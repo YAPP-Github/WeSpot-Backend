@@ -1,0 +1,38 @@
+name: Opened Issue Notification
+on:
+  issues:
+    types:
+      - opened
+      - reopened
+
+jobs:
+  create-issue:
+    name: Discord notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Issue
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: Server 사랑의 BOT
+          DISCORD_AVATAR: https://www.notion.so/image/https%3A%2F%2Fi.imgur.com%2FqIqJ0GA.png?table=block&id=232c40c1-598a-4163-bb8d-acf1151cd026&spaceId=4263d120-003b-49f8-8cb5-37585d6fb45d&width=2000&userId=c0125a99-ca81-4e9f-9c32-096f12a6698c&cache=v2
+          DISCORD_EMBEDS: |
+            [
+                { 
+                  "title": "왔어요 왔어~ 새로운 이슈가 왔어요~🥳\n${{ github.event.issue.title }}",
+                  "color": 10478271,
+                  "description": "${{ github.event.issue.html_url }}",
+                  "fields": [
+                    {
+                      "name": "Issue Number",
+                      "value": "#${{ github.event.issue.number }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "Author",
+                      "value": "${{ github.event.issue.user.login }}",
+                      "inline": true
+                    }
+                  ]
+                }
+              ]

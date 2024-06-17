@@ -1,0 +1,90 @@
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  approved:
+    if: github.event.review.state == 'APPROVED'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Approve Message
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: Server 사랑의 BOT
+          DISCORD_AVATAR: https://www.notion.so/image/https%3A%2F%2Fi.imgur.com%2FqIqJ0GA.png?table=block&id=232c40c1-598a-4163-bb8d-acf1151cd026&spaceId=4263d120-003b-49f8-8cb5-37585d6fb45d&width=2000&userId=c0125a99-ca81-4e9f-9c32-096f12a6698c&cache=v2
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "PR 어프로브, 이건 기천짱의 특급칭찬이야 ~ 😘😘 \\n${{ github.event.pull_request.title }}",
+                "color": 10478271,
+                "description": "${{ github.event.review.html_url }}",
+                "fields": [
+                  {
+                    "name": "Reviewer",
+                    "value": "${{ github.event.review.user.login }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Comment",
+                    "value": "${{ github.event.review.body }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "State",
+                    "value": "${{ github.event.review.state }}",
+                    "inline": true
+                  }
+                ]
+              }
+            ]
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: add label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: 🌟머지 해주세요🌟
+
+  commented_or_changes_requested:
+    if: github.event.review.state == 'commented' || github.event.review.state == 'changes_requested'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Comment Message
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: Server 사랑의 BOT
+          DISCORD_AVATAR: https://github.com/YAPP-Github/24th-App-Team-1-Android/assets/77484719/611fc015-8f91-4645-90c9-2ae9e86d9e7b
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "PR 수정 요청, 미쿠짱 똥 가져와 똥 💩💩 \\n${{ github.event.pull_request.title }}",
+                "color": 13458524,
+                "description": "${{ github.event.review.html_url }}",
+                "fields": [
+                  {
+                    "name": "Reviewer",
+                    "value": "${{ github.event.review.user.login }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "Comment",
+                    "value": "${{ github.event.review.body }}",
+                    "inline": true
+                  },
+                  {
+                    "name": "State",
+                    "value": "${{ github.event.review.state }}",
+                    "inline": true
+                  }
+                ]
+              }
+            ]
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: add label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: ✏️수정 요청✏️
