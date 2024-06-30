@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 
 @EnableJpaAuditing
 @EnableFeignClients
-@SpringBootApplication(scanBasePackages = ["come.wespot"])
+@SpringBootApplication(scanBasePackages = ["com.wespot"])
 class ApiApplication
 
 fun main(args: Array<String>) {
