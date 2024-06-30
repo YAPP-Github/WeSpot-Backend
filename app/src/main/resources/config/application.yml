@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: local
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  tomcat:
+    access-log:
+      enabled: true
+  port: 8081
+
