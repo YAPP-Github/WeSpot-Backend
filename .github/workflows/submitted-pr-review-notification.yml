@@ -18,7 +18,7 @@ jobs:
           DISCORD_EMBEDS: |
             [
               {
-                "title": "PR 어프로브, 이건 기천짱의 특급칭찬이야 ~ 😘😘 \\n${{ github.event.pull_request.title }}",
+                "title": "PR 어프로브, 이건 기천짱의 특급칭찬이야 ~ 😘😘 \n${{ github.event.pull_request.title }}",
                 "color": 10478271,
                 "description": "${{ github.event.review.html_url }}",
                 "fields": [
@@ -60,7 +60,7 @@ jobs:
           DISCORD_EMBEDS: |
             [
               {
-                "title": "PR 수정 요청, 미쿠짱 똥 가져와 똥 💩💩 \\n${{ github.event.pull_request.title }}",
+                "title": "PR 수정 요청, 미쿠짱 똥 가져와 똥 💩💩 \n${{ github.event.pull_request.title }}",
                 "color": 13458524,
                 "description": "${{ github.event.review.html_url }}",
                 "fields": [
@@ -101,7 +101,7 @@ jobs:
           DISCORD_EMBEDS: |
             [
               {
-                "title": "PR에 댓글이 달렸어요. 기천짱 칼 가져와! 🔪 \\n${{ github.event.pull_request.title }}",
+                "title": "PR에 댓글이 달렸어요. 기천짱 칼 가져와! 🔪 \n${{ github.event.pull_request.title }}",
                 "color": 13458524,
                 "description": "${{ github.event.review.html_url }}",
                 "fields": [
