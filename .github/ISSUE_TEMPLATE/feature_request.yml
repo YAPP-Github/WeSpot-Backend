@@ -3,6 +3,14 @@ description: Request new Feature
 title: "[feature]: "
 labels: ["🌱기능🌱"]
 body:
+  - type: input
+    id: parentKey
+    attributes:
+      label: Epic Ticket Number
+      description: WS-75 - 회원가입/로그인 | WS-79 - 투표 홈 | WS-88 - 쪽지 홈 | WS-104 - 알림 | WS-131 - 투표 결과 | WS-132 - 전체 | WS-134 - 쪽지 보관함
+      placeholder: WS-132
+    validations:
+      required: true
   - type: markdown
     attributes:
       value: |
