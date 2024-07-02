@@ -112,7 +112,7 @@ jobs:
                   },
                   {
                     "name": "Comment",
-                    "value": "${{ github.event.comment.body }}",
+                    "value": "${{ github.event.review.body }}",
                     "inline": true
                   },
                   {
