@@ -1,0 +1,28 @@
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url:
+    username:
+    password:
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        use_sql_comments: true
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
+    defer-datasource-initialization: true
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: trace
+
+management:
+  endpoints:
+    enabled-by-default: false
+
+environment: local
