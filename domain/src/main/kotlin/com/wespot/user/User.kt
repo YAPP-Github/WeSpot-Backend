@@ -14,5 +14,6 @@ data class User(
     val social: Social,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
+    val withdrawAt: LocalDateTime,
 ) {
 }
