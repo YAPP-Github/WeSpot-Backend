@@ -3,6 +3,7 @@ on:
   issues:
     types:
       - opened
+      - reopened
 
 jobs:
   create-issue:
@@ -52,8 +53,27 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
+      - name: Create SubTask
+        id: create-subtask
+        uses: atlassian/gajira-create@v3
+        with:
+            project: WS
+            issuetype: SubTask
+            summary: "${{ github.event.issue.title }}"
+            description: "${{ steps.md2jira.outputs.output-text }}"
+            fields: |
+              {
+                "parent": {
+                  "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
+                },
+                "assignee" : { 
+                  "id" : "${{ steps.jira-assignee.outputs.accountId }}"
+                }
+              }
+
       - name: Create Issue
-        id: create
+        id: create-issue
+        if: failure()
         uses: atlassian/gajira-create@v3
         with:
           project: WS
@@ -74,8 +94,9 @@ jobs:
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
 
       - name: Update issue title
+        if: always() && (steps.create-subtask.conclusion == 'success' || steps.create-issue.conclusion == 'success')
         uses: actions-cool/issues-helper@v3
         with:
           actions: "update-issue"
           token: ${{ secrets.ACCESS_GITHUB_TOKEN }}
-          title: "${{ steps.create.outputs.issue }} ${{ github.event.issue.title }}"
+          title: "${{ steps.create-subtask.outputs.issue || steps.create-issue.outputs.issue }} ${{ github.event.issue.title }}"
