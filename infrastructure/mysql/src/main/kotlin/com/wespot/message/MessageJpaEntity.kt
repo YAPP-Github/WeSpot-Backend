@@ -1,30 +1,32 @@
 package com.wespot.message
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.UserJpaEntity
 import jakarta.persistence.*
+import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
-@Entity(name = "message")
+@Entity
+@Table(name = "message")
 class MessageJpaEntity(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
+    @field: NotNull
     val content: String,
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id")
-    val sender: UserJpaEntity,
+    @field: NotNull
+    val senderId: Long,
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    val receiver: UserJpaEntity,
+    @field: NotNull
+    val receiverId: Long,
 
     val isReceiverRead: Boolean,
 
     val readAt: LocalDateTime,
 
+    @field: NotNull
     val isSent: Boolean,
 
     val sentAt: LocalDateTime,
@@ -32,6 +34,7 @@ class MessageJpaEntity(
     val receivedAt: LocalDateTime,
 
     @Embedded
+    @field: NotNull
     val baseEntity: BaseEntity
 
 )
