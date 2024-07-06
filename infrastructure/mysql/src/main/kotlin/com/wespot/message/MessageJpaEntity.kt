@@ -1,7 +1,7 @@
 package com.wespot.message
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.User
+import com.wespot.user.UserJpaEntity
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -15,11 +15,11 @@ class MessageJpaEntity(
 
     @ManyToOne
     @JoinColumn(name = "sender_id")
-    val sender: User,
+    val sender: UserJpaEntity,
 
     @ManyToOne
     @JoinColumn(name = "receiver_id")
-    val receiver: User,
+    val receiver: UserJpaEntity,
 
     val isReceiverRead: Boolean,
 
@@ -32,6 +32,6 @@ class MessageJpaEntity(
     val receivedAt: LocalDateTime,
 
     @Embedded
-    val baseEntity: BaseEntity,
-) {
-}
+    val baseEntity: BaseEntity
+
+)
