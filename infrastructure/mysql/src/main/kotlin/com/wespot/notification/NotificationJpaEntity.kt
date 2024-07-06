@@ -1,32 +1,36 @@
 package com.wespot.notification
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.UserJpaEntity
 import jakarta.persistence.*
+import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
-@Entity(name = "notification")
+@Entity
+@Table(name = "notification")
 class NotificationJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id")
-    val user: UserJpaEntity,
+    @field: NotNull
+    val userId: Long,
 
     @Enumerated(value = EnumType.STRING)
     val type: NotificationType,
 
+    @field: NotNull
     val targetId: Long,
 
+    @field: NotNull
     val content: String,
 
+    @field: NotNull
     val isRead: Boolean,
 
     val readAt: LocalDateTime,
 
+    @field: NotNull
     val isEnabled: Boolean,
 
     @Embedded
