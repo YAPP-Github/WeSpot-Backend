@@ -19,14 +19,14 @@ class VoteJpaEntity(
     val grade: Int,
 
     @field: NotNull
-    val group: Int,
+    val groupNumber: Int,
 
     @field: NotNull
     val date: LocalDateTime,
 
-    @field: NotNull
-    @OneToMany(mappedBy = "vote", cascade = [CascadeType.PERSIST])
-    val ballots: List<BallotJpaEntity>
+//    @field: NotNull
+//    @OneToMany(mappedBy = "vote", cascade = [CascadeType.PERSIST])
+//    val ballots: List<BallotJpaEntity>,
 
 )
 

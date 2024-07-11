@@ -12,7 +12,6 @@ class SocialJpaEntity(
     @field: NotNull
     val socialType: Long,
 
-    @field: NotNull
     val socialRefreshToken: String
 
 )
