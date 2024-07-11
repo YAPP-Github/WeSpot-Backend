@@ -4,7 +4,6 @@ dependencies {
 
     implementation(project(":common"))
     implementation(project(":domain"))
-    implementation(project(":infrastructure:mysql"))
 }
 
 tasks.named<Jar>("jar") {

@@ -31,9 +31,6 @@ allprojects {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
 
 subprojects {
 	apply(plugin = "java")
@@ -41,6 +38,8 @@ subprojects {
 	apply(plugin = "kotlin")
 	apply(plugin = "kotlin-spring")
 	apply(plugin = "kotlin-kapt")
+	apply(plugin = "kotlin-noarg")
+	apply(plugin = "kotlin-jpa")
 
 	apply(plugin = "org.springframework.boot")
 	apply(plugin = "io.spring.dependency-management")
@@ -54,6 +53,9 @@ subprojects {
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 		implementation("mysql:mysql-connector-java:8.0.32")
+
+		// https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
+		implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
 
 		testImplementation("org.springframework.boot:spring-boot-starter-test")
 		testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
