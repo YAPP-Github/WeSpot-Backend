@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
-@FeignClient(name = "apple", url = "https://appleid.apple.com/auth", configuration = [SocialHeaderConfiguration::class])
+@FeignClient(
+    name = "apple",
+    url = "https://appleid.apple.com/auth",
+    configuration = [SocialHeaderConfiguration::class]
+)
 interface AppleClient {
 
     /**

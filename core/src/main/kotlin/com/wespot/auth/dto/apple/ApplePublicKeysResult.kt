@@ -13,12 +13,3 @@ data class ApplePublicKeysResult(
             ?: throw IllegalArgumentException("Apple JWT 값의 alg, kid 정보가 올바르지 않습니다.")
     }
 }
-
-data class ApplePublicKey(
-    val kty: String,
-    val kid: String,
-    val use: String,
-    val alg: String,
-    val n: String,
-    val e: String
-)

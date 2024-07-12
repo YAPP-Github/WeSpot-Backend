@@ -51,7 +51,7 @@ class AppleCreateClientSecret(
             val objects = pemParser.readObject() as PrivateKeyInfo
             converter.getPrivateKey(objects)
         } catch (e: Exception) {
-            throw IllegalArgumentException ("Failed to generate private key: ${e.message}")
+            throw IllegalArgumentException ("Apple private key 생성 실패: ${e.message}")
         }
     }
 }

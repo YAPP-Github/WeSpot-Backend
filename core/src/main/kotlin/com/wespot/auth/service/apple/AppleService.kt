@@ -29,9 +29,9 @@ class AppleService(
 
     override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): OAuthIdAndRefreshToken {
         val appleId = getAppleId(authLoginRequest.identityToken
-            ?: throw IllegalArgumentException("Apple ID token is null"))
+            ?: throw IllegalArgumentException("Apple ID token이 없습니다."))
         val appleTokenResult = generateAuthToken(authLoginRequest.authorizationCode
-            ?: throw IllegalArgumentException("Authorization code is null"))
+            ?: throw IllegalArgumentException("Authorization code가 없습니다."))
 
         return OAuthIdAndRefreshToken(
             oAuthId = appleId,
@@ -47,7 +47,11 @@ class AppleService(
         val headers = appleJwtParser.parseHeaders(identityToken)
         val applePublicKeys = appleClient.getApplePublicKeys()
         val publicKey = applePublicKeyGenerator.generatePublicKey(headers, applePublicKeys)
-        val claims: Claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(identityToken).body
+        val claims: Claims = Jwts.parserBuilder()
+            .setSigningKey(publicKey)
+            .build()
+            .parseClaimsJws(identityToken)
+            .body
 
         return claims.subject
     }

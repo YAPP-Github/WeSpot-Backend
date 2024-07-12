@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
-@FeignClient(name = "kakao", url = "https://kapi.kakao.com", configuration = [SocialHeaderConfiguration::class])
+@FeignClient(
+    name = "kakao",
+    url = "https://kapi.kakao.com",
+    configuration = [SocialHeaderConfiguration::class]
+)
 interface KakaoClient {
 
     /**
