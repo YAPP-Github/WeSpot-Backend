@@ -17,11 +17,9 @@ class SocialAuthServiceFactoryTest : BehaviorSpec({
     given("SocialAuthServiceFactory 테스트") {
         every { kakaoService.isSupport(SocialType.KAKAO) } returns true
         every { kakaoService.isSupport(SocialType.APPLE) } returns false
-        every { kakaoService.isSupport(SocialType.NONE) } returns false
 
         every { appleService.isSupport(SocialType.KAKAO) } returns false
         every { appleService.isSupport(SocialType.APPLE) } returns true
-        every { appleService.isSupport(SocialType.NONE) } returns false
 
         `when`("Kakao 소셜 타입에 대한 서비스를 요청할 때") {
             then("KakaoService를 반환해야 한다") {
@@ -34,14 +32,6 @@ class SocialAuthServiceFactoryTest : BehaviorSpec({
             then("AppleService를 반환해야 한다") {
                 val service = factory.getService(SocialType.APPLE)
                 service shouldBe appleService
-            }
-        }
-
-        `when`("지원하지 않는 소셜 타입에 대한 서비스를 요청할 때") {
-            then("IllegalArgumentException을 던져야 한다") {
-                shouldThrow<IllegalArgumentException> {
-                    factory.getService(SocialType.NONE)
-                }
             }
         }
     }

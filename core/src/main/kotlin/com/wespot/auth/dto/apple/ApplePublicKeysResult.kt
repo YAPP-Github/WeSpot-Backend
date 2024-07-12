@@ -9,7 +9,7 @@ data class ApplePublicKeysResult(
 ) {
     fun getMatchesKey(alg: String?, kid: String?): ApplePublicKey {
         return keys
-            .firstOrNull { k -> k.alg == alg && k.kid == kid }
+            .firstOrNull { key -> key.alg == alg && key.kid == kid }
             ?: throw IllegalArgumentException("Apple JWT 값의 alg, kid 정보가 올바르지 않습니다.")
     }
 }
