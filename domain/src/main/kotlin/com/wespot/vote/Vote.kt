@@ -6,7 +6,7 @@ data class Vote(
     val id: Long,
     val schoolName: String,
     val grade: Int,
-    val group: Int,
+    val groupNumber: Int,
     val date: LocalDateTime,
     val ballots: List<Ballot>
 ) {

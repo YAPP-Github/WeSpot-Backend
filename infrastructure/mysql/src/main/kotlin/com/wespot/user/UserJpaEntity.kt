@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "user")
 class UserJpaEntity(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
@@ -20,7 +19,7 @@ class UserJpaEntity(
     val grade: Int,
 
     @field: NotNull
-    val group: Int,
+    val groupNumber: Int,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -43,7 +42,6 @@ class UserJpaEntity(
     val fcm: FCMJpaEntity,
 
     @Embedded
-    @field: NotNull
     val social: SocialJpaEntity,
 
     @Embedded

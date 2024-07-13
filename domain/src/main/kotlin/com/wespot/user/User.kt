@@ -7,7 +7,7 @@ data class User(
     val id: Long,
     val school: School,
     val grade: Int,
-    val group: Int,
+    val groupNumber: Int,
     val setting: Setting,
     val profile: Profile,
     val fcm: FCM,
