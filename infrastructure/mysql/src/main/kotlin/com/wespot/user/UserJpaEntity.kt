@@ -24,6 +24,12 @@ class UserJpaEntity(
     val id: Long,
 
     @field: NotNull
+    val email: String,
+
+    @field: NotNull
+    val password: String,
+
+    @field: NotNull
     val name: String,
 
     @field: NotNull
@@ -67,4 +73,6 @@ class UserJpaEntity(
 
     val withdrawAt: LocalDateTime
 
-)
+) {
+
+}
