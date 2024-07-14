@@ -65,7 +65,7 @@ class VoteService(
                     findUser(request.userId)
                 )
             }.toList()
-        vote.addBallots(ballots);
+        vote.addBallots(ballots)
         return votePort.save(vote).id
     }
 

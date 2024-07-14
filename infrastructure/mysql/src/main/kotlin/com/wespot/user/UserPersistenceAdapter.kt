@@ -2,6 +2,7 @@ package com.wespot.user
 
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Repository
+import kotlin.jvm.optionals.getOrNull
 
 @Repository
 class UserPersistenceAdapter(
@@ -9,7 +10,11 @@ class UserPersistenceAdapter(
 ) : UserPort {
 
     override fun findById(id: Long): User? {
-        return userJpaRepository.findById(id)?.let { };
+        return userJpaRepository.findById(id)
+            .getOrNull()
+            ?.let { userJpaEntity ->
+                UserMapper.mapToDomainEntity(userJpaEntity)
+            }
     }
 
     override fun findAllBySchoolIdAndGradeAndGroupNumber(
@@ -17,7 +22,13 @@ class UserPersistenceAdapter(
         grade: Int,
         groupNumber: Int
     ): List<User> {
-
+        return userJpaRepository.findAllBySchoolIdAndGradeAndGroupNumber(
+            schoolId,
+            grade,
+            groupNumber
+        ).stream()
+            .map { userJpaEntity -> UserMapper.mapToDomainEntity(userJpaEntity) }
+            .toList()
     }
 
 }

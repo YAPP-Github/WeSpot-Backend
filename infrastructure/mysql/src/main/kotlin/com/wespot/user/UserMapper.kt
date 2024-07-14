@@ -1,7 +1,6 @@
 package com.wespot.user
 
 import com.wespot.common.BaseEntity
-import com.wespot.school.School
 
 object UserMapper {
 
