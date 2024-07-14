@@ -3,7 +3,8 @@ package com.wespot.vote.service
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
-import com.wespot.vote.dto.VoteItems
+import com.wespot.vote.dto.request.VoteRequest
+import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.VoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
@@ -40,7 +41,6 @@ class VoteService(
         )
     }
 
-
     private fun findVoteByUser(user: User, date: LocalDate): Vote {
         return votePort.findBySchoolIdAndGradeAndGroupNumberAndDate(
             user.id,
@@ -50,8 +50,9 @@ class VoteService(
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
-    override fun saveVote(userId: Long): Long {
+    override fun saveVote(userId: Long, requests: List<VoteRequest>): Long {
         TODO("Not yet implemented")
+        //이 부분은 그냥 POST받아서 저장하는 것인데
     }
 
 

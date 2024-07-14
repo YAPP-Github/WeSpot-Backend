@@ -1,4 +1,4 @@
-package com.wespot.vote.dto
+package com.wespot.vote.dto.response
 
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
