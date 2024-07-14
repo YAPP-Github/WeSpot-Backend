@@ -16,7 +16,7 @@ import java.time.LocalDate
 class VoteService(
     private val votePort: VotePort,
     private val voteOptionPort: VoteOptionPort,
-    private val userPort: UserPort
+    private val userPort: UserPort,
 ) : VoteUseCase {
 
     @Transactional
@@ -46,7 +46,7 @@ class VoteService(
 
     private fun findVoteByUser(user: User, date: LocalDate): Vote {
         return votePort.findBySchoolIdAndGradeAndGroupNumberAndDate(
-            user.id,
+            user.schoolId,
             user.grade,
             user.groupNumber,
             date

@@ -10,14 +10,14 @@ import java.time.LocalDateTime
 
 @EntityListeners(AuditingEntityListener::class)
 @Embeddable
-class BaseEntity {
+data class BaseEntity(
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime,
 
     @LastModifiedDate
     @Column(nullable = false)
-    val updatedAt: LocalDateTime? = null
+    val updatedAt: LocalDateTime?
 
-}
+)

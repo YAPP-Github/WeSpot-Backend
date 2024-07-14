@@ -13,6 +13,9 @@ class UserJpaEntity(
     val id: Long,
 
     @field: NotNull
+    val name: String,
+
+    @field: NotNull
     val schoolId: Long,
 
     @field: NotNull

@@ -20,6 +20,6 @@ class ProfileJpaEntity(
     val backgroundColor: String,
 
     @field: NotNull
-    val imageUrl: String
+    val iconUrl: String
 
 )
