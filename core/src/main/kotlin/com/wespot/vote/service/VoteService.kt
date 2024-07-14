@@ -10,8 +10,10 @@ import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
 import jakarta.transaction.Transactional
+import org.springframework.stereotype.Service
 import java.time.LocalDate
 
+@Service
 class VoteService(
     private val votePort: VotePort,
     private val voteOptionPort: VoteOptionPort,
