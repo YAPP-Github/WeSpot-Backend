@@ -17,7 +17,7 @@ data class Vote(
     companion object {
         private val NUMBER_OF_VOTE_USERS = 5
         private val NUMBER_OF_VOTE_OPTIONS = 5
-        private val MOVE_TO_NEXT_VOTE_OPTION = 1;
+        private val MOVE_TO_NEXT_VOTE_OPTION = 1
     }
 
     fun findTodayVoteOptions(voteOptions: List<VoteOption>): List<VoteOption> {

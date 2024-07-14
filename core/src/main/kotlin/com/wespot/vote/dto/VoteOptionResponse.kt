@@ -3,7 +3,17 @@ package com.wespot.vote.dto
 import com.wespot.voteoption.VoteOption
 
 class VoteOptionResponse(
-    val user: UserResponse,
-    val voteOptions: List<VoteOption>
+    val id: Long,
+    val content: String
 ) {
+
+    companion object {
+        fun from(voteOption: VoteOption): VoteOptionResponse {
+            return VoteOptionResponse(
+                id = voteOption.id!!,
+                content = voteOption.content
+            )
+        }
+    }
+
 }

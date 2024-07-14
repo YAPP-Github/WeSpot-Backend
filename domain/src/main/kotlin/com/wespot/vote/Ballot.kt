@@ -3,7 +3,6 @@ package com.wespot.vote
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
 import java.time.LocalDateTime
-import java.util.*
 
 data class Ballot(
     val id: Long?,

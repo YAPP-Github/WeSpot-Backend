@@ -6,10 +6,6 @@ data class Ballots(
     private val ballots: MutableList<Ballot>,
 ) {
 
-    fun addBallot(ballot: Ballot) {
-        ballots.add(ballot);
-    }
-
     fun findUsersVotedByUser(sentUser: User): List<User> {
         return ballots.stream()
             .filter { ballot -> ballot.sender == sentUser }
