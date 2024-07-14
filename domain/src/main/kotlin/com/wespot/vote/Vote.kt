@@ -2,6 +2,7 @@ package com.wespot.vote
 
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class Vote(
@@ -10,7 +11,7 @@ data class Vote(
     val grade: Int,
     val groupNumber: Int,
     val voteNumber: Int,
-    val date: LocalDateTime,
+    val date: LocalDate,
     val ballots: Ballots,
 ) {
 
