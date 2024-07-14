@@ -1,3 +1,3 @@
-[submodule "app/src/main/resources/backend-submodule"]
-	path = app/src/main/resources/backend-submodule
+[submodule "app/src/main/resources/config"]
+	path = app/src/main/resources/config
 	url = https://github.com/yapp-wespot/backend-submodule.git
