@@ -5,13 +5,13 @@ import com.wespot.voteoption.VoteOption
 import java.time.LocalDateTime
 
 data class Vote(
-    private val id: Long,
-    private val schoolName: String,
-    private val grade: Int,
-    private val groupNumber: Int,
-    private val voteNumber: Int,
-    private val date: LocalDateTime,
-    private val ballots: Ballots
+    val id: Long,
+    val schoolName: String,
+    val grade: Int,
+    val groupNumber: Int,
+    val voteNumber: Int,
+    val date: LocalDateTime,
+    val ballots: Ballots
 ) {
 
     companion object {
@@ -45,5 +45,10 @@ data class Vote(
     }
 
     private fun isMe(classmate: User?, user: User) = classmate == user
+
+    fun addBallots(ballots: List<Ballot>) {
+        ballots.stream()
+            .forEach { ballot -> this.ballots.add(ballot) }
+    }
 
 }

@@ -12,6 +12,6 @@ interface VotePort {
         date: LocalDate
     ): Vote?
 
-    fun save(vote: Vote)
+    fun save(vote: Vote): Vote
 
 }

@@ -2,6 +2,7 @@ package com.wespot.vote.service
 
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
+import com.wespot.vote.Ballot
 import com.wespot.vote.Vote
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.response.VoteItems
@@ -9,6 +10,7 @@ import com.wespot.vote.port.`in`.VoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
+import jakarta.transaction.Transactional
 import java.time.LocalDate
 
 class VoteService(
@@ -17,6 +19,7 @@ class VoteService(
     private val userPort: UserPort
 ) : VoteUseCase {
 
+    @Transactional
     override fun getVoteOptions(userId: Long): VoteItems {
         val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
         val user: User = findUser(userId)
@@ -50,10 +53,25 @@ class VoteService(
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
+    @Transactional
     override fun saveVote(userId: Long, requests: List<VoteRequest>): Long {
-        TODO("Not yet implemented")
-        //이 부분은 그냥 POST받아서 저장하는 것인데
+        val user: User = findUser(userId)
+        val vote: Vote = findVoteByUser(user, LocalDate.now())
+        val ballots: List<Ballot> = requests.stream()
+            .map { request ->
+                Ballot.of(
+                    findVoteOption(request.voteOptionId),
+                    user,
+                    findUser(request.userId)
+                )
+            }.toList()
+        vote.addBallots(ballots);
+        return votePort.save(vote).id
     }
 
+    private fun findVoteOption(voteOptionId: Long): VoteOption {
+        return voteOptionPort.findById(voteOptionId)
+            ?: throw IllegalArgumentException("ID에 해당하는 선택지가 존재하지 않습니다.")
+    }
 
 }
