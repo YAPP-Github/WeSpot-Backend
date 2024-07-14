@@ -13,7 +13,7 @@ class VoteJpaEntity(
     val id: Long,
 
     @field: NotNull
-    val schoolName: String,
+    val schoolId: Long,
 
     @field: NotNull
     val grade: Int,

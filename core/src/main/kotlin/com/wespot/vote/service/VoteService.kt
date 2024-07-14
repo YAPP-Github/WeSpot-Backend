@@ -2,7 +2,6 @@ package com.wespot.vote.service
 
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
-import com.wespot.vote.Ballot
 import com.wespot.vote.Vote
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.response.VoteItems
@@ -57,21 +56,15 @@ class VoteService(
     override fun saveVote(userId: Long, requests: List<VoteRequest>): Long {
         val user: User = findUser(userId)
         val vote: Vote = findVoteByUser(user, LocalDate.now())
-        val ballots: List<Ballot> = requests.stream()
-            .map { request ->
-                Ballot.of(
-                    findVoteOption(request.voteOptionId),
-                    user,
-                    findUser(request.userId)
+        requests.stream()
+            .forEach { request ->
+                vote.addBallot(
+                    voteOptionId = request.voteOptionId,
+                    senderId = userId,
+                    receiverId = request.userId
                 )
-            }.toList()
-        vote.addBallots(ballots)
+            }
         return votePort.save(vote).id
-    }
-
-    private fun findVoteOption(voteOptionId: Long): VoteOption {
-        return voteOptionPort.findById(voteOptionId)
-            ?: throw IllegalArgumentException("ID에 해당하는 선택지가 존재하지 않습니다.")
     }
 
 }

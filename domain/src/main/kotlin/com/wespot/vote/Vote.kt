@@ -6,12 +6,12 @@ import java.time.LocalDateTime
 
 data class Vote(
     val id: Long,
-    val schoolName: String,
+    val schoolId: Long,
     val grade: Int,
     val groupNumber: Int,
     val voteNumber: Int,
     val date: LocalDateTime,
-    val ballots: Ballots
+    val ballots: Ballots,
 ) {
 
     companion object {
@@ -36,19 +36,34 @@ data class Vote(
     }
 
     fun findVotedUsers(classmates: List<User>, user: User): List<User> {
-        val alreadyVotedByUser: List<User> = ballots.findUsersVotedByUser(user)
+        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
         return classmates.stream()
-            .filter { classmate -> alreadyVotedByUser.contains(classmate) || isMe(classmate, user) }
+            .filter { classmate ->
+                alreadyVotedByUser.contains(classmate.id) || isMe(
+                    classmate,
+                    user
+                )
+            }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
     }
 
-    private fun isMe(classmate: User?, user: User) = classmate == user
+    private fun isMe(classmate: User, user: User) = classmate == user
 
-    fun addBallots(ballots: List<Ballot>) {
-        ballots.stream()
-            .forEach { ballot -> this.ballots.add(ballot) }
+    fun addBallot(voteOptionId: Long, senderId: Long, receiverId: Long) {
+        ballots.add(
+            Ballot.of(
+                id,
+                voteOptionId,
+                senderId,
+                receiverId
+            )
+        )
+    }
+
+    fun getBallots(): List<Ballot> {
+        return ballots.ballots
     }
 
 }

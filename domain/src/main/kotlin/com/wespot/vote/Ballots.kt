@@ -1,11 +1,16 @@
 package com.wespot.vote
 
-import com.wespot.user.User
 import java.util.*
 
 data class Ballots(
-    private val ballots: MutableList<Ballot>,
+    val ballots: MutableList<Ballot>,
 ) {
+
+    companion object {
+        fun from(ballots: List<Ballot>): Ballots {
+            return Ballots(ballots.toMutableList())
+        }
+    }
 
     fun add(ballot: Ballot) {
         if (Objects.isNull(ballot)) {
@@ -14,10 +19,10 @@ data class Ballots(
         ballots.add(ballot)
     }
 
-    fun findUsersVotedByUser(sentUser: User): List<User> {
+    fun findUserIdsVotedByUser(sentUserId: Long): List<Long> {
         return ballots.stream()
-            .filter { ballot -> ballot.sender == sentUser }
-            .map(Ballot::receiver)
+            .filter { ballot -> ballot.senderId == sentUserId }
+            .map(Ballot::receiverId)
             .distinct()
             .toList()
     }

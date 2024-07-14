@@ -10,10 +10,13 @@ class BallotJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
 
     @field: NotNull
     val voteId: Long,
+
+    @field: NotNull
+    val voteOptionId: Long,
 
     @field: NotNull
     val senderId: Long,
