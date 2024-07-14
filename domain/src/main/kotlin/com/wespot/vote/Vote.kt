@@ -17,6 +17,7 @@ data class Vote(
     companion object {
         private val NUMBER_OF_VOTE_USERS = 5
         private val NUMBER_OF_VOTE_OPTIONS = 5
+        private val MOVE_TO_NEXT_VOTE_OPTION = 1;
     }
 
     fun findTodayVoteOptions(voteOptions: List<VoteOption>): List<VoteOption> {
@@ -28,17 +29,21 @@ data class Vote(
         var index: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % voteOptions.size
         while (todayVoteOptions.size < NUMBER_OF_VOTE_OPTIONS) {
             todayVoteOptions.add(voteOptions[index])
-            index = (index + 1) % voteOptions.size
+            index = (index + MOVE_TO_NEXT_VOTE_OPTION) % voteOptions.size
         }
 
         return todayVoteOptions
     }
 
-    fun findVotedUsers(user: User): List<User> {
-        val findUsersVotedByUser = ballots.findUsersVotedByUser(user)
-
-        return findUsersVotedByUser.shuffled()
+    fun findVotedUsers(classmates: List<User>, user: User): List<User> {
+        val alreadyVotedByUser: List<User> = ballots.findUsersVotedByUser(user)
+        return classmates.stream()
+            .filter { classmate -> alreadyVotedByUser.contains(classmate) || isMe(classmate, user) }
+            .toList()
+            .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
     }
+
+    private fun isMe(classmate: User?, user: User) = classmate == user
 
 }
