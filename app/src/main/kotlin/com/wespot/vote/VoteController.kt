@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/votes")
+@RequestMapping("/v1/votes")
 class VoteController(
     private val voteUseCase: VoteUseCase
 ) {
