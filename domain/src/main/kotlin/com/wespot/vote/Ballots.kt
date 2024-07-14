@@ -10,7 +10,7 @@ data class Ballots(
         ballots.add(ballot);
     }
 
-    fun findUserVotedByUser(sentUser: User): List<User> {
+    fun findUsersVotedByUser(sentUser: User): List<User> {
         return ballots.stream()
             .filter { ballot -> ballot.sender == sentUser }
             .map(Ballot::receiver)

@@ -22,6 +22,9 @@ class VoteJpaEntity(
     val groupNumber: Int,
 
     @field: NotNull
+    val voteNumber: Int,
+
+    @field: NotNull
     val date: LocalDateTime,
 
 //    @field: NotNull
