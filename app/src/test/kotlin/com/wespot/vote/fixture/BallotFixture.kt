@@ -15,4 +15,19 @@ object BallotFixture {
         isReceiverRead = true
     )
 
+    fun createByVoteAndVoteOptionAndSenderAndReceiver(
+        voteId: Long,
+        voteOptionId: Long,
+        senderId: Long,
+        receiverId: Long
+    ) = Ballot(
+        id = null,
+        voteId = voteId,
+        voteOptionId = voteOptionId,
+        senderId = senderId,
+        receiverId = receiverId,
+        createdAt = LocalDateTime.now(),
+        isReceiverRead = true
+    )
+
 }
