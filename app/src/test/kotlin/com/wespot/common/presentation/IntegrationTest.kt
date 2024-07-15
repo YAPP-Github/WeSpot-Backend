@@ -1,5 +1,6 @@
-package com.wespot
+package com.wespot.common.presentation
 
+import com.wespot.DatabaseCleanup
 import io.restassured.RestAssured
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

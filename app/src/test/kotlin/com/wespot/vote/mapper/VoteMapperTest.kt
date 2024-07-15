@@ -1,5 +1,11 @@
-package com.wespot.vote
+package com.wespot.vote.mapper
 
+import com.wespot.vote.BallotMapper
+import com.wespot.vote.Ballots
+import com.wespot.vote.VoteMapper
+import com.wespot.vote.fixture.BallotJpaEntityFixture
+import com.wespot.vote.fixture.VoteFixture
+import com.wespot.vote.fixture.VoteJpaEntityFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -20,7 +26,7 @@ class VoteMapperTest : BehaviorSpec({
                 voteDomainEntity.groupNumber shouldBe voteJpaEntity.groupNumber
                 voteDomainEntity.voteNumber shouldBe voteJpaEntity.voteNumber
                 voteDomainEntity.date shouldBe voteJpaEntity.date
-                voteDomainEntity.ballots shouldBe Ballots::class
+                voteDomainEntity.ballots::class shouldBe Ballots::class
             }
         }
     }

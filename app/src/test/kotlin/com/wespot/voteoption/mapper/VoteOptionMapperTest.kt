@@ -1,8 +1,10 @@
-package com.wespot.voteoption
+package com.wespot.voteoption.mapper
 
+import com.wespot.voteoption.VoteOptionMapper
+import com.wespot.voteoption.fixture.VoteOptionFixture
+import com.wespot.voteoption.fixture.VoteOptionJpaEntityFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import com.wespot.voteoption.fixture.VoteOptionJpaEntityFixture
 
 class VoteOptionMapperTest : BehaviorSpec({
 

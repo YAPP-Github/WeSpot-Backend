@@ -1,5 +1,8 @@
-package com.wespot.vote
+package com.wespot.vote.mapper
 
+import com.wespot.vote.BallotMapper
+import com.wespot.vote.fixture.BallotFixture
+import com.wespot.vote.fixture.BallotJpaEntityFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
