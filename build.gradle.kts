@@ -54,7 +54,6 @@ subprojects {
 		implementation("org.jetbrains.kotlin:kotlin-reflect")
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-		implementation("mysql:mysql-connector-j")
 
 		// https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on
 		implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
