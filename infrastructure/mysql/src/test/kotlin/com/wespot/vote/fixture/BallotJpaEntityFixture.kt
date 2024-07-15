@@ -1,6 +1,7 @@
-package com.wespot.vote
+package com.wespot.vote.fixture
 
 import com.wespot.common.BaseEntity
+import com.wespot.vote.BallotJpaEntity
 import java.time.LocalDateTime
 
 object BallotJpaEntityFixture {

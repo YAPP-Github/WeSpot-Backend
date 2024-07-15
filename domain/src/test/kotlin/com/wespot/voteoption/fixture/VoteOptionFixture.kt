@@ -1,5 +1,6 @@
-package com.wespot.voteoption
+package com.wespot.voteoption.fixture
 
+import com.wespot.voteoption.VoteOption
 import java.time.LocalDateTime
 
 object VoteOptionFixture {

@@ -1,5 +1,7 @@
-package com.wespot.vote
+package com.wespot.vote.fixture
 
+import com.wespot.vote.Ballots
+import com.wespot.vote.Vote
 import java.time.LocalDate
 import java.util.*
 
