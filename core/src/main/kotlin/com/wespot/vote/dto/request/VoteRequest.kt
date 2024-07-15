@@ -1,6 +1,6 @@
 package com.wespot.vote.dto.request
 
-class VoteRequest(
+data class VoteRequest(
     val userId: Long,
     val voteOptionId: Long
 ) {
