@@ -41,13 +41,13 @@ data class Vote(
     fun findVotedUsers(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
         return classmates.stream()
-            .filter { alreadyVotedByUser.contains(it.id) || isMe(it, user) }
+            .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
-            .shuffled()
+//            .shuffled() // TODO: Shuffle 하게 되면, 사용자가 중간에 그만두었을 때에도 다른 결과를 반환할 것 같아서 지우려고요. 동의하시나요 ?!
             .take(NUMBER_OF_VOTE_USERS)
     }
 
-    private fun isMe(classmate: User, user: User) = classmate == user
+    private fun isNotMe(classmate: User, user: User) = classmate != user
 
     fun addBallot(
         todayVoteOptionsIds: List<Long>,
@@ -58,10 +58,10 @@ data class Vote(
         validateVoteOption(todayVoteOptionsIds, voteOptionId)
         ballots.add(
             Ballot.of(
-                id,
-                voteOptionId,
-                senderId,
-                receiverId
+                voteId = id,
+                voteOptionId = voteOptionId,
+                senderId = senderId,
+                receiverId = receiverId
             )
         )
     }
