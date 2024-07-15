@@ -1,7 +1,6 @@
 package com.wespot.vote
 
 import java.time.LocalDate
-import java.util.*
 
 object VoteJpaEntityFixture {
 
