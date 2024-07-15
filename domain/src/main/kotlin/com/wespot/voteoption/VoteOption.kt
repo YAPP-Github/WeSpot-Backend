@@ -12,10 +12,10 @@ data class VoteOption(
 
     companion object {
         fun of(
-            id: Long,
+            id: Long?,
             content: String,
             createdAt: LocalDateTime,
-            updatedAt: LocalDateTime
+            updatedAt: LocalDateTime?
         ): VoteOption {
             if (Objects.isNull(content) || content.isBlank()) {
                 throw IllegalArgumentException("선택지의 내용은 필수로 존재해야합니다.")
