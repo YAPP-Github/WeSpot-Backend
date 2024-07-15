@@ -3,6 +3,7 @@ package com.wespot.vote
 import com.wespot.common.BaseEntity
 
 object BallotMapper {
+
     fun mapToDomainEntity(ballotJpaEntity: BallotJpaEntity): Ballot =
         Ballot(
             id = ballotJpaEntity.id,
