@@ -13,10 +13,7 @@ class ProfileJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-
-    @field: NotNull
-    val userId: Long,
+    val id: Long?,
 
     @field: NotNull
     val backgroundColor: String,

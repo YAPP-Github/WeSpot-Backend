@@ -6,7 +6,6 @@ object FCMMapper {
     fun mapToDomainEntity(fcmJpaEntity: FCMJpaEntity): FCM =
         FCM(
             id = fcmJpaEntity.id,
-            userId = fcmJpaEntity.userId,
             fcmToken = fcmJpaEntity.fcmToken,
             createdAt = fcmJpaEntity.baseEntity.createdAt
         )
@@ -14,7 +13,6 @@ object FCMMapper {
     fun mapToJpaEntity(fcm: FCM): FCMJpaEntity =
         FCMJpaEntity(
             id = fcm.id,
-            userId = fcm.userId,
             fcmToken = fcm.fcmToken,
             baseEntity = BaseEntity(
                 createdAt = fcm.createdAt,

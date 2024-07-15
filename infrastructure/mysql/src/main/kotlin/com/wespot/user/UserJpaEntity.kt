@@ -1,6 +1,7 @@
 package com.wespot.user
 
 import com.wespot.common.BaseEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -20,7 +21,7 @@ class UserJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
 
     @field: NotNull
     val name: String,
@@ -34,21 +35,21 @@ class UserJpaEntity(
     @field: NotNull
     val groupNumber: Int,
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(
         name = "setting_id", foreignKey = ForeignKey(name = "fk_users_setting_id")
     )
     @field: NotNull
     val setting: SettingJpaEntity,
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(
         name = "profile_id", foreignKey = ForeignKey(name = "fk_users_profile_id")
     )
     @field: NotNull
     val profile: ProfileJpaEntity,
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
     @JoinColumn(
         name = "fcm_id", foreignKey = ForeignKey(name = "fk_users_fcm_id")
     )
