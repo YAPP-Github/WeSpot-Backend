@@ -27,34 +27,34 @@ class DatabaseCleanup(
         val resultSet: ResultSet = jdbcTemplate.dataSource!!
             .connection
             .metaData
-            .getTables(null, "PUBLIC", null, arrayOf("TABLE"));
+            .getTables(null, "PUBLIC", null, arrayOf("TABLE"))
 
         while (resultSet.next()) {
-            val tableName: String = resultSet.getString("TABLE_NAME");
-            this.tableNames.add(tableName);
+            val tableName: String = resultSet.getString("TABLE_NAME")
+            this.tableNames.add(tableName)
         }
     }
 
     @Transactional
     fun execute() {
-        disableReferentialIntegrity();
-        executeTruncate();
-        enableReferentialIntegrity();
+        disableReferentialIntegrity()
+        executeTruncate()
+        enableReferentialIntegrity()
     }
 
-    fun disableReferentialIntegrity() {
-        jdbcTemplate.execute(DISABLE_REFERENTIAL_QUERY);
+    private fun disableReferentialIntegrity() {
+        jdbcTemplate.execute(DISABLE_REFERENTIAL_QUERY)
     }
 
-    fun executeTruncate() {
+    private fun executeTruncate() {
         for (tableName in tableNames) {
             val TRUNCATE_QUERY: String = TRUNCATE_SQL_MESSAGE.format(tableName)
-            jdbcTemplate.execute(TRUNCATE_QUERY);
+            jdbcTemplate.execute(TRUNCATE_QUERY)
         }
     }
 
-    fun enableReferentialIntegrity() {
-        jdbcTemplate.execute(ENABLE_REFERENTIAL_QUERY);
+    private fun enableReferentialIntegrity() {
+        jdbcTemplate.execute(ENABLE_REFERENTIAL_QUERY)
     }
 
 }
