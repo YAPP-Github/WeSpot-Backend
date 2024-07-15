@@ -21,18 +21,21 @@ data class Vote(
     }
 
     fun findTodayVoteOptions(voteOptions: List<VoteOption>): List<VoteOption> {
+        validateVoteOptionsSize(voteOptions)
+        val todayVoteOptions: MutableList<VoteOption> = mutableListOf()
+        var voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % voteOptions.size
+        while (todayVoteOptions.size < NUMBER_OF_VOTE_OPTIONS) {
+            todayVoteOptions.add(voteOptions[voteOptionIndex])
+            voteOptionIndex = (voteOptionIndex + MOVE_TO_NEXT_VOTE_OPTION) % voteOptions.size
+        }
+
+        return todayVoteOptions.toList()
+    }
+
+    private fun validateVoteOptionsSize(voteOptions: List<VoteOption>) {
         if (voteOptions.size < 5) {
             throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.")
         }
-
-        val todayVoteOptions: MutableList<VoteOption> = mutableListOf()
-        var index: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % voteOptions.size
-        while (todayVoteOptions.size < NUMBER_OF_VOTE_OPTIONS) {
-            todayVoteOptions.add(voteOptions[index])
-            index = (index + MOVE_TO_NEXT_VOTE_OPTION) % voteOptions.size
-        }
-
-        return todayVoteOptions
     }
 
     fun findVotedUsers(classmates: List<User>, user: User): List<User> {
@@ -51,7 +54,13 @@ data class Vote(
 
     private fun isMe(classmate: User, user: User) = classmate == user
 
-    fun addBallot(voteOptionId: Long, senderId: Long, receiverId: Long) {
+    fun addBallot(
+        todayVoteOptionsIds: List<Long>,
+        voteOptionId: Long,
+        senderId: Long,
+        receiverId: Long
+    ) {
+        validateVoteOption(todayVoteOptionsIds, voteOptionId)
         ballots.add(
             Ballot.of(
                 id,
@@ -60,6 +69,16 @@ data class Vote(
                 receiverId
             )
         )
+    }
+
+    private fun validateVoteOption(
+        todayVoteOptionsIds: List<Long>,
+        voteOptionId: Long
+    ) {
+        if (todayVoteOptionsIds.contains(voteOptionId)) {
+            return
+        }
+        throw IllegalArgumentException("오늘 제공된 질문지만 선택해 투표할 수 있습니다.")
     }
 
     fun getBallots(): List<Ballot> {

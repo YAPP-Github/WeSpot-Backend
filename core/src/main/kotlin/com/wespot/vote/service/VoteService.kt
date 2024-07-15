@@ -22,11 +22,11 @@ class VoteService(
 
     @Transactional
     override fun getVoteOptions(userId: Long): VoteItems {
-        val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
         val user: User = findUser(userId)
         val classmates = findClassmatesByUser(user)
-        val vote: Vote = findVoteByUser(user, LocalDate.now())
-        val todayVoteOptions: List<VoteOption> = vote.findTodayVoteOptions(voteOptions)
+        val today = LocalDate.now()
+        val vote: Vote = findVoteByUser(user, today)
+        val todayVoteOptions: List<VoteOption> = findTodayVoteOptions(vote)
         val todayVoteItems: List<User> = vote.findVotedUsers(classmates, user)
 
         return VoteItems.of(todayVoteItems, todayVoteOptions)
@@ -54,19 +54,53 @@ class VoteService(
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
+    private fun findTodayVoteOptions(vote: Vote): List<VoteOption> {
+        val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
+
+        return vote.findTodayVoteOptions(voteOptions)
+    }
+
     @Transactional
-    override fun saveVote(userId: Long, requests: List<VoteRequest>): Long {
+    override fun saveVote(
+        userId: Long,
+        requests: List<VoteRequest>
+    ): Long {
+        validateUserIdsInRequests(requests)
         val user: User = findUser(userId)
-        val vote: Vote = findVoteByUser(user, LocalDate.now())
+        val today = LocalDate.now()
+        val vote: Vote = findVoteByUser(user, today)
         requests.stream()
             .forEach { request ->
                 vote.addBallot(
+                    todayVoteOptionsIds = findTodayVoteOptionIds(vote),
                     voteOptionId = request.voteOptionId,
                     senderId = userId,
                     receiverId = request.userId
                 )
             }
+
         return votePort.save(vote).id
+    }
+
+    private fun validateUserIdsInRequests(requests: List<VoteRequest>) {
+        val userIds: List<Long> = requests.stream()
+            .map { it.userId }
+            .toList()
+        validateUserIds(userIds)
+    }
+
+    private fun validateUserIds(userIds: List<Long>) {
+        val foundUserIds = userPort.findIdsByIdIn(userIds)
+        if (foundUserIds.size == userIds.size) {
+            return
+        }
+        throw IllegalArgumentException("투표하고자 하는 회원이 존재하지 않습니다.")
+    }
+
+    private fun findTodayVoteOptionIds(vote: Vote): List<Long> {
+        return findTodayVoteOptions(vote).stream()
+            .map { it.id!! }
+            .toList()
     }
 
 }
