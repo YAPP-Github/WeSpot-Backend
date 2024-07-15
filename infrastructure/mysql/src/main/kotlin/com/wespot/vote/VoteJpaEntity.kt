@@ -32,4 +32,3 @@ class VoteJpaEntity(
 //    val ballots: List<BallotJpaEntity>,
 
 )
-

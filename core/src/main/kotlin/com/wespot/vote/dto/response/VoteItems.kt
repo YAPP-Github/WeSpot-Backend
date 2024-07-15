@@ -6,6 +6,7 @@ import com.wespot.voteoption.VoteOption
 data class VoteItems(
     val voteItems: List<VoteItem>
 ) {
+
     companion object {
 
         fun of(classmates: List<User>, voteOptions: List<VoteOption>): VoteItems {
@@ -16,4 +17,5 @@ data class VoteItems(
         }
 
     }
+
 }

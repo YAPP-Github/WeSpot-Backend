@@ -9,6 +9,7 @@ data class UserResponse(
 ) {
 
     companion object {
+
         fun from(user: User): UserResponse {
             return UserResponse(
                 id = user.id!!,
@@ -16,6 +17,7 @@ data class UserResponse(
                 profile = ProfileResponse.from(user.profile)
             )
         }
+
     }
 
 }

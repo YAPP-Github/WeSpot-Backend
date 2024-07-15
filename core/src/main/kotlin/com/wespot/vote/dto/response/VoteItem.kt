@@ -9,6 +9,7 @@ data class VoteItem(
 ) {
 
     companion object {
+
         fun of(classmate: User, voteOptions: List<VoteOption>): VoteItem {
             return VoteItem(
                 user = UserResponse.from(classmate),
@@ -17,6 +18,7 @@ data class VoteItem(
                     .toList()
             )
         }
+
     }
 
 }

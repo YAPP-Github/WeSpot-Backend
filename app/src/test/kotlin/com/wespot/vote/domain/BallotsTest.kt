@@ -31,7 +31,7 @@ class BallotsTest : BehaviorSpec({
                 1,
                 4
             )
-            val duplicateBallots = ballots.toMutableList();
+            val duplicateBallots = ballots.toMutableList()
             duplicateBallots.add(duplicateBallot)
             val throwingCallable = { Ballots.from(duplicateBallots) }
             then("예외가 발생한다.") {
@@ -41,7 +41,7 @@ class BallotsTest : BehaviorSpec({
         }
 
         `when`("이미 생성된 투표지 목록에, 중복된 투표지를 추가하면") {
-            val actual = Ballots.from(ballots);
+            val actual = Ballots.from(ballots)
             val duplicateBallot = BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(
                 1,
                 1,

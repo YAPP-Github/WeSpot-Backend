@@ -169,4 +169,3 @@ private fun createUserOptionByCount(userCount: Long): List<User> {
     }
     return users
 }
-

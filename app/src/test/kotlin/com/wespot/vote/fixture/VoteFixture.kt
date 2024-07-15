@@ -39,5 +39,4 @@ object VoteFixture {
             ballots = Ballots.from(ballots)
         )
 
-
 }

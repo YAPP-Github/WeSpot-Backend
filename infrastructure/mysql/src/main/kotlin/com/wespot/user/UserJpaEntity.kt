@@ -64,6 +64,4 @@ class UserJpaEntity(
 
     val withdrawAt: LocalDateTime
 
-) {
-
-}
+)

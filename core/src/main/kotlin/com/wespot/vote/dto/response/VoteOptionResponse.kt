@@ -8,12 +8,14 @@ data class VoteOptionResponse(
 ) {
 
     companion object {
+
         fun from(voteOption: VoteOption): VoteOptionResponse {
             return VoteOptionResponse(
                 id = voteOption.id!!,
                 content = voteOption.content
             )
         }
+
     }
 
 }

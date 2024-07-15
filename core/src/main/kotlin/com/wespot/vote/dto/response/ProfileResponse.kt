@@ -8,12 +8,14 @@ data class ProfileResponse(
 ) {
 
     companion object {
+
         fun from(profile: Profile): ProfileResponse {
             return ProfileResponse(
                 backgroundColor = profile.backgroundColor,
                 iconUrl = profile.iconUrl
             )
         }
+
     }
 
 }
