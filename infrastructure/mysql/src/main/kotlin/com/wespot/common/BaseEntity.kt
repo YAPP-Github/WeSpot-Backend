@@ -19,7 +19,6 @@ data class BaseEntity(
     val createdAt: LocalDateTime,
 
     @LastModifiedDate
-    @field: NotNull
-    val updatedAt: LocalDateTime?
+    val updatedAt: LocalDateTime? = null
 
 )
