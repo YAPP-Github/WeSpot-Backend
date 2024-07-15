@@ -15,7 +15,7 @@ class DatabaseCleanup(
 
     companion object {
         private val TRUNCATE_SQL_MESSAGE: String = "TRUNCATE TABLE %s"
-        private val SET_REFERENTIAL_INTEGRITY_SQL_MESSAGE: String = "SET FOREIGN_KEY_CHECKS = %s"
+        private val SET_REFERENTIAL_INTEGRITY_SQL_MESSAGE: String = "SET REFERENTIAL_INTEGRITY = %s"
         private val DISABLE_REFERENTIAL_QUERY: String =
             SET_REFERENTIAL_INTEGRITY_SQL_MESSAGE.format(false)
         private val ENABLE_REFERENTIAL_QUERY: String =
