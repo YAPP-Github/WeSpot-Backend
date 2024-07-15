@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 object BallotJpaEntityFixture {
 
-    fun createMock() = BallotJpaEntity(
+    fun create() = BallotJpaEntity(
         id = 1L,
         voteId = 1L,
         voteOptionId = 1L,

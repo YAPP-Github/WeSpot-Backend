@@ -8,35 +8,22 @@ import io.kotest.matchers.shouldBe
 
 class VoteTest() : BehaviorSpec({
 
+    // 일단, 오늘 질문지
+    // 넘어온 질문지의 사이즈가 5 미만이라서 예외가 터지는 경우
+    // Vote가능한 유저를 찾는 것
+    // addBalot할 때, 오늘 질문에포함되어 있는지 확인
+    // 그렇지 않은 경우도
+
     given("Jpa Entity 투표지가 주어지고") {
-        val jpaEntity = BallotJpaEntityFixture.createMock()
         `when`("Mapper를 통해 이를 Domain Entity로 변환하면") {
-            val domainEntity = BallotMapper.mapToDomainEntity(jpaEntity)
             then("Domain Entity를 반환한다") {
-                jpaEntity.id shouldBe domainEntity.id
-                jpaEntity.voteId shouldBe domainEntity.voteId
-                jpaEntity.voteOptionId shouldBe domainEntity.voteOptionId
-                jpaEntity.senderId shouldBe domainEntity.senderId
-                jpaEntity.receiverId shouldBe domainEntity.receiverId
-                jpaEntity.baseEntity.createdAt shouldBe domainEntity.createdAt
-                jpaEntity.baseEntity.updatedAt shouldBe null
-                jpaEntity.isReceiverRead shouldBe domainEntity.isReceiverRead
             }
         }
     }
 
     given("Domain Entity 투표지가 주어지고") {
-        val domainEntity = BallotFixture.createMock()
         `when`("Mapper를 통해 이를 Jpa Entity로 변환하면") {
-            val jpaEntity = BallotMapper.mapToJpaEntity(domainEntity)
             then("Jpa Entity를 반환한다") {
-                domainEntity.id shouldBe jpaEntity.id
-                domainEntity.voteId shouldBe jpaEntity.voteId
-                domainEntity.voteOptionId shouldBe jpaEntity.voteOptionId
-                domainEntity.senderId shouldBe jpaEntity.senderId
-                domainEntity.receiverId shouldBe jpaEntity.receiverId
-                domainEntity.createdAt shouldBe jpaEntity.baseEntity.createdAt
-                domainEntity.isReceiverRead shouldBe jpaEntity.isReceiverRead
             }
         }
     }

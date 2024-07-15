@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 object VoteJpaEntityFixture {
 
-    fun createMock() = VoteJpaEntity(
+    fun create() = VoteJpaEntity(
         id = 1L,
         schoolId = 1L,
         grade = 1,

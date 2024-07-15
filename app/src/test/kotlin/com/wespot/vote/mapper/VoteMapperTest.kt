@@ -12,8 +12,8 @@ import io.kotest.matchers.shouldBe
 class VoteMapperTest : BehaviorSpec({
 
     given("Jpa Entity 투표가 주어지고") {
-        val voteJpaEntity = VoteJpaEntityFixture.createMock()
-        val ballotJpaEntity = BallotJpaEntityFixture.createMock()
+        val voteJpaEntity = VoteJpaEntityFixture.create()
+        val ballotJpaEntity = BallotJpaEntityFixture.create()
         `when`("Mapper를 통해 이를 Domain Entity로 변환하면") {
             val voteDomainEntity = VoteMapper.mapToDomainEntity(
                 voteJpaEntity,
@@ -32,7 +32,7 @@ class VoteMapperTest : BehaviorSpec({
     }
 
     given("Domain Entity 투표가 주어지고") {
-        val domainEntity = VoteFixture.createMock()
+        val domainEntity = VoteFixture.create()
         `when`("Mapper를 통해 이를 Jpa Entity로 변환하면") {
             val jpaEntity = VoteMapper.mapToJpaEntity(domainEntity)
             then("Jpa Entity를 반환한다") {

@@ -12,7 +12,7 @@ data class Ballots(
         }
 
         private fun createBallots(ballots: List<Ballot>): MutableMap<Long, MutableMap<Long, Ballot>> {
-            val resultOfBallots: MutableMap<Long, MutableMap<Long, Ballot>> = mutableMapOf()
+            val resultOfBallots: MutableMap<Long, MutableMap<Long, Ballot>> = LinkedHashMap()
             ballots.forEach { addBallot(resultOfBallots, it) }
             return resultOfBallots
         }

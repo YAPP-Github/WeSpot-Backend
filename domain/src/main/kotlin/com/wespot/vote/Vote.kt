@@ -41,12 +41,7 @@ data class Vote(
     fun findVotedUsers(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
         return classmates.stream()
-            .filter { classmate ->
-                alreadyVotedByUser.contains(classmate.id) || isMe(
-                    classmate,
-                    user
-                )
-            }
+            .filter { alreadyVotedByUser.contains(it.id) || isMe(it, user) }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)

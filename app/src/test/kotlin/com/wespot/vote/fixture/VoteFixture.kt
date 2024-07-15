@@ -7,7 +7,7 @@ import java.util.*
 
 object VoteFixture {
 
-    fun createMock() = Vote(
+    fun create() = Vote(
         id = 1L,
         schoolId = 1L,
         grade = 1,

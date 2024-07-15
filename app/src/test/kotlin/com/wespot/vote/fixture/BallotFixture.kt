@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 object BallotFixture {
 
-    fun createMock() = Ballot(
+    fun create() = Ballot(
         id = 1L,
         voteId = 1L,
         voteOptionId = 1L,
