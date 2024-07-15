@@ -31,4 +31,8 @@ class UserPersistenceAdapter(
             .toList()
     }
 
+    override fun findIdsByIdIn(ids: List<Long>): List<Long> {
+        return userJpaRepository.findIdsByIdIn(ids)
+    }
+
 }
