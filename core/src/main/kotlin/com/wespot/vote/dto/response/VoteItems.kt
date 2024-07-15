@@ -3,7 +3,7 @@ package com.wespot.vote.dto.response
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
 
-class VoteItems(
+data class VoteItems(
     val voteItems: List<VoteItem>
 ) {
     companion object {
@@ -14,5 +14,6 @@ class VoteItems(
                     .map { classmate -> VoteItem.of(classmate, voteOptions) }.toList()
             )
         }
+
     }
 }

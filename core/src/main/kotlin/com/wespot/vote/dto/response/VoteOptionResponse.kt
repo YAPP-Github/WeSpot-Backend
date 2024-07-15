@@ -2,7 +2,7 @@ package com.wespot.vote.dto.response
 
 import com.wespot.voteoption.VoteOption
 
-class VoteOptionResponse(
+data class VoteOptionResponse(
     val id: Long,
     val content: String
 ) {

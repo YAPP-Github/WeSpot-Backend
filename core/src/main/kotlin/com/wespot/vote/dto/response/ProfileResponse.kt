@@ -2,7 +2,7 @@ package com.wespot.vote.dto.response
 
 import com.wespot.user.Profile
 
-class ProfileResponse(
+data class ProfileResponse(
     val backgroundColor: String,
     val iconUrl: String
 ) {

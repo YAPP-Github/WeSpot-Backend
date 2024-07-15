@@ -3,7 +3,7 @@ package com.wespot.vote.dto.response
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
 
-class VoteItem(
+data class VoteItem(
     val user: UserResponse,
     val voteOptions: List<VoteOptionResponse>
 ) {
