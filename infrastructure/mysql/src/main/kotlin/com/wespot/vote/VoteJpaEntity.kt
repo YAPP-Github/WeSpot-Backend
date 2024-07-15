@@ -10,7 +10,7 @@ class VoteJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
 
     @field: NotNull
     val schoolId: Long,

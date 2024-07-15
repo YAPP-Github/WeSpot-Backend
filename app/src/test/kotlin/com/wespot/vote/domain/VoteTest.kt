@@ -126,7 +126,7 @@ class VoteTest() : BehaviorSpec({
             val users = createUserOptionByCount(5)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
-            val voteUsers = vote.findVotedUsers(users, me)
+            val voteUsers = vote.findUsersForVote(users, me)
             then("정상적으로 반환한다.") {
                 voteUsers.size shouldBe 3
                 voteUsers[0].id shouldBe 3
@@ -139,7 +139,7 @@ class VoteTest() : BehaviorSpec({
             val users = createUserOptionByCount(8)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
-            val voteUsers = vote.findVotedUsers(users, me)
+            val voteUsers = vote.findUsersForVote(users, me)
             then("정상적으로 반환한다.") {
                 voteUsers.size shouldBe 5
                 voteUsers[0].id shouldBe 3

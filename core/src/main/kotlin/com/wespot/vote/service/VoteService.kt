@@ -27,9 +27,9 @@ class VoteService(
         val today = LocalDate.now()
         val vote: Vote = findVoteByUser(user, today)
         val todayVoteOptions: List<VoteOption> = findTodayVoteOptions(vote)
-        val todayVoteItems: List<User> = vote.findVotedUsers(classmates, user)
+        val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
 
-        return VoteItems.of(todayVoteItems, todayVoteOptions)
+        return VoteItems.of(usersForVote, todayVoteOptions)
     }
 
     private fun findUser(userId: Long): User {
@@ -39,7 +39,7 @@ class VoteService(
 
     private fun findClassmatesByUser(user: User): List<User> {
         return userPort.findAllBySchoolIdAndGradeAndGroupNumber(
-            user.id,
+            user.schoolId,
             user.grade,
             user.groupNumber
         )
@@ -65,6 +65,7 @@ class VoteService(
         userId: Long,
         requests: List<VoteRequest>
     ): Long {
+        validateRequestsSize(requests.size)
         validateUserIdsInRequests(requests)
         val user: User = findUser(userId)
         val today = LocalDate.now()
@@ -79,7 +80,13 @@ class VoteService(
                 )
             }
 
-        return votePort.save(vote).id
+        return votePort.save(vote).id!!
+    }
+
+    private fun validateRequestsSize(requestsSize: Int) {
+        if (5 < requestsSize) {
+            throw IllegalArgumentException("투표는 한번에 최대 5명에게 할 수 있습니다.")
+        }
     }
 
     private fun validateUserIdsInRequests(requests: List<VoteRequest>) {
