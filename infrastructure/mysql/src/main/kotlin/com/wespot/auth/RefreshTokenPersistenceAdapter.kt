@@ -1,45 +1,45 @@
 package com.wespot.auth
 
 import com.wespot.auth.port.out.RefreshTokenPort
-import com.wespot.user.User
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
-@Transactional(readOnly = true)
 @Repository
 class RefreshTokenPersistenceAdapter(
-    private val refreshTokenRepository: RefreshTokenJpaRepository
+    private val refreshTokenJpaRepository: RefreshTokenJpaRepository
 ) : RefreshTokenPort {
-    override fun create(refreshToken: RefreshToken): RefreshToken {
+
+
+    @Transactional
+    override fun save(refreshToken: RefreshToken): RefreshToken {
         return RefreshTokenMapper.mapToJpaEntity(refreshToken)
-            .let { refreshTokenRepository.save(it) }
+            .let { refreshTokenJpaRepository.save(it) }
             .let { RefreshTokenMapper.mapToDomainEntity(it) }
     }
 
-    override fun findByUser(user: User): RefreshToken? {
-        return refreshTokenRepository.findByIdOrNull(user.id)
+    override fun findByUserId(userId: Long): RefreshToken? {
+        return refreshTokenJpaRepository.findByUserId(userId)
             ?.let { RefreshTokenMapper.mapToDomainEntity(it) }
-            ?: throw NoSuchElementException("해당하는 유저의 RefreshToken이 없습니다.")
     }
 
+    @Transactional
     override fun saveOrUpdate(refreshToken: RefreshToken): RefreshToken {
-        val refreshTokenJpaEntity = refreshTokenRepository.findByUserId(refreshToken.user.id)
+        val refreshTokenJpaEntity = refreshTokenJpaRepository.findByUserId(refreshToken.user.id)
         return if (refreshTokenJpaEntity != null) {
-            RefreshTokenMapper.mapToJpaEntity(refreshToken)
-                .let { refreshTokenRepository.save(it) }
+            refreshTokenJpaEntity.update(refreshToken.refreshToken)
+            refreshTokenJpaRepository.save(refreshTokenJpaEntity)
                 .let { RefreshTokenMapper.mapToDomainEntity(it) }
         } else {
-            create(refreshToken)
+            save(refreshToken)
         }
     }
 
     override fun deleteByUserId(userId: Long) {
-        refreshTokenRepository.deleteByUserId(userId)
+        refreshTokenJpaRepository.deleteByUserId(userId)
     }
 
     override fun findByRefreshToken(refreshToken: String): RefreshToken? {
-        val findByRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken)
+        val findByRefreshToken = refreshTokenJpaRepository.findByRefreshToken(refreshToken)
         if (findByRefreshToken != null) {
             return RefreshTokenMapper.mapToDomainEntity(findByRefreshToken)
         }

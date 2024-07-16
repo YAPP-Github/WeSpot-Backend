@@ -1,10 +1,8 @@
 package com.wespot.auth
 
+import com.wespot.common.BaseEntity
 import com.wespot.user.entity.UserJpaEntity
 import jakarta.persistence.*
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
-import java.time.Instant
 import java.time.LocalDateTime
 
 
@@ -15,23 +13,23 @@ class RefreshTokenJpaEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val refreshToken: String,
+    var refreshToken: String,
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "fk_refresh_token_user_id"))
+    @JoinColumn(name = "users_id", foreignKey = ForeignKey(name = "fk_refresh_token_user_id"))
     val user: UserJpaEntity,
 
-    @CreatedDate
-    @LastModifiedDate
-    val createdAt: Instant? = null,
+    @Embedded
+    val baseEntity: BaseEntity,
 
-    @LastModifiedDate
-    val updatedAt: Instant? = null,
-
-    @Column(name = "expired_at", columnDefinition = "Datetime", scale = 6)
-    val expiredAt: LocalDateTime? = null,
+    @field:Column(name = "expired_at", columnDefinition = "Datetime", scale = 6)
+    var expiredAt: LocalDateTime,
 ) {
 
+    fun update(refreshToken: String) {
+        this.refreshToken = refreshToken
+        this.expiredAt= LocalDateTime.now().plusDays(30)
+    }
 }
 
 
