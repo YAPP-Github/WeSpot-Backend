@@ -90,10 +90,16 @@ class VoteTest() : BehaviorSpec({
                 .stream()
                 .map { it.id!! }
                 .toList()
-            val throwingCallable = { vote.addBallot(todayVoteOptions, 1L, 1L, 3L) }
 
             then("정상적으로 투표가 진행된다.") {
-                shouldNotThrow<IllegalArgumentException>(throwingCallable)
+                shouldNotThrow<IllegalArgumentException> {
+                    vote.addBallot(
+                        todayVoteOptions,
+                        1L,
+                        1L,
+                        3L
+                    )
+                }
             }
         }
 
