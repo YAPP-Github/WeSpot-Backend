@@ -4,6 +4,8 @@ import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
 import com.wespot.vote.dto.request.VoteRequest
+import com.wespot.vote.dto.request.VoteRequests
+import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.VoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
@@ -27,9 +29,12 @@ class VoteService(
         val today = LocalDate.now()
         val vote: Vote = findVoteByUser(user, today)
         val todayVoteOptions: List<VoteOption> = findTodayVoteOptions(vote)
-        val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
+        val usersForVote: List<User> = vote.findUsersForVote(classmates = classmates, user = user)
 
-        return VoteItems.of(usersForVote, todayVoteOptions)
+        return VoteItems.of(
+            classmates = usersForVote,
+            voteOptions = todayVoteOptions
+        )
     }
 
     private fun findUser(userId: Long): User {
@@ -39,18 +44,18 @@ class VoteService(
 
     private fun findClassmatesByUser(user: User): List<User> {
         return userPort.findAllBySchoolIdAndGradeAndGroupNumber(
-            user.schoolId,
-            user.grade,
-            user.groupNumber
+            schoolId = user.schoolId,
+            grade = user.grade,
+            groupNumber = user.groupNumber
         )
     }
 
     private fun findVoteByUser(user: User, date: LocalDate): Vote {
         return votePort.findBySchoolIdAndGradeAndGroupNumberAndDate(
-            user.schoolId,
-            user.grade,
-            user.groupNumber,
-            date
+            schoolId = user.schoolId,
+            grade = user.grade,
+            groupNumber = user.groupNumber,
+            date = date
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
@@ -63,14 +68,14 @@ class VoteService(
     @Transactional
     override fun saveVote(
         userId: Long,
-        requests: List<VoteRequest>
-    ): Long {
-        validateRequestsSize(requests.size)
-        validateUserIdsInRequests(requests)
+        requests: VoteRequests
+    ): SaveVoteResponse {
+        validateRequestsSize(requests.voteRequests.size)
+        validateUserIdsInRequests(requests.voteRequests)
         val user: User = findUser(userId)
         val today = LocalDate.now()
-        val vote: Vote = findVoteByUser(user, today)
-        requests.stream()
+        val vote: Vote = findVoteByUser(user = user, date = today)
+        requests.voteRequests.stream()
             .forEach { request ->
                 vote.addBallot(
                     todayVoteOptionsIds = findTodayVoteOptionIds(vote),
@@ -80,7 +85,7 @@ class VoteService(
                 )
             }
 
-        return votePort.save(vote).id!!
+        return SaveVoteResponse(votePort.save(vote).id!!)
     }
 
     private fun validateRequestsSize(requestsSize: Int) {

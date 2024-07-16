@@ -43,7 +43,6 @@ data class Vote(
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
-//            .shuffled() // TODO: Shuffle 하게 되면, 사용자가 중간에 그만두었을 때에도 다른 결과를 반환할 것 같아서 지우려고요. 동의하시나요 ?!
             .take(NUMBER_OF_VOTE_USERS)
     }
 

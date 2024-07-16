@@ -9,6 +9,7 @@ import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.dto.request.VoteRequest
+import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.fixture.VoteFixture
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
@@ -81,11 +82,13 @@ class VoteServiceTest(
     @Test
     fun `투표시 존재하지 않는 사용자가 포함되어 있으면 예외가 발생한다`() {
         // given
-        val requests = listOf(
-            VoteRequest(
-                userId = Long.MAX_VALUE,
-                voteOptionId = voteOptions[0].id!!
-            ),
+        val requests = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = Long.MAX_VALUE,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+            )
         )
 
         // when
@@ -99,31 +102,33 @@ class VoteServiceTest(
     @Test
     fun `한번에 5명을 초과해 투표를 진행할 경우 예외가 발생한다`() {
         // given
-        val requests = listOf(
-            VoteRequest(
-                userId = users[0].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[1].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[2].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[3].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[4].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[5].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
+        val requests = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[0].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[1].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[2].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[3].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[4].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[5].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+            )
         )
 
         // when
@@ -137,11 +142,13 @@ class VoteServiceTest(
     @Test
     fun `투표시 존재하지 않는 질문지가 포함되어 있다면 예외가 발생한다`() {
         // given
-        val requests = listOf(
-            VoteRequest(
-                userId = users[0].id!!,
-                voteOptionId = Long.MAX_VALUE
-            ),
+        val requests = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[0].id!!,
+                    voteOptionId = Long.MAX_VALUE
+                ),
+            )
         )
 
         // when
@@ -155,27 +162,29 @@ class VoteServiceTest(
     @Test
     fun `투표를 정상적으로 진행한다`() {
         // given
-        val requests = listOf(
-            VoteRequest(
-                userId = users[0].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[1].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[2].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[3].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
-            VoteRequest(
-                userId = users[4].id!!,
-                voteOptionId = voteOptions[0].id!!
-            ),
+        val requests = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[0].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[1].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[2].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[3].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+                VoteRequest(
+                    userId = users[4].id!!,
+                    voteOptionId = voteOptions[0].id!!
+                ),
+            )
         )
 
         // when
@@ -183,7 +192,7 @@ class VoteServiceTest(
 
         // then
         val ballots = ballotJpaRepository.findAll()
-        val votedUserIds = requests.stream()
+        val votedUserIds = requests.voteRequests.stream()
             .map { it.userId }
             .toList()
         ballots.size shouldBe 5

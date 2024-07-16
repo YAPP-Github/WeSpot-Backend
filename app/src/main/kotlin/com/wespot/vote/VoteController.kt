@@ -1,6 +1,7 @@
 package com.wespot.vote
 
-import com.wespot.vote.dto.request.VoteRequest
+import com.wespot.vote.dto.request.VoteRequests
+import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.VoteUseCase
 import org.springframework.http.HttpStatus
@@ -20,13 +21,15 @@ class VoteController(
     @GetMapping("/options")
     fun getVoteOptions(userId: Long): ResponseEntity<VoteItems> {
         val responses = voteUseCase.getVoteOptions(userId)
-        return ResponseEntity.ok()
-            .body(responses)
+        return ResponseEntity.ok(responses)
     }
 
     @PostMapping
-    fun createVote(userId: Long, @RequestBody requests: List<VoteRequest>): ResponseEntity<Long> {
-        val savedId: Long = voteUseCase.saveVote(userId, requests)
+    fun createVote(
+        userId: Long,
+        @RequestBody requests: VoteRequests
+    ): ResponseEntity<SaveVoteResponse> {
+        val savedId: SaveVoteResponse = voteUseCase.saveVote(userId, requests)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(savedId)
     }
