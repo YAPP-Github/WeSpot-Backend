@@ -4,8 +4,11 @@ import com.wespot.user.User
 import com.wespot.user.repository.UserJpaRepository
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Repository
 class UserPersistenceAdapter(
     private val userJpaRepository: UserJpaRepository,

@@ -1,6 +1,8 @@
-package com.wespot.user
+package com.wespot.user.entity
 
 import com.wespot.common.BaseEntity
+import com.wespot.school.SchoolJpaEntity
+import com.wespot.user.Role
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
@@ -18,7 +20,7 @@ class UserJpaEntity(
 
     @field: NotNull
     val password: String,
-    
+
     @field: NotNull
     val schoolId: Long,
 

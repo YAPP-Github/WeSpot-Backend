@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
 
 @Entity
-@Table(name = "fcm")
+@Table(name = "profile")
 class ProfileJpaEntity(
 
     @Id

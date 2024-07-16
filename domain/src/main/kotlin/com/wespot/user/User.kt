@@ -26,6 +26,7 @@ data class User(
             email = email,
             password = password,
             role = Role.GUEST,
+            schoolId = schoolId,
             grade = grade,
             groupNumber = groupNumber,
             setting = setting,
@@ -39,19 +40,23 @@ data class User(
         fun create(
             email: String,
             password: String,
+            schoolId: Long,
             grade: Int,
             groupNumber: Int,
             social: Social
         ) =
             User(
-                id = 0,
+                id = 0L,
                 email = email,
                 password = password,
                 role = Role.USER,
+                schoolId = schoolId,
                 grade = grade,
                 groupNumber = groupNumber,
                 setting = Setting(),
                 social = social,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
             )
     }
 }

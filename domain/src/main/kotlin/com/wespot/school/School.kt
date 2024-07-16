@@ -1,10 +1,8 @@
 package com.wespot.school
 
-import com.wespot.user.User
 
 data class School(
     val id: Long,
-    val user: User,
     val name: String,
     val schoolType: SchoolType,
     val region: String,
@@ -13,15 +11,13 @@ data class School(
 
     companion object {
         fun create(
-            user: User,
             name: String,
             schoolType: SchoolType,
             region: String,
             address: String
         ) =
             School(
-                id = 0,
-                user = user,
+                id = 0L,
                 name = name,
                 schoolType = schoolType,
                 region = region,

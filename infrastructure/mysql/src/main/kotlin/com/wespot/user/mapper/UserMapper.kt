@@ -16,6 +16,7 @@ object UserMapper {
                 setting = Setting(
                     isEnableNotification = user.setting.isEnableNotification,
                 ),
+                schoolId = user.schoolId,
                 grade = user.grade,
                 groupNumber = user.groupNumber,
                 role = user.role,
@@ -39,6 +40,7 @@ object UserMapper {
                 setting = SettingJpaEntity(
                     isEnableNotification = user.setting.isEnableNotification,
                 ),
+                schoolId = user.schoolId,
                 grade = user.grade,
                 groupNumber = user.groupNumber,
                 role = user.role,
