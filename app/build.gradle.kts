@@ -11,6 +11,12 @@ dependencies {
     implementation(project(":infrastructure:mysql"))
     implementation(project(":infrastructure:redis"))
 
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    testImplementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    testImplementation("io.jsonwebtoken:jjwt-impl:0.11.2")
+    testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
+
     testImplementation("io.rest-assured:rest-assured")
 
 
