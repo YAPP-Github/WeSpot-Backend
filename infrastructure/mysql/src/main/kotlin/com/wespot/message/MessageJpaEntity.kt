@@ -34,7 +34,6 @@ class MessageJpaEntity(
     val receivedAt: LocalDateTime,
 
     @Embedded
-    @field: NotNull
     val baseEntity: BaseEntity
 
 )

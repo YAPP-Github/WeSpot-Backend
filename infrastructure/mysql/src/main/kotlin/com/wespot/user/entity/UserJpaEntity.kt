@@ -62,9 +62,7 @@ class UserJpaEntity(
     val withdrawAt: LocalDateTime?,
 
     @Embedded
-    @field: NotNull
     val baseEntity: BaseEntity,
-
 
 ) {
 
