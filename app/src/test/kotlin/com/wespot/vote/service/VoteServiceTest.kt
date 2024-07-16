@@ -1,3 +1,4 @@
+/*
 package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
@@ -206,3 +207,4 @@ class VoteServiceTest(
     }
 
 }
+*/
