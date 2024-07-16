@@ -4,7 +4,8 @@ import java.time.LocalDateTime
 
 data class FCM(
     val id: Long,
-    val fcmToken: String,
-    val createdAt: LocalDateTime,
+    val user: User,
+    val fcmToken: String?,
+    val createdAt: LocalDateTime?,
 ) {
 }

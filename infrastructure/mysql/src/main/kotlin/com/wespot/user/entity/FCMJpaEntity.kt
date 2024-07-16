@@ -1,4 +1,4 @@
-package com.wespot.user
+package com.wespot.user.entity
 
 import com.wespot.common.BaseEntity
 import jakarta.persistence.Embedded
@@ -17,11 +17,15 @@ class FCMJpaEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id", foreignKey = ForeignKey(name = "fk_fcm_users_id"))
+    val user: UserJpaEntity,
+
     @field: NotNull
-    val fcmToken: String,
+    val fcmToken: String?,
 
     @Embedded
     @field: NotNull
-    val baseEntity: BaseEntity
+    val baseEntity: BaseEntity?
 
 )
