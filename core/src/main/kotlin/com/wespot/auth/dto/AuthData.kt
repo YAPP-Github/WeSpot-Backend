@@ -1,7 +1,10 @@
 package com.wespot.auth.dto
 
-data class AuthData(
-    val email: String,
-    val socialRefreshToken: String,
-    val socialEmail: String,
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class AuthData @JsonCreator constructor(
+    @JsonProperty("email") val email: String,
+    @JsonProperty("socialRefreshToken") val socialRefreshToken: String,
+    @JsonProperty("socialEmail") val socialEmail: String
 )

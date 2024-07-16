@@ -9,6 +9,9 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core"))
     implementation(project(":infrastructure:mysql"))
+    implementation(project(":infrastructure:redis"))
 
     testImplementation("io.rest-assured:rest-assured")
+
+
 }
