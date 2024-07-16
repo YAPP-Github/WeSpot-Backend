@@ -1,7 +1,6 @@
 package com.wespot.auth.service
 
 import com.wespot.user.SocialType
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
 @Service

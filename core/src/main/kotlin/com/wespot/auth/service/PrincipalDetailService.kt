@@ -13,7 +13,9 @@ class PrincipalDetailService(
     private val userPort: UserPort
 ) : UserDetailsService {
     override fun loadUserByUsername(userEmail: String): UserDetails {
-        val principal: User = userPort.getByEmail(userEmail) ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
+
+        val principal: User = userPort.findByEmail(userEmail) ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
+
         return PrincipalDetails(principal)
     }
 }

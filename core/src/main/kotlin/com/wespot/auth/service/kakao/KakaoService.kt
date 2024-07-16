@@ -1,7 +1,7 @@
 package com.wespot.auth.service.kakao
 
 import com.wespot.auth.dto.AuthLoginRequest
-import com.wespot.auth.dto.OAuthIdAndRefreshToken
+import com.wespot.auth.dto.SocialResponse
 import com.wespot.auth.service.SocialAuthService
 import com.wespot.user.SocialType
 import org.springframework.beans.factory.annotation.Value
@@ -18,12 +18,14 @@ class KakaoService(
         private const val KAKAO_PREFIX = "KakaoAK "
     }
 
-    override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): OAuthIdAndRefreshToken {
+    override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): SocialResponse {
         val kakaoId = getKakaoId(authLoginRequest.identityToken
             ?: throw IllegalArgumentException("Kakao ID가 입력되지 않았습니다."))
 
-        return OAuthIdAndRefreshToken(
-            oAuthId = kakaoId, refreshToken = NOT_SUPPORTED
+        return SocialResponse(
+            socialId = kakaoId,
+            socialRefreshToken = NOT_SUPPORTED,
+            socialEmail = NOT_SUPPORTED
         )
     }
 
