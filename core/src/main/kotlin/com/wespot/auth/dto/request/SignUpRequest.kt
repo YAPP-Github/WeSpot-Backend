@@ -1,10 +1,10 @@
-package com.wespot.auth.dto
+package com.wespot.auth.dto.request
 
 data class SignUpRequest(
-    val singUpToken: String,
+    val signUpToken: String,
     val profile: ProfileRequest,
     val userConsent: UserConsentRequest,
-    val school: SchoolRequest,
+    val schoolId: Long,
     val grade: Int,
     val groupNumber: Int,
 )

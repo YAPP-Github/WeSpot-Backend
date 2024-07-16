@@ -1,7 +1,7 @@
 package com.wespot.auth.service.apple
 
-import com.wespot.auth.dto.AuthLoginRequest
-import com.wespot.auth.dto.SocialResponse
+import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.apple.AppleRevokeRequest
 import com.wespot.auth.dto.apple.AppleTokenResult
 import com.wespot.auth.service.SocialAuthService

@@ -1,7 +1,7 @@
 package com.wespot.auth.service.kakao
 
-import com.wespot.auth.dto.AuthLoginRequest
-import com.wespot.auth.dto.SocialResponse
+import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.service.SocialAuthService
 import com.wespot.user.SocialType
 import org.springframework.beans.factory.annotation.Value

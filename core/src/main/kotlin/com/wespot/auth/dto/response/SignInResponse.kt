@@ -1,4 +1,4 @@
-package com.wespot.auth.dto
+package com.wespot.auth.dto.response
 
 data class SignInResponse (
     val accessToken: String,

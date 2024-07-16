@@ -5,9 +5,9 @@ import com.wespot.user.User
 
 interface RefreshTokenPort {
 
-    fun create(refreshToken: RefreshToken): RefreshToken
+    fun save(refreshToken: RefreshToken): RefreshToken
 
-    fun findByUser(user: User): RefreshToken?
+    fun findByUserId(userId: Long): RefreshToken?
 
     fun saveOrUpdate(refreshToken: RefreshToken): RefreshToken
 

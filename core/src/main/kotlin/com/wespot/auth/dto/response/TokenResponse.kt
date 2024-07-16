@@ -1,4 +1,4 @@
-package com.wespot.auth.dto
+package com.wespot.auth.dto.response
 
 data class TokenResponse(
     val accessToken: String,

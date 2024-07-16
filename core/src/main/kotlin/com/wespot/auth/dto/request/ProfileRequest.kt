@@ -1,4 +1,4 @@
-package com.wespot.auth.dto
+package com.wespot.auth.dto.request
 
 data class ProfileRequest(
     val backgroundColor: String,

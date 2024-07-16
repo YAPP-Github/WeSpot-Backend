@@ -1,4 +1,4 @@
-package com.wespot.auth.dto
+package com.wespot.auth.dto.request
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 

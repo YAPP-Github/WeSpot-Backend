@@ -3,7 +3,7 @@ package com.wespot.auth.service.jwt
 import com.wespot.auth.JwtTokenInfo.ACCESS_TOKEN
 import com.wespot.auth.JwtTokenInfo.EMAIL_CLAIM
 import com.wespot.auth.JwtTokenInfo.REFRESH_TOKEN
-import com.wespot.auth.dto.TokenResponse
+import com.wespot.auth.dto.response.TokenResponse
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
