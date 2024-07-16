@@ -8,6 +8,7 @@ object UserMapper {
         User(
             id = userJpaEntity.id,
             name = userJpaEntity.name,
+            introduction = userJpaEntity.introduction,
             schoolId = userJpaEntity.schoolId,
             grade = userJpaEntity.grade,
             groupNumber = userJpaEntity.groupNumber,
@@ -24,6 +25,7 @@ object UserMapper {
         UserJpaEntity(
             id = user.id,
             name = user.name,
+            introduction = user.introduction,
             schoolId = user.schoolId,
             grade = user.grade,
             setting = SettingMapper.mapToJpaEntity(user.setting),

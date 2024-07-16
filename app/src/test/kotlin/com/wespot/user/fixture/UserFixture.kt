@@ -15,6 +15,7 @@ object UserFixture {
     ) = User(
         id = id,
         name = "TestUser",
+        introduction = "hello",
         schoolId = 1L,
         grade = 1,
         groupNumber = 1,
