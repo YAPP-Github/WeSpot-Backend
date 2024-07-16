@@ -5,7 +5,6 @@ import com.wespot.auth.service.apple.AppleService
 import com.wespot.user.SocialType
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 

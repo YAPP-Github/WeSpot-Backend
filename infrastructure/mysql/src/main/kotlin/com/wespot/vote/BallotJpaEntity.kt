@@ -16,6 +16,9 @@ class BallotJpaEntity(
     val voteId: Long,
 
     @field: NotNull
+    val voteOptionId: Long,
+
+    @field: NotNull
     val senderId: Long,
 
     @field: NotNull

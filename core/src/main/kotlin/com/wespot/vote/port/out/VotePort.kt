@@ -1,0 +1,17 @@
+package com.wespot.vote.port.out
+
+import com.wespot.vote.Vote
+import java.time.LocalDate
+
+interface VotePort {
+
+    fun findBySchoolIdAndGradeAndGroupNumberAndDate(
+        schoolId: Long,
+        grade: Int,
+        groupNumber: Int,
+        date: LocalDate
+    ): Vote?
+
+    fun save(vote: Vote): Vote
+
+}

@@ -4,9 +4,11 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
 
 @Entity
+@Table(name = "profile")
 class ProfileJpaEntity(
 
     @Id
@@ -14,12 +16,9 @@ class ProfileJpaEntity(
     val id: Long,
 
     @field: NotNull
-    val userId: Long,
-
-    @field: NotNull
     val backgroundColor: String,
 
     @field: NotNull
-    val imageUrl: String
+    val iconUrl: String
 
 )

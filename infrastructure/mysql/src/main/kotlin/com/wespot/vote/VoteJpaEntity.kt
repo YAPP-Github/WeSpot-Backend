@@ -2,7 +2,7 @@ package com.wespot.vote
 
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Entity
 @Table(name = "vote")
@@ -13,7 +13,7 @@ class VoteJpaEntity(
     val id: Long,
 
     @field: NotNull
-    val schoolName: String,
+    val schoolId: Long,
 
     @field: NotNull
     val grade: Int,
@@ -22,11 +22,13 @@ class VoteJpaEntity(
     val groupNumber: Int,
 
     @field: NotNull
-    val date: LocalDateTime,
+    val voteNumber: Int,
+
+    @field: NotNull
+    val date: LocalDate,
 
 //    @field: NotNull
 //    @OneToMany(mappedBy = "vote", cascade = [CascadeType.PERSIST])
 //    val ballots: List<BallotJpaEntity>,
 
 )
-
