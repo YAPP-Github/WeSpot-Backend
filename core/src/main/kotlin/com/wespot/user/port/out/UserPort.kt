@@ -17,4 +17,10 @@ interface UserPort {
 
     fun getByEmail(userEmail: String): User?
 
+    fun findByEmail(userEmail: String): User?
+
+    fun save(user: User): User
+
+    fun findById(userId: Long): User?
+
 }
