@@ -5,18 +5,16 @@ import com.wespot.user.entity.ProfileJpaEntity
 
 object ProfileMapper {
 
-    fun mapToDomainEntity(profile: ProfileJpaEntity): Profile =
+    fun mapToDomainEntity(profileJpaEntity: ProfileJpaEntity): Profile =
         Profile(
-            id = profile.id,
-            user = UserMapper.mapToDomainEntity(profile.user),
-            backgroundColor = profile.backgroundColor,
-            iconUrl = profile.iconUrl
+            id = profileJpaEntity.id,
+            backgroundColor = profileJpaEntity.backgroundColor,
+            iconUrl = profileJpaEntity.iconUrl
         )
 
     fun mapToJpaEntity(profile: Profile): ProfileJpaEntity =
         ProfileJpaEntity(
             id = profile.id,
-            user = UserMapper.mapToJpaEntity(profile.user),
             backgroundColor = profile.backgroundColor,
             iconUrl = profile.iconUrl
         )

@@ -1,4 +1,7 @@
-package com.wespot.user
+package com.wespot.user.mapper
+
+import com.wespot.user.Social
+import com.wespot.user.entity.SocialJpaEntity
 
 object SocialMapper {
 
@@ -6,6 +9,7 @@ object SocialMapper {
         Social(
             socialId = socialJpaEntity.socialId,
             socialType = socialJpaEntity.socialType,
+            socialEmail = socialJpaEntity.socialEmail,
             socialRefreshToken = socialJpaEntity.socialRefreshToken
         )
 
@@ -13,6 +17,7 @@ object SocialMapper {
         SocialJpaEntity(
             socialId = social.socialId,
             socialType = social.socialType,
+            socialEmail = social.socialEmail,
             socialRefreshToken = social.socialRefreshToken
         )
 

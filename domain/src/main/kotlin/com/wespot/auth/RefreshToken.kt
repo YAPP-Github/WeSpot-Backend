@@ -7,7 +7,7 @@ data class RefreshToken(
     val id : Long,
     val refreshToken: String,
     val user: User,
-    val createdAt: LocalDateTime?,
+    val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime?,
     val expiredAt: LocalDateTime
 ){

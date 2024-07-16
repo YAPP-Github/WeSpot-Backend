@@ -110,6 +110,8 @@ class AuthService(
             email = signUpToken.email,
             password = passwordEncoder.encode(signUpToken.email + secretKey),
             schoolId = school.id,
+            name = signUpRequest.name,
+            introduction = signUpRequest.introduction,
             grade = signUpRequest.grade,
             groupNumber = signUpRequest.groupNumber,
             social = social
@@ -123,20 +125,28 @@ class AuthService(
     ) {
 
         val userConsent = UserConsent.create(
-            user = user,
             consentType = signUpRequest.userConsent.consentType,
             consentValue = signUpRequest.userConsent.consentValue,
             consentedAt = LocalDateTime.now()
         )
 
         val profile = Profile.create(
-            user = user,
             backgroundColor = signUpRequest.profile.backgroundColor,
             iconUrl = signUpRequest.profile.iconUrl
         )
 
-        userConsentPort.save(userConsent)
-        profilePort.save(profile)
+        val savedUserConsent = userConsentPort.save(userConsent)
+        val savedProfile = profilePort.save(profile)
+
+        val updatedUser = User.update(
+            user = user,
+            userConsent = savedUserConsent,
+            profile = savedProfile,
+            fcm = null,
+            setting = null
+        )
+        userPort.save(updatedUser)
+
     }
 
     fun reIssueToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
@@ -164,7 +174,7 @@ class AuthService(
             .revoke(revokeUser.social.socialId, revokeUser.social.socialRefreshToken)
 
         refreshTokenPort.deleteByUserId(loginUserId)
-        userPort.save(revokeUser.withdraw(revokeUser))
+        userPort.save(revokeUser.withdraw())
 
     }
 

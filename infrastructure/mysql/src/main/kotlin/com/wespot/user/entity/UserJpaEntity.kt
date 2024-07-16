@@ -22,7 +22,26 @@ class UserJpaEntity(
     val password: String,
 
     @field: NotNull
+    val name: String,
+
+    @field: NotNull
+    val introduction: String,
+
+    @field: NotNull
     val schoolId: Long,
+
+    @field: NotNull
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "profile_id", foreignKey = ForeignKey(name = "fk_users_profile_id"))
+    val profile: ProfileJpaEntity,
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "fcm_id", foreignKey = ForeignKey(name = "fk_users_fcm_id"))
+    val fcm: FCMJpaEntity,
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "user_consent_id", foreignKey = ForeignKey(name = "fk_users_user_consent_id"))
+    val userConsent: UserConsentJpaEntity,
 
     @field: NotNull
     val grade: Int,

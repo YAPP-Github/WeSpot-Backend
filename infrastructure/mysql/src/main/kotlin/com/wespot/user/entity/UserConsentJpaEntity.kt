@@ -12,10 +12,6 @@ class UserConsentJpaEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id", foreignKey = ForeignKey(name = "fk_user_consent_users_id"))
-    val user: UserJpaEntity,
-
     @Enumerated(EnumType.STRING)
     val consentType: ConsentType?,
 

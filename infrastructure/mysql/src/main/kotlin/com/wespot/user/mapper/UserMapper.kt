@@ -1,34 +1,30 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
-import com.wespot.school.School
-import com.wespot.school.SchoolJpaEntity
 import com.wespot.user.*
 import com.wespot.user.entity.*
 
 object UserMapper {
 
-        fun mapToDomainEntity(user: UserJpaEntity): User =
+        fun mapToDomainEntity(userJpaEntity: UserJpaEntity): User =
             User(
-                id = user.id,
-                email = user.email,
-                password = user.password,
-                setting = Setting(
-                    isEnableNotification = user.setting.isEnableNotification,
-                ),
-                schoolId = user.schoolId,
-                grade = user.grade,
-                groupNumber = user.groupNumber,
-                role = user.role,
-                social = Social(
-                    socialType = user.social.socialType,
-                    socialId = user.social.socialId,
-                    socialEmail = user.social.socialEmail,
-                    socialRefreshToken = user.social.socialRefreshToken,
-                ),
-                createdAt = user.baseEntity.createdAt,
-                updatedAt = user.baseEntity.updatedAt,
-                withdrawAt = user.withdrawAt,
+                id = userJpaEntity.id,
+                email = userJpaEntity.email,
+                password = userJpaEntity.password,
+                name = userJpaEntity.name,
+                introduction = userJpaEntity.introduction,
+                schoolId = userJpaEntity.schoolId,
+                grade = userJpaEntity.grade,
+                groupNumber = userJpaEntity.groupNumber,
+                role = userJpaEntity.role,
+                setting = SettingMapper.mapToDomainEntity(userJpaEntity.setting),
+                profile = ProfileMapper.mapToDomainEntity(userJpaEntity.profile),
+                fcm = FCMMapper.mapToDomainEntity(userJpaEntity.fcm),
+                social = SocialMapper.mapToDomainEntity(userJpaEntity.social),
+                userConsent = UserConsentMapper.mapToDomainEntity(userJpaEntity.userConsent),
+                createdAt = userJpaEntity.baseEntity.createdAt,
+                updatedAt = userJpaEntity.baseEntity.updatedAt,
+                withdrawAt = userJpaEntity.withdrawAt,
             )
 
 
@@ -37,19 +33,17 @@ object UserMapper {
                 id = user.id,
                 email = user.email,
                 password = user.password,
-                setting = SettingJpaEntity(
-                    isEnableNotification = user.setting.isEnableNotification,
-                ),
+                name = user.name,
+                introduction = user.introduction,
                 schoolId = user.schoolId,
                 grade = user.grade,
                 groupNumber = user.groupNumber,
                 role = user.role,
-                social = SocialJpaEntity(
-                    socialType = user.social.socialType,
-                    socialId = user.social.socialId,
-                    socialEmail = user.social.socialEmail,
-                    socialRefreshToken = user.social.socialRefreshToken,
-                ),
+                setting = SettingMapper.mapToJpaEntity(user.setting),
+                profile = ProfileMapper.mapToJpaEntity(user.profile),
+                fcm = FCMMapper.mapToJpaEntity(user.fcm),
+                social = SocialMapper.mapToJpaEntity(user.social),
+                userConsent = UserConsentMapper.mapToJpaEntity(user.userConsent),
                 withdrawAt = user.withdrawAt,
                 baseEntity = BaseEntity(
                     createdAt = user.createdAt,
