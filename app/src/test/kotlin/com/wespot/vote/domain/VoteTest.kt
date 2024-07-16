@@ -68,7 +68,7 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
                 .stream()
-                .map { it.id!! }
+                .map { it.id }
                 .toList()
 
             then("예외가 발생한다.") {
@@ -88,7 +88,7 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
                 .stream()
-                .map { it.id!! }
+                .map { it.id }
                 .toList()
 
             then("정상적으로 투표가 진행된다.") {
@@ -107,7 +107,7 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
                 .stream()
-                .map { it.id!! }
+                .map { it.id }
                 .toList()
 
             then("예외가 발생한다.") {

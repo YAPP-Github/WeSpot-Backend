@@ -28,7 +28,7 @@ object VoteFixture {
         ballots = Ballots.from(ballots)
     )
 
-    fun createWithIdAndVoteNumberAndBallots(id: Long?, voteNumber: Int, ballots: List<Ballot>) =
+    fun createWithIdAndVoteNumberAndBallots(id: Long, voteNumber: Int, ballots: List<Ballot>) =
         Vote(
             id = id,
             schoolId = 1L,

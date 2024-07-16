@@ -24,7 +24,7 @@ class VotePersistenceAdapter(
         )?.let { voteJpaEntity ->
             VoteMapper.mapToDomainEntity(
                 voteJpaEntity,
-                ballotJpaRepository.findAllByVoteId(voteJpaEntity.id!!)
+                ballotJpaRepository.findAllByVoteId(voteJpaEntity.id)
                     .stream()
                     .map { ballot -> BallotMapper.mapToDomainEntity(ballot) }
                     .toList()

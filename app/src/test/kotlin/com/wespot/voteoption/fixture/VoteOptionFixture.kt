@@ -12,7 +12,7 @@ object VoteOptionFixture {
         updatedAt = null,
     )
 
-    fun createWithId(id: Long?) = VoteOption(
+    fun createWithId(id: Long) = VoteOption(
         id = id,
         content = "id가 지정된 질문지입니다.",
         createdAt = LocalDateTime.now(),

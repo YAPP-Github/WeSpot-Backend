@@ -11,36 +11,16 @@ import java.time.LocalDateTime
 object UserFixture {
 
     fun createWithId(
-        id: Long?,
+        id: Long,
     ) = User(
         id = id,
         name = "TestUser",
         schoolId = 1L,
         grade = 1,
         groupNumber = 1,
-        setting = Setting(null, false),
-        profile = Profile(null, "black", "image.png"),
-        fcm = FCM(null, "token", LocalDateTime.now()),
-        social = Social(SocialType.KAKAO, 1L, "refreshToken"),
-        createdAt = LocalDateTime.now(),
-        updatedAt = null,
-        withdrawAt = LocalDateTime.now(),
-    )
-
-    fun createWithIdAndSettingAndProfileAndFCM(
-        id: Long?,
-        setting: Setting,
-        profile: Profile,
-        fcm: FCM
-    ) = User(
-        id = id,
-        name = "TestUser",
-        schoolId = 1,
-        grade = 1,
-        groupNumber = 1,
-        setting = setting,
-        profile = profile,
-        fcm = fcm,
+        setting = Setting(0, false),
+        profile = Profile(0, "black", "image.png"),
+        fcm = FCM(0, "token", LocalDateTime.now()),
         social = Social(SocialType.KAKAO, 1L, "refreshToken"),
         createdAt = LocalDateTime.now(),
         updatedAt = null,

@@ -12,7 +12,7 @@ data class UserResponse(
 
         fun from(user: User): UserResponse {
             return UserResponse(
-                id = user.id!!,
+                id = user.id,
                 name = user.name,
                 profile = ProfileResponse.from(user.profile)
             )

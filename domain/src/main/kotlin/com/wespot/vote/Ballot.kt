@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class Ballot(
-    val id: Long?,
+    val id: Long,
     val voteId: Long,
     val voteOptionId: Long,
     val senderId: Long,
@@ -19,7 +19,7 @@ data class Ballot(
             validateVoteOption(voteOptionId)
             validateSenderAndReceiver(senderId, receiverId)
             return Ballot(
-                id = null,
+                id = 0L,
                 voteId = voteId,
                 voteOptionId = voteOptionId,
                 senderId = senderId,

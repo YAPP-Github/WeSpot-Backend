@@ -12,7 +12,7 @@ class VoteOptionTest() : BehaviorSpec() {
 
     init {
         given("정상적인 입력이 주어지고") {
-            val id = null
+            val id = 0L
             val content = "정상적인 입력"
             val createdAt = LocalDateTime.now()
             val updatedAt = null
@@ -32,7 +32,7 @@ class VoteOptionTest() : BehaviorSpec() {
     @ValueSource(strings = ["", "     ", "               "])
     fun `정상적이지 않은 내용이 주어지고`(invalidContent: String) {
         // given
-        val id = null
+        val id = 0L
         val createdAt = LocalDateTime.now()
         val updatedAt = null
 

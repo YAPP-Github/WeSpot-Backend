@@ -16,7 +16,7 @@ class BallotTest() : BehaviorSpec({
         `when`("투표지를 생성할 때") {
             val ballot = Ballot.of(voteId, voteOptionId, senderId, receiverId)
             then("정상적으로 생성된다.") {
-                ballot.id shouldBe null
+                ballot.id shouldBe 0L
                 ballot.voteId shouldBe voteId
                 ballot.voteOptionId shouldBe voteOptionId
                 ballot.senderId shouldBe senderId

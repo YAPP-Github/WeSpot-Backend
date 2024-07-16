@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class VoteOption(
-    val id: Long?,
+    val id: Long,
     val content: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime?,
@@ -12,7 +12,7 @@ data class VoteOption(
 
     companion object {
         fun of(
-            id: Long?,
+            id: Long,
             content: String,
             createdAt: LocalDateTime,
             updatedAt: LocalDateTime?

@@ -3,7 +3,7 @@ package com.wespot.user
 import java.time.LocalDateTime
 
 data class User(
-    val id: Long?,
+    val id: Long,
     val name: String,
     val schoolId: Long,
     val grade: Int,

@@ -5,7 +5,7 @@ import com.wespot.voteoption.VoteOption
 import java.time.LocalDate
 
 data class Vote(
-    val id: Long?,
+    val id: Long,
     val schoolId: Long,
     val grade: Int,
     val groupNumber: Int,
@@ -39,7 +39,7 @@ data class Vote(
     }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
-        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id!!)
+        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
@@ -57,7 +57,7 @@ data class Vote(
         validateVoteOption(todayVoteOptionsIds, voteOptionId)
         ballots.add(
             Ballot.of(
-                voteId = id!!,
+                voteId = id,
                 voteOptionId = voteOptionId,
                 senderId = senderId,
                 receiverId = receiverId

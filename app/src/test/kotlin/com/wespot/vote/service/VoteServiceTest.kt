@@ -50,14 +50,14 @@ class VoteServiceTest(
         voteOptions.clear()
         users.clear()
         for (i in 0 until 8) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithId(null))
+            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithId(0))
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
-                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(null))
+                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
         val vote =
-            VoteFixture.createWithIdAndVoteNumberAndBallots(null, 0, Collections.emptyList())
+            VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
         voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
     }
 
@@ -69,10 +69,7 @@ class VoteServiceTest(
     @Test
     fun `투표에 지정된 질문지를 반환받는다`() {
         // given when
-        println(users.size)
-        println(voteOptions.size)
-        val voteOptions = voteService.getVoteOptions(users[0].id!!)
-        println(voteOptions)
+        val voteOptions = voteService.getVoteOptions(users[0].id)
 
         // then
         voteOptions.voteItems.size shouldBe 5
@@ -86,13 +83,13 @@ class VoteServiceTest(
             listOf(
                 VoteRequest(
                     userId = Long.MAX_VALUE,
-                    voteOptionId = voteOptions[0].id!!
+                    voteOptionId = voteOptions[0].id
                 ),
             )
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id!!, requests) }
+        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -105,34 +102,34 @@ class VoteServiceTest(
         val requests = VoteRequests(
             listOf(
                 VoteRequest(
-                    userId = users[0].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[0].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[1].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[1].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[2].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[2].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[3].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[3].id,
+                    voteOptionId = voteOptions[0].id,
                 ),
                 VoteRequest(
-                    userId = users[4].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[4].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[5].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[5].id,
+                    voteOptionId = voteOptions[0].id
                 ),
             )
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id!!, requests) }
+        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -145,14 +142,14 @@ class VoteServiceTest(
         val requests = VoteRequests(
             listOf(
                 VoteRequest(
-                    userId = users[0].id!!,
+                    userId = users[0].id,
                     voteOptionId = Long.MAX_VALUE
                 ),
             )
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id!!, requests) }
+        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -165,30 +162,30 @@ class VoteServiceTest(
         val requests = VoteRequests(
             listOf(
                 VoteRequest(
-                    userId = users[0].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[0].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[1].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[1].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[2].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[2].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[3].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[3].id,
+                    voteOptionId = voteOptions[0].id
                 ),
                 VoteRequest(
-                    userId = users[4].id!!,
-                    voteOptionId = voteOptions[0].id!!
+                    userId = users[4].id,
+                    voteOptionId = voteOptions[0].id
                 ),
             )
         )
 
         // when
-        voteService.saveVote(users[users.size - 1].id!!, requests)
+        voteService.saveVote(users[users.size - 1].id, requests)
 
         // then
         val ballots = ballotJpaRepository.findAll()

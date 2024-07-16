@@ -85,7 +85,7 @@ class VoteService(
                 )
             }
 
-        return SaveVoteResponse(votePort.save(vote).id!!)
+        return SaveVoteResponse(votePort.save(vote).id)
     }
 
     private fun validateRequestsSize(requestsSize: Int) {
@@ -111,7 +111,7 @@ class VoteService(
 
     private fun findTodayVoteOptionIds(vote: Vote): List<Long> {
         return findTodayVoteOptions(vote).stream()
-            .map { it.id!! }
+            .map { it.id }
             .toList()
     }
 

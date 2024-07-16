@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @EntityListeners(AuditingEntityListener::class)
 @Embeddable
-data class BaseEntity(
+class BaseEntity(
 
     @CreatedDate
     @field: NotNull

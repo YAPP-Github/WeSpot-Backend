@@ -21,7 +21,7 @@ object BallotFixture {
         senderId: Long,
         receiverId: Long
     ) = Ballot(
-        id = null,
+        id = 0L,
         voteId = voteId,
         voteOptionId = voteOptionId,
         senderId = senderId,
