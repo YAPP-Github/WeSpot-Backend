@@ -34,6 +34,7 @@ class RefreshTokenPersistenceAdapter(
         }
     }
 
+    @Transactional
     override fun deleteByUserId(userId: Long) {
         refreshTokenJpaRepository.deleteByUserId(userId)
     }

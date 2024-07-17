@@ -30,7 +30,7 @@ class JwtAuthenticationEntryPoint(
         val body = objectMapper.writeValueAsString(
             ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNAUTHORIZED,
-                BadCredentialsException("").message!!,
+                BadCredentialsException("로그인이 만료되었습니다. 계속하려면 다시 로그인해 주세요.").message!!,
             ).apply {
                 type = URI.create("/errors/unauthenticated")
                 instance = URI.create(request.requestURI)

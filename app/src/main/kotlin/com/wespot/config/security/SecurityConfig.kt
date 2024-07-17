@@ -81,8 +81,6 @@ class SecurityConfig(
         val configuration = CorsConfiguration().apply {
             allowCredentials = true
             allowedOrigins = listOf(
-                "https://api.lyfeteam.info",
-                "http://localhost:3000",
                 "http://localhost:8080",
             )
             allowedMethods = listOf(
