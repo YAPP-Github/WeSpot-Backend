@@ -18,7 +18,6 @@ class AuthenticationService(
 ) : AuthenticationUseCase {
 
     override fun getAuthentication(token: String): Authentication {
-
         val claims: Claims = jwtTokenValidator.verifyToken(token)
         val email: String = claims[EMAIL_CLAIM] as String
         val principalDetails = principalDetailService.loadUserByUsername(email) as PrincipalDetails

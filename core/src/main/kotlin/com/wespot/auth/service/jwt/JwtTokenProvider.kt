@@ -29,7 +29,6 @@ class JwtTokenProvider(
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     fun generateToken(authentication: Authentication): TokenResponse {
-
         val now = Date().time
         val accessTokenExpiresIn = Date(now + accessTokenExpireTime)
 
@@ -51,7 +50,6 @@ class JwtTokenProvider(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
-
     }
 
 }
