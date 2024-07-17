@@ -1,7 +1,7 @@
 package com.wespot.auth.service.apple
 
-import com.wespot.auth.dto.AuthLoginRequest
-import com.wespot.auth.dto.OAuthIdAndRefreshToken
+import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.apple.AppleRevokeRequest
 import com.wespot.auth.dto.apple.AppleTokenResult
 import com.wespot.auth.service.SocialAuthService
@@ -27,15 +27,16 @@ class AppleService(
         private const val TOKEN_TYPE_HINT = "refresh_token"
     }
 
-    override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): OAuthIdAndRefreshToken {
+    override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): SocialResponse {
         val appleId = getAppleId(authLoginRequest.identityToken
             ?: throw IllegalArgumentException("Apple ID token이 없습니다."))
         val appleTokenResult = generateAuthToken(authLoginRequest.authorizationCode
             ?: throw IllegalArgumentException("Authorization code가 없습니다."))
 
-        return OAuthIdAndRefreshToken(
-            oAuthId = appleId,
-            refreshToken = appleTokenResult.refreshToken ?: NOT_SUPPORTED
+        return SocialResponse(
+            socialId = appleId,
+            socialRefreshToken = appleTokenResult.refreshToken ?: NOT_SUPPORTED,
+            socialEmail = NOT_SUPPORTED
         )
     }
 

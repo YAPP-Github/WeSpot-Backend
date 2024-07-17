@@ -15,7 +15,8 @@ class SchoolJpaEntity(
     val name: String,
 
     @field:NotNull
-    val category: SchoolCategory,
+    @Enumerated(EnumType.STRING)
+    val schoolType: SchoolType,
 
     @field:NotNull
     val region: String,

@@ -1,12 +1,27 @@
 package com.wespot.school
 
+
 data class School(
     val id: Long,
     val name: String,
-    val category: SchoolCategory,
     val schoolType: SchoolType,
-    val estType: EstType,
     val region: String,
     val address: String,
 ) {
+
+    companion object {
+        fun create(
+            name: String,
+            schoolType: SchoolType,
+            region: String,
+            address: String
+        ) =
+            School(
+                id = 0L,
+                name = name,
+                schoolType = schoolType,
+                region = region,
+                address = address
+            )
+    }
 }

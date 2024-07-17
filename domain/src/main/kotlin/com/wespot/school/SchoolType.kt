@@ -1,4 +1,6 @@
 package com.wespot.school
 
-enum class SchoolType { // TODO : 이 부분은 같이 이야기하면서 구체화 해나가 보시죠!
+enum class SchoolType {
+    MIDDLE,
+    HIGH
 }

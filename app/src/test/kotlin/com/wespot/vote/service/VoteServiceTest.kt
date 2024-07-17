@@ -1,10 +1,10 @@
 package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
-import com.wespot.user.UserJpaEntity
-import com.wespot.user.UserJpaRepository
-import com.wespot.user.UserMapper
+import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.mapper.UserMapper
+import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper

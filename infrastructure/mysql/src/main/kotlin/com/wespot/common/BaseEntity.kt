@@ -14,11 +14,12 @@ import java.time.LocalDateTime
 class BaseEntity(
 
     @CreatedDate
-    @field: NotNull
-    @Column(updatable = false)
-    val createdAt: LocalDateTime,
+    @field:NotNull
+    @field:Column(nullable = false, updatable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @LastModifiedDate
+    @field:Column(nullable = true)
     val updatedAt: LocalDateTime? = null
 
 )
