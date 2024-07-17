@@ -7,7 +7,10 @@ import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.user.fixture.UserFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.verify
 import java.time.LocalDateTime
 
 class RefreshTokenServiceTest : BehaviorSpec({
@@ -15,9 +18,12 @@ class RefreshTokenServiceTest : BehaviorSpec({
     val refreshTokenService = RefreshTokenService(refreshTokenPort)
 
     given("refreshTokenService 테스트") {
-
         val token = "newRefreshToken"
         val user = UserFixture.createWithId(1)
+
+        val now = LocalDateTime.now()
+        mockkStatic(LocalDateTime::class)
+        every { LocalDateTime.now() } returns now
 
         val existingToken = RefreshToken.create(
             refreshToken = "oldToken",
