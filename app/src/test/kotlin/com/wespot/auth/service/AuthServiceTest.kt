@@ -1,5 +1,6 @@
 package com.wespot.auth.service
 
+import com.wespot.DateTimeUtil.getExpirationLocalDateTime
 import com.wespot.auth.dto.*
 import com.wespot.auth.dto.request.*
 import com.wespot.auth.dto.response.SignUpResponse
@@ -21,6 +22,7 @@ import io.mockk.*
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.util.Date
 import java.util.NoSuchElementException
 
 class AuthServiceTest : BehaviorSpec({
@@ -80,6 +82,8 @@ class AuthServiceTest : BehaviorSpec({
 
         val token = "testToken"
 
+        val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
+
         every { authService.fetchSocialEmail(authLoginRequest) } returns socialResponse
         every { authService.formatSocialEmail(socialId = socialResponse.socialId, socialType = authLoginRequest.socialType) } returns formatSocialEmail
         every { userPort.findByEmail(formatSocialEmail) } returns null
@@ -115,7 +119,8 @@ class AuthServiceTest : BehaviorSpec({
             val user = UserFixture.createWithId(1)
             val tokenResponse = TokenResponse(
                 accessToken = "accessToken",
-                refreshToken = "refreshToken"
+                refreshToken = "refreshToken",
+                refreshTokenExpiredAt = refreshTokenExpiredAt
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
@@ -171,13 +176,17 @@ class AuthServiceTest : BehaviorSpec({
 
         val user = UserFixture.createWithId(1)
 
+
+        val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
+
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
         every { authService.createUser(authData, signUpRequest) } returns user
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
         every { authService.signIn(any()) } returns TokenResponse(
             accessToken = "accessToken",
-            refreshToken = "refreshToken"
+            refreshToken = "refreshToken",
+            refreshTokenExpiredAt = refreshTokenExpiredAt
         )
 
         `when`("사용자가 signUp을 호출할 때") {
@@ -202,7 +211,8 @@ class AuthServiceTest : BehaviorSpec({
                 )
                 authService.signIn(signInRequest) shouldBe TokenResponse(
                     accessToken = "accessToken",
-                    refreshToken = "refreshToken"
+                    refreshToken = "refreshToken",
+                    refreshTokenExpiredAt = refreshTokenExpiredAt
                 )
             }
 
@@ -230,11 +240,14 @@ class AuthServiceTest : BehaviorSpec({
             password = "password"
         )
 
+        val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
+
         val user = UserFixture.createWithId(1)
         val authentication = mockk<Authentication>()
         val generateToken = TokenResponse(
             accessToken = "accessToken",
-            refreshToken = "refreshToken"
+            refreshToken = "refreshToken",
+            refreshTokenExpiredAt = refreshTokenExpiredAt
         )
 
         every { authenticationManager.authenticate(any()) } returns authentication
@@ -271,6 +284,8 @@ class AuthServiceTest : BehaviorSpec({
 
     given("reIssueToken 테스트") {
 
+        val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
+
         val refreshTokenRequest = RefreshTokenRequest(
             refreshToken = "testRefreshToken"
         )
@@ -279,7 +294,8 @@ class AuthServiceTest : BehaviorSpec({
         val authentication = mockk<Authentication>()
         val generateToken = TokenResponse(
             accessToken = "newAccessToken",
-            refreshToken = "newRefreshToken"
+            refreshToken = "newRefreshToken",
+            refreshTokenExpiredAt = refreshTokenExpiredAt
         )
 
         every { authenticationService.getAuthentication(any()) } returns authentication

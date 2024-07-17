@@ -71,7 +71,8 @@ class AuthService(
 
         return TokenResponse(
             accessToken = generateToken.accessToken,
-            refreshToken = generateToken.refreshToken
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
         )
     }
 
@@ -149,7 +150,8 @@ class AuthService(
 
         return TokenResponse(
             accessToken = generateToken.accessToken,
-            refreshToken = generateToken.refreshToken
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
         )
     }
 
