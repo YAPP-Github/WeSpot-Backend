@@ -37,7 +37,7 @@ class RefreshTokenServiceTest : BehaviorSpec({
             id = existingToken.id,
             refreshToken = token,
             user = existingToken.user,
-            createdAt = existingToken.createdAt ?: LocalDateTime.now(),
+            createdAt = existingToken.createdAt,
             updatedAt = LocalDateTime.now(),
             expiredAt = LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRY_DAYS)
         )
