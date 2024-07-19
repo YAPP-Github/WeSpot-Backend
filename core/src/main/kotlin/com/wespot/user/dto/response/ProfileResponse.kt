@@ -1,4 +1,4 @@
-package com.wespot.vote.dto.response
+package com.wespot.user.dto.response
 
 import com.wespot.user.Profile
 

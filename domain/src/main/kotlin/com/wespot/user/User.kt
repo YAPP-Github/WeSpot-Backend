@@ -22,6 +22,35 @@ data class User(
     val withdrawAt: LocalDateTime?,
 ) {
 
+    fun updateProfile(
+        introduction: String,
+        backgroundColor: String,
+        iconUrl: String
+    ) =
+        User(
+            id = id,
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
+            role = role,
+            schoolId = schoolId,
+            grade = grade,
+            groupNumber = groupNumber,
+            profile = Profile(
+                id = profile.id,
+                backgroundColor = backgroundColor,
+                iconUrl = iconUrl
+            ),
+            fcm = fcm,
+            setting = setting,
+            social = social,
+            userConsent = userConsent,
+            createdAt = createdAt,
+            updatedAt = LocalDateTime.now(),
+            withdrawAt = withdrawAt,
+        )
+
     fun withdraw() =
         User(
             id = id,
@@ -92,7 +121,7 @@ data class User(
             fcm: FCM?,
             setting: Setting?,
             userConsent: UserConsent?
-        )=
+        ) =
             User(
                 id = user.id,
                 email = user.email,
@@ -103,11 +132,11 @@ data class User(
                 schoolId = user.schoolId,
                 grade = user.grade,
                 groupNumber = user.groupNumber,
-                profile = profile?: user.profile,
-                fcm = fcm?: user.fcm,
-                setting = setting?: user.setting,
+                profile = profile ?: user.profile,
+                fcm = fcm ?: user.fcm,
+                setting = setting ?: user.setting,
                 social = user.social,
-                userConsent = userConsent?: user.userConsent,
+                userConsent = userConsent ?: user.userConsent,
                 createdAt = user.createdAt,
                 updatedAt = LocalDateTime.now(),
                 withdrawAt = user.withdrawAt
