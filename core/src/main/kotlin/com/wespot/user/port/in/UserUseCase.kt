@@ -1,6 +1,5 @@
 package com.wespot.user.port.`in`
 
-import com.wespot.user.Profile
 import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.BackgroundListResponse
 import com.wespot.user.dto.response.CharacterListResponse
@@ -11,7 +10,7 @@ interface UserUseCase {
 
     fun me(): UserResponse
 
-    fun updateProfile(profile: UpdateProfileRequest): UserResponse
+    fun updateProfile(profile: UpdateProfileRequest): Unit
 
     fun backgrounds(): BackgroundListResponse
 
