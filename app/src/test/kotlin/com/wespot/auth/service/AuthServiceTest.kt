@@ -6,6 +6,7 @@ import com.wespot.auth.dto.request.*
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.fixture.AuthFixture
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
@@ -151,43 +152,16 @@ class AuthServiceTest : BehaviorSpec({
 
     given("signUp 테스트") {
 
-        val signUpRequest = SignUpRequest(
-            signUpToken = "signUpToken",
-            name = "Test User",
-            introduction = "Hello, this is a test.",
-            profile = ProfileRequest(
-                backgroundColor = "blue",
-                iconUrl = "iconUrl"
-            ),
-            userConsent = UserConsentRequest(
-                consentType = ConsentType.MARKETING,
-                consentValue = true
-            ),
-            schoolId = 1L,
-            grade = 1,
-            groupNumber = 1
-        )
-
-        val authData = AuthData(
-            email = "test@test.com",
-            socialRefreshToken = "testRefreshToken",
-            socialEmail = "test@social.com"
-        )
-
-        val user = UserFixture.createWithId(1)
-
-
+        val signUpRequest = AuthFixture.createSignUpRequest()
+        val authData = AuthFixture.createAuthData()
+        val user = AuthFixture.createUser()
         val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
 
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
         every { authService.createUser(authData, signUpRequest) } returns user
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
-        every { authService.signIn(any()) } returns TokenResponse(
-            accessToken = "accessToken",
-            refreshToken = "refreshToken",
-            refreshTokenExpiredAt = refreshTokenExpiredAt
-        )
+        every { authService.signIn(any()) } returns AuthFixture.createTokenResponse(refreshTokenExpiredAt)
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)
@@ -209,11 +183,7 @@ class AuthServiceTest : BehaviorSpec({
                     email = authData.email,
                     password = "${authData.email}$secretKey"
                 )
-                authService.signIn(signInRequest) shouldBe TokenResponse(
-                    accessToken = "accessToken",
-                    refreshToken = "refreshToken",
-                    refreshTokenExpiredAt = refreshTokenExpiredAt
-                )
+                authService.signIn(signInRequest) shouldBe AuthFixture.createTokenResponse(refreshTokenExpiredAt)
             }
 
             then("TokenResponse를 반환한다") {
@@ -244,11 +214,7 @@ class AuthServiceTest : BehaviorSpec({
 
         val user = UserFixture.createWithId(1)
         val authentication = mockk<Authentication>()
-        val generateToken = TokenResponse(
-            accessToken = "accessToken",
-            refreshToken = "refreshToken",
-            refreshTokenExpiredAt = refreshTokenExpiredAt
-        )
+        val generateToken = AuthFixture.createTokenResponse(refreshTokenExpiredAt)
 
         every { authenticationManager.authenticate(any()) } returns authentication
         every { authentication.name } returns user.email
@@ -292,11 +258,7 @@ class AuthServiceTest : BehaviorSpec({
 
         val user = UserFixture.createWithId(1)
         val authentication = mockk<Authentication>()
-        val generateToken = TokenResponse(
-            accessToken = "newAccessToken",
-            refreshToken = "newRefreshToken",
-            refreshTokenExpiredAt = refreshTokenExpiredAt
-        )
+        val generateToken = AuthFixture.createTokenResponse(refreshTokenExpiredAt)
 
         every { authenticationService.getAuthentication(any()) } returns authentication
         every { authentication.name } returns user.email
@@ -324,8 +286,8 @@ class AuthServiceTest : BehaviorSpec({
             }
 
             then("TokenResponse를 반환한다") {
-                response.accessToken shouldBe "newAccessToken"
-                response.refreshToken shouldBe "newRefreshToken"
+                response.accessToken shouldBe "accessToken"
+                response.refreshToken shouldBe "refreshToken"
             }
         }
 
