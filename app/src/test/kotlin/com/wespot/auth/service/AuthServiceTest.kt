@@ -23,7 +23,6 @@ import io.mockk.*
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.util.Date
 import java.util.NoSuchElementException
 
 class AuthServiceTest : BehaviorSpec({

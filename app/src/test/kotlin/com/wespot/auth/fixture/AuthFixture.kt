@@ -3,7 +3,7 @@ package com.wespot.auth.fixture
 import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.auth.dto.request.SignUpRequest
-import com.wespot.auth.dto.request.UserConsentRequest
+import com.wespot.auth.dto.request.ConsentsRequest
 import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.user.ConsentType
 import com.wespot.user.User
@@ -15,18 +15,13 @@ object AuthFixture {
         return SignUpRequest(
             signUpToken = "signUpToken",
             name = "Test User",
-            introduction = "Hello, this is a test.",
-            profile = ProfileRequest(
-                backgroundColor = "blue",
-                iconUrl = "iconUrl"
-            ),
-            userConsent = UserConsentRequest(
-                consentType = ConsentType.MARKETING,
-                consentValue = true
+            gender = "male",
+            consents = ConsentsRequest(
+                marketing = true
             ),
             schoolId = 1L,
             grade = 1,
-            groupNumber = 1
+            classNumber = 1
         )
     }
 
