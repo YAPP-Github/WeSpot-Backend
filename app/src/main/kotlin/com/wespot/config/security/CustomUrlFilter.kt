@@ -27,6 +27,9 @@ class CustomUrlFilter(
         "/api/v1/auth/login",
         "/api/v1/auth/signup",
         "/api/v1/auth/revoke",
+        "/api/v1/users/me",
+        "/api/v1/users/backgrounds",
+        "/api/v1/users/characters",
     )
 
     override fun doFilterInternal(
