@@ -7,7 +7,7 @@ data class UserResponse(
     val name: String,
     val gender : String,
     val introduction : String,
-    val school : String,
+    val schoolName : String,
     val grade : Int,
     val groupNumber : Int,
     val profile: ProfileResponse?
@@ -21,9 +21,9 @@ data class UserResponse(
                 name = user.name,
                 gender = user.name,
                 introduction = user.introduction,
-                school = school,
+                schoolName = school,
                 grade = user.grade,
-                groupNumber = user.groupNumber,
+                groupNumber = user.classNumber,
                 profile = user.profile.let { ProfileResponse.from(it) }
             )
         }

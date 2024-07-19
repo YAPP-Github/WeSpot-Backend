@@ -43,18 +43,18 @@ class VoteService(
     }
 
     private fun findClassmatesByUser(user: User): List<User> {
-        return userPort.findAllBySchoolIdAndGradeAndGroupNumber(
+        return userPort.findAllBySchoolIdAndGradeAndClassNumber(
             schoolId = user.schoolId,
             grade = user.grade,
-            groupNumber = user.groupNumber
+            groupNumber = user.classNumber
         )
     }
 
     private fun findVoteByUser(user: User, date: LocalDate): Vote {
-        return votePort.findBySchoolIdAndGradeAndGroupNumberAndDate(
+        return votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
             schoolId = user.schoolId,
             grade = user.grade,
-            groupNumber = user.groupNumber,
+            groupNumber = user.classNumber,
             date = date
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }

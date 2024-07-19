@@ -29,15 +29,15 @@ class UserPersistenceAdapter(
              .let { UserMapper.mapToDomainEntity(it) }
     }
 
-    override fun findAllBySchoolIdAndGradeAndGroupNumber(
+    override fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int
+        classNumber: Int
     ): List<User> {
-        return userJpaRepository.findAllBySchoolIdAndGradeAndGroupNumber(
+        return userJpaRepository.findAllBySchoolIdAndGradeAndClassNumber(
             schoolId,
             grade,
-            groupNumber
+            classNumber
         ).stream()
             .map { userJpaEntity -> UserMapper.mapToDomainEntity(userJpaEntity) }
             .toList()

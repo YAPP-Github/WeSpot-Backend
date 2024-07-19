@@ -6,6 +6,14 @@ data class Profile(
     val iconUrl: String,
 ) {
 
+    fun update (
+        backgroundColor: String,
+        iconUrl: String
+    ) = Profile(
+        id = this.id,
+        backgroundColor = backgroundColor,
+        iconUrl = iconUrl
+    )
     companion object {
         fun create(
             backgroundColor: String,

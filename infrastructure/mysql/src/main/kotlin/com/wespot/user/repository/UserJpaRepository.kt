@@ -9,10 +9,10 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
 
     fun findByEmail(email: String): UserJpaEntity?
 
-    fun findAllBySchoolIdAndGradeAndGroupNumber(
+    fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int
+        classNumber: Int
     ): List<UserJpaEntity>
 
     @Query("SELECT u.id FROM UserJpaEntity u WHERE u.id IN :ids")
