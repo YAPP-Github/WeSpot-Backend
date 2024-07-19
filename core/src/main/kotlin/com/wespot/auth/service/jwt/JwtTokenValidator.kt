@@ -16,7 +16,6 @@ class JwtTokenValidator(
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     fun verifyToken(token: String): Claims {
-
         try {
             return Jwts.parserBuilder()
                 .setSigningKey(key)

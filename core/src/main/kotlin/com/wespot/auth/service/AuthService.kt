@@ -8,6 +8,7 @@ import com.wespot.auth.dto.request.SignUpRequest
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
@@ -42,11 +43,10 @@ class AuthService(
 
     @Value("\${jwt.secret}")
     private val secretKey: String
-) {
+) : AuthUseCase {
 
 
-    fun socialAccess(authLoginRequest: AuthLoginRequest): Any {
-
+    override fun socialAccess(authLoginRequest: AuthLoginRequest): Any {
         val socialResponse = fetchSocialEmail(authLoginRequest)
         val socialEmail = formatSocialEmail(socialResponse.socialId, authLoginRequest.socialType)
 
@@ -56,15 +56,13 @@ class AuthService(
             socialEmail = socialResponse.socialEmail,
         )
         val user = userPort.findByEmail(socialEmail)
-            ?: return SignUpResponse(createSignUpToken(authDate = authData))
+            ?: return SignUpResponse(createSignUpToken(authData = authData))
 
         return signIn(createSignInRequest(user))
-
     }
 
 
     fun signIn(signInRequest: SignInRequest): TokenResponse {
-
         val authentication = authenticateUser(signInRequest)
         val generateToken = jwtTokenProvider.generateToken(authentication)
         val user = getUserByEmail(authentication.name)
@@ -73,14 +71,13 @@ class AuthService(
 
         return TokenResponse(
             accessToken = generateToken.accessToken,
-            refreshToken = generateToken.refreshToken
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
         )
-
     }
 
 
-    fun signUp(signUpRequest: SignUpRequest): TokenResponse {
-
+    override fun signUp(signUpRequest: SignUpRequest): TokenResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
 
         val user = createUser(signUpToken, signUpRequest)
@@ -89,14 +86,12 @@ class AuthService(
         saveRelatedEntities(savedUser, signUpRequest)
 
         return signIn(createSignInRequest(savedUser))
-
     }
 
-    private fun createUser(
+    fun createUser(
         signUpToken: AuthData,
         signUpRequest: SignUpRequest
     ): User {
-
         val school = (schoolPort.findById(signUpRequest.schoolId)
             ?: throw NoSuchElementException("해당 학교가 존재하지 않습니다."))
 
@@ -116,14 +111,12 @@ class AuthService(
             groupNumber = signUpRequest.groupNumber,
             social = social
         )
-
     }
 
     fun saveRelatedEntities(
         user: User,
         signUpRequest: SignUpRequest
     ) {
-
         val userConsent = UserConsent.create(
             consentType = signUpRequest.userConsent.consentType,
             consentValue = signUpRequest.userConsent.consentValue,
@@ -146,11 +139,9 @@ class AuthService(
             setting = null
         )
         userPort.save(updatedUser)
-
     }
 
-    fun reIssueToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
-
+    override fun reIssueToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
         val authentication = authenticationService.getAuthentication(token = refreshTokenRequest.refreshToken)
         val generateToken = jwtTokenProvider.generateToken(authentication = authentication)
         val user = getUserByEmail(authentication.name)
@@ -159,13 +150,12 @@ class AuthService(
 
         return TokenResponse(
             accessToken = generateToken.accessToken,
-            refreshToken = generateToken.refreshToken
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
         )
-
     }
 
-    fun revoke() {
-
+    override fun revoke() {
         val loginUserId = getLoginUserId()
         val revokeUser = userPort.findById(loginUserId)
             ?: throw NoSuchElementException("해당 계정이 존재하지 않습니다.")
@@ -175,16 +165,15 @@ class AuthService(
 
         refreshTokenPort.deleteByUserId(loginUserId)
         userPort.save(revokeUser.withdraw())
-
     }
 
-    private fun fetchSocialEmail(authLoginRequest: AuthLoginRequest): SocialResponse {
+    fun fetchSocialEmail(authLoginRequest: AuthLoginRequest): SocialResponse {
         return socialAuthServiceFactory.getService(authLoginRequest.socialType)
             .fetchAuthToken(authLoginRequest)
     }
 
 
-    private fun getUserByEmail(email: String): User {
+    fun getUserByEmail(email: String): User {
         return userPort.findByEmail(email)
             ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
     }
@@ -197,15 +186,14 @@ class AuthService(
         password = "${user.email}$secretKey"
     )
 
-    private fun formatSocialEmail(socialId: String, socialType: SocialType): String {
+    fun formatSocialEmail(socialId: String, socialType: SocialType): String {
         return "$socialId@${socialType.name}"
     }
 
 
-    private fun createSignUpToken(authDate: AuthData): String {
-
+    fun createSignUpToken(authData: AuthData): String {
         val token = UUID.randomUUID().toString()
-        authDataPort.saveAuthData(token, authDate)
+        authDataPort.saveAuthData(token, authData)
 
         return token
     }

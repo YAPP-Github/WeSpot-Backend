@@ -1,5 +1,6 @@
 package com.wespot.auth.service.jwt
 
+import com.wespot.DateTimeUtil.getExpirationLocalDateTime
 import com.wespot.auth.JwtTokenInfo.ACCESS_TOKEN
 import com.wespot.auth.JwtTokenInfo.EMAIL_CLAIM
 import com.wespot.auth.JwtTokenInfo.REFRESH_TOKEN
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import java.security.Key
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 
@@ -29,7 +33,6 @@ class JwtTokenProvider(
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     fun generateToken(authentication: Authentication): TokenResponse {
-
         val now = Date().time
         val accessTokenExpiresIn = Date(now + accessTokenExpireTime)
 
@@ -49,10 +52,13 @@ class JwtTokenProvider(
 
         return TokenResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken
+            refreshToken = refreshToken,
+            refreshTokenExpiredAt = getExpirationLocalDateTime(refreshTokenExpireTime).toString()
         )
-
     }
+
+
+
 
 }
 
