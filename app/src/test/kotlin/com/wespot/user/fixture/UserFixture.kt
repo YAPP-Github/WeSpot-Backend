@@ -1,6 +1,11 @@
 package com.wespot.user.fixture
 
+import com.wespot.auth.PrincipalDetails
+import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.user.*
+import com.wespot.user.dto.request.UpdateProfileRequest
+import org.springframework.security.authentication.TestingAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import java.time.LocalDateTime
 
 object UserFixture {
@@ -14,9 +19,10 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = "hello",
+        gender = "male",
         schoolId = 1L,
         grade = 1,
-        groupNumber = 1,
+        classNumber = 1,
         setting = Setting(),
         profile = Profile(0, "black", "image.png"),
         fcm = FCM(0, "token", LocalDateTime.now()),
@@ -37,4 +43,22 @@ object UserFixture {
         withdrawAt = LocalDateTime.now(),
     )
 
+    // SecurityContextHolder를 사용하여 테스트를 위한 User를 설정
+    fun setSecurityContextUser(user : User){
+        val mockUserDetail = PrincipalDetails(user)
+
+        val authentication = TestingAuthenticationToken(mockUserDetail, null)
+        SecurityContextHolder.getContext().authentication = authentication
+    }
+
+    fun updateProfileRequest(
+        introduction: String = "hello",
+        profile: Profile = Profile(0, "black", "image.png"),
+    ) = UpdateProfileRequest(
+        introduction = introduction,
+        profile = ProfileRequest(
+            backgroundColor = profile.backgroundColor,
+            iconUrl = profile.iconUrl
+        )
+    )
 }

@@ -10,7 +10,7 @@ class VotePersistenceAdapter(
     private val ballotJpaRepository: BallotJpaRepository
 ) : VotePort {
 
-    override fun findBySchoolIdAndGradeAndGroupNumberAndDate(
+    override fun findBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,
         groupNumber: Int,

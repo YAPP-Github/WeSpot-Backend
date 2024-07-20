@@ -23,7 +23,6 @@ class AuthController(
     fun signIn(
         @RequestBody request: AuthLoginRequest
     ): Any {
-
         val response = authService.socialAccess(request)
 
         return if (response is SignUpResponse) {
@@ -32,40 +31,33 @@ class AuthController(
             ResponseEntity.ok()
                 .body(response)
         }
-
     }
 
     @PostMapping("/signup")
     fun signUp(
         @RequestBody request: SignUpRequest
     ): ResponseEntity<TokenResponse> {
-
         val signUp = authService.signUp(request)
 
         return ResponseEntity.ok()
             .body(signUp)
-
     }
 
     @PostMapping("/reissue")
     fun reissue(
         @RequestBody request: RefreshTokenRequest
     ): ResponseEntity<TokenResponse> {
-
         val response = authService.reIssueToken(request)
 
         return ResponseEntity.ok()
             .body(response)
-
     }
 
     @PostMapping("/revoke")
     fun revoke(): ResponseEntity<Unit> {
-
         authService.revoke()
 
         return ResponseEntity.noContent().build()
-
     }
 
 }

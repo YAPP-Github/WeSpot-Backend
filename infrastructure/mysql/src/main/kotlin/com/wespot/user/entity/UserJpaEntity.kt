@@ -1,7 +1,6 @@
 package com.wespot.user.entity
 
 import com.wespot.common.BaseEntity
-import com.wespot.school.SchoolJpaEntity
 import com.wespot.user.Role
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
@@ -28,6 +27,9 @@ class UserJpaEntity(
     val introduction: String,
 
     @field: NotNull
+    val gender: String,
+
+    @field: NotNull
     val schoolId: Long,
 
     @field: NotNull
@@ -47,7 +49,7 @@ class UserJpaEntity(
     val grade: Int,
 
     @field: NotNull
-    val groupNumber: Int,
+    val classNumber: Int,
 
     @Embedded
     @field: NotNull
@@ -64,6 +66,6 @@ class UserJpaEntity(
     @Embedded
     val baseEntity: BaseEntity,
 
-) {
+    ) {
 
 }

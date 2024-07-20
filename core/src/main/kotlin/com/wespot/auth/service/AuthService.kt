@@ -106,10 +106,10 @@ class AuthService(
             password = passwordEncoder.encode(signUpToken.email + secretKey),
             schoolId = school.id,
             name = signUpRequest.name,
-            introduction = signUpRequest.introduction,
             grade = signUpRequest.grade,
-            groupNumber = signUpRequest.groupNumber,
-            social = social
+            groupNumber = signUpRequest.classNumber,
+            social = social,
+            gender = signUpRequest.gender
         )
     }
 
@@ -117,23 +117,23 @@ class AuthService(
         user: User,
         signUpRequest: SignUpRequest
     ) {
-        val userConsent = UserConsent.create(
-            consentType = signUpRequest.userConsent.consentType,
-            consentValue = signUpRequest.userConsent.consentValue,
-            consentedAt = LocalDateTime.now()
-        )
 
-        val profile = Profile.create(
-            backgroundColor = signUpRequest.profile.backgroundColor,
-            iconUrl = signUpRequest.profile.iconUrl
-        )
+        var userConsent: UserConsent? = null
+        if (signUpRequest.consents.marketing) {
+            val marketingConsent = UserConsent.create(
+                consentType = ConsentType.MARKETING,
+                consentValue = true,
+                consentedAt = LocalDateTime.now()
+            )
+            userConsent = userConsentPort.save(marketingConsent)
+        }
 
-        val savedUserConsent = userConsentPort.save(userConsent)
+        val profile = Profile.createInit()
         val savedProfile = profilePort.save(profile)
 
         val updatedUser = User.update(
             user = user,
-            userConsent = savedUserConsent,
+            userConsent = userConsent,
             profile = savedProfile,
             fcm = null,
             setting = null

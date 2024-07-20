@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 interface VotePort {
 
-    fun findBySchoolIdAndGradeAndGroupNumberAndDate(
+    fun findBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,
         groupNumber: Int,

@@ -6,7 +6,7 @@ interface UserPort {
 
     fun findById(userId: Long): User?
 
-    fun findAllBySchoolIdAndGradeAndGroupNumber(
+    fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
         grade: Int,
         groupNumber: Int

@@ -8,10 +8,11 @@ data class User(
     val password: String,
     val name: String,
     val introduction: String,
+    val gender: String,
     val role: Role,
     val schoolId: Long,
     val grade: Int,
-    val groupNumber: Int,
+    val classNumber: Int,
     val profile: Profile,
     val fcm: FCM?,
     val setting: Setting,
@@ -22,6 +23,30 @@ data class User(
     val withdrawAt: LocalDateTime?,
 ) {
 
+    fun updateProfile(
+        introduction: String,
+    ) =
+        User(
+            id = id,
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
+            gender = gender,
+            role = role,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = classNumber,
+            profile = profile,
+            fcm = fcm,
+            setting = setting,
+            social = social,
+            userConsent = userConsent,
+            createdAt = createdAt,
+            updatedAt = LocalDateTime.now(),
+            withdrawAt = withdrawAt,
+        )
+
     fun withdraw() =
         User(
             id = id,
@@ -29,10 +54,11 @@ data class User(
             password = "",
             name = "",
             introduction = "",
+            gender = gender,
             role = Role.GUEST,
             schoolId = schoolId,
             grade = grade,
-            groupNumber = groupNumber,
+            classNumber = classNumber,
             profile = profile,
             fcm = fcm,
             setting = setting,
@@ -53,22 +79,23 @@ data class User(
             email: String,
             password: String,
             name: String,
-            introduction: String,
             schoolId: Long,
             grade: Int,
             groupNumber: Int,
-            social: Social
+            social: Social,
+            gender: String
         ) =
             User(
                 id = 0L,
                 email = email,
                 password = password,
                 name = name,
-                introduction = introduction,
+                introduction = "",
+                gender = gender,
                 role = Role.USER,
                 schoolId = schoolId,
                 grade = grade,
-                groupNumber = groupNumber,
+                classNumber = groupNumber,
                 profile = Profile.create(
                     backgroundColor = "",
                     iconUrl = "",
@@ -92,22 +119,23 @@ data class User(
             fcm: FCM?,
             setting: Setting?,
             userConsent: UserConsent?
-        )=
+        ) =
             User(
                 id = user.id,
                 email = user.email,
                 password = user.password,
                 name = user.name,
                 introduction = user.introduction,
+                gender = user.gender,
                 role = user.role,
                 schoolId = user.schoolId,
                 grade = user.grade,
-                groupNumber = user.groupNumber,
-                profile = profile?: user.profile,
-                fcm = fcm?: user.fcm,
-                setting = setting?: user.setting,
+                classNumber = user.classNumber,
+                profile = profile ?: user.profile,
+                fcm = fcm ?: user.fcm,
+                setting = setting ?: user.setting,
                 social = user.social,
-                userConsent = userConsent?: user.userConsent,
+                userConsent = userConsent ?: user.userConsent,
                 createdAt = user.createdAt,
                 updatedAt = LocalDateTime.now(),
                 withdrawAt = user.withdrawAt
