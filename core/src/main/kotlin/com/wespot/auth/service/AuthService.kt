@@ -128,10 +128,7 @@ class AuthService(
             userConsent = userConsentPort.save(marketingConsent)
         }
 
-        val profile = Profile.create(
-            backgroundColor = "",
-            iconUrl = ""
-        )
+        val profile = Profile.createInit()
         val savedProfile = profilePort.save(profile)
 
         val updatedUser = User.update(
