@@ -4,19 +4,19 @@ import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.BackgroundListResponse
 import com.wespot.user.dto.response.CharacterListResponse
 import com.wespot.user.dto.response.UserResponse
-import com.wespot.user.service.UserService
+import com.wespot.user.port.`in`.UserUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/users")
 class UserController(
-    private val userService: UserService
+    private val userUseCase: UserUseCase
 ) {
 
     @GetMapping("/me")
     fun me(): ResponseEntity<UserResponse> {
-        val response = userService.me()
+        val response = userUseCase.me()
 
         return ResponseEntity.ok()
             .body(response)
@@ -26,7 +26,7 @@ class UserController(
     fun updateProfile(
         @RequestBody profile: UpdateProfileRequest
     ): ResponseEntity<Unit> {
-        userService.updateProfile(profile)
+        userUseCase.updateProfile(profile)
 
         return ResponseEntity.noContent()
             .build()
@@ -34,7 +34,7 @@ class UserController(
 
     @GetMapping("/backgrounds")
     fun backgrounds(): ResponseEntity<BackgroundListResponse> {
-        val response = userService.backgrounds()
+        val response = userUseCase.backgrounds()
 
         return ResponseEntity.ok()
             .body(response)
@@ -42,7 +42,7 @@ class UserController(
 
     @GetMapping("/characters")
     fun characters(): ResponseEntity<CharacterListResponse> {
-        val response = userService.characters()
+        val response = userUseCase.characters()
 
         return ResponseEntity.ok()
             .body(response)
