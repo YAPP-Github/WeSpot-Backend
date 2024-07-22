@@ -1,23 +1,11 @@
 package com.wespot.vote.presentation
 
 import com.wespot.common.presentation.IntegrationTest
-import com.wespot.user.fixture.UserFixture
-import com.wespot.user.mapper.UserMapper
 import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.VoteJpaRepository
-import com.wespot.vote.VoteMapper
-import com.wespot.vote.fixture.VoteFixture
-import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
-import com.wespot.voteoption.VoteOptionMapper
-import com.wespot.voteoption.fixture.VoteOptionFixture
-import io.kotest.matchers.shouldBe
-import io.restassured.RestAssured
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import java.util.*
 
 class VoteControllerTest(
     @Autowired
