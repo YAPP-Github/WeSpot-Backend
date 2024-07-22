@@ -31,16 +31,13 @@ class VoteTest() : BehaviorSpec({
             }
         }
 
-        `when`("voteNumber가 1일 때의 오늘의 질문지를") {
+        `when`("오늘의 질문지를 뽑아낼 때, 범위를 벗어나는 경우") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(1, Collections.emptyList())
-            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions).voteOptions
+            val throwingCallable = { vote.findVoteOptionsByVoteDate(voteOptions) }
 
-            then("정상적으로 반환한다.") {
-                todayVoteOptions[0].id shouldBe 6
-                todayVoteOptions[1].id shouldBe 7
-                todayVoteOptions[2].id shouldBe 8
-                todayVoteOptions[3].id shouldBe 9
-                todayVoteOptions[4].id shouldBe 1
+            then("예외가 발생한다.") {
+                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                shouldThrow shouldHaveMessage "선택지의 개수가 5의 배수가 아닙니다."
             }
         }
     }

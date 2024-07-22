@@ -17,19 +17,23 @@ data class Vote(
     companion object {
         private val NUMBER_OF_VOTE_USERS = 5
         private val NUMBER_OF_VOTE_OPTIONS = 5
-        private val MOVE_TO_NEXT_VOTE_OPTION = 1
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
         validateVoteOptionsSize(allVoteOptions)
-        val voteOptionsByDate: MutableList<VoteOption> = mutableListOf()
-        var voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
-        while (voteOptionsByDate.size < NUMBER_OF_VOTE_OPTIONS) {
-            voteOptionsByDate.add(allVoteOptions[voteOptionIndex])
-            voteOptionIndex = (voteOptionIndex + MOVE_TO_NEXT_VOTE_OPTION) % allVoteOptions.size
-        }
+        val voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
+        validateVoteOptionsSizeMultipleOf5(allVoteOptions.size, voteOptionIndex)
+        val voteOptionsByVoteDate = allVoteOptions.subList(voteOptionIndex, voteOptionIndex + NUMBER_OF_VOTE_OPTIONS)
+        return VoteOptionsByVoteDate.of(date, voteOptionsByVoteDate)
+    }
 
-        return VoteOptionsByVoteDate(date, voteOptionsByDate.toList())
+    private fun validateVoteOptionsSizeMultipleOf5(
+        allVoteOptionsSize: Int,
+        voteOptionIndex: Int
+    ) {
+        if (allVoteOptionsSize <= voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
+            throw IllegalArgumentException("선택지의 개수가 5의 배수가 아닙니다.")
+        }
     }
 
     private fun validateVoteOptionsSize(allVoteOptions: List<VoteOption>) {
@@ -39,7 +43,7 @@ data class Vote(
     }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
-        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id!!)
+        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
@@ -80,8 +84,8 @@ data class Vote(
         val rankedVoteResults: Map<Long, List<VoteRecord>> =
             getBallots().groupBy { it.voteOptionId }
                 .mapValues { BallotsAggregator.of(it.key, it.value) }
-                .mapValues {
-                    it.value.getRankedResults()
+                .mapValues { entry ->
+                    entry.value.getRankedResults()
                         .filter { usersAssociateBy.containsKey(it.userId) }
                         .map { VoteRecord.of(usersAssociateBy[it.userId]!!, it) }
                 }
