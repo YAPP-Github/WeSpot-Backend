@@ -12,17 +12,17 @@ data class VoteMetrics(
     companion object {
 
         fun createInitialState(userId: Long): VoteMetrics {
-            return VoteMetrics(userId, LocalDateTime.MIN, 0, false)
+            return VoteMetrics(userId, LocalDateTime.MIN, 0, true)
         }
 
     }
 
-    fun recordVote(ballot: Ballot): VoteMetrics {
+    fun recordBallot(ballot: Ballot): VoteMetrics {
         return VoteMetrics(
             userId = userId,
             lastVotedDateTime = maxOf(lastVotedDateTime, ballot.createdAt),
             voteCount = voteCount + 1,
-            isReceiverRead = isReceiverRead || ballot.isReceiverRead
+            isReceiverRead = isReceiverRead && ballot.isReceiverRead
         )
     }
 
