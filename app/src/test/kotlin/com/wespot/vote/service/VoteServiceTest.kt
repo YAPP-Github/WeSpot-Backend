@@ -29,7 +29,7 @@ import kotlin.test.Test
 @SpringBootTest
 class VoteServiceTest(
     @Autowired
-    private var voteService: SaveVoteService,
+    private var voteService: SavedVoteService,
     @Autowired
     private var databaseCleanup: DatabaseCleanup,
     @Autowired
