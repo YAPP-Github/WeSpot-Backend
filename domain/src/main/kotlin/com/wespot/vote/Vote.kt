@@ -85,7 +85,7 @@ data class Vote(
             getBallots().groupBy { it.voteOptionId }
                 .mapValues { BallotsAggregator.of(it.key, it.value) }
                 .mapValues { entry ->
-                    entry.value.getRankedResults()
+                    entry.value.getRankResults()
                         .filter { usersAssociateBy.containsKey(it.userId) }
                         .map { VoteRecord.of(usersAssociateBy[it.userId]!!, it) }
                 }
