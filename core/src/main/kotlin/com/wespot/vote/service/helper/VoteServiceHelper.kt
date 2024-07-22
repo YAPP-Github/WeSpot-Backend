@@ -1,5 +1,6 @@
 package com.wespot.vote.service.helper
 
+import com.wespot.auth.service.SecurityUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
@@ -10,6 +11,10 @@ import com.wespot.voteoption.VoteOption
 import java.time.LocalDate
 
 object VoteServiceHelper {
+
+    fun findLoginUserId(userPort: UserPort): Long {
+        return SecurityUtils.getLoginUserId(userPort)
+    }
 
     fun findUser(userPort: UserPort, userId: Long): User {
         return userPort.findById(userId)

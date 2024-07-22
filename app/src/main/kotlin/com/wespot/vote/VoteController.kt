@@ -25,37 +25,34 @@ class VoteController(
 ) {
 
     @GetMapping("/options")
-    fun getVoteOptions(userId: Long): ResponseEntity<VoteItems> {
-        val responses = savedVoteUseCase.getVoteOptions(userId)
+    fun getVoteOptions(): ResponseEntity<VoteItems> {
+        val responses = savedVoteUseCase.getVoteOptions()
         return ResponseEntity.ok(responses)
     }
 
     @PostMapping
     fun createVote(
-        userId: Long,
         @RequestBody requests: VoteRequests
     ): ResponseEntity<SaveVoteResponse> {
-        val savedId: SaveVoteResponse = savedVoteUseCase.saveVote(userId, requests)
+        val savedId: SaveVoteResponse = savedVoteUseCase.saveVote(requests)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(savedId)
     }
 
     @GetMapping
     fun getTop5VoteResults(
-        userId: Long,
         @RequestParam date: LocalDate
     ): ResponseEntity<VoteResultResponsesOfTop5> {
-        val responses: VoteResultResponsesOfTop5 = voteRankUseCase.getVoteResultsOfTop5(userId, date)
+        val responses: VoteResultResponsesOfTop5 = voteRankUseCase.getVoteResultsOfTop5(date)
 
         return ResponseEntity.ok(responses)
     }
 
     @GetMapping("/tops")
     fun getTop1VoteResults(
-        userId: Long,
         @RequestParam date: LocalDate
     ): ResponseEntity<VoteResultResponsesOfTop1> {
-        val responses: VoteResultResponsesOfTop1 = voteRankUseCase.getVoteResultsOfTop1(userId, date)
+        val responses: VoteResultResponsesOfTop1 = voteRankUseCase.getVoteResultsOfTop1(date)
 
         return ResponseEntity.ok(responses)
     }

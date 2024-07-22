@@ -19,14 +19,14 @@ class VoteRankService(
     private val userPort: UserPort,
 ) : VoteRankUseCase {
 
-    override fun getVoteResultsOfTop5(userId: Long, date: LocalDate): VoteResultResponsesOfTop5 {
-        return VoteResultResponsesOfTop5.from(getRankedVoteResults(userId, date))
+    override fun getVoteResultsOfTop5(date: LocalDate): VoteResultResponsesOfTop5 {
+        return VoteResultResponsesOfTop5.from(getRankedVoteResults(date))
     }
 
     private fun getRankedVoteResults(
-        userId: Long,
         date: LocalDate
     ): Map<VoteOption, List<VoteRecord>> {
+        val userId=VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
@@ -36,8 +36,8 @@ class VoteRankService(
         return rankedVoteResults
     }
 
-    override fun getVoteResultsOfTop1(userId: Long, date: LocalDate): VoteResultResponsesOfTop1 {
-        return VoteResultResponsesOfTop1.from(getRankedVoteResults(userId, date))
+    override fun getVoteResultsOfTop1(date: LocalDate): VoteResultResponsesOfTop1 {
+        return VoteResultResponsesOfTop1.from(getRankedVoteResults(date))
     }
 
 }

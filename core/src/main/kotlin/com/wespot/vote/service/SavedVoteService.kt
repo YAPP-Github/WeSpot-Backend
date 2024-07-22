@@ -23,10 +23,12 @@ class SavedVoteService(
     private val userPort: UserPort,
 ) : SavedVoteUseCase {
 
-    override fun getVoteOptions(userId: Long): VoteItems {
+    override fun getVoteOptions(): VoteItems {
+        val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user: User = VoteServiceHelper.findUser(userPort, userId)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val today = LocalDate.now()
+
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
         val todayVoteOptions: VoteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote)
         val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
@@ -39,11 +41,11 @@ class SavedVoteService(
 
     @Transactional
     override fun saveVote(
-        userId: Long,
         requests: VoteRequests
     ): SaveVoteResponse {
         validateRequestsSize(requests.voteRequests.size)
         validateUserIdsInRequests(requests.voteRequests)
+        val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user: User = VoteServiceHelper.findUser(userPort, userId)
         val today = LocalDate.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)

@@ -6,8 +6,8 @@ import java.time.LocalDate
 
 interface VoteRankUseCase {
 
-    fun getVoteResultsOfTop5(userId: Long, date: LocalDate): VoteResultResponsesOfTop5
+    fun getVoteResultsOfTop5(date: LocalDate): VoteResultResponsesOfTop5
 
-    fun getVoteResultsOfTop1(userId: Long, date: LocalDate): VoteResultResponsesOfTop1
+    fun getVoteResultsOfTop1(date: LocalDate): VoteResultResponsesOfTop1
 
 }
