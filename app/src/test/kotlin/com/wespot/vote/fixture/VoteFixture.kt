@@ -12,7 +12,7 @@ object VoteFixture {
         id = 1L,
         schoolId = 1L,
         grade = 1,
-        groupNumber = 1,
+        classNumber = 1,
         voteNumber = 0,
         date = LocalDate.now(),
         ballots = Ballots.from(Collections.emptyList())
@@ -22,7 +22,7 @@ object VoteFixture {
         id = 1L,
         schoolId = 1L,
         grade = 1,
-        groupNumber = 1,
+        classNumber = 1,
         voteNumber = voteNumber,
         date = LocalDate.now(),
         ballots = Ballots.from(ballots)
@@ -33,7 +33,7 @@ object VoteFixture {
             id = id,
             schoolId = 1L,
             grade = 1,
-            groupNumber = 1,
+            classNumber = 1,
             voteNumber = voteNumber,
             date = LocalDate.now(),
             ballots = Ballots.from(ballots)

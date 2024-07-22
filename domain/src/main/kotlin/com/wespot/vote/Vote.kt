@@ -8,7 +8,7 @@ data class Vote(
     val id: Long,
     val schoolId: Long,
     val grade: Int,
-    val groupNumber: Int,
+    val classNumber: Int,
     val voteNumber: Int,
     val date: LocalDate,
     val ballots: Ballots,

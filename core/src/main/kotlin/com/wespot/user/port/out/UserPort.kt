@@ -9,7 +9,7 @@ interface UserPort {
     fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int
+        classNumber: Int
     ): List<User>
 
     fun findIdsByIdIn(ids: List<Long>): List<Long>

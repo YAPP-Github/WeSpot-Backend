@@ -25,7 +25,7 @@ object VoteServiceHelper {
         return userPort.findAllBySchoolIdAndGradeAndClassNumber(
             schoolId = user.schoolId,
             grade = user.grade,
-            groupNumber = user.classNumber
+            classNumber = user.classNumber
         )
     }
 
@@ -33,7 +33,7 @@ object VoteServiceHelper {
         return votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
             schoolId = user.schoolId,
             grade = user.grade,
-            groupNumber = user.classNumber,
+            classNumber = user.classNumber,
             date = date
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
