@@ -11,7 +11,7 @@ import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
-import com.wespot.voteoption.VoteOption
+import com.wespot.vote.service.helper.VoteServiceHelper
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -24,45 +24,17 @@ class SavedVoteService(
 ) : SavedVoteUseCase {
 
     override fun getVoteOptions(userId: Long): VoteItems {
-        val user: User = findUser(userId)
-        val classmates = findClassmatesByUser(user)
+        val user: User = VoteServiceHelper.findUser(userPort, userId)
+        val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val today = LocalDate.now()
-        val vote: Vote = findVoteByUser(user, today)
-        val todayVoteOptions: VoteOptionsByVoteDate = findVoteOptionsByVoteDate(vote)
-        val usersForVote: List<User> = vote.findUsersForVote(classmates = classmates, user = user)
+        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
+        val todayVoteOptions: VoteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote)
+        val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
 
         return VoteItems.of(
             classmates = usersForVote,
             voteOptions = todayVoteOptions.voteOptions
         )
-    }
-
-    private fun findUser(userId: Long): User {
-        return userPort.findById(userId)
-            ?: throw IllegalArgumentException("ID에 해당하는 사용자가 존재하지 않습니다.")
-    }
-
-    private fun findClassmatesByUser(user: User): List<User> {
-        return userPort.findAllBySchoolIdAndGradeAndClassNumber(
-            schoolId = user.schoolId,
-            grade = user.grade,
-            groupNumber = user.classNumber
-        )
-    }
-
-    private fun findVoteByUser(user: User, date: LocalDate): Vote {
-        return votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
-            schoolId = user.schoolId,
-            grade = user.grade,
-            groupNumber = user.classNumber,
-            date = date
-        ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
-    }
-
-    private fun findVoteOptionsByVoteDate(vote: Vote): VoteOptionsByVoteDate {
-        val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
-
-        return vote.findVoteOptionsByVoteDate(voteOptions)
     }
 
     @Transactional
@@ -72,13 +44,13 @@ class SavedVoteService(
     ): SaveVoteResponse {
         validateRequestsSize(requests.voteRequests.size)
         validateUserIdsInRequests(requests.voteRequests)
-        val user: User = findUser(userId)
+        val user: User = VoteServiceHelper.findUser(userPort, userId)
         val today = LocalDate.now()
-        val vote: Vote = findVoteByUser(user = user, date = today)
+        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
         requests.voteRequests.stream()
             .forEach { request ->
                 vote.addBallot(
-                    voteOptionsByVoteDate = findVoteOptionsByVoteDate(vote),
+                    voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote),
                     voteOptionId = request.voteOptionId,
                     senderId = userId,
                     receiverId = request.userId
@@ -98,11 +70,8 @@ class SavedVoteService(
         val userIds: List<Long> = requests.stream()
             .map { it.userId }
             .toList()
-        validateUserIds(userIds)
-    }
-
-    private fun validateUserIds(userIds: List<Long>) {
         val foundUserIds = userPort.findIdsByIdIn(userIds)
+
         if (foundUserIds.size == userIds.size) {
             return
         }

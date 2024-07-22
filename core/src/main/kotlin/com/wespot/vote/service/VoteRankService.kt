@@ -32,6 +32,7 @@ class VoteRankService(
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
         val voteOptions = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote)
         val rankedVoteResults = vote.getRankedVoteResults(voteOptions, classmates)
+
         return rankedVoteResults
     }
 
