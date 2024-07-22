@@ -11,6 +11,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import java.time.LocalDateTime
 import java.util.*
 
 class VoteTest() : BehaviorSpec({
@@ -144,6 +145,134 @@ class VoteTest() : BehaviorSpec({
             }
         }
 
+    }
+
+    given("투표 결과를 통해") {
+        val ballots = listOf(
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAt(
+                1L,
+                1L,
+                2L,
+                1L,
+                LocalDateTime.now().minusHours(10)
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAt(
+                1L,
+                1L,
+                3L,
+                2L,
+                LocalDateTime.now().minusHours(8)
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 2L, 1L, 3L),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 3L, 5L, 4L),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 4L, 4L, 6L),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 6L, 4L, 5L),
+        )
+
+        `when`("등수를 집계할 때, 존재하지 않는 유저의 통계는") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("집계하지 않는다.") {
+                val forthVoteOption = voteOptions[3]
+                rankedVoteResults[forthVoteOption]!!.size shouldBe 0
+            }
+        }
+
+        `when`("등수를 집계할 때, 존재하지 않는 VoteOption에 대해") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("집계하지 않는다.") {
+                rankedVoteResults.containsKey(voteOptions[5]) shouldBe false
+            }
+        }
+
+        `when`("등수를 집계할 때, VoteOption의 Id로") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("정렬되어 집계한다.") {
+                val entries = rankedVoteResults.toList()
+                entries[0].first.id shouldBe 1
+                entries[1].first.id shouldBe 2
+                entries[2].first.id shouldBe 3
+                entries[3].first.id shouldBe 4
+                entries[4].first.id shouldBe 5
+            }
+        }
+
+        `when`("등수를 집계할 때, 주어진 User를 매핑해서") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("결과를 반환한다.") {
+                val entries = rankedVoteResults.toList()
+                entries[0].second.size shouldBe 2
+                entries[0].second[0].user.id shouldBe 2
+                entries[0].second[1].user.id shouldBe 1
+                entries[1].second.size shouldBe 1
+                entries[1].second[0].user.id shouldBe 3
+                entries[2].second.size shouldBe 1
+                entries[2].second[0].user.id shouldBe 4
+                entries[3].second.size shouldBe 0
+                entries[4].second.size shouldBe 0
+            }
+        }
+
+        `when`("등수를 집계할 때, 주어진 VoteOption을 매핑해서") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("결과를 반환한다.") {
+                val entries = rankedVoteResults.toList()
+                entries[0].first shouldBe voteOptionsByVoteDate.voteOptions[0]
+                entries[1].first shouldBe voteOptionsByVoteDate.voteOptions[1]
+                entries[2].first shouldBe voteOptionsByVoteDate.voteOptions[2]
+                entries[3].first shouldBe voteOptionsByVoteDate.voteOptions[3]
+                entries[4].first shouldBe voteOptionsByVoteDate.voteOptions[4]
+            }
+        }
+
+        `when`("등수를 집계할 때, 등수도 함께 포함해서") {
+            val users = createUserOptionByCount(5)
+            val voteOptions = createVoteOptionByCount(10)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+
+            then("결과를 반환한다.") {
+                val entries = rankedVoteResults.toList()
+                entries[0].second.size shouldBe 2
+                entries[0].second[0].user.id shouldBe 2
+                entries[0].second[0].rate.value shouldBe Int.MAX_VALUE
+                entries[0].second[1].user.id shouldBe 1
+                entries[0].second[1].rate.value shouldBe Int.MAX_VALUE
+                entries[1].second.size shouldBe 1
+                entries[1].second[0].user.id shouldBe 3
+                entries[1].second[0].rate.value shouldBe Int.MAX_VALUE
+                entries[2].second.size shouldBe 1
+                entries[2].second[0].user.id shouldBe 4
+                entries[2].second[0].rate.value shouldBe Int.MAX_VALUE
+                entries[3].second.size shouldBe 0
+                entries[4].second.size shouldBe 0
+            }
+        }
     }
 
 })
