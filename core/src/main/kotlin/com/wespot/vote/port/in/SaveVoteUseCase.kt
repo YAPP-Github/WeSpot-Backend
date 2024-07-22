@@ -4,7 +4,7 @@ import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 
-interface VoteUseCase {
+interface SaveVoteUseCase {
 
     fun getVoteOptions(userId: Long): VoteItems
 

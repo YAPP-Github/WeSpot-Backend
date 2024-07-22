@@ -7,7 +7,7 @@ import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
-import com.wespot.vote.port.`in`.VoteUseCase
+import com.wespot.vote.port.`in`.SaveVoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
-class VoteService(
+class SaveVoteService(
     private val votePort: VotePort,
     private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
-) : VoteUseCase {
+) : SaveVoteUseCase {
 
     @Transactional
     override fun getVoteOptions(userId: Long): VoteItems {
