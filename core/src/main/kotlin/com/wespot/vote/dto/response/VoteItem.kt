@@ -4,7 +4,7 @@ import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
 
 data class VoteItem(
-    val user: UserResponse,
+    val user: VoteUserResponse,
     val voteOptions: List<VoteOptionResponse>
 ) {
 
@@ -12,7 +12,7 @@ data class VoteItem(
 
         fun of(classmate: User, voteOptions: List<VoteOption>): VoteItem {
             return VoteItem(
-                user = UserResponse.from(classmate),
+                user = VoteUserResponse.from(classmate),
                 voteOptions = voteOptions.stream()
                     .map { voteOption -> VoteOptionResponse.from(voteOption) }
                     .toList()
