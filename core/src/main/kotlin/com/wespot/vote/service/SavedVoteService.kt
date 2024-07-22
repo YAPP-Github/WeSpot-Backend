@@ -3,6 +3,7 @@ package com.wespot.vote.service
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
+import com.wespot.vote.VoteOptionsByVoteDate
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
@@ -28,12 +29,12 @@ class SavedVoteService(
         val classmates = findClassmatesByUser(user)
         val today = LocalDate.now()
         val vote: Vote = findVoteByUser(user, today)
-        val todayVoteOptions: List<VoteOption> = findTodayVoteOptions(vote)
+        val todayVoteOptions: VoteOptionsByVoteDate = findVoteOptionsByVoteDate(vote)
         val usersForVote: List<User> = vote.findUsersForVote(classmates = classmates, user = user)
 
         return VoteItems.of(
             classmates = usersForVote,
-            voteOptions = todayVoteOptions
+            voteOptions = todayVoteOptions.voteOptions
         )
     }
 
@@ -59,10 +60,10 @@ class SavedVoteService(
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
-    private fun findTodayVoteOptions(vote: Vote): List<VoteOption> {
+    private fun findVoteOptionsByVoteDate(vote: Vote): VoteOptionsByVoteDate {
         val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
 
-        return vote.findTodayVoteOptions(voteOptions)
+        return vote.findVoteOptionsByVoteDate(voteOptions)
     }
 
     @Transactional
@@ -78,7 +79,7 @@ class SavedVoteService(
         requests.voteRequests.stream()
             .forEach { request ->
                 vote.addBallot(
-                    todayVoteOptionsIds = findTodayVoteOptionIds(vote),
+                    voteOptionsByVoteDate = findVoteOptionsByVoteDate(vote),
                     voteOptionId = request.voteOptionId,
                     senderId = userId,
                     receiverId = request.userId
@@ -107,12 +108,6 @@ class SavedVoteService(
             return
         }
         throw IllegalArgumentException("투표하고자 하는 회원이 존재하지 않습니다.")
-    }
-
-    private fun findTodayVoteOptionIds(vote: Vote): List<Long> {
-        return findTodayVoteOptions(vote).stream()
-            .map { it.id }
-            .toList()
     }
 
 }

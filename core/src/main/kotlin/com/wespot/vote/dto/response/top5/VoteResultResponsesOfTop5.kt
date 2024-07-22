@@ -1,5 +1,6 @@
 package com.wespot.vote.dto.response.top5
 
+import com.wespot.vote.VoteRecord
 import com.wespot.voteoption.VoteOption
 
 data class VoteResultResponsesOfTop5(

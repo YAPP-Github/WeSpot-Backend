@@ -20,26 +20,26 @@ data class Vote(
         private val MOVE_TO_NEXT_VOTE_OPTION = 1
     }
 
-    fun findTodayVoteOptions(voteOptions: List<VoteOption>): List<VoteOption> {
-        validateVoteOptionsSize(voteOptions)
-        val todayVoteOptions: MutableList<VoteOption> = mutableListOf()
-        var voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % voteOptions.size
-        while (todayVoteOptions.size < NUMBER_OF_VOTE_OPTIONS) {
-            todayVoteOptions.add(voteOptions[voteOptionIndex])
-            voteOptionIndex = (voteOptionIndex + MOVE_TO_NEXT_VOTE_OPTION) % voteOptions.size
+    fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
+        validateVoteOptionsSize(allVoteOptions)
+        val voteOptionsByDate: MutableList<VoteOption> = mutableListOf()
+        var voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
+        while (voteOptionsByDate.size < NUMBER_OF_VOTE_OPTIONS) {
+            voteOptionsByDate.add(allVoteOptions[voteOptionIndex])
+            voteOptionIndex = (voteOptionIndex + MOVE_TO_NEXT_VOTE_OPTION) % allVoteOptions.size
         }
 
-        return todayVoteOptions.toList()
+        return VoteOptionsByVoteDate(date, voteOptionsByDate.toList())
     }
 
-    private fun validateVoteOptionsSize(voteOptions: List<VoteOption>) {
-        if (voteOptions.size < 5) {
+    private fun validateVoteOptionsSize(allVoteOptions: List<VoteOption>) {
+        if (allVoteOptions.size < 5) {
             throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.")
         }
     }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
-        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
+        val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id!!)
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
@@ -49,12 +49,12 @@ data class Vote(
     private fun isNotMe(classmate: User, user: User) = classmate != user
 
     fun addBallot(
-        todayVoteOptionsIds: List<Long>,
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         voteOptionId: Long,
         senderId: Long,
         receiverId: Long
     ) {
-        validateVoteOption(todayVoteOptionsIds, voteOptionId)
+        voteOptionsByVoteDate.validateVoteOption(voteOptionId)
         ballots.add(
             Ballot.of(
                 voteId = id,
@@ -65,21 +65,31 @@ data class Vote(
         )
     }
 
-    private fun validateVoteOption(
-        todayVoteOptionsIds: List<Long>,
-        voteOptionId: Long
-    ) {
-        if (todayVoteOptionsIds.contains(voteOptionId)) {
-            return
-        }
-        throw IllegalArgumentException("오늘 제공된 질문지만 선택해 투표할 수 있습니다.")
-    }
-
     fun getBallots(): List<Ballot> {
         return ballots.ballots
             .map { it.value }
             .flatMap { it.values }
             .toList()
+    }
+
+    fun getRankedVoteResults(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        users: List<User>
+    ): Map<VoteOption, List<VoteRecord>> {
+        val usersAssociateBy = users.associateBy { it.id }
+        val rankedVoteResults: Map<Long, List<VoteRecord>> =
+            getBallots().groupBy { it.voteOptionId }
+                .mapValues { BallotsAggregator.of(it.key, it.value) }
+                .mapValues {
+                    it.value.getRankedResults()
+                        .filter { usersAssociateBy.containsKey(it.userId) }
+                        .map { VoteRecord.of(usersAssociateBy[it.userId]!!, it) }
+                }
+                .toMap(LinkedHashMap())
+
+        return voteOptionsByVoteDate.voteOptions
+            .associateWith { rankedVoteResults[it.id] ?: emptyList() }
+            .toMap(LinkedHashMap())
     }
 
 }

@@ -20,7 +20,7 @@ class VoteTest() : BehaviorSpec({
 
         `when`("voteNumber가 0일 때의 오늘의 질문지를") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, Collections.emptyList())
-            val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions).voteOptions
 
             then("정상적으로 반환한다.") {
                 todayVoteOptions[0].id shouldBe 1
@@ -33,7 +33,7 @@ class VoteTest() : BehaviorSpec({
 
         `when`("voteNumber가 1일 때의 오늘의 질문지를") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(1, Collections.emptyList())
-            val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions).voteOptions
 
             then("정상적으로 반환한다.") {
                 todayVoteOptions[0].id shouldBe 6
@@ -50,7 +50,7 @@ class VoteTest() : BehaviorSpec({
 
         `when`("5개 미만인 경우") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, Collections.emptyList())
-            val throwingCallable = { vote.findTodayVoteOptions(voteOptions) }
+            val throwingCallable = { vote.findVoteOptionsByVoteDate(voteOptions) }
 
             then("예외를 발생시킨다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -66,10 +66,7 @@ class VoteTest() : BehaviorSpec({
         val voteOptions = createVoteOptionByCount(10)
         `when`("중복된 투표를 하는 경우") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
-            val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
-                .stream()
-                .map { it.id }
-                .toList()
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions)
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
@@ -86,10 +83,7 @@ class VoteTest() : BehaviorSpec({
 
         `when`("중복되지 않은 투표를 하는 경우") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
-            val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
-                .stream()
-                .map { it.id }
-                .toList()
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions)
 
             then("정상적으로 투표가 진행된다.") {
                 shouldNotThrow<IllegalArgumentException> {
@@ -105,10 +99,7 @@ class VoteTest() : BehaviorSpec({
 
         `when`("오늘의 질문지가 아닌 질문지를 선택한 경우") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
-            val todayVoteOptions = vote.findTodayVoteOptions(voteOptions)
-                .stream()
-                .map { it.id }
-                .toList()
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions)
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
