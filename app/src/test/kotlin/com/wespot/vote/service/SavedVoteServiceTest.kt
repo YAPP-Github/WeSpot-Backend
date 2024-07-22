@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
-class VoteServiceTest(
+class SavedVoteServiceTest(
     @Autowired
     private var voteService: SavedVoteService,
     @Autowired

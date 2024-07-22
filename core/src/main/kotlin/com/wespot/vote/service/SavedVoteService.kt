@@ -23,7 +23,6 @@ class SavedVoteService(
     private val userPort: UserPort,
 ) : SavedVoteUseCase {
 
-    @Transactional
     override fun getVoteOptions(userId: Long): VoteItems {
         val user: User = findUser(userId)
         val classmates = findClassmatesByUser(user)
