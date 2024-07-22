@@ -13,6 +13,9 @@ data class VoteOptionsByVoteDate(
             if (voteOptions.size != 5) {
                 throw IllegalArgumentException("선택지는 5개가 주어져야 합니다.")
             }
+            if (LocalDate.now() < date) {
+                throw IllegalArgumentException("미래의 선택지는 정할 수 없습니다.")
+            }
 
             return VoteOptionsByVoteDate(date, voteOptions)
         }
