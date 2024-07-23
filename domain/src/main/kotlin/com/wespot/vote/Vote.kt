@@ -59,18 +59,10 @@ data class Vote(
 
     fun getRankedVoteResults(
         voteOptionsByVoteDate: VoteOptionsByVoteDate,
-        users: List<User>
+        users: List<User>,
+        rankCalculateService: RankCalculateService
     ): Map<VoteOption, List<VoteRecord>> {
-        val usersAssociateBy = users.associateBy { it.id }
-        val rankedVoteResults: Map<Long, List<VoteRecord>> =
-            getBallots().groupBy { it.voteOptionId }
-                .mapValues { BallotsAggregator.of(it.key, it.value) }
-                .mapValues { entry ->
-                    entry.value.getRankResults()
-                        .filter { usersAssociateBy.containsKey(it.userId) }
-                        .map { VoteRecord.of(usersAssociateBy[it.userId]!!, it) }
-                }
-                .toMap(LinkedHashMap())
+        val rankedVoteResults = rankCalculateService.calculate(users, getBallots())
 
         return voteOptionsByVoteDate.voteOptions
             .associateWith { rankedVoteResults[it.id] ?: emptyList() }

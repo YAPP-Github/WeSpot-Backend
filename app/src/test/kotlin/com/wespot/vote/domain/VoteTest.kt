@@ -2,6 +2,7 @@ package com.wespot.vote.domain
 
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
+import com.wespot.vote.RankCalculateService
 import com.wespot.vote.fixture.BallotFixture
 import com.wespot.vote.fixture.VoteFixture
 import com.wespot.voteoption.VoteOption
@@ -174,7 +175,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("집계하지 않는다.") {
                 val forthVoteOption = voteOptions[3]
@@ -187,7 +188,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("집계하지 않는다.") {
                 rankedVoteResults.containsKey(voteOptions[5]) shouldBe false
@@ -199,7 +200,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("정렬되어 집계한다.") {
                 val entries = rankedVoteResults.toList()
@@ -216,7 +217,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("결과를 반환한다.") {
                 val entries = rankedVoteResults.toList()
@@ -237,7 +238,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("결과를 반환한다.") {
                 val entries = rankedVoteResults.toList()
@@ -254,7 +255,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users)
+            val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("결과를 반환한다.") {
                 val entries = rankedVoteResults.toList()
