@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 object BallotFixture {
 
     fun create() = Ballot(
-        id = 1L,
+        id = 0L,
         voteId = 1L,
         voteOptionId = 1L,
         senderId = 1L,
@@ -35,7 +35,7 @@ object BallotFixture {
         voteOptionId: Long,
         senderId: Long,
         receiverId: Long,
-        createdAt:LocalDateTime
+        createdAt: LocalDateTime
     ) = Ballot(
         id = 0L,
         voteId = voteId,
@@ -44,6 +44,23 @@ object BallotFixture {
         receiverId = receiverId,
         createdAt = createdAt,
         isReceiverRead = false
+    )
+
+    fun createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+        voteId: Long,
+        voteOptionId: Long,
+        senderId: Long,
+        receiverId: Long,
+        createdAt: LocalDateTime,
+        isReceiverRead: Boolean
+    ) = Ballot(
+        id = 0L,
+        voteId = voteId,
+        voteOptionId = voteOptionId,
+        senderId = senderId,
+        receiverId = receiverId,
+        createdAt = createdAt,
+        isReceiverRead = isReceiverRead
     )
 
 }
