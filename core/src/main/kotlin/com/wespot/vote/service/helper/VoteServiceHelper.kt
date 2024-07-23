@@ -44,4 +44,22 @@ object VoteServiceHelper {
         return vote.findVoteOptionsByVoteDate(voteOptions)
     }
 
+    fun findVotesOrderByDateDesc(votePort: VotePort, user: User): List<Vote> {
+        return votePort.findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+            schoolId = user.schoolId,
+            grade = user.grade,
+            classNumber = user.classNumber
+        )
+    }
+
+    fun findVoteOptionOnAllVoteOptions(
+        voteOptions: List<VoteOption>,
+        optionId: Long
+    ): VoteOption {
+        val voteOption = voteOptions.find { it.id == optionId }
+            ?: throw IllegalArgumentException("존재하지 않는 질문지입니다.")
+
+        return voteOption
+    }
+
 }
