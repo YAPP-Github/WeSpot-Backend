@@ -7,16 +7,12 @@ import com.wespot.vote.VoteJpaRepository
 import com.wespot.voteoption.VoteOptionJpaRepository
 import org.springframework.beans.factory.annotation.Autowired
 
-class VoteControllerTest(
-    @Autowired
+class VoteControllerTest @Autowired constructor(
     private var userJpaRepository: UserJpaRepository,
-    @Autowired
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    @Autowired
     private var voteJpaRepository: VoteJpaRepository,
-    @Autowired
     private var ballotJpaRepository: BallotJpaRepository,
-) : IntegrationTest() { // TODO : 회원가입 구현하신 거 보고 바로 인수테스트 구현할게요
+) : IntegrationTest() {
 
 //    @Test
 //    fun `질문지를 반환한다`() {
@@ -47,6 +43,69 @@ class VoteControllerTest(
 //            .extract()
 //
 //        response.statusCode() shouldBe 200
+//    }
+//
+//    @Test
+//    fun `투표를 진행한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `투표의 1~5등을 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `투표의 1등을 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `내가 받은 투표 목록을 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `내가 받은 투표를 개별 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `내가 보낸 투표 목록을 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
+//    }
+//
+//    @Test
+//    fun `내가 보낸 투표를 개별 조회한다`(){
+//        // given
+//
+//        // when
+//
+//        // then
 //    }
 
 }

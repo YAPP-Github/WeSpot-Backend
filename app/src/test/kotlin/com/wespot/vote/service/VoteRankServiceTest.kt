@@ -26,18 +26,12 @@ import java.time.LocalDate
 import java.util.*
 
 @SpringBootTest
-class VoteRankServiceTest(
-    @Autowired
+class VoteRankServiceTest @Autowired constructor(
     private var voteRankService: VoteRankService,
-    @Autowired
     private var databaseCleanup: DatabaseCleanup,
-    @Autowired
     private var userJpaRepository: UserJpaRepository,
-    @Autowired
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    @Autowired
     private var voteJpaRepository: VoteJpaRepository,
-    @Autowired
     private var ballotJpaRepository: BallotJpaRepository,
 ) {
 

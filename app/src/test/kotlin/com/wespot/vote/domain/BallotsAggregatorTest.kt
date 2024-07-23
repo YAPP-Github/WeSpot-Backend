@@ -110,7 +110,7 @@ class BallotsAggregatorTest : BehaviorSpec({
         }
     }
 
-    given("투표지 집계기를 통해") {
+    given("투표지 집계기를 통해서") {
         val tenHoursAgo = LocalDateTime.now().minusHours(10)
         val nineHoursAgo = LocalDateTime.now().minusHours(9)
         val eightHoursAgo = LocalDateTime.now().minusHours(8)
