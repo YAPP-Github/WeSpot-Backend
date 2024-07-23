@@ -110,4 +110,80 @@ class BallotsAggregatorTest : BehaviorSpec({
         }
     }
 
+    given("투표지 집계기를 통해") {
+        val tenHoursAgo = LocalDateTime.now().minusHours(10)
+        val nineHoursAgo = LocalDateTime.now().minusHours(9)
+        val eightHoursAgo = LocalDateTime.now().minusHours(8)
+        val receivedBallots = listOf(
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                1L,
+                2L,
+                tenHoursAgo,
+                true
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                3L,
+                2L,
+                tenHoursAgo,
+                true
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                5L,
+                2L,
+                eightHoursAgo,
+                true
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                2L,
+                3L,
+                tenHoursAgo,
+                true
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                4L,
+                3L,
+                nineHoursAgo,
+                false
+            ),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAtAndIsReceiverRead(
+                1L,
+                1L,
+                6L,
+                4L,
+                tenHoursAgo,
+                true
+            ),
+        )
+        `when`("본인이 받은 투표를") {
+            val ballotsAggregator = BallotsAggregator.of(1L, receivedBallots)
+            val userReceivedVotes = ballotsAggregator.getUserReceivedVotes(2L)
+            then("정상적으로 조회한다.") {
+                userReceivedVotes.voteCount shouldBe 3
+                userReceivedVotes.isReceiverRead shouldBe true
+                userReceivedVotes.userId shouldBe 2
+                userReceivedVotes.lastVotedDateTime shouldBe eightHoursAgo
+            }
+        }
+        `when`("본인이 받은 투표 중 하나라도 읽지 않은 것이 존재한다면") {
+            val ballotsAggregator = BallotsAggregator.of(1L, receivedBallots)
+            val userReceivedVotes = ballotsAggregator.getUserReceivedVotes(3L)
+            then("읽지 않음을 나타내는 VoteMetrics를 반환한다.") {
+                userReceivedVotes.voteCount shouldBe 2
+                userReceivedVotes.isReceiverRead shouldBe false
+                userReceivedVotes.userId shouldBe 3
+                userReceivedVotes.lastVotedDateTime shouldBe nineHoursAgo
+            }
+        }
+    }
+
 })
