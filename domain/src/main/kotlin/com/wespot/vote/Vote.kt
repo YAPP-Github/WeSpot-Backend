@@ -96,4 +96,69 @@ data class Vote(
             .toMap(LinkedHashMap())
     }
 
+    fun getUserReceivedVotes(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        user: User
+    ): Map<VoteOption, VoteRecord> {
+        val receivedVotes: Map<Long, VoteRecord> = getBallots()
+            .filter { it.receiverId == user.id }
+            .groupBy { it.voteOptionId }
+            .mapValues { BallotsAggregator.of(it.key, it.value) }
+            .mapValues { VoteRecord.of(user, it.value.getUserReceivedVotes(user.id)) }
+            .toMap()
+
+        return voteOptionsByVoteDate.voteOptions
+            .filter { receivedVotes.contains(it.id) }
+            .associateWith { receivedVotes[it.id]!! }
+            .toMap(LinkedHashMap())
+    }
+
+    fun getUserReceivedVote(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        voteOption: VoteOption,
+        user: User
+    ): VoteRecord {
+        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
+        val ballots = getBallots()
+            .filter { voteOption.id == it.voteOptionId }
+            .toList()
+        val voteRecord: VoteRecord = BallotsAggregator.of(voteOption.id, ballots)
+            .getRankResults()
+            .withIndex()
+            .filter { it.value.userId == user.id }
+            .map { (index, voteMetrics) -> VoteRecord.ofWithRate(user, index + 1, voteMetrics) }
+            .firstOrNull() ?: throw IllegalArgumentException("해당 유저는 해당 질문지에 대한 투표를 받은 기록이 없습니다.")
+        ballots.forEach { it.receiverRead() }
+
+        return voteRecord
+    }
+
+    fun getUserSentVotes(
+        voteOptions: VoteOptionsByVoteDate,
+        user: User,
+    ): Map<VoteOption, List<Ballot>> {
+        val ballots = ballots.findSentBallotsByUser(user.id)
+
+        return voteOptions.voteOptions
+            .filter { voteOption -> containVoteOptionOnBallots(ballots, voteOption) }
+            .associateWith { voteOption -> ballots.filter { voteOption.id == it.voteOptionId } }
+    }
+
+    private fun containVoteOptionOnBallots(
+        ballots: List<Ballot>,
+        voteOption: VoteOption
+    ) = ballots.stream()
+        .anyMatch { it.voteOptionId == voteOption.id }
+
+    fun getUserSentVote(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        voteOption: VoteOption,
+        user: User
+    ): List<Ballot> {
+        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
+
+        return ballots.findSentBallotsByUser(user.id)
+            .filter { it.voteOptionId == voteOption.id }
+    }
+
 }
