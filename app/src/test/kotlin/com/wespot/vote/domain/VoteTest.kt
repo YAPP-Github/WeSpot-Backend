@@ -3,6 +3,7 @@ package com.wespot.vote.domain
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.RankCalculateService
+import com.wespot.vote.ReceivedVoteCalculateService
 import com.wespot.vote.fixture.BallotFixture
 import com.wespot.vote.fixture.VoteFixture
 import com.wespot.voteoption.VoteOption
@@ -306,7 +307,9 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-            val receivedVotes = vote.getUserReceivedVotes(voteOptionsByVoteDate, users[0])
+            val receivedVotes = vote.getUserReceivedVotes(
+                voteOptionsByVoteDate, users[0], ReceivedVoteCalculateService()
+            )
 
             then("결과를 정상적으로 반환한다.") {
                 receivedVotes.size shouldBe 2
@@ -332,7 +335,8 @@ class VoteTest() : BehaviorSpec({
                     vote.getUserReceivedVote(
                         voteOptionsByVoteDate,
                         voteOptions[5],
-                        users[0]
+                        users[0],
+                        ReceivedVoteCalculateService()
                     )
                 }
                 shouldThrow shouldHaveMessage "오늘 제공된 질문지만 선택해 투표할 수 있습니다."
@@ -344,9 +348,19 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
             val userReceivedVoteByFirstVoteOption =
-                vote.getUserReceivedVote(voteOptionsByVoteDate, voteOptions[0], users[0])
+                vote.getUserReceivedVote(
+                    voteOptionsByVoteDate,
+                    voteOptions[0],
+                    users[0],
+                    ReceivedVoteCalculateService()
+                )
             val userReceivedVoteBySecondVoteOption =
-                vote.getUserReceivedVote(voteOptionsByVoteDate, voteOptions[1], users[0])
+                vote.getUserReceivedVote(
+                    voteOptionsByVoteDate,
+                    voteOptions[1],
+                    users[0],
+                    ReceivedVoteCalculateService()
+                )
 
             then("결과를 정상적으로 반환한다.") {
                 userReceivedVoteByFirstVoteOption.user shouldBe users[0]
@@ -365,9 +379,19 @@ class VoteTest() : BehaviorSpec({
             }
 
             val receiverReadVoteByFirstVoteOption =
-                vote.getUserReceivedVote(voteOptionsByVoteDate, voteOptions[0], users[0])
+                vote.getUserReceivedVote(
+                    voteOptionsByVoteDate,
+                    voteOptions[0],
+                    users[0],
+                    ReceivedVoteCalculateService()
+                )
             val receiverReadVoteBySecondVoteOption =
-                vote.getUserReceivedVote(voteOptionsByVoteDate, voteOptions[1], users[0])
+                vote.getUserReceivedVote(
+                    voteOptionsByVoteDate,
+                    voteOptions[1],
+                    users[0],
+                    ReceivedVoteCalculateService()
+                )
             then("수신자가 읽은 것으로 변경된다.") {
                 receiverReadVoteByFirstVoteOption.isReceiverRead shouldBe true
                 receiverReadVoteBySecondVoteOption.isReceiverRead shouldBe true

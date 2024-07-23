@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.user.port.out.UserPort
+import com.wespot.vote.ReceivedVoteCalculateService
 import com.wespot.vote.dto.response.received.ReceivedVoteResponse
 import com.wespot.vote.dto.response.received.ReceivedVotesResponses
 import com.wespot.vote.port.`in`.ReceivedVoteUseCase
@@ -16,6 +17,7 @@ class ReceivedVoteService(
     private val votePort: VotePort,
     private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
+    private val receivedVoteCalculateService: ReceivedVoteCalculateService
 ) : ReceivedVoteUseCase {
 
     override fun getReceivedVotes(): ReceivedVotesResponses {
@@ -26,7 +28,7 @@ class ReceivedVoteService(
 
         return ReceivedVotesResponses.of(
             voteResults = votes.associateWith {
-                it.getUserReceivedVotes(it.findVoteOptionsByVoteDate(voteOptions), user)
+                it.getUserReceivedVotes(it.findVoteOptionsByVoteDate(voteOptions), user, receivedVoteCalculateService)
             }
         )
     }
@@ -44,7 +46,8 @@ class ReceivedVoteService(
         val voteRecord = vote.getUserReceivedVote(
             vote.findVoteOptionsByVoteDate(voteOptions),
             voteOption,
-            user
+            user,
+            receivedVoteCalculateService
         )
         votePort.save(vote)
 
