@@ -14,4 +14,11 @@ interface VotePort {
 
     fun save(vote: Vote): Vote
 
+    fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): List<Vote>
+
+
 }
