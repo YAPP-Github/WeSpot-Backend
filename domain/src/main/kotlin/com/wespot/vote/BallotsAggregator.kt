@@ -37,4 +37,9 @@ class BallotsAggregator(
     ) = ranked.sortedByDescending { it.lastVotedDateTime }
         .sortedByDescending { it.voteCount }
 
+    fun getUserReceivedVotes(userId: Long): VoteMetrics {
+        return ballots.filter { it.receiverId == userId }
+            .fold(VoteMetrics.createInitialState(userId)) { acc, ballot -> acc.recordBallot(ballot) }
+    }
+
 }
