@@ -16,31 +16,12 @@ data class Vote(
 
     companion object {
         private val NUMBER_OF_VOTE_USERS = 5
-        private val NUMBER_OF_VOTE_OPTIONS = 5
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-        validateVoteOptionsSize(allVoteOptions)
-        val voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
-        validateVoteOptionsSizeMultipleOf5(allVoteOptions.size, voteOptionIndex)
-        val voteOptionsByVoteDate = allVoteOptions.subList(voteOptionIndex, voteOptionIndex + NUMBER_OF_VOTE_OPTIONS)
-        return VoteOptionsByVoteDate.of(date, voteOptionsByVoteDate)
+        return VoteOptionsByVoteDate.of(date, voteNumber, allVoteOptions)
     }
 
-    private fun validateVoteOptionsSizeMultipleOf5(
-        allVoteOptionsSize: Int,
-        voteOptionIndex: Int
-    ) {
-        if (allVoteOptionsSize <= voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
-            throw IllegalArgumentException("선택지의 개수가 5의 배수가 아닙니다.")
-        }
-    }
-
-    private fun validateVoteOptionsSize(allVoteOptions: List<VoteOption>) {
-        if (allVoteOptions.size < 5) {
-            throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.")
-        }
-    }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
