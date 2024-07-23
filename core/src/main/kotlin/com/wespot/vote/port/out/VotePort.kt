@@ -8,7 +8,7 @@ interface VotePort {
     fun findBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int,
+        classNumber: Int,
         date: LocalDate
     ): Vote?
 

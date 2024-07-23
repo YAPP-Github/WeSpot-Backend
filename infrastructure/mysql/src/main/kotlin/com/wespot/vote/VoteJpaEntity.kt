@@ -19,7 +19,7 @@ class VoteJpaEntity(
     val grade: Int,
 
     @field: NotNull
-    val groupNumber: Int,
+    val classNumber: Int,
 
     @field: NotNull
     val voteNumber: Int,

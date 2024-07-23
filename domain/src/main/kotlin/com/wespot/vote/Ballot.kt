@@ -10,7 +10,7 @@ data class Ballot(
     val senderId: Long,
     val receiverId: Long,
     val createdAt: LocalDateTime,
-    val isReceiverRead: Boolean,
+    var isReceiverRead: Boolean,
 ) {
 
     companion object {
@@ -47,6 +47,10 @@ data class Ballot(
             }
         }
 
+    }
+
+    fun receiverRead() {
+        isReceiverRead = true
     }
 
 }

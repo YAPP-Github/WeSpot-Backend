@@ -30,6 +30,9 @@ class CustomUrlFilter(
         "/api/v1/users/me",
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
+        "/v1/votes/options",
+        "/v1/votes",
+        "/v1/votes/tops",
     )
 
     override fun doFilterInternal(

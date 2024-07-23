@@ -9,7 +9,7 @@ data class UserResponse(
     val introduction : String,
     val schoolName : String,
     val grade : Int,
-    val groupNumber : Int,
+    val classNumber : Int,
     val profile: ProfileResponse?
 ) {
 
@@ -23,7 +23,7 @@ data class UserResponse(
                 introduction = user.introduction,
                 schoolName = school,
                 grade = user.grade,
-                groupNumber = user.classNumber,
+                classNumber = user.classNumber,
                 profile = user.profile.let { ProfileResponse.from(it) }
             )
         }

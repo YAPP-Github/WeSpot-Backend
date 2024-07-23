@@ -5,10 +5,10 @@ import java.time.LocalDate
 
 interface VoteJpaRepository : JpaRepository<VoteJpaEntity, Long> {
 
-    fun findBySchoolIdAndGradeAndGroupNumberAndDate(
+    fun findBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int,
+        classNumber: Int,
         date: LocalDate
     ): VoteJpaEntity?
 

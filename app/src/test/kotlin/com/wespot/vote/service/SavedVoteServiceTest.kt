@@ -27,9 +27,9 @@ import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
-class VoteServiceTest(
+class SavedVoteServiceTest(
     @Autowired
-    private var voteService: VoteService,
+    private var voteService: SavedVoteService,
     @Autowired
     private var databaseCleanup: DatabaseCleanup,
     @Autowired
@@ -50,7 +50,7 @@ class VoteServiceTest(
         voteOptions.clear()
         users.clear()
         for (i in 0 until 8) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithId(0))
+            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako"))
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
@@ -68,8 +68,12 @@ class VoteServiceTest(
 
     @Test
     fun `투표에 지정된 질문지를 반환받는다`() {
-        // given when
-        val voteOptions = voteService.getVoteOptions(users[0].id)
+        // given
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+
+        // when
+        val voteOptions = voteService.getVoteOptions()
 
         // then
         voteOptions.voteItems.size shouldBe 5
@@ -89,7 +93,9 @@ class VoteServiceTest(
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        val throwingCallable = { voteService.saveVote(requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -129,7 +135,9 @@ class VoteServiceTest(
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        val throwingCallable = { voteService.saveVote(requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -149,7 +157,9 @@ class VoteServiceTest(
         )
 
         // when
-        val throwingCallable = { voteService.saveVote(users[users.size - 1].id, requests) }
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        val throwingCallable = { voteService.saveVote(requests) }
 
         // then
         val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -185,7 +195,9 @@ class VoteServiceTest(
         )
 
         // when
-        voteService.saveVote(users[users.size - 1].id, requests)
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests)
 
         // then
         val ballots = ballotJpaRepository.findAll()

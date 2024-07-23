@@ -23,7 +23,7 @@ class VoteMapperTest : BehaviorSpec({
                 voteDomainEntity.id shouldBe voteJpaEntity.id
                 voteDomainEntity.schoolId shouldBe voteJpaEntity.schoolId
                 voteDomainEntity.grade shouldBe voteJpaEntity.grade
-                voteDomainEntity.groupNumber shouldBe voteJpaEntity.groupNumber
+                voteDomainEntity.classNumber shouldBe voteJpaEntity.classNumber
                 voteDomainEntity.voteNumber shouldBe voteJpaEntity.voteNumber
                 voteDomainEntity.date shouldBe voteJpaEntity.date
                 voteDomainEntity.ballots::class shouldBe Ballots::class
@@ -39,7 +39,7 @@ class VoteMapperTest : BehaviorSpec({
                 jpaEntity.id shouldBe domainEntity.id
                 jpaEntity.schoolId shouldBe domainEntity.schoolId
                 jpaEntity.grade shouldBe domainEntity.grade
-                jpaEntity.groupNumber shouldBe domainEntity.groupNumber
+                jpaEntity.classNumber shouldBe domainEntity.classNumber
                 jpaEntity.voteNumber shouldBe domainEntity.voteNumber
                 jpaEntity.date shouldBe domainEntity.date
             }

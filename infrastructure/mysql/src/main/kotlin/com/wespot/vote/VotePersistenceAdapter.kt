@@ -13,13 +13,13 @@ class VotePersistenceAdapter(
     override fun findBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,
-        groupNumber: Int,
+        classNumber: Int,
         date: LocalDate
     ): Vote? {
-        return voteJpaRepository.findBySchoolIdAndGradeAndGroupNumberAndDate(
+        return voteJpaRepository.findBySchoolIdAndGradeAndClassNumberAndDate(
             schoolId,
             grade,
-            groupNumber,
+            classNumber,
             date
         )?.let { voteJpaEntity ->
             VoteMapper.mapToDomainEntity(

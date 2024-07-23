@@ -7,7 +7,7 @@ object VoteMapper {
             id = voteJpaEntity.id,
             schoolId = voteJpaEntity.schoolId,
             grade = voteJpaEntity.grade,
-            groupNumber = voteJpaEntity.groupNumber,
+            classNumber = voteJpaEntity.classNumber,
             voteNumber = voteJpaEntity.voteNumber,
             date = voteJpaEntity.date,
             ballots = Ballots.from(ballots)
@@ -18,7 +18,7 @@ object VoteMapper {
             id = vote.id,
             schoolId = vote.schoolId,
             grade = vote.grade,
-            groupNumber = vote.groupNumber,
+            classNumber = vote.classNumber,
             voteNumber = vote.voteNumber,
             date = vote.date,
         )
