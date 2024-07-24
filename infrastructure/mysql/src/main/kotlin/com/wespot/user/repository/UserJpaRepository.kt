@@ -27,8 +27,8 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
         AND (
             :cursorId IS NULL OR (
-                (u.name > :cursorName) OR
-                (u.name = :cursorName AND s.name > :cursorSchoolName) OR
+                (:cursorName IS NULL OR u.name > :cursorName) OR
+                (u.name = :cursorName AND (:cursorSchoolName IS NULL OR s.name > :cursorSchoolName)) OR
                 (u.name = :cursorName AND s.name = :cursorSchoolName AND
                     CASE
                         WHEN s.schoolType = 'MIDDLE' THEN 1
