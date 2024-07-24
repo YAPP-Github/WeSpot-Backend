@@ -2,10 +2,8 @@ package com.wespot.user.service
 
 import com.wespot.auth.service.SecurityUtils.getLoginUser
 import com.wespot.school.School
-import com.wespot.school.SchoolType
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.User
-import com.wespot.user.dto.CursorSearchData
 import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.*
 import com.wespot.user.port.`in`.UserUseCase
@@ -13,10 +11,6 @@ import com.wespot.user.port.out.ProfileBackgroundPort
 import com.wespot.user.port.out.ProfileIconPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserPort
-import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
