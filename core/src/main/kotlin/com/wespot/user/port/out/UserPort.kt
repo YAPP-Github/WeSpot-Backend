@@ -1,6 +1,8 @@
 package com.wespot.user.port.out
 
+import com.wespot.user.Role
 import com.wespot.user.User
+import org.springframework.data.domain.Pageable
 
 interface UserPort {
 
@@ -18,5 +20,12 @@ interface UserPort {
 
     fun save(user: User): User
 
-
+    fun searchUsers(
+        name: String,
+        cursorName: String?,
+        cursorSchoolName: String?,
+        cursorSchoolTypeOrder: Int?,
+        cursorId: Long?,
+        pageable: Pageable
+    ): List<User>
 }
