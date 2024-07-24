@@ -28,4 +28,12 @@ interface UserPort {
         cursorId: Long?,
         pageable: Pageable
     ): List<User>
+
+    fun countUsersAfterCursor(
+        name: String,
+        cursorName: String?,
+        cursorSchoolName: String?,
+        cursorSchoolTypeOrder: Int?,
+        cursorId: Long?
+    ): Long
 }

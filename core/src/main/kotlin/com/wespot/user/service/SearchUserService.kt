@@ -40,7 +40,15 @@ class SearchUserService(
             pageable = pageable
         )
 
-        return buildUserListResponse(users = users, pageable = pageable)
+        val totalCount = userPort.countUsersAfterCursor(
+            name = keyword,
+            cursorName = cursorData.cursorName,
+            cursorSchoolName = cursorData.cursorSchoolName,
+            cursorSchoolTypeOrder = cursorData.cursorSchoolTypeOrder,
+            cursorId = cursorId
+        )
+
+        return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)
     }
 
     private fun fetchFirstPage(
@@ -56,7 +64,15 @@ class SearchUserService(
             pageable = pageable
         )
 
-        return buildUserListResponse(users = users, pageable = pageable)
+        val totalCount = userPort.countUsersAfterCursor(
+            name = keyword,
+            cursorName = null,
+            cursorSchoolName = null,
+            cursorSchoolTypeOrder = null,
+            cursorId = null
+        )
+
+        return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)
     }
 
     private fun fetchCursorData(cursorId: Long): CursorSearchData {
@@ -79,9 +95,10 @@ class SearchUserService(
 
     private fun buildUserListResponse(
         users: List<User>,
-        pageable: Pageable
+        pageable: Pageable,
+        totalCount: Long
     ): UserListResponse {
-        val hasNext = users.size == pageable.pageSize
+        val hasNext = totalCount > pageable.pageSize
         val userResponses = users.map { user ->
             val schools = findSchool(user)
             UserResponse.from(user, schools.name)

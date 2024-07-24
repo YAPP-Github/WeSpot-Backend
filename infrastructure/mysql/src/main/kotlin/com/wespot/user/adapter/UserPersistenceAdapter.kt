@@ -48,6 +48,22 @@ class UserPersistenceAdapter(
             .toList()
     }
 
+    override fun countUsersAfterCursor(
+        name: String,
+        cursorName: String?,
+        cursorSchoolName: String?,
+        cursorSchoolTypeOrder: Int?,
+        cursorId: Long?
+    ): Long {
+        return userJpaRepository.countUsersAfterCursor(
+            name = name,
+            cursorName = cursorName,
+            cursorSchoolName = cursorSchoolName,
+            cursorSchoolTypeOrder = cursorSchoolTypeOrder,
+            cursorId = cursorId
+        )
+    }
+
     override fun findById(userId: Long): User? {
         return userJpaRepository.findById(userId)
             .orElseThrow { NoSuchElementException("유저를 찾을 수 없습니다.") }
