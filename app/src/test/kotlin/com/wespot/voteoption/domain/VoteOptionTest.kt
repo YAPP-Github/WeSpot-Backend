@@ -15,7 +15,7 @@ class VoteOptionTest() : BehaviorSpec() {
             val id = 0L
             val content = "정상적인 입력"
             val createdAt = LocalDateTime.now()
-            val updatedAt = null
+            val updatedAt = LocalDateTime.now()
             `when`("질문지를 생성하면") {
                 val voteOption = VoteOption.of(id, content, createdAt, updatedAt)
                 then("정상적으로 생성된다.") {
@@ -34,7 +34,7 @@ class VoteOptionTest() : BehaviorSpec() {
         // given
         val id = 0L
         val createdAt = LocalDateTime.now()
-        val updatedAt = null
+        val updatedAt = LocalDateTime.now()
 
         // when
         val throwingCallable = { VoteOption.of(id, invalidContent, createdAt, updatedAt) }

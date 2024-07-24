@@ -12,7 +12,7 @@ object BallotJpaEntityFixture {
         voteOptionId = 1L,
         senderId = 1L,
         receiverId = 1L,
-        baseEntity = BaseEntity(LocalDateTime.now(), null),
+        baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now()),
         isReceiverRead = true
     )
 

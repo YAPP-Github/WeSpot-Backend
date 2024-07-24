@@ -47,7 +47,7 @@ object UserFixture {
             consentedAt = LocalDateTime.now()
         ),
         createdAt = LocalDateTime.now(),
-        updatedAt = null,
+        updatedAt = LocalDateTime.now(),
         withdrawAt = LocalDateTime.now(),
     )
 
@@ -81,7 +81,7 @@ object UserFixture {
             consentedAt = LocalDateTime.now()
         ),
         createdAt = LocalDateTime.now(),
-        updatedAt = null,
+        updatedAt = LocalDateTime.now(),
         withdrawAt = LocalDateTime.now(),
     )
 
@@ -103,4 +103,43 @@ object UserFixture {
             iconUrl = profile.iconUrl
         )
     )
+
+    fun createUser(
+        id: Long,
+        email: String,
+        name: String,
+        schoolId: Long,
+        profileId: Long = id
+    ): User {
+        return User(
+            id = id,
+            email = email,
+            password = "password",
+            name = name,
+            introduction = "소개 $id",
+            gender = "M",
+            schoolId = schoolId,
+            profile = Profile(profileId, "", ""),
+            fcm = null,
+            userConsent = UserConsent(
+                id = 0,
+                consentType = ConsentType.MARKETING,
+                consentValue = true,
+                consentedAt = LocalDateTime.now()
+            ),
+            grade = 1,
+            classNumber = 1,
+            setting = Setting(),
+            social = Social(
+                socialType = SocialType.KAKAO,
+                socialId = "1234",
+                socialEmail = null,
+                socialRefreshToken = ""
+            ),
+            role = Role.USER,
+            withdrawAt = null,
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+    }
 }

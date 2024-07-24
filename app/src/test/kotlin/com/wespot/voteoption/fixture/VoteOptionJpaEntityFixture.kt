@@ -9,7 +9,7 @@ object VoteOptionJpaEntityFixture {
     fun create() = VoteOptionJpaEntity(
         id = 1L,
         content = "Mock 질문을 만듭니다.",
-        baseEntity = BaseEntity(LocalDateTime.now(), null),
+        baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now()),
     )
 
 }

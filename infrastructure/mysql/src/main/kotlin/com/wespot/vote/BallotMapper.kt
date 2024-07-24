@@ -12,6 +12,7 @@ object BallotMapper {
             senderId = ballotJpaEntity.senderId,
             receiverId = ballotJpaEntity.receiverId,
             createdAt = ballotJpaEntity.baseEntity.createdAt,
+            updatedAt = ballotJpaEntity.baseEntity.updatedAt,
             isReceiverRead = ballotJpaEntity.isReceiverRead
         )
 
@@ -24,7 +25,7 @@ object BallotMapper {
             receiverId = ballot.receiverId,
             baseEntity = BaseEntity(
                 createdAt = ballot.createdAt,
-                updatedAt = null
+                updatedAt = ballot.updatedAt,
             ),
             isReceiverRead = ballot.isReceiverRead
         )

@@ -12,6 +12,7 @@ object BallotFixture {
         senderId = 1L,
         receiverId = 1L,
         createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
         isReceiverRead = false
     )
 
@@ -27,6 +28,7 @@ object BallotFixture {
         senderId = senderId,
         receiverId = receiverId,
         createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
         isReceiverRead = false
     )
 
@@ -43,6 +45,7 @@ object BallotFixture {
         senderId = senderId,
         receiverId = receiverId,
         createdAt = createdAt,
+        updatedAt = LocalDateTime.now(),
         isReceiverRead = false
     )
 
