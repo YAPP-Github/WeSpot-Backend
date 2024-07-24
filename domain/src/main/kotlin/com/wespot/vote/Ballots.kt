@@ -64,4 +64,13 @@ data class Ballots(
             .toList()
     }
 
+    fun findSentBallotsByUser(userId: Long): List<Ballot> {
+        if (!ballots.containsKey(userId)) {
+            return Collections.emptyList()
+        }
+
+        return ballots[userId]!!.values
+            .toList()
+    }
+
 }

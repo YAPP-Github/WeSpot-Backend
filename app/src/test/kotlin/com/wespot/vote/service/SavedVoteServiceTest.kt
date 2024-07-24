@@ -27,18 +27,12 @@ import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
-class SavedVoteServiceTest(
-    @Autowired
+class SavedVoteServiceTest @Autowired constructor(
     private var voteService: SavedVoteService,
-    @Autowired
     private var databaseCleanup: DatabaseCleanup,
-    @Autowired
     private var userJpaRepository: UserJpaRepository,
-    @Autowired
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    @Autowired
     private var voteJpaRepository: VoteJpaRepository,
-    @Autowired
     private var ballotJpaRepository: BallotJpaRepository,
 ) {
 

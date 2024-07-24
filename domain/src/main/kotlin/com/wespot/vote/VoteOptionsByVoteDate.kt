@@ -9,16 +9,41 @@ data class VoteOptionsByVoteDate(
 ) {
 
     companion object {
-        fun of(date: LocalDate, voteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-            if (voteOptions.size != 5) {
-                throw IllegalArgumentException("선택지는 5개가 주어져야 합니다.")
-            }
+
+        private const val NUMBER_OF_VOTE_OPTIONS = 5
+
+        fun of(date: LocalDate, voteNumber: Int, allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
+            validateDate(date)
+            validateVoteOptionsSize(allVoteOptions.size)
+            val voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
+            validateVoteOptionsSizeMultipleOf5(allVoteOptions.size, voteOptionIndex)
+            val voteOptionsByVoteDate =
+                allVoteOptions.subList(voteOptionIndex, voteOptionIndex + NUMBER_OF_VOTE_OPTIONS)
+
+            return VoteOptionsByVoteDate(date, voteOptionsByVoteDate)
+        }
+
+        private fun validateDate(date: LocalDate) {
             if (LocalDate.now() < date) {
                 throw IllegalArgumentException("미래의 선택지는 정할 수 없습니다.")
             }
-
-            return VoteOptionsByVoteDate(date, voteOptions)
         }
+
+        private fun validateVoteOptionsSize(allVoteOptionsSize: Int) {
+            if (allVoteOptionsSize < 5) {
+                throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.")
+            }
+        }
+
+        private fun validateVoteOptionsSizeMultipleOf5(
+            allVoteOptionsSize: Int,
+            voteOptionIndex: Int
+        ) {
+            if (allVoteOptionsSize < voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
+                throw IllegalArgumentException("선택지의 개수가 5의 배수가 아닙니다.")
+            }
+        }
+
     }
 
     fun validateVoteOption(
