@@ -38,7 +38,7 @@ class SentVoteService(
     ): Map<VoteOption, List<Ballot>> {
         val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
 
-        return vote.getUserSentVotes(voteOptionsByVoteDate, user)
+        return vote.getUserSentVotes(voteOptionsByVoteDate = voteOptionsByVoteDate, user = user)
     }
 
     override fun getSentVote(optionId: Long, date: LocalDate): SentVoteResponse {

@@ -15,7 +15,7 @@ data class Vote(
 ) {
 
     companion object {
-        private val NUMBER_OF_VOTE_USERS = 5
+        private const val NUMBER_OF_VOTE_USERS = 5
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
@@ -94,12 +94,12 @@ data class Vote(
     }
 
     fun getUserSentVotes(
-        voteOptions: VoteOptionsByVoteDate,
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         user: User,
     ): Map<VoteOption, List<Ballot>> {
         val ballots = ballots.findSentBallotsByUser(user.id)
 
-        return voteOptions.voteOptions
+        return voteOptionsByVoteDate.voteOptions
             .filter { voteOption -> containVoteOptionOnBallots(ballots, voteOption) }
             .associateWith { voteOption -> ballots.filter { voteOption.id == it.voteOptionId } }
     }

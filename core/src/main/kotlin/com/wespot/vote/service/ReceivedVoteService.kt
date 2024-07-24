@@ -1,13 +1,17 @@
 package com.wespot.vote.service
 
+import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.ReceivedVoteCalculateService
+import com.wespot.vote.Vote
+import com.wespot.vote.VoteRecord
 import com.wespot.vote.dto.response.received.ReceivedVoteResponse
 import com.wespot.vote.dto.response.received.ReceivedVotesResponses
 import com.wespot.vote.port.`in`.ReceivedVoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
+import com.wespot.voteoption.VoteOption
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -25,11 +29,22 @@ class ReceivedVoteService(
         val user = VoteServiceHelper.findUser(userPort, userId)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
         val voteOptions = voteOptionPort.findAllVoteOption()
+        val voteResults = votes.associateWith { getUserReceivedVotesByVote(it, voteOptions, user) }
 
-        return ReceivedVotesResponses.of(
-            voteResults = votes.associateWith {
-                it.getUserReceivedVotes(it.findVoteOptionsByVoteDate(voteOptions), user, receivedVoteCalculateService)
-            }
+        return ReceivedVotesResponses.of(voteResults = voteResults)
+    }
+
+    private fun getUserReceivedVotesByVote(
+        vote: Vote,
+        voteOptions: List<VoteOption>,
+        user: User
+    ): Map<VoteOption, VoteRecord> {
+        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+
+        return vote.getUserReceivedVotes(
+            voteOptionsByVoteDate = voteOptionsByVoteDate,
+            user = user,
+            receivedVoteCalculateService = receivedVoteCalculateService
         )
     }
 
@@ -44,10 +59,10 @@ class ReceivedVoteService(
         val voteOptions = voteOptionPort.findAllVoteOption()
         val voteOption = VoteServiceHelper.findVoteOptionOnAllVoteOptions(voteOptions, optionId)
         val voteRecord = vote.getUserReceivedVote(
-            vote.findVoteOptionsByVoteDate(voteOptions),
-            voteOption,
-            user,
-            receivedVoteCalculateService
+            voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions),
+            voteOption = voteOption,
+            user = user,
+            receivedVoteCalculateService = receivedVoteCalculateService
         )
         votePort.save(vote)
 
