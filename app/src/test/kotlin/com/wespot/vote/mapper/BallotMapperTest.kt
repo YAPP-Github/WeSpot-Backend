@@ -19,7 +19,7 @@ class BallotMapperTest : BehaviorSpec({
                 jpaEntity.senderId shouldBe domainEntity.senderId
                 jpaEntity.receiverId shouldBe domainEntity.receiverId
                 jpaEntity.baseEntity.createdAt shouldBe domainEntity.createdAt
-                jpaEntity.baseEntity.updatedAt shouldBe null
+                jpaEntity.baseEntity.updatedAt shouldBe domainEntity.updatedAt
                 jpaEntity.isReceiverRead shouldBe domainEntity.isReceiverRead
             }
         }
