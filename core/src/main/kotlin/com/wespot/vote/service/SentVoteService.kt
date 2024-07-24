@@ -1,12 +1,16 @@
 package com.wespot.vote.service
 
+import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
+import com.wespot.vote.Ballot
+import com.wespot.vote.Vote
 import com.wespot.vote.dto.response.sent.SentVoteResponse
 import com.wespot.vote.dto.response.sent.SentVotesResponses
 import com.wespot.vote.port.`in`.SentVoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
+import com.wespot.voteoption.VoteOption
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -22,15 +26,19 @@ class SentVoteService(
         val user = VoteServiceHelper.findUser(userPort, userId)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
         val voteOptions = voteOptionPort.findAllVoteOption()
+        val voteResults = votes.associateWith { getSentVotes(it, voteOptions, user) }
 
-        return SentVotesResponses.from(
-            votes.associateWith {
-                it.getUserSentVotes(
-                    it.findVoteOptionsByVoteDate(voteOptions),
-                    user,
-                )
-            }
-        )
+        return SentVotesResponses.from(voteResults)
+    }
+
+    private fun getSentVotes(
+        vote: Vote,
+        voteOptions: List<VoteOption>,
+        user: User
+    ): Map<VoteOption, List<Ballot>> {
+        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+
+        return vote.getUserSentVotes(voteOptionsByVoteDate, user)
     }
 
     override fun getSentVote(optionId: Long, date: LocalDate): SentVoteResponse {
@@ -39,10 +47,11 @@ class SentVoteService(
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
         val voteOptions = voteOptionPort.findAllVoteOption()
         val voteOption = VoteServiceHelper.findVoteOptionOnAllVoteOptions(voteOptions, optionId)
+        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
 
         return SentVoteResponse.of(
-            voteOption,
-            vote.getUserSentVote(vote.findVoteOptionsByVoteDate(voteOptions), voteOption, user)
+            voteOption = voteOption,
+            users = vote.getUserSentVote(voteOptionsByVoteDate, voteOption, user)
                 .map { VoteServiceHelper.findUser(userPort, it.receiverId) }
                 .toList()
         )
