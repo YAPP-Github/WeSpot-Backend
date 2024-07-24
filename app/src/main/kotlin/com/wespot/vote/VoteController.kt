@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/v1/votes")
+@RequestMapping("/api/v1/votes")
 class VoteController(
     private val savedVoteUseCase: SavedVoteUseCase,
     private val voteRankUseCase: VoteRankUseCase,
