@@ -19,7 +19,7 @@ data class User(
     val social: Social,
     val userConsent: UserConsent,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime?,
+    val updatedAt: LocalDateTime,
     val withdrawAt: LocalDateTime?,
 ) {
 

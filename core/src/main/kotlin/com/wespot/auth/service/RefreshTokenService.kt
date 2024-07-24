@@ -22,7 +22,7 @@ class RefreshTokenService(
                 id = findRefreshToken.id,
                 refreshToken = token,
                 user = findRefreshToken.user,
-                createdAt = findRefreshToken.createdAt ?: LocalDateTime.now(),
+                createdAt = findRefreshToken.createdAt,
                 updatedAt = LocalDateTime.now(),
                 expiredAt = LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRY_DAYS)
             )

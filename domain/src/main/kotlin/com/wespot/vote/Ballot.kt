@@ -10,6 +10,7 @@ data class Ballot(
     val senderId: Long,
     val receiverId: Long,
     val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
     var isReceiverRead: Boolean,
 ) {
 
@@ -25,6 +26,7 @@ data class Ballot(
                 senderId = senderId,
                 receiverId = receiverId,
                 createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
                 isReceiverRead = false
             )
         }

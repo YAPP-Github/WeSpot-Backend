@@ -15,4 +15,20 @@ object SchoolFixture {
         )
     }
 
+    fun createSchool(
+        id: Long,
+        name: String,
+        schoolType: SchoolType,
+        region: String,
+        address: String
+    ): School {
+        return School(
+            id = id,
+            name = name,
+            schoolType = schoolType,
+            region = region,
+            address = address
+        )
+    }
+
 }

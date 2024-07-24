@@ -8,7 +8,7 @@ data class RefreshToken(
     val refreshToken: String,
     val user: User,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime?,
+    val updatedAt: LocalDateTime,
     val expiredAt: LocalDateTime
 ){
     companion object {
