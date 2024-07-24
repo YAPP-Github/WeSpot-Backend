@@ -12,4 +12,10 @@ interface VoteJpaRepository : JpaRepository<VoteJpaEntity, Long> {
         date: LocalDate
     ): VoteJpaEntity?
 
+    fun findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): List<VoteJpaEntity>
+
 }

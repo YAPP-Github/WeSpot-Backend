@@ -15,32 +15,13 @@ data class Vote(
 ) {
 
     companion object {
-        private val NUMBER_OF_VOTE_USERS = 5
-        private val NUMBER_OF_VOTE_OPTIONS = 5
+        private const val NUMBER_OF_VOTE_USERS = 5
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-        validateVoteOptionsSize(allVoteOptions)
-        val voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
-        validateVoteOptionsSizeMultipleOf5(allVoteOptions.size, voteOptionIndex)
-        val voteOptionsByVoteDate = allVoteOptions.subList(voteOptionIndex, voteOptionIndex + NUMBER_OF_VOTE_OPTIONS)
-        return VoteOptionsByVoteDate.of(date, voteOptionsByVoteDate)
+        return VoteOptionsByVoteDate.of(date, voteNumber, allVoteOptions)
     }
 
-    private fun validateVoteOptionsSizeMultipleOf5(
-        allVoteOptionsSize: Int,
-        voteOptionIndex: Int
-    ) {
-        if (allVoteOptionsSize <= voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
-            throw IllegalArgumentException("선택지의 개수가 5의 배수가 아닙니다.")
-        }
-    }
-
-    private fun validateVoteOptionsSize(allVoteOptions: List<VoteOption>) {
-        if (allVoteOptions.size < 5) {
-            throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.")
-        }
-    }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
@@ -78,22 +59,66 @@ data class Vote(
 
     fun getRankedVoteResults(
         voteOptionsByVoteDate: VoteOptionsByVoteDate,
-        users: List<User>
+        users: List<User>,
+        rankCalculateService: RankCalculateService
     ): Map<VoteOption, List<VoteRecord>> {
-        val usersAssociateBy = users.associateBy { it.id }
-        val rankedVoteResults: Map<Long, List<VoteRecord>> =
-            getBallots().groupBy { it.voteOptionId }
-                .mapValues { BallotsAggregator.of(it.key, it.value) }
-                .mapValues { entry ->
-                    entry.value.getRankResults()
-                        .filter { usersAssociateBy.containsKey(it.userId) }
-                        .map { VoteRecord.of(usersAssociateBy[it.userId]!!, it) }
-                }
-                .toMap(LinkedHashMap())
+        val rankedVoteResults = rankCalculateService.calculate(users, getBallots())
 
         return voteOptionsByVoteDate.voteOptions
             .associateWith { rankedVoteResults[it.id] ?: emptyList() }
             .toMap(LinkedHashMap())
+    }
+
+    fun getUserReceivedVotes(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        user: User,
+        receivedVoteCalculateService: ReceivedVoteCalculateService
+    ): Map<VoteOption, VoteRecord> {
+        val receivedVotes = receivedVoteCalculateService.calculateUserReceivedVotes(user, getBallots())
+
+        return voteOptionsByVoteDate.voteOptions
+            .filter { receivedVotes.contains(it.id) }
+            .associateWith { receivedVotes[it.id]!! }
+            .toMap(LinkedHashMap())
+    }
+
+    fun getUserReceivedVote(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        voteOption: VoteOption,
+        user: User,
+        receivedVoteCalculateService: ReceivedVoteCalculateService
+    ): VoteRecord {
+        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
+
+        return receivedVoteCalculateService.calculateUserReceivedVote(voteOption, user, getBallots())
+    }
+
+    fun getUserSentVotes(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        user: User,
+    ): Map<VoteOption, List<Ballot>> {
+        val ballots = ballots.findSentBallotsByUser(user.id)
+
+        return voteOptionsByVoteDate.voteOptions
+            .filter { voteOption -> containVoteOptionOnBallots(ballots, voteOption) }
+            .associateWith { voteOption -> ballots.filter { voteOption.id == it.voteOptionId } }
+    }
+
+    private fun containVoteOptionOnBallots(
+        ballots: List<Ballot>,
+        voteOption: VoteOption
+    ) = ballots.stream()
+        .anyMatch { it.voteOptionId == voteOption.id }
+
+    fun getUserSentVote(
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        voteOption: VoteOption,
+        user: User,
+    ): List<Ballot> {
+        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
+
+        return ballots.findSentBallotsByUser(user.id)
+            .filter { it.voteOptionId == voteOption.id }
     }
 
 }

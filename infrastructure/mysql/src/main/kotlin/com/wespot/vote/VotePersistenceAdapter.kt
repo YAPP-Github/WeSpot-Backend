@@ -24,13 +24,16 @@ class VotePersistenceAdapter(
         )?.let { voteJpaEntity ->
             VoteMapper.mapToDomainEntity(
                 voteJpaEntity,
-                ballotJpaRepository.findAllByVoteId(voteJpaEntity.id)
-                    .stream()
-                    .map { ballot -> BallotMapper.mapToDomainEntity(ballot) }
-                    .toList()
+                findBallotsByVote(voteJpaEntity.id)
             )
         }
     }
+
+    private fun findBallotsByVote(voteId: Long): List<Ballot> =
+        ballotJpaRepository.findAllByVoteId(voteId)
+            .stream()
+            .map { BallotMapper.mapToDomainEntity(it) }
+            .toList()
 
     override fun save(vote: Vote): Vote {
         vote.getBallots()
@@ -39,6 +42,22 @@ class VotePersistenceAdapter(
             .forEach { ballotJpaEntity -> ballotJpaRepository.save(ballotJpaEntity) }
         voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
         return vote
+    }
+
+    override fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): List<Vote> {
+        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(schoolId, grade, classNumber)
+            .stream()
+            .map {
+                VoteMapper.mapToDomainEntity(
+                    it,
+                    findBallotsByVote(it.id)
+                )
+            }
+            .toList()
     }
 
 }

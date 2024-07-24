@@ -17,17 +17,20 @@ import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
-class VoteRankServiceTest @Autowired constructor(
-    private var voteRankService: VoteRankService,
+class SentVoteServiceTest @Autowired constructor(
+    private var sentVoteService: SentVoteService,
     private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
@@ -50,9 +53,26 @@ class VoteRankServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        val vote =
-            VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
-        savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
+        savedVote = voteJpaRepository.save(
+            VoteMapper.mapToJpaEntity(
+                VoteFixture.createWithIdAndVoteNumberAndBallotsAndCreatedAt(
+                    0,
+                    0,
+                    Collections.emptyList(),
+                    LocalDate.now()
+                )
+            )
+        )
+        voteJpaRepository.save(
+            VoteMapper.mapToJpaEntity(
+                VoteFixture.createWithIdAndVoteNumberAndBallotsAndCreatedAt(
+                    0,
+                    0,
+                    Collections.emptyList(),
+                    LocalDate.now().minusDays(1)
+                )
+            )
+        )
     }
 
     @AfterEach
@@ -61,8 +81,11 @@ class VoteRankServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `투표 결과 1~5등을 조회한다`() {
+    fun `본인이 보낸 투표 목록을 조회한다`() {
         // given
+        val now = LocalDateTime.now()
+        mockkStatic(LocalDateTime::class)
+        every { LocalDateTime.now() } returns now
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
@@ -75,7 +98,7 @@ class VoteRankServiceTest @Autowired constructor(
                 )
             )
         )
-        Thread.sleep(1)
+        every { LocalDateTime.now() } returns now.plusMinutes(1)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
@@ -90,7 +113,7 @@ class VoteRankServiceTest @Autowired constructor(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
                     savedVote!!.id,
-                    voteOptions[1].id,
+                    voteOptions[2].id,
                     users[0].id,
                     users[2].id
                 )
@@ -98,23 +121,24 @@ class VoteRankServiceTest @Autowired constructor(
         )
 
         // when
-        val voteResultsOfTop5 = voteRankService.getVoteResultsOfTop5(LocalDate.now())
+        val sentVotes = sentVoteService.getSentVotes()
 
         // then
-        voteResultsOfTop5.voteResults.size shouldBe 5
-        voteResultsOfTop5.voteResults[0].voteResults.size shouldBe 2
-        voteResultsOfTop5.voteResults[0].voteResults[0].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[0].voteResults[0].user.id shouldBe users[1].id
-        voteResultsOfTop5.voteResults[0].voteResults[1].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[0].voteResults[1].user.id shouldBe users[0].id
-        voteResultsOfTop5.voteResults[1].voteResults.size shouldBe 1
-        voteResultsOfTop5.voteResults[1].voteResults[0].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[1].voteResults[0].user.id shouldBe users[2].id
+        sentVotes.voteData.size shouldBe 2
+        sentVotes.voteData[0].date shouldBe LocalDate.now().toString()
+        sentVotes.voteData[0].sentVoteResults.size shouldBe 2
+        sentVotes.voteData[0].sentVoteResults[0].voteCount shouldBe 1
+        sentVotes.voteData[0].sentVoteResults[1].voteCount shouldBe 1
+        sentVotes.voteData[1].date shouldBe LocalDate.now().minusDays(1).toString()
+        sentVotes.voteData[1].sentVoteResults.size shouldBe 0
     }
 
     @Test
-    fun `투표 결과 1등을 조회한다`() {
+    fun `본인이 보낸 투표를 개별 조회한다`() {
         // given
+        val now = LocalDateTime.now()
+        mockkStatic(LocalDateTime::class)
+        every { LocalDateTime.now() } returns now
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
@@ -127,7 +151,7 @@ class VoteRankServiceTest @Autowired constructor(
                 )
             )
         )
-        Thread.sleep(1)
+        every { LocalDateTime.now() } returns now.plusMinutes(1)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
@@ -150,15 +174,14 @@ class VoteRankServiceTest @Autowired constructor(
         )
 
         // when
-        val voteResultsOfTop1 = voteRankService.getVoteResultsOfTop1(LocalDate.now())
+        val sentVoteByFirstVoteOption = sentVoteService.getSentVote(voteOptions[0].id, now.toLocalDate())
+        val sentVoteBySecondVoteOption = sentVoteService.getSentVote(voteOptions[1].id, now.toLocalDate())
 
         // then
-        voteResultsOfTop1.voteResults.size shouldBe 5
-        voteResultsOfTop1.voteResults[0].voteResult!!.user.id shouldBe users[1].id
-        voteResultsOfTop1.voteResults[1].voteResult!!.user.id shouldBe users[2].id
-        voteResultsOfTop1.voteResults[2].voteResult shouldBe null
-        voteResultsOfTop1.voteResults[3].voteResult shouldBe null
-        voteResultsOfTop1.voteResults[4].voteResult shouldBe null
+        sentVoteByFirstVoteOption.voteResult.voteUsers.size shouldBe 1
+        sentVoteByFirstVoteOption.voteResult.voteOption.id shouldBe voteOptions[0].id
+        sentVoteBySecondVoteOption.voteResult.voteUsers.size shouldBe 1
+        sentVoteBySecondVoteOption.voteResult.voteOption.id shouldBe voteOptions[1].id
     }
 
 }
