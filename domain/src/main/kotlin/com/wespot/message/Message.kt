@@ -1,13 +1,12 @@
 package com.wespot.message
 
-import com.wespot.user.User
 import java.time.LocalDateTime
 
 data class Message(
     val id: Long,
     val content: String,
-    val sender: User,
-    val receiver: User,
+    val senderId: Long,
+    val receiverId: Long,
     val isReceiverRead: Boolean,
     val readAt: LocalDateTime,
     val isSent: Boolean,
