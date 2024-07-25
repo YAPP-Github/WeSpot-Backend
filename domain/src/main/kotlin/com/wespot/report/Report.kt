@@ -20,6 +20,7 @@ data class Report(
             sender: User,
             receiver: User
         ): Report {
+            validate(sender, receiver)
             return Report(
                 id = 0,
                 reportType = reportType,
@@ -28,6 +29,12 @@ data class Report(
                 receiverId = receiver.id,
                 createdAt = LocalDateTime.now()
             )
+        }
+
+        private fun validate(sender: User, receiver: User) {
+            if (sender.id == receiver.id) {
+                throw IllegalArgumentException("본인이 본인을 신고할 수 없습니다.")
+            }
         }
 
     }
