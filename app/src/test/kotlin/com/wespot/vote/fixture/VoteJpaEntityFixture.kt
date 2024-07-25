@@ -14,4 +14,14 @@ object VoteJpaEntityFixture {
         date = LocalDate.now(),
     )
 
+    fun createWithSchoolIdAndGradeAndClassNumber(schoolId: Long, grade: Int, classNumber: Int) = VoteJpaEntity(
+        id = 1L,
+        schoolId = schoolId,
+        grade = grade,
+        classNumber = classNumber,
+        voteNumber = 0,
+        date = LocalDate.now()
+    )
+
+
 }

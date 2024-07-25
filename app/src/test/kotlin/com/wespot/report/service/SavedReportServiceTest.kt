@@ -3,7 +3,6 @@ package com.wespot.report.service
 import com.wespot.DatabaseCleanup
 import com.wespot.message.MessageJpaRepository
 import com.wespot.message.MessageMapper
-import com.wespot.message.MessagePersistenceAdapter
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.report.ReportJpaRepository
 import com.wespot.report.ReportType
