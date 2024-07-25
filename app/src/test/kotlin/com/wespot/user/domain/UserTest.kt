@@ -12,7 +12,6 @@ class UserTest : BehaviorSpec({
         val user = UserFixture.createWithId(1L)
 
         `when`("제한을 주었을 때") {
-
             val originRestriction = user.restriction
             val newRestriction = RestrictionFixture.createFirstMessageUsageRestriction()
             user.restrict(newRestriction)
