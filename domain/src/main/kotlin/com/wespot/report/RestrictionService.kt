@@ -2,7 +2,6 @@ package com.wespot.report
 
 import com.wespot.user.Restriction
 import com.wespot.user.RestrictionType
-import com.wespot.user.User
 import org.springframework.stereotype.Component
 
 @Component
