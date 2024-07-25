@@ -4,7 +4,7 @@ import com.wespot.common.BaseEntity
 
 object MessageMapper {
 
-    fun toDomainEntity(messageJpaEntity: MessageJpaEntity) = Message(
+    fun mapToDomainEntity(messageJpaEntity: MessageJpaEntity) = Message(
         id = messageJpaEntity.id,
         content = messageJpaEntity.content,
         senderId = messageJpaEntity.senderId,
@@ -18,7 +18,7 @@ object MessageMapper {
         updatedAt = messageJpaEntity.baseEntity.updatedAt
     )
 
-    fun toJpaEntity(message: Message) = MessageJpaEntity(
+    fun mapToJpaEntity(message: Message) = MessageJpaEntity(
         id = message.id,
         content = message.content,
         senderId = message.senderId,
