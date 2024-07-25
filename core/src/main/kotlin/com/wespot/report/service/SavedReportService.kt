@@ -30,24 +30,9 @@ class SavedReportService(
         val targetUser = findTargetUserByUserId(reportRequest.targetId)
         val report = Report.of(reportRequest.reportType, reportRequest.targetId, loginUser, targetUser)
         val reports = findAllUserReportByReportType(targetUser, reportRequest.reportType)
-        executeReport(report, targetUser, reports)
+        executeReport(report = report, sender = loginUser, receiver = targetUser, reports = reports)
 
         return ReportResponse(targetUser.id)
-    }
-
-    private fun executeReport(
-        report: Report,
-        targetUser: User,
-        reports: List<Report>
-    ) {
-        validateReport(report)
-
-        deleteIfMessageReport(report)
-        val restriction = restrictionService.calculateRestrictionByReports(targetUser.restriction, report, reports)
-        targetUser.restrict(restriction)
-
-        reportPort.save(report)
-        userPort.save(targetUser)
     }
 
     private fun findLoginUser(): User {
@@ -64,20 +49,36 @@ class SavedReportService(
         return reportPort.findAllByReportedIdAndReportType(targetUser.id, reportType)
     }
 
-    private fun validateReport(report: Report) {
-        if (existsTargetByReportType(report)) {
+    private fun executeReport(
+        report: Report,
+        sender: User,
+        receiver: User,
+        reports: List<Report>
+    ) {
+        validateReport(report, sender, receiver)
+
+        deleteIfMessageReport(report)
+        val restriction = restrictionService.calculateRestrictionByReports(receiver.restriction, report, reports)
+        receiver.restrict(restriction)
+
+        reportPort.save(report)
+        userPort.save(receiver)
+    }
+
+    private fun validateReport(report: Report, sender: User, receiver: User) {
+        if (existsTargetByReportType(report, sender, receiver)) {
             return
         }
 
         throw IllegalArgumentException("존재하지 않는 ${report.reportType.value}에 신고를 할 수 없습니다.")
     }
 
-    private fun existsTargetByReportType(report: Report): Boolean {
+    private fun existsTargetByReportType(report: Report, sender: User, receiver: User): Boolean {
         if (report.isMessageReport()) {
-            return messagePort.existsById(report.targetId)
+            return messagePort.existsByIdAndSenderIdAndReceiverId(report.targetId, sender.id, receiver.id)
         }
 
-        return votePort.existsById(report.targetId)
+        return votePort.existsById(report.targetId) && sender.isClassmate(receiver)
     }
 
     private fun deleteIfMessageReport(report: Report) {
