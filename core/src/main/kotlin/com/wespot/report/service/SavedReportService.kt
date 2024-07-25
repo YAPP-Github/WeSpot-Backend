@@ -27,7 +27,8 @@ class SavedReportService(
     @Transactional
     override fun reportReceived(reportRequest: ReportRequest): ReportResponse {
         val loginUser = findLoginUser()
-        val targetUser = findTargetUserByUserId(reportRequest.targetId)
+        println("loginUser: ${loginUser} reportType:${reportRequest.reportType} targetId:${reportRequest.targetId} userId:${reportRequest.targetUserId}")
+        val targetUser = findTargetUserByUserId(reportRequest.targetUserId)
         val report = Report.of(reportRequest.reportType, reportRequest.targetId, loginUser, targetUser)
         val reports = findAllUserReportByReportType(targetUser, reportRequest.reportType)
         executeReport(report = report, sender = loginUser, receiver = targetUser, reports = reports)
@@ -36,8 +37,7 @@ class SavedReportService(
     }
 
     private fun findLoginUser(): User {
-        return userPort.findById(SecurityUtils.getLoginUserId(userPort))
-            ?: throw IllegalArgumentException("로그인을 하지 않은 유저입니다.")
+        return userPort.findById(SecurityUtils.getLoginUserId(userPort))!!
     }
 
     private fun findTargetUserByUserId(userId: Long): User {
