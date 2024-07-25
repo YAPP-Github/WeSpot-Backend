@@ -27,13 +27,12 @@ class SavedReportService(
     @Transactional
     override fun reportReceived(reportRequest: ReportRequest): ReportResponse {
         val loginUser = findLoginUser()
-        println("loginUser: ${loginUser} reportType:${reportRequest.reportType} targetId:${reportRequest.targetId} userId:${reportRequest.targetUserId}")
         val targetUser = findTargetUserByUserId(reportRequest.targetUserId)
         val report = Report.of(reportRequest.reportType, reportRequest.targetId, loginUser, targetUser)
         val reports = findAllUserReportByReportType(targetUser, reportRequest.reportType)
-        executeReport(report = report, sender = loginUser, receiver = targetUser, reports = reports)
+        val savedReport = executeReport(report = report, sender = loginUser, receiver = targetUser, reports = reports)
 
-        return ReportResponse(targetUser.id)
+        return ReportResponse(savedReport.id)
     }
 
     private fun findLoginUser(): User {
@@ -41,7 +40,7 @@ class SavedReportService(
     }
 
     private fun findTargetUserByUserId(userId: Long): User {
-        return userPort.findById(userId) ?: throw IllegalArgumentException("신고 하고자 하는 회원이 존재하지 않습니다.")
+        return userPort.findById(userId)!!
     }
 
 
@@ -54,15 +53,16 @@ class SavedReportService(
         sender: User,
         receiver: User,
         reports: List<Report>
-    ) {
+    ): Report {
         validateReport(report, sender, receiver)
 
         deleteIfMessageReport(report)
         val restriction = restrictionService.calculateRestrictionByReports(receiver.restriction, report, reports)
         receiver.restrict(restriction)
 
-        reportPort.save(report)
         userPort.save(receiver)
+
+        return reportPort.save(report)
     }
 
     private fun validateReport(report: Report, sender: User, receiver: User) {

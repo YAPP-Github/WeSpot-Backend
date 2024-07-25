@@ -11,7 +11,7 @@ interface UserPort {
         classNumber: Int
     ): Boolean
 
-    fun findById(userId: Long): User
+    fun findById(userId: Long): User?
 
     fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,

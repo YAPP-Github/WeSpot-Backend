@@ -65,7 +65,7 @@ class UserPersistenceAdapter(
         )
     }
 
-    override fun findById(userId: Long): User {
+    override fun findById(userId: Long): User? {
         return userJpaRepository.findById(userId)
             .orElseThrow { NoSuchElementException("유저를 찾을 수 없습니다.") }
             .let { UserMapper.mapToDomainEntity(it) }
