@@ -1,11 +1,10 @@
 package com.wespot.user.repository
 
-import com.wespot.user.Role
 import com.wespot.user.entity.UserJpaEntity
-import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import org.springframework.data.domain.Pageable
 
 interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
 
@@ -19,6 +18,12 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
 
     @Query("SELECT u.id FROM UserJpaEntity u WHERE u.id IN :ids")
     fun findIdsByIdIn(@Param("ids") ids: List<Long>): List<Long>
+
+    fun existsBySchoolIdAndGradeAndClassNumber(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): Boolean
 
     @Query(
         """

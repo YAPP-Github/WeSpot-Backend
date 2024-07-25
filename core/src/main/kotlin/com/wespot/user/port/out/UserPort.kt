@@ -1,10 +1,15 @@
 package com.wespot.user.port.out
 
-import com.wespot.user.Role
 import com.wespot.user.User
 import org.springframework.data.domain.Pageable
 
 interface UserPort {
+
+    fun existsBySchoolIdAndGradeAndClassNumber(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): Boolean
 
     fun findById(userId: Long): User?
 
@@ -28,6 +33,8 @@ interface UserPort {
         cursorId: Long?,
         pageable: Pageable
     ): List<User>
+
+    fun findAll(): List<User>
 
     fun countUsersAfterCursor(
         name: String,
