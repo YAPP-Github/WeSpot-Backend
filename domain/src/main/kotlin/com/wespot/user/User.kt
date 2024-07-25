@@ -18,6 +18,7 @@ data class User(
     val setting: Setting,
     val social: Social,
     val userConsent: UserConsent,
+    val restriction: Restriction,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val withdrawAt: LocalDateTime?,
@@ -42,6 +43,7 @@ data class User(
             setting = setting,
             social = social,
             userConsent = userConsent,
+            restriction = restriction,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             withdrawAt = withdrawAt,
@@ -70,6 +72,7 @@ data class User(
             ),
             userConsent = userConsent,
             createdAt = createdAt,
+            restriction = restriction,
             updatedAt = LocalDateTime.now(),
             withdrawAt = LocalDateTime.now(),
         )
@@ -108,6 +111,7 @@ data class User(
                     consentedAt = LocalDateTime.now(),
                     consentValue = false
                 ),
+                restriction = Restriction.createInitialState(),
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 withdrawAt = null
@@ -136,10 +140,37 @@ data class User(
                 setting = setting ?: user.setting,
                 social = user.social,
                 userConsent = userConsent ?: user.userConsent,
+                restriction = user.restriction,
                 createdAt = user.createdAt,
                 updatedAt = LocalDateTime.now(),
                 withdrawAt = user.withdrawAt
             )
 
     }
+
+    fun restrict(
+        restriction: Restriction
+    ) =
+        User(
+            id = id,
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
+            gender = gender,
+            role = role,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = classNumber,
+            profile = profile,
+            fcm = fcm,
+            setting = setting,
+            social = social,
+            userConsent = userConsent,
+            restriction = restriction,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            withdrawAt = withdrawAt
+        )
+
 }

@@ -5,6 +5,7 @@ import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.user.ConsentType
 import com.wespot.user.FCM
 import com.wespot.user.Profile
+import com.wespot.user.Restriction
 import com.wespot.user.Role
 import com.wespot.user.Setting
 import com.wespot.user.Social
@@ -46,6 +47,7 @@ object UserFixture {
             consentValue = true,
             consentedAt = LocalDateTime.now()
         ),
+        restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         withdrawAt = LocalDateTime.now(),
@@ -80,6 +82,7 @@ object UserFixture {
             consentValue = true,
             consentedAt = LocalDateTime.now()
         ),
+        restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         withdrawAt = LocalDateTime.now(),
@@ -137,6 +140,7 @@ object UserFixture {
                 socialRefreshToken = ""
             ),
             role = Role.USER,
+            restriction = Restriction.createInitialState(),
             withdrawAt = null,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
