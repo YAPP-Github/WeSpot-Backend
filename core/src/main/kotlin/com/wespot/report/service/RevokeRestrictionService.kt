@@ -16,14 +16,14 @@ class RevokeRestrictionService(
     override fun revokeRestriction() {
         val users = userPort.findAll()
         val today = LocalDate.now()
-        users.map { it.restrict(getRestrictionByDate(it, today)) }
-            .forEach { userPort.save(it) }
+
+        users.forEach { changeUserRestrictionByDate(it, today) }
+        users.forEach { userPort.save(it) }
     }
 
-    private fun getRestrictionByDate(
-        it: User,
-        today: LocalDate
-    ) = it.restriction
-        .getCurrentRestrictionBasedOnTime(today)
+    private fun changeUserRestrictionByDate(user: User, today: LocalDate) {
+        val newRestriction = user.getCurrentUserRestrictionBasedOnTime(today)
+        user.restrict(newRestriction)
+    }
 
 }
