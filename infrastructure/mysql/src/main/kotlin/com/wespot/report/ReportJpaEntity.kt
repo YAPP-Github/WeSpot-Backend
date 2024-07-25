@@ -1,6 +1,12 @@
 package com.wespot.report
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -14,15 +20,15 @@ class ReportJpaEntity(
 
     @Enumerated(value = EnumType.STRING)
     @field:NotNull
-    val type: ReportType,
+    val reportType: ReportType,
 
     @field:NotNull
-    val reporterId: Long,
+    val targetId: Long,
 
     @field:NotNull
-    val reportedId: Long,
+    val senderId: Long,
 
     @field:NotNull
-    val isApprove: Boolean
+    val receiverId: Long
 
 )
