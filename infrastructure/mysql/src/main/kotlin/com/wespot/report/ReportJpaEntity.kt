@@ -1,5 +1,7 @@
 package com.wespot.report
 
+import com.wespot.common.BaseEntity
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -29,6 +31,9 @@ class ReportJpaEntity(
     val senderId: Long,
 
     @field:NotNull
-    val receiverId: Long
+    val receiverId: Long,
+
+    @Embedded
+    val baseEntity: BaseEntity
 
 )

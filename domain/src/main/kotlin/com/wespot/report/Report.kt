@@ -1,6 +1,7 @@
 package com.wespot.report
 
 import com.wespot.user.User
+import java.time.LocalDateTime
 
 data class Report(
     val id: Long,
@@ -8,6 +9,7 @@ data class Report(
     val targetId: Long,
     val senderId: Long,
     val receiverId: Long,
+    val createdAt: LocalDateTime
 ) {
 
     companion object {
@@ -23,7 +25,8 @@ data class Report(
                 reportType = reportType,
                 targetId = targetId,
                 senderId = sender.id,
-                receiverId = receiver.id
+                receiverId = receiver.id,
+                createdAt = LocalDateTime.now()
             )
         }
 

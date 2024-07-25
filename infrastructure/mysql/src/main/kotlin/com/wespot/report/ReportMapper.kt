@@ -1,5 +1,7 @@
 package com.wespot.report
 
+import com.wespot.common.BaseEntity
+
 object ReportMapper {
 
     fun toDomainEntity(reportJpaEntity: ReportJpaEntity) = Report(
@@ -7,7 +9,8 @@ object ReportMapper {
         reportType = reportJpaEntity.reportType,
         targetId = reportJpaEntity.targetId,
         senderId = reportJpaEntity.senderId,
-        receiverId = reportJpaEntity.receiverId
+        receiverId = reportJpaEntity.receiverId,
+        createdAt = reportJpaEntity.baseEntity.createdAt
     )
 
     fun toJpaEntity(report: Report) = ReportJpaEntity(
@@ -15,7 +18,8 @@ object ReportMapper {
         reportType = report.reportType,
         targetId = report.targetId,
         senderId = report.senderId,
-        receiverId = report.receiverId
+        receiverId = report.receiverId,
+        baseEntity = BaseEntity(report.createdAt, report.createdAt)
     )
 
 }
