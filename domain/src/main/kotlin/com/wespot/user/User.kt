@@ -158,4 +158,10 @@ data class User(
     fun getCurrentUserRestrictionBasedOnTime(date: LocalDate) =
         restriction.getCurrentRestrictionBasedOnTime(date)
 
+    fun isClassmate(
+        otherUser: User
+    ) = this.schoolId == otherUser.schoolId
+        && this.grade == otherUser.grade
+        && this.classNumber == otherUser.classNumber
+
 }

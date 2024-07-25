@@ -24,4 +24,22 @@ class UserTest : BehaviorSpec({
         }
     }
 
+    given("서로 다른 유저가") {
+        val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+        `when`("같은 학급인 것을") {
+            val classmate = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val isClassmate = user.isClassmate(classmate)
+            then("확인한다.") {
+                isClassmate shouldBe true
+            }
+        }
+        `when`("다른 학급인 것을") {
+            val otherClassUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val isNotClassmate = user.isClassmate(otherClassUser)
+            then("확인한다.") {
+                isNotClassmate shouldBe false
+            }
+        }
+    }
+
 })
