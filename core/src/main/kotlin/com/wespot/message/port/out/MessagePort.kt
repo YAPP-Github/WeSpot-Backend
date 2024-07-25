@@ -5,6 +5,6 @@ interface MessagePort {
 
     fun deleteById(id: Long)
 
-    fun existsById(id: Long): Boolean
+    fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean
 
 }

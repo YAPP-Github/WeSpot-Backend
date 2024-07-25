@@ -12,8 +12,8 @@ class MessagePersistenceAdapter(
         messageJpaRepository.deleteById(id)
     }
 
-    override fun existsById(id: Long): Boolean {
-        return messageJpaRepository.existsById(id)
+    override fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean {
+        return messageJpaRepository.existsByIdAndSenderIdAndReceiverId(id, senderId, receiverId)
     }
 
 }
