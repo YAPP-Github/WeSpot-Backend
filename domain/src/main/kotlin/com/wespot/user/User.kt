@@ -1,5 +1,6 @@
 package com.wespot.user
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class User(
@@ -18,7 +19,7 @@ data class User(
     val setting: Setting,
     val social: Social,
     val userConsent: UserConsent,
-    val restriction: Restriction,
+    var restriction: Restriction,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val withdrawAt: LocalDateTime?,
@@ -150,27 +151,11 @@ data class User(
 
     fun restrict(
         restriction: Restriction
-    ) =
-        User(
-            id = id,
-            email = email,
-            password = password,
-            name = name,
-            introduction = introduction,
-            gender = gender,
-            role = role,
-            schoolId = schoolId,
-            grade = grade,
-            classNumber = classNumber,
-            profile = profile,
-            fcm = fcm,
-            setting = setting,
-            social = social,
-            userConsent = userConsent,
-            restriction = restriction,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            withdrawAt = withdrawAt
-        )
+    ) {
+        this.restriction = restriction
+    }
+
+    fun getCurrentUserRestrictionBasedOnTime(date: LocalDate) =
+        restriction.getCurrentRestrictionBasedOnTime(date)
 
 }
