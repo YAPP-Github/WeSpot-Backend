@@ -20,4 +20,18 @@ object MessageFixture {
         receivedAt = LocalDateTime.now()
     )
 
+    fun createWithIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long) = Message(
+        id = id,
+        content = "content",
+        senderId = senderId,
+        receiverId = receiverId,
+        isReceiverRead = true,
+        readAt = LocalDateTime.now(),
+        isSent = true,
+        sentAt = LocalDateTime.now(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+        receivedAt = LocalDateTime.now()
+    )
+
 }
