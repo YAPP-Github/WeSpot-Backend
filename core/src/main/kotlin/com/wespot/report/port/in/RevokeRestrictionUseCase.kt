@@ -1,7 +1,9 @@
 package com.wespot.report.port.`in`
 
+import java.time.LocalDate
+
 interface RevokeRestrictionUseCase {
 
-    fun revokeRestriction()
+    fun revokeRestriction(today: LocalDate)
 
 }

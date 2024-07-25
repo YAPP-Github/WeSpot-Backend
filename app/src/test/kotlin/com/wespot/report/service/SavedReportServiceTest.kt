@@ -32,9 +32,6 @@ class SavedReportServiceTest @Autowired constructor(
     private val reportJpaRepository: ReportJpaRepository
 ) {
 
-    @Autowired
-    private lateinit var messagePersistenceAdapter: MessagePersistenceAdapter
-
     @AfterEach
     fun tearDown() {
         databaseCleanup.execute()

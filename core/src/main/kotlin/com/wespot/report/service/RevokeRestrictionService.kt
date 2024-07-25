@@ -13,9 +13,8 @@ class RevokeRestrictionService(
 ) : RevokeRestrictionUseCase {
 
     @Transactional
-    override fun revokeRestriction() {
+    override fun revokeRestriction(today: LocalDate) {
         val users = userPort.findAll()
-        val today = LocalDate.now()
 
         users.forEach { changeUserRestrictionByDate(it, today) }
         users.forEach { userPort.save(it) }
