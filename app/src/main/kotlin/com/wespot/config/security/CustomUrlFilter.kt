@@ -23,6 +23,7 @@ class CustomUrlFilter(
     private val validUrlPatterns = listOf(
         "/health",
         "/",
+        "/h2-console",
         "/api/v1/auth/reissue",
         "/api/v1/auth/login",
         "/api/v1/auth/signup",
@@ -30,10 +31,15 @@ class CustomUrlFilter(
         "/api/v1/users/me",
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
-        "/v1/votes/options",
-        "/v1/votes",
-        "/v1/votes/tops",
         "/api/v1/users/search",
+        "/api/v1/votes/options",
+        "/api/v1/votes",
+        "/api/v1/votes/tops",
+        "/api/v1/votes/sent",
+        "/api/v1/votes/received",
+        "/api/v1/votes/sent/options",
+        "/api/v1/votes/received/options",
+        "/api/v1/reports/users"
     )
 
     override fun doFilterInternal(
