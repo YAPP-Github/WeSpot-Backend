@@ -38,7 +38,7 @@ class RestrictionServiceTest : BehaviorSpec({
             val newRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, reports)
 
             then("30일 이용제한이 된다.") {
-                newRestriction.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+                newRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 newRestriction.releaseDate shouldBe LocalDate.now().plusDays(30)
             }
         }
@@ -62,7 +62,7 @@ class RestrictionServiceTest : BehaviorSpec({
             val newRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, reports)
 
             then("90일 이용제한이 된다.") {
-                newRestriction.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+                newRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 newRestriction.releaseDate shouldBe LocalDate.now().plusDays(90)
             }
         }
@@ -86,7 +86,7 @@ class RestrictionServiceTest : BehaviorSpec({
             val newRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, reports)
 
             then("영구 이용제한 된다.") {
-                newRestriction.restrictionType shouldBe RestrictionType.MESSAGE_PERMANENT
+                newRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
                 newRestriction.releaseDate shouldBe LocalDate.MAX
             }
         }
@@ -110,19 +110,19 @@ class RestrictionServiceTest : BehaviorSpec({
             val newRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, reports)
 
             then("영구 이용제한 된다.") {
-                newRestriction.restrictionType shouldBe RestrictionType.VOTE_PERMANENT
+                newRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
                 newRestriction.releaseDate shouldBe LocalDate.MAX
             }
         }
         `when`("기존의 제한과 상관없이 현재 이용 제한 원칙에 따라") {
-            val originRestriction = Restriction.of(RestrictionType.MESSAGE_USAGE, 30)
+            val originRestriction = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
             val reports = getReportByCount(ReportType.MESSAGE, 9)
             val report =
                 ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.MESSAGE, 10, 1, 2)
             val newRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, reports)
 
             then("이용제한이 결정된다.") {
-                newRestriction.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+                newRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 newRestriction.releaseDate shouldBe LocalDate.now().plusDays(90)
             }
         }

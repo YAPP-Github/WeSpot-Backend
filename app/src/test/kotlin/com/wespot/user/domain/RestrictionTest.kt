@@ -24,26 +24,27 @@ class RestrictionTest : BehaviorSpec({
         `when`("정상적인 값이 아닌 값이 입력되게 되면") {
             then("예외가 발생한다.") {
                 val shouldThrow =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.MESSAGE_USAGE, 29L) }
+                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 29L) }
                 val shouldThrow1 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.MESSAGE_USAGE, 31L) }
+                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 31L) }
                 val shouldThrow2 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.MESSAGE_USAGE, 89L) }
+                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 89L) }
                 val shouldThrow3 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.MESSAGE_USAGE, 91L) }
+                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 91L) }
                 val shouldThrow4 = shouldThrow<IllegalArgumentException> {
                     Restriction.of(
-                        RestrictionType.MESSAGE_PERMANENT,
+                        RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
                         Long.MAX_VALUE - 1L
                     )
                 }
                 val shouldThrow5 = shouldThrow<IllegalArgumentException> {
                     Restriction.of(
-                        RestrictionType.VOTE_PERMANENT,
+                        RestrictionType.PERMANENT_BAN_VOTE_REPORT,
                         Long.MAX_VALUE - 1L
                     )
                 }
 
+                shouldThrow shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
                 shouldThrow1 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
                 shouldThrow2 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
                 shouldThrow3 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
@@ -52,18 +53,18 @@ class RestrictionTest : BehaviorSpec({
             }
         }
         `when`("정해진 규격의 값을 입력하게 되면") {
-            val messageUsage1 = Restriction.of(RestrictionType.MESSAGE_USAGE, 30L)
-            val messageUsage2 = Restriction.of(RestrictionType.MESSAGE_USAGE, 90L)
-            val messagePermanent = Restriction.of(RestrictionType.MESSAGE_PERMANENT, Long.MAX_VALUE)
-            val votePermanent = Restriction.of(RestrictionType.VOTE_PERMANENT, Long.MAX_VALUE)
+            val messageUsage1 = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
+            val messageUsage2 = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90L)
+            val messagePermanent = Restriction.of(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE)
+            val votePermanent = Restriction.of(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
             then("정상적으로 객체를 생성한다.") {
-                messageUsage1.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+                messageUsage1.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 messageUsage1.releaseDate shouldBe LocalDate.now().plusDays(30)
-                messageUsage2.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+                messageUsage2.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 messageUsage2.releaseDate shouldBe LocalDate.now().plusDays(90)
-                messagePermanent.restrictionType shouldBe RestrictionType.MESSAGE_PERMANENT
+                messagePermanent.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
                 messagePermanent.releaseDate shouldBe LocalDate.MAX
-                votePermanent.restrictionType shouldBe RestrictionType.VOTE_PERMANENT
+                votePermanent.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
                 votePermanent.releaseDate shouldBe LocalDate.MAX
             }
         }

@@ -242,7 +242,7 @@ class SavedReportServiceTest @Autowired constructor(
         val permanentUser = userJpaRepository.findById(reportReceiver.id).get()
 
         // then
-        permanentUser.restrictionType shouldBe RestrictionType.VOTE_PERMANENT
+        permanentUser.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
     }
 
 }

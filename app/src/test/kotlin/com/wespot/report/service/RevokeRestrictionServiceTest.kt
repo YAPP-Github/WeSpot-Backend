@@ -21,7 +21,7 @@ class RevokeRestrictionServiceTest @Autowired constructor(
     fun `이용 제한 기간이 지난 유저는 제한이 풀린다`() {
         // given
         val user = UserFixture.createWithId(0)
-        val restriction = Restriction.of(RestrictionType.MESSAGE_USAGE, 30L)
+        val restriction = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
         user.restrict(restriction)
         val savedUser = userJpaRepository.save(UserMapper.mapToJpaEntity(user))
         val now = LocalDate.now().plusDays(31)
@@ -38,7 +38,7 @@ class RevokeRestrictionServiceTest @Autowired constructor(
     fun `제한 기간이 지나지 않은 유저는 제한이 풀리지 않는다`() {
         // given
         val user = UserFixture.createWithId(0)
-        val restriction = Restriction.of(RestrictionType.MESSAGE_USAGE, 30L)
+        val restriction = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
         user.restrict(restriction)
         val savedUser = userJpaRepository.save(UserMapper.mapToJpaEntity(user))
         val now = LocalDate.now().plusDays(29)
@@ -48,7 +48,7 @@ class RevokeRestrictionServiceTest @Autowired constructor(
         val revokeUser = userJpaRepository.findById(savedUser.id).get()
 
         // then
-        revokeUser.restrictionType shouldBe RestrictionType.MESSAGE_USAGE
+        revokeUser.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
         revokeUser.releaseDate shouldBe now.plusDays(1)
     }
 

@@ -31,13 +31,13 @@ data class Restriction(
         }
 
         private fun validate(restrictionType: RestrictionType, restrictionDay: Long) {
-            if ((restrictionType == RestrictionType.VOTE_PERMANENT && restrictionDay == PERMANENT_BAN_DAY)
-                || (restrictionType == RestrictionType.MESSAGE_PERMANENT && restrictionDay == PERMANENT_BAN_DAY)
+            if ((restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT && restrictionDay == PERMANENT_BAN_DAY)
+                || (restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT && restrictionDay == PERMANENT_BAN_DAY)
             ) {
                 return
             }
-            if ((restrictionType == RestrictionType.MESSAGE_USAGE && restrictionDay == FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
-                || (restrictionType == RestrictionType.MESSAGE_USAGE && restrictionDay == SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
+            if ((restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
+                || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
             ) {
                 return
             }

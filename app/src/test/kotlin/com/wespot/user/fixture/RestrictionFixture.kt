@@ -5,12 +5,12 @@ import com.wespot.user.RestrictionType
 
 object RestrictionFixture {
 
-    fun createFirstMessageUsageRestriction() = Restriction.of(RestrictionType.MESSAGE_USAGE, 30L)
+    fun createFirstMessageUsageRestriction() = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
 
-    fun createSecondMessageUsageRestriction() = Restriction.of(RestrictionType.MESSAGE_USAGE, 90L)
+    fun createSecondMessageUsageRestriction() = Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90L)
 
-    fun createMessagePermanentRestriction() = Restriction.of(RestrictionType.MESSAGE_PERMANENT, Long.MAX_VALUE)
+    fun createMessagePermanentRestriction() = Restriction.of(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE)
 
-    fun createVotePermanentRestriction() = Restriction.of(RestrictionType.VOTE_PERMANENT, Long.MAX_VALUE)
+    fun createVotePermanentRestriction() = Restriction.of(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
 
 }
