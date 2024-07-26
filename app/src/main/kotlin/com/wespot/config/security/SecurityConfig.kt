@@ -68,14 +68,6 @@ class SecurityConfig(
                         "/api/v1/users/backgrounds",
                         "/api/v1/users/characters",
                         "/api/v1/users/search",
-                        "/api/v1/votes/options",
-                        "/api/v1/votes",
-                        "/api/v1/votes/tops",
-                        "/api/v1/votes/sent",
-                        "/api/v1/votes/received",
-                        "/api/v1/votes/sent/options",
-                        "/api/v1/votes/received/options",
-                        "/api/v1/reports/users"
                     ).permitAll()
                     .anyRequest().authenticated()
             }
