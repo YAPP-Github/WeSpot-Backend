@@ -22,6 +22,10 @@ configurations {
 	}
 }
 
+tasks.withType<Jar> {
+    archiveBaseName.set("wespot")
+}
+
 allprojects {
 	group = "com.wespot"
 	version = "1.0.0"
