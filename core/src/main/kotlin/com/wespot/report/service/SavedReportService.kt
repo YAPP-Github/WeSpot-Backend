@@ -45,7 +45,7 @@ class SavedReportService(
 
 
     private fun findAllUserReportByReportType(targetUser: User, reportType: ReportType): List<Report> {
-        return reportPort.findAllByReportedIdAndReportType(targetUser.id, reportType)
+        return reportPort.findAllByReceiverIdAndReportType(targetUser.id, reportType)
     }
 
     private fun executeReport(

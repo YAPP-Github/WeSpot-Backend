@@ -8,9 +8,9 @@ class ReportPersistenceAdapter(
     private val reportJpaRepository: ReportJpaRepository
 ) : ReportPort {
 
-    override fun findAllByReportedIdAndReportType(reportedId: Long, reportType: ReportType): List<Report> {
+    override fun findAllByReceiverIdAndReportType(receiverId: Long, reportType: ReportType): List<Report> {
         val findAllByReportedIdAndReportType =
-            reportJpaRepository.findAllByReceiverIdAndReportType(reportedId, reportType)
+            reportJpaRepository.findAllByReceiverIdAndReportType(receiverId, reportType)
 
         return findAllByReportedIdAndReportType.map { ReportMapper.toDomainEntity(it) }
     }

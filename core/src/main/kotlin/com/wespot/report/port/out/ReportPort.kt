@@ -5,7 +5,7 @@ import com.wespot.report.ReportType
 
 interface ReportPort {
 
-    fun findAllByReportedIdAndReportType(reportedId: Long, reportType: ReportType): List<Report>
+    fun findAllByReceiverIdAndReportType(receiverId: Long, reportType: ReportType): List<Report>
 
     fun save(report: Report): Report
 
