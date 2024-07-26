@@ -41,7 +41,7 @@ data class Restriction(
             ) {
                 return
             }
-            throw IllegalArgumentException("올바르지 않은 제제 타입과 제제 일 수 입니다.")
+            throw IllegalArgumentException("올바르지 않은 제재 타입과 제재 일 수 입니다.")
         }
 
     }

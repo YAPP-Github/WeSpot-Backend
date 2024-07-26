@@ -44,12 +44,12 @@ class RestrictionTest : BehaviorSpec({
                     )
                 }
 
-                shouldThrow shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
-                shouldThrow1 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
-                shouldThrow2 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
-                shouldThrow3 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
-                shouldThrow4 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
-                shouldThrow5 shouldHaveMessage "올바르지 않은 제제 타입과 제제 일 수 입니다."
+                shouldThrow shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow1 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow2 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow3 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow4 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow5 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
             }
         }
         `when`("정해진 규격의 값을 입력하게 되면") {
