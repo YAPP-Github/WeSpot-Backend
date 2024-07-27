@@ -22,10 +22,6 @@ configurations {
 	}
 }
 
-tasks.withType<Jar> {
-    archiveBaseName.set("wespot")
-}
-
 allprojects {
 	group = "com.wespot"
 	version = "1.0.0"
@@ -55,7 +51,7 @@ subprojects {
 		implementation("org.springframework.boot:spring-boot-starter-security")
 		implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-		implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 		implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
