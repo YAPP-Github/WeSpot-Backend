@@ -34,4 +34,18 @@ object MessageFixture {
         receivedAt = LocalDateTime.now()
     )
 
+    fun createMessage(
+        content: String,
+        receiverId: Long,
+        senderId: Long,
+        senderName: String
+    ): Message {
+        return Message.sendMessage(
+            content = content,
+            receiverId = receiverId,
+            senderId = senderId,
+            senderName = senderName
+        )
+    }
+
 }

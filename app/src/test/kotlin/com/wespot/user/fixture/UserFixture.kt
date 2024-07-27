@@ -88,6 +88,72 @@ object UserFixture {
         withdrawAt = LocalDateTime.now(),
     )
 
+    fun createSender(
+        id: Long = 1L
+    ) = User(
+        id = id,
+        email = "sender@example.com",
+        password = "password",
+        role = Role.USER,
+        name = "Sender",
+        introduction = "intro",
+        gender = "M",
+        schoolId = 1L,
+        grade = 1,
+        classNumber = 1,
+        setting = Setting(),
+        profile = Profile(1L, "black", "image.png"),
+        fcm = null,
+        social = Social(
+            socialType = SocialType.KAKAO,
+            socialId = "1123123",
+            socialEmail = null,
+            socialRefreshToken = "refreshToken"
+        ),
+        userConsent = UserConsent(
+            id = 1,
+            consentType = ConsentType.MARKETING,
+            consentValue = true,
+            consentedAt = LocalDateTime.now()
+        ),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+        withdrawAt = null
+    )
+
+    fun createReceiver(
+        id: Long = 2L
+    ) = User(
+        id = id,
+        email = "receiver@example.com",
+        password = "password",
+        role = Role.USER,
+        name = "Receiver",
+        introduction = "intro",
+        gender = "M",
+        schoolId = 1L,
+        grade = 1,
+        classNumber = 1,
+        setting = Setting(),
+        profile = Profile(2L, "black", "image.png"),
+        fcm = null,
+        social = Social(
+            socialType = SocialType.KAKAO,
+            socialId = "1123123",
+            socialEmail = null,
+            socialRefreshToken = "refreshToken"
+        ),
+        userConsent = UserConsent(
+            id = 2,
+            consentType = ConsentType.MARKETING,
+            consentValue = true,
+            consentedAt = LocalDateTime.now()
+        ),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+        withdrawAt = null
+    )
+
     // SecurityContextHolder를 사용하여 테스트를 위한 User를 설정
     fun setSecurityContextUser(user: User) {
         val mockUserDetail = PrincipalDetails(user)
