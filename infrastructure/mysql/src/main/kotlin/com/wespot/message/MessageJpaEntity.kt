@@ -20,18 +20,24 @@ class MessageJpaEntity(
     val senderId: Long,
 
     @field: NotNull
-    val receiverId: Long,
-
-    val isReceiverRead: Boolean,
-
-    val readAt: LocalDateTime,
+    val senderName: String,
 
     @field: NotNull
-    val isSent: Boolean,
+    val receiverId: Long,
 
-    val sentAt: LocalDateTime,
+    val isReceiverRead: Boolean?,
 
-    val receivedAt: LocalDateTime,
+    @Enumerated(EnumType.STRING)
+    val messageType: MessageType,
+
+    @field: NotNull
+    val isSend: Boolean,
+
+    val sendAt: LocalDateTime?,
+
+    val receivedAt: LocalDateTime?,
+
+    val readAt: LocalDateTime?,
 
     @Embedded
     val baseEntity: BaseEntity
