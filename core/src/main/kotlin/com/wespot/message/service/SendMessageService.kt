@@ -43,7 +43,6 @@ class SendMessageService(
         return SendMessageResponse.from(saveMessage.id)
     }
 
-
     private fun validateAlreadySentMessageToday(senderId: Long, receiverId: Long) {
         require(!messagePort.hasSentMessageToday(senderId, receiverId)) { "오늘 이미 해당 수신자에게 메시지를 보냈습니다." }
     }
