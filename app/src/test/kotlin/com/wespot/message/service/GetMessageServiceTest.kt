@@ -15,7 +15,6 @@ import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
@@ -23,8 +22,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
 class GetMessageServiceTest : BehaviorSpec({
-
-    val log = KotlinLogging.logger { }
 
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
