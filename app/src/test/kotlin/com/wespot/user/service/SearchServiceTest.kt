@@ -36,6 +36,7 @@ class SearchServiceTest : BehaviorSpec({
             val school3 = SchoolFixture.createSchool(3L, "광주고등학교", SchoolType.HIGH, "광주", "광주시 서구")
 
             every { userPort.searchUsers(keyword, null, null, null, null, pageable) } returns users
+            every { userPort.countUsersAfterCursor(keyword, null, null, null, null) } returns 0L
             every { schoolPort.findById(1L) } returns school1
             every { schoolPort.findById(2L) } returns school2
             every { schoolPort.findById(3L) } returns school3
@@ -63,6 +64,7 @@ class SearchServiceTest : BehaviorSpec({
             )
 
             every { userPort.findById(cursorId) } returns cursorUser
+            every { userPort.countUsersAfterCursor("경", "김갑수", "서울고등학교", 2, 1) } returns 0L
             every { schoolPort.findById(1L) } returns school
             every { userPort.searchUsers(keyword, "김갑수", "서울고등학교", 2, cursorId, pageable) } returns users
 
@@ -89,6 +91,7 @@ class SearchServiceTest : BehaviorSpec({
                 UserFixture.createUser(3L, "user3@example.com", "김경수", 3L)
             )
 
+            every { userPort.countUsersAfterCursor("경", "김경식", "부산고등학교", 2, 2) } returns 0L
             every { userPort.findById(cursorId) } returns cursorUser
             every { schoolPort.findById(2L) } returns school
             every { userPort.searchUsers(keyword, "김경식", "부산고등학교", 2, cursorId, pageable) } returns users

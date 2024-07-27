@@ -63,6 +63,7 @@ object BallotFixture {
         senderId = senderId,
         receiverId = receiverId,
         createdAt = createdAt,
+        updatedAt = createdAt,
         isReceiverRead = isReceiverRead
     )
 

@@ -1,13 +1,10 @@
 package com.wespot.user.adapter
 
-import com.wespot.school.SchoolType
-import com.wespot.user.Role
 import com.wespot.user.User
 import com.wespot.user.repository.UserJpaRepository
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional
 class UserPersistenceAdapter(
     private val userJpaRepository: UserJpaRepository,
 ) : UserPort {
+
+    override fun existsBySchoolIdAndGradeAndClassNumber(schoolId: Long, grade: Int, classNumber: Int): Boolean {
+        return userJpaRepository.existsBySchoolIdAndGradeAndClassNumber(schoolId, grade, classNumber)
+    }
 
     override fun findByEmail(userEmail: String): User? {
         return userJpaRepository.findByEmail(userEmail)
@@ -86,6 +87,11 @@ class UserPersistenceAdapter(
 
     override fun findIdsByIdIn(ids: List<Long>): List<Long> {
         return userJpaRepository.findIdsByIdIn(ids)
+    }
+
+    override fun findAll(): List<User> {
+        return userJpaRepository.findAll()
+            .map { UserMapper.mapToDomainEntity(it) }
     }
 
 }
