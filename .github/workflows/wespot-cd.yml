@@ -3,8 +3,10 @@ on:
     workflow_dispatch:
 
     pull_request:
-        branches: [ develop ]
-        types: [ closed ]
+        branches:
+            - develop
+            - main
+#        types: [ closed ]
 
 jobs:
     build:
@@ -40,9 +42,6 @@ jobs:
 
             - name: Docker Image Build
               run: docker buildx build --platform linux/amd64 -t wespot0817/wespot . --push
-
-            - name: Docker Hub push
-              run: docker push wespot0817/wespot
 
             - name: Docker Pull And run
               uses: appleboy/ssh-action@v0.1.6
