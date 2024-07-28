@@ -31,6 +31,10 @@ class ModifyMessageServiceTest : BehaviorSpec({
     lateinit var message: Message
 
     beforeContainer {
+        // 시간을 조작하여 테스트 시간 설정
+        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+        MessageTimeValidator.setClock(fixedClock)
+        
         sender = UserFixture.createSender()
         receiver = UserFixture.createReceiver()
         message = MessageFixture.createMessage("Hello", receiver.id, sender.id, sender.name)
@@ -57,9 +61,7 @@ class ModifyMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { messagePort.save(any()) } returns message.copy(content = updateMessageRequest.content)
 
-            // 시간을 조작하여 테스트 시간 설정
-            val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
-            MessageTimeValidator.setClock(fixedClock)
+
 
             then("메시지가 올바르게 업데이트되어야 한다") {
                 val response = modifyMessageService.updateMessage(message.id, updateMessageRequest)

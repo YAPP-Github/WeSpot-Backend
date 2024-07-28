@@ -35,7 +35,7 @@ class SendMessageService(
             senderId = loginUser.id,
             senderName = sendMessageRequest.senderName
         )
-        
+
         val saveMessage = messagePort.save(sendMessage)
 
         return SendMessageResponse.from(saveMessage.id)
