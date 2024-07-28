@@ -74,7 +74,7 @@ class SavedReportServiceTest @Autowired constructor(
         val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
 
         // then
-        shouldThrow shouldHaveMessage "유저를 찾을 수 없습니다."
+        shouldThrow shouldHaveMessage "신고하고자 하는 사용자가 존재하지 않습니다."
     }
 
     @Test

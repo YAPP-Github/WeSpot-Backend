@@ -6,6 +6,7 @@ import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.port.`in`.CreatedVoteUseCase
 import com.wespot.vote.port.out.VotePort
+import com.wespot.vote.service.helper.VoteServiceHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -58,7 +59,7 @@ class CreatedVoteService(
 
     @Transactional
     override fun createVoteByUser(user: User) {
-        userPort.findById(user.id)
+        VoteServiceHelper.findUser(userPort, user.id)
         val today = LocalDate.now()
         val voteIdentifier = VoteIdentifier.of(user, today)
         saveVote(voteIdentifier)

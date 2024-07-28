@@ -148,10 +148,10 @@ class CreatedVoteServiceTest @Autowired constructor(
     @Test
     fun `가입하지 않은 유저가 투표 생성을 요청할 경우 예외가 발생한다`() {
         // given when
-        val shouldThrow = shouldThrow<NoSuchElementException> { createdVoteService.createVoteByUser(users[0]) }
+        val shouldThrow = shouldThrow<IllegalArgumentException> { createdVoteService.createVoteByUser(users[0]) }
 
         // then
-        shouldThrow shouldHaveMessage "유저를 찾을 수 없습니다."
+        shouldThrow shouldHaveMessage "ID에 해당하는 사용자가 존재하지 않습니다."
     }
 
 }
