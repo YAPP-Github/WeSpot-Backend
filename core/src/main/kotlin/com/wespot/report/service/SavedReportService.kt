@@ -43,8 +43,8 @@ class SavedReportService(
     private fun findTargetUserByUserId(userId: Long): User {
         return userPort.findById(userId)
             ?: throw NoSuchElementException("신고하고자 하는 사용자가 존재하지 않습니다.")
-    }
 
+    }
 
     private fun findAllUserReportByReportType(targetUser: User, reportType: ReportType): List<Report> {
         return reportPort.findAllByReceiverIdAndReportType(targetUser.id, reportType)
