@@ -3,25 +3,12 @@ package com.wespot.vote
 import com.wespot.vote.port.out.VotePort
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.*
 
 @Repository
 class VotePersistenceAdapter(
     private val voteJpaRepository: VoteJpaRepository,
     private val ballotJpaRepository: BallotJpaRepository
 ) : VotePort {
-
-    override fun findTop1BySchoolIdAndGradeAndClassNumberOrderByDateDescExcludeBallots(
-        schoolId: Long,
-        grade: Int,
-        classNumber: Int
-    ): Vote? {
-        return voteJpaRepository.findTop1BySchoolIdAndGradeAndClassNumberOrderByDateDesc(
-            schoolId,
-            grade,
-            classNumber
-        )?.let { VoteMapper.mapToDomainEntity(it, Collections.emptyList()) } ?: return null
-    }
 
     override fun existsBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,

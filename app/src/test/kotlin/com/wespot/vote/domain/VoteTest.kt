@@ -4,6 +4,8 @@ import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.RankCalculateService
 import com.wespot.vote.ReceivedVoteCalculateService
+import com.wespot.vote.Vote
+import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.fixture.BallotFixture
 import com.wespot.vote.fixture.VoteFixture
 import com.wespot.voteoption.VoteOption
@@ -13,6 +15,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -468,6 +471,67 @@ class VoteTest() : BehaviorSpec({
                 userSentVoteBySecondVoteOption[0].voteOptionId shouldBe 2
                 userSentVoteBySecondVoteOption[0].senderId shouldBe 1
                 userSentVoteBySecondVoteOption[0].receiverId shouldBe 4
+            }
+        }
+    }
+
+    given("초기 상태의 투표함을 만들 때,") {
+        `when`("이전 투표가 없으면") {
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val now = LocalDate.now()
+            val voteIdentifier = VoteIdentifier.of(user, now)
+            val vote = Vote.of(voteIdentifier, null)
+
+            then("VoteNumber가 0으로 설정된다.") {
+                vote.voteIdentifier.date shouldBe voteIdentifier.date
+                vote.voteIdentifier.schoolId shouldBe user.schoolId
+                vote.voteIdentifier.grade shouldBe user.grade
+                vote.voteIdentifier.classNumber shouldBe user.classNumber
+                vote.voteNumber shouldBe 0
+            }
+        }
+        `when`("이전 투표가 존재하면") {
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val now = LocalDate.now()
+            val voteIdentifier = VoteIdentifier.of(user, now)
+            val previousVote = Vote.of(voteIdentifier, null)
+            val newVoteIdentifier = VoteIdentifier.of(user, now.plusDays(1))
+            val vote = Vote.of(newVoteIdentifier, previousVote)
+
+            then("VoteNumber가 이전 투표의 VoteNumber + 1 로 설정된다.") {
+                vote.voteIdentifier.date shouldBe newVoteIdentifier.date
+                vote.voteIdentifier.schoolId shouldBe user.schoolId
+                vote.voteIdentifier.grade shouldBe user.grade
+                vote.voteIdentifier.classNumber shouldBe user.classNumber
+                vote.voteNumber shouldBe 1
+            }
+        }
+
+        `when`("입력된 학급과 PreviousVote의 학급이 동일하지 않을 때") {
+            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val now = LocalDate.now()
+            val firstUserVoteIdentifier = VoteIdentifier.of(firstUser, now.minusDays(1))
+            val previousVote= Vote.of(firstUserVoteIdentifier, null)
+            val secondUserVoteIdentifier = VoteIdentifier.of(secondUser, now)
+            val shouldThrow = shouldThrow<IllegalArgumentException> { Vote.of(secondUserVoteIdentifier, previousVote) }
+
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "입력된 이전 투표가 유효하지 않습니다."
+            }
+        }
+
+        `when`("입력된 날짜의 어제가 previousVote의 date가 아니면") {
+            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val now = LocalDate.now()
+            val firstUserVoteIdentifier = VoteIdentifier.of(firstUser, now.minusDays(2))
+            val previousVote= Vote.of(firstUserVoteIdentifier, null)
+            val secondUserVoteIdentifier = VoteIdentifier.of(secondUser, now)
+            val shouldThrow = shouldThrow<IllegalArgumentException> { Vote.of(secondUserVoteIdentifier, previousVote) }
+
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "입력된 이전 투표가 유효하지 않습니다."
             }
         }
     }

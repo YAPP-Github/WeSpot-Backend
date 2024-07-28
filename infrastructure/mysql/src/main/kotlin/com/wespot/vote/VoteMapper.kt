@@ -5,22 +5,24 @@ object VoteMapper {
     fun mapToDomainEntity(voteJpaEntity: VoteJpaEntity, ballots: List<Ballot>): Vote =
         Vote(
             id = voteJpaEntity.id,
-            schoolId = voteJpaEntity.schoolId,
-            grade = voteJpaEntity.grade,
-            classNumber = voteJpaEntity.classNumber,
+            voteIdentifier = VoteIdentifier(
+                schoolId = voteJpaEntity.schoolId,
+                grade = voteJpaEntity.grade,
+                classNumber = voteJpaEntity.classNumber,
+                date = voteJpaEntity.date
+            ),
             voteNumber = voteJpaEntity.voteNumber,
-            date = voteJpaEntity.date,
             ballots = Ballots.from(ballots)
         )
 
     fun mapToJpaEntity(vote: Vote): VoteJpaEntity =
         VoteJpaEntity(
             id = vote.id,
-            schoolId = vote.schoolId,
-            grade = vote.grade,
-            classNumber = vote.classNumber,
+            schoolId = vote.voteIdentifier.schoolId,
+            grade = vote.voteIdentifier.grade,
+            classNumber = vote.voteIdentifier.classNumber,
             voteNumber = vote.voteNumber,
-            date = vote.date,
+            date = vote.voteIdentifier.date,
         )
 
 }

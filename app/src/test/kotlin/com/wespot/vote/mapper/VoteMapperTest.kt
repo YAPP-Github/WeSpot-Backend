@@ -21,11 +21,11 @@ class VoteMapperTest : BehaviorSpec({
             )
             then("Domain Entity를 반환한다") {
                 voteDomainEntity.id shouldBe voteJpaEntity.id
-                voteDomainEntity.schoolId shouldBe voteJpaEntity.schoolId
-                voteDomainEntity.grade shouldBe voteJpaEntity.grade
-                voteDomainEntity.classNumber shouldBe voteJpaEntity.classNumber
+                voteDomainEntity.voteIdentifier.schoolId shouldBe voteJpaEntity.schoolId
+                voteDomainEntity.voteIdentifier.grade shouldBe voteJpaEntity.grade
+                voteDomainEntity.voteIdentifier.classNumber shouldBe voteJpaEntity.classNumber
                 voteDomainEntity.voteNumber shouldBe voteJpaEntity.voteNumber
-                voteDomainEntity.date shouldBe voteJpaEntity.date
+                voteDomainEntity.voteIdentifier.date shouldBe voteJpaEntity.date
                 voteDomainEntity.ballots::class shouldBe Ballots::class
             }
         }
@@ -37,11 +37,11 @@ class VoteMapperTest : BehaviorSpec({
             val jpaEntity = VoteMapper.mapToJpaEntity(domainEntity)
             then("Jpa Entity를 반환한다") {
                 jpaEntity.id shouldBe domainEntity.id
-                jpaEntity.schoolId shouldBe domainEntity.schoolId
-                jpaEntity.grade shouldBe domainEntity.grade
-                jpaEntity.classNumber shouldBe domainEntity.classNumber
+                jpaEntity.schoolId shouldBe domainEntity.voteIdentifier.schoolId
+                jpaEntity.grade shouldBe domainEntity.voteIdentifier.grade
+                jpaEntity.classNumber shouldBe domainEntity.voteIdentifier.classNumber
                 jpaEntity.voteNumber shouldBe domainEntity.voteNumber
-                jpaEntity.date shouldBe domainEntity.date
+                jpaEntity.date shouldBe domainEntity.voteIdentifier.date
             }
         }
     }

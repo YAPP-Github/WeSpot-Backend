@@ -2,24 +2,61 @@ package com.wespot.vote
 
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
-import java.time.LocalDate
+import java.util.*
 
 data class Vote(
     val id: Long,
-    val schoolId: Long,
-    val grade: Int,
-    val classNumber: Int,
+    val voteIdentifier: VoteIdentifier,
     val voteNumber: Int,
-    val date: LocalDate,
     val ballots: Ballots,
 ) {
 
     companion object {
         private const val NUMBER_OF_VOTE_USERS = 5
+        private const val MOVED_YESTERDAY = 1L
+
+        fun of(
+            voteIdentifier: VoteIdentifier,
+            previousVote: Vote?,
+        ): Vote {
+            if (Objects.isNull(previousVote)) {
+                return Vote(
+                    id = 0L,
+                    voteIdentifier = voteIdentifier,
+                    voteNumber = 0,
+                    ballots = Ballots.createEmptyBallots()
+                )
+            }
+
+            validatePreviousVote(voteIdentifier, previousVote!!)
+            return Vote(
+                id = 0L,
+                voteIdentifier = voteIdentifier,
+                voteNumber = previousVote.voteNumber + 1,
+                ballots = Ballots.createEmptyBallots()
+            )
+        }
+
+        private fun validatePreviousVote(voteIdentifier: VoteIdentifier, previousVote: Vote) {
+            if (voteIdentifier.isSameClass(previousVote.voteIdentifier) && isYesterday(voteIdentifier, previousVote)) {
+                return
+            }
+
+            throw IllegalArgumentException("입력된 이전 투표가 유효하지 않습니다.")
+        }
+
+        private fun isYesterday(
+            voteIdentifier: VoteIdentifier,
+            previousVote: Vote
+        ): Boolean {
+            val yesterday = voteIdentifier.date.minusDays(MOVED_YESTERDAY)
+
+            return previousVote.voteIdentifier.date == yesterday
+        }
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-        return VoteOptionsByVoteDate.of(date, voteNumber, allVoteOptions)
+        return VoteOptionsByVoteDate.of(voteIdentifier.date, voteNumber, allVoteOptions)
     }
 
 
