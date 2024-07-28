@@ -90,4 +90,13 @@ class BallotsTest : BehaviorSpec({
         }
     }
 
+    given("투표지 목록") {
+        `when`("을 빈 상태로") {
+            val emptyBallots = Ballots.createEmptyBallots()
+            then("생성 할 수 있다.") {
+                emptyBallots.ballots.size shouldBe 0
+            }
+        }
+    }
+
 })
