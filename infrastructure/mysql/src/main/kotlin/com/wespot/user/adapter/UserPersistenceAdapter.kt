@@ -5,6 +5,7 @@ import com.wespot.user.repository.UserJpaRepository
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -66,9 +67,8 @@ class UserPersistenceAdapter(
     }
 
     override fun findById(userId: Long): User? {
-        return userJpaRepository.findById(userId)
-            .orElseThrow { NoSuchElementException("유저를 찾을 수 없습니다.") }
-            .let { UserMapper.mapToDomainEntity(it) }
+        return userJpaRepository.findByIdOrNull(userId)
+            ?.let { UserMapper.mapToDomainEntity(it) }
     }
 
     override fun findAllBySchoolIdAndGradeAndClassNumber(

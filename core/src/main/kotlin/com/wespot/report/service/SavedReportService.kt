@@ -36,11 +36,13 @@ class SavedReportService(
     }
 
     private fun findLoginUser(): User {
-        return userPort.findById(SecurityUtils.getLoginUserId(userPort))!!
+        return userPort.findById(SecurityUtils.getLoginUserId(userPort))
+            ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
     }
 
     private fun findTargetUserByUserId(userId: Long): User {
-        return userPort.findById(userId)!!
+        return userPort.findById(userId)
+            ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
     }
 
 
