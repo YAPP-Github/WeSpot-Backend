@@ -40,7 +40,6 @@ class CustomUrlFilter(
         "/api/v1/votes/received/options",
         "/api/v1/reports/users",
         "/api/v1/messages",
-        "/api/v1/messages/*",
         "/api/v1/messages/send",
         "/api/v1/messages/status/me",
         "/api/v1/messages/check-profanity",

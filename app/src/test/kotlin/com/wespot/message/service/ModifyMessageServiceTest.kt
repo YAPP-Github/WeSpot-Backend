@@ -2,6 +2,7 @@ package com.wespot.message.service
 
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
+import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.UpdateMessageRequest
 import com.wespot.message.dto.response.UpdateMessageResponse
 import com.wespot.message.fixture.MessageFixture
@@ -14,14 +15,13 @@ import io.kotest.matchers.shouldBe
 import io.mockk.*
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 
-class ModifySendMessageServiceTest : BehaviorSpec({
+class ModifyMessageServiceTest : BehaviorSpec({
 
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
-    val modifySendMessageService = ModifySendMessageService(
+    val modifyMessageService = ModifyMessageService(
         messagePort = messagePort,
         userPort = userPort
     )
@@ -62,22 +62,22 @@ class ModifySendMessageServiceTest : BehaviorSpec({
             MessageTimeValidator.setClock(fixedClock)
 
             then("메시지가 올바르게 업데이트되어야 한다") {
-                val response = modifySendMessageService.updateMessage(message.id, updateMessageRequest)
+                val response = modifyMessageService.updateMessage(message.id, updateMessageRequest)
                 response shouldBe UpdateMessageResponse.from(message.id)
             }
 
             then("올바른 메시지를 가져와야 한다") {
-                modifySendMessageService.updateMessage(message.id, updateMessageRequest)
+                modifyMessageService.updateMessage(message.id, updateMessageRequest)
                 verify { messagePort.findById(message.id) }
             }
 
             then("로그인한 사용자가 메시지를 업데이트해야 한다") {
-                modifySendMessageService.updateMessage(message.id, updateMessageRequest)
+                modifyMessageService.updateMessage(message.id, updateMessageRequest)
                 verify { SecurityUtils.getLoginUser(userPort) }
             }
 
             then("메시지를 저장해야 한다") {
-                modifySendMessageService.updateMessage(message.id, updateMessageRequest)
+                modifyMessageService.updateMessage(message.id, updateMessageRequest)
                 verify { messagePort.save(any()) }
             }
         }
@@ -90,12 +90,12 @@ class ModifySendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message.copy(isReceiverRead = true)
 
             then("메시지가 읽은 상태로 업데이트되어야 한다") {
-                modifySendMessageService.readMessage(messageId)
+                modifyMessageService.readMessage(messageId)
                 verify { messagePort.save(any()) }
             }
 
             then("올바른 메시지를 가져와야 한다") {
-                modifySendMessageService.readMessage(messageId)
+                modifyMessageService.readMessage(messageId)
                 verify { messagePort.findById(messageId) }
             }
         }

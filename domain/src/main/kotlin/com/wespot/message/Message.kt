@@ -1,5 +1,7 @@
 package com.wespot.message
 
+import com.wespot.message.MessageTimeValidator.validateMessageSendTime
+import com.wespot.message.MessageTimeValidator.validateMessageUpdateTime
 import com.wespot.user.User
 import java.time.LocalDateTime
 
@@ -21,10 +23,14 @@ data class Message(
 
     fun updateMessage(
         content: String,
+        modifier: User,
         receiverId: Long,
         senderName: String
-    ) =
-        Message(
+    ): Message {
+        validateMessageOwner(modifier)
+        require(senderId != receiverId) { "본인이 메시지를 보낼 수 없습니다." }
+        validateMessageUpdateTime()
+        val message = Message(
             id = id,
             content = content,
             senderId = senderId,
@@ -39,9 +45,15 @@ data class Message(
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
         )
+        message.validateMessageReceiver()
 
-    fun readMessage() =
-        Message(
+        return message
+    }
+
+    fun readMessage(
+        user: User
+    ): Message {
+        val message = Message(
             id = id,
             content = content,
             senderId = senderId,
@@ -54,8 +66,11 @@ data class Message(
             sendAt = sendAt,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
-            receivedAt = receivedAt,
+            receivedAt = receivedAt
         )
+        message.validateSentMessage(user)
+        return message
+    }
 
     fun validateMessageOwner(loginUser: User) {
         require(messageType == MessageType.SENT) { "보낸 메시지만 수정이 가능합니다." }
@@ -63,11 +78,11 @@ data class Message(
     }
 
     fun validateMessageReceiver() {
-        require(receiverId != senderId) { "본인에게 메시지를 보낼 수 없습니다." }
+        require(receiverId != senderId) { "본인이 메시지를 보낼 수 없습니다." }
     }
 
     fun validateSentMessage(loginUser: User) {
-        require(receiverId != loginUser.id) { "본인에게 받은 메시지만 읽을 수 있습니다." }
+        require(receiverId != loginUser.id) { "본인이 받은 메시지만 읽을 수 있습니다." }
         require(messageType != MessageType.RECEIVED) { "받은 메시지만 읽을 수 있습니다." }
     }
 
@@ -79,7 +94,8 @@ data class Message(
             senderId: Long,
             senderName: String
         ): Message {
-            return Message(
+            validateMessageSendTime()
+            val message = Message(
                 id = 0L,
                 content = content,
                 senderId = senderId,
@@ -92,8 +108,11 @@ data class Message(
                 sendAt = LocalDateTime.now(),
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
-                receivedAt = null
+                receivedAt = null,
             )
+            message.validateMessageReceiver()
+
+            return message
         }
 
     }

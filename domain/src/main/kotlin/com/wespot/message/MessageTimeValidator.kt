@@ -1,4 +1,4 @@
-package com.wespot.message.service
+package com.wespot.message
 
 import java.time.Clock
 import java.time.LocalTime
@@ -7,11 +7,11 @@ object MessageTimeValidator {
     private var clock: Clock = Clock.systemDefaultZone()
 
     fun setClock(clock: Clock) {
-        this.clock = clock
+        MessageTimeValidator.clock = clock
     }
 
     fun resetClock() {
-        this.clock = Clock.systemDefaultZone()
+        clock = Clock.systemDefaultZone()
     }
 
     private fun isValidTimeRange(): Boolean {

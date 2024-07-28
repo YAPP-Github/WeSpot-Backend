@@ -7,8 +7,8 @@ import com.wespot.message.dto.response.SendMessageResponse
 import com.wespot.message.port.`in`.SendMessageUseCase
 import com.wespot.message.port.out.MessagePort
 import com.wespot.message.service.MessageFinder.findUserById
-import com.wespot.message.service.MessageSendLimitValidator.validateSendMessageLimit
-import com.wespot.message.service.MessageTimeValidator.validateMessageSendTime
+import com.wespot.message.service.MessageSendValidator.validateAlreadySentMessageToday
+import com.wespot.message.service.MessageSendValidator.validateSendMessageLimit
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,9 +26,8 @@ class SendMessageService(
         val receiver = findUserById(id = sendMessageRequest.receiverId, userPort = userPort)
 
         validateSendMessageLimit(user = loginUser, messagePort = messagePort)
-        validateAlreadySentMessageToday(senderId = loginUser.id, receiverId = receiver.id)
+        validateAlreadySentMessageToday(senderId = loginUser.id, receiverId = receiver.id, messagePort = messagePort)
         validateUserBlockStatus()
-        validateMessageSendTime()
 
         val sendMessage = Message.sendMessage(
             content = sendMessageRequest.content,
@@ -36,15 +35,10 @@ class SendMessageService(
             senderId = loginUser.id,
             senderName = sendMessageRequest.senderName
         )
-        sendMessage.validateMessageReceiver()
-
+        
         val saveMessage = messagePort.save(sendMessage)
 
         return SendMessageResponse.from(saveMessage.id)
-    }
-
-    private fun validateAlreadySentMessageToday(senderId: Long, receiverId: Long) {
-        require(!messagePort.hasSentMessageToday(senderId, receiverId)) { "오늘 이미 해당 수신자에게 메시지를 보냈습니다." }
     }
 
     private fun validateUserBlockStatus() {

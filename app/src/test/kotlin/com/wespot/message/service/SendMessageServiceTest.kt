@@ -2,6 +2,7 @@ package com.wespot.message.service
 
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
+import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.SendMessageRequest
 import com.wespot.message.dto.response.SendMessageResponse
 import com.wespot.message.fixture.MessageFixture
