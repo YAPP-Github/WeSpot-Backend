@@ -116,6 +116,7 @@ object UserFixture {
             consentValue = true,
             consentedAt = LocalDateTime.now()
         ),
+        restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         withdrawAt = null
@@ -149,6 +150,7 @@ object UserFixture {
             consentValue = true,
             consentedAt = LocalDateTime.now()
         ),
+        restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         withdrawAt = null
