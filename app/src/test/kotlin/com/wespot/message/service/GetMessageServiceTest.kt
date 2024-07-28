@@ -2,6 +2,7 @@ package com.wespot.message.service
 
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
+import com.wespot.message.MessageTimeValidator
 import com.wespot.message.MessageType
 import com.wespot.message.dto.response.MessageListResponse
 import com.wespot.message.dto.response.MessageResponse
@@ -20,6 +21,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 class GetMessageServiceTest : BehaviorSpec({
 
@@ -48,6 +52,11 @@ class GetMessageServiceTest : BehaviorSpec({
     }
 
     fun initializeMessages(): MutableList<Message> {
+
+        // 시간을 조작하여 테스트 시간 설정
+        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+        MessageTimeValidator.setClock(fixedClock)
+
         val messages = mutableListOf<Message>()
         for (i in 1..11) {
             messages.add(

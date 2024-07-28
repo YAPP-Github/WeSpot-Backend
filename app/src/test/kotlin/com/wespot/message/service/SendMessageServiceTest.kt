@@ -31,6 +31,11 @@ class SendMessageServiceTest : BehaviorSpec({
     lateinit var message: Message
 
     beforeContainer {
+
+        // 시간을 조작하여 테스트 시간 설정
+        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+        MessageTimeValidator.setClock(fixedClock)
+
         sender = UserFixture.createSender()
         receiver = UserFixture.createReceiver()
         message = MessageFixture.createMessage("Hello", receiver.id, sender.id, sender.name)
@@ -58,10 +63,6 @@ class SendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message
             every { messagePort.sendMessageCount(sender.id) } returns 0
             every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
-
-            // 시간을 조작하여 테스트 시간 설정
-            val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
-            MessageTimeValidator.setClock(fixedClock)
 
             val response = sendMessageService.send(sendMessageRequest)
 
