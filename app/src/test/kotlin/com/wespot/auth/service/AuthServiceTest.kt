@@ -1,8 +1,10 @@
 package com.wespot.auth.service
 
 import com.wespot.DateTimeUtil.getExpirationLocalDateTime
-import com.wespot.auth.dto.*
-import com.wespot.auth.dto.request.*
+import com.wespot.auth.dto.AuthData
+import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.request.RefreshTokenRequest
+import com.wespot.auth.dto.request.SignInRequest
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.response.TokenResponse
@@ -11,7 +13,7 @@ import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.*
+import com.wespot.user.SocialType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
@@ -19,11 +21,14 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.spyk
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.util.NoSuchElementException
 
 class AuthServiceTest : BehaviorSpec({
 
@@ -42,21 +47,24 @@ class AuthServiceTest : BehaviorSpec({
 
     val secretKey = "testSecretKey"
 
-    val authService = spyk(AuthService(
-        userPort = userPort,
-        refreshTokenPort = refreshTokenPort,
-        userConsentPort = userConsentPort,
-        profilePort = profilePort,
-        schoolPort = schoolPort,
-        authDataPort = authDataPort,
-        jwtTokenProvider = jwtTokenProvider,
-        socialAuthServiceFactory = socialAuthServiceFactory,
-        authenticationService = authenticationService,
-        authenticationManager = authenticationManager,
-        passwordEncoder = passwordEncoder,
-        refreshTokenService = refreshTokenService,
-        secretKey = secretKey
-    ))
+    val authService = spyk(
+        AuthService(
+            userPort = userPort,
+            refreshTokenPort = refreshTokenPort,
+            userConsentPort = userConsentPort,
+            profilePort = profilePort,
+            schoolPort = schoolPort,
+            authDataPort = authDataPort,
+            jwtTokenProvider = jwtTokenProvider,
+            socialAuthServiceFactory = socialAuthServiceFactory,
+            authenticationService = authenticationService,
+            authenticationManager = authenticationManager,
+            passwordEncoder = passwordEncoder,
+            refreshTokenService = refreshTokenService,
+            eventPublisher = mockk(),
+            secretKey = secretKey
+        )
+    )
 
     given("loginAccess 테스트") {
 
@@ -85,7 +93,12 @@ class AuthServiceTest : BehaviorSpec({
         val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
 
         every { authService.fetchSocialEmail(authLoginRequest) } returns socialResponse
-        every { authService.formatSocialEmail(socialId = socialResponse.socialId, socialType = authLoginRequest.socialType) } returns formatSocialEmail
+        every {
+            authService.formatSocialEmail(
+                socialId = socialResponse.socialId,
+                socialType = authLoginRequest.socialType
+            )
+        } returns formatSocialEmail
         every { userPort.findByEmail(formatSocialEmail) } returns null
         every { authDataPort.saveAuthData(token = any(), authData = authData) } just Runs
         every { authService.createSignUpToken(authData = authData) } returns token
@@ -158,6 +171,7 @@ class AuthServiceTest : BehaviorSpec({
 
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
         every { authService.createUser(authData, signUpRequest) } returns user
+        every { userPort.existsBySchoolIdAndGradeAndClassNumber(any(), any(), any()) } returns true
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
         every { authService.signIn(any()) } returns AuthFixture.createTokenResponse(refreshTokenExpiredAt)
@@ -291,7 +305,9 @@ class AuthServiceTest : BehaviorSpec({
         }
 
         `when`("잘못된 refreshToken으로 reIssueToken을 호출할 때") {
-            every { authenticationService.getAuthentication(refreshTokenRequest.refreshToken) } throws NoSuchElementException("잘못된 refreshToken 입니다")
+            every { authenticationService.getAuthentication(refreshTokenRequest.refreshToken) } throws NoSuchElementException(
+                "잘못된 refreshToken 입니다"
+            )
 
             then("NoSuchElementException이 발생해야 한다") {
                 shouldThrow<NoSuchElementException> {
@@ -307,7 +323,10 @@ class AuthServiceTest : BehaviorSpec({
 
         every { authService.getLoginUserId() } returns user.id
         every { userPort.findById(user.id) } returns user
-        every { socialAuthServiceFactory.getService(user.social.socialType).revoke(user.social.socialId, user.social.socialRefreshToken) } returns true
+        every {
+            socialAuthServiceFactory.getService(user.social.socialType)
+                .revoke(user.social.socialId, user.social.socialRefreshToken)
+        } returns true
         every { refreshTokenPort.deleteByUserId(user.id) } just Runs
         every { userPort.save(any()) } returns user
 
@@ -323,7 +342,8 @@ class AuthServiceTest : BehaviorSpec({
             }
 
             then("소셜 서비스의 revoke를 호출한다") {
-                socialAuthServiceFactory.getService(user.social.socialType).revoke(user.social.socialId, user.social.socialRefreshToken) shouldBe true
+                socialAuthServiceFactory.getService(user.social.socialType)
+                    .revoke(user.social.socialId, user.social.socialRefreshToken) shouldBe true
             }
 
             then("refreshToken을 삭제한다") {
