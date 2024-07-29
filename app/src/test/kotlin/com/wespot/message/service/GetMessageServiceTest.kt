@@ -14,7 +14,9 @@ import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.User
+import com.wespot.user.fixture.BlockedUserFixture
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -30,21 +32,29 @@ class GetMessageServiceTest : BehaviorSpec({
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
     val schoolPort = mockk<SchoolPort>()
+    val blockedUserPort = mockk<BlockedUserPort>()
     val getMessageService = GetMessageService(
         messagePort = messagePort,
         userPort = userPort,
-        schoolPort = schoolPort
+        schoolPort = schoolPort,
+        blockedUserPort = blockedUserPort
     )
 
     lateinit var sender: User
+    lateinit var blockedSender: User
     lateinit var receiver: User
     lateinit var school: School
 
     beforeContainer {
+        // 시간을 조작하여 테스트 시간 설정
+        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+        MessageTimeValidator.setClock(fixedClock)
+
         sender = UserFixture.createSender()
+        blockedSender = UserFixture.createWithId(3)
         receiver = UserFixture.createReceiver()
         school = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
-        UserFixture.setSecurityContextUser(sender)
+        UserFixture.setSecurityContextUser(receiver)
     }
 
     afterContainer {
@@ -52,15 +62,15 @@ class GetMessageServiceTest : BehaviorSpec({
     }
 
     fun initializeMessages(): MutableList<Message> {
-
-        // 시간을 조작하여 테스트 시간 설정
-        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
-        MessageTimeValidator.setClock(fixedClock)
-
         val messages = mutableListOf<Message>()
-        for (i in 1..11) {
+        for (i in 1..6) {
             messages.add(
                 MessageFixture.createMessage("Hello $i", receiver.id, sender.id, sender.name).copy(id = i.toLong())
+            )
+        }
+        for (i in 7..11) {
+            messages.add(
+                MessageFixture.createMessageWithReceived("Hello $i", receiver.id, blockedSender.id, sender.name).copy(id = i.toLong())
             )
         }
         return messages
@@ -77,13 +87,15 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
             every { schoolPort.findById(receiver.schoolId) } returns school
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
 
             then("올바른 메시지를 반환해야 한다") {
                 val response = getMessageService.getMessage(messageId)
                 response shouldBe MessageResponse.from(
                     message = messages[0],
                     receiver = receiver,
-                    school = school
+                    school = school,
+                    isBlocked = false
                 )
             }
 
@@ -110,18 +122,27 @@ class GetMessageServiceTest : BehaviorSpec({
                     pageRequest
                 )
             } returns messages.take(10)
+            every {
+                messagePort.countSentMessagesAfterCursor(
+                    MessageType.SENT,
+                    sender.id,
+                    cursorId
+                )
+            } returns 11
 
             val result = getMessageService.getSendMessages(cursorId)
 
             then("첫 10개의 발신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 10
+                result.hasNext shouldBe true
                 result shouldBe MessageListResponse.from(messages.take(10).map { message ->
                     MessageResponse.from(
                         message = message,
-                        receiver = sender,
-                        school = school
+                        receiver = receiver,
+                        school = school,
+                        isBlocked = false
                     )
-                })
+                }, hasNext = true)
             }
         }
 
@@ -142,51 +163,72 @@ class GetMessageServiceTest : BehaviorSpec({
                     pageRequest
                 )
             } returns messages.drop(10)
+            every {
+                messagePort.countSentMessagesAfterCursor(
+                    MessageType.SENT,
+                    sender.id,
+                    cursorId
+                )
+            } returns 1
 
             val result = getMessageService.getSendMessages(cursorId)
 
             then("다음 페이지의 발신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 1
+                result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
                     MessageResponse.from(
                         message = message,
-                        receiver = sender,
-                        school = school
+                        receiver = receiver,
+                        school = school,
+                        isBlocked = false
                     )
-                })
+                }, hasNext = false)
             }
         }
-
 
         `when`("첫 페이지의 수신 메시지를 조회하면") {
             val messages = initializeMessages()
             val cursorId = Long.MAX_VALUE
             val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
+            val blockedUserIds = listOf<Long>()
 
-            every { SecurityUtils.getLoginUser(userPort) } returns receiver // receiver로 변경
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
-            every { userPort.findById(sender.id) } returns sender // sender로 변경
+            every { userPort.findById(sender.id) } returns sender
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     MessageType.RECEIVED,
                     receiver.id,
                     cursorId,
+                    blockedUserIds,
                     pageRequest
                 )
             } returns messages.take(10)
+            every {
+                messagePort.countMessagesAfterCursor(
+                    MessageType.RECEIVED,
+                    receiver.id,
+                    cursorId,
+                    blockedUserIds
+                )
+            } returns 11
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
 
             val result = getMessageService.getReceivedMessages(cursorId)
 
             then("첫 10개의 수신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 10
+                result.hasNext shouldBe true
                 result shouldBe MessageListResponse.from(messages.take(10).map { message ->
                     MessageResponse.from(
                         message = message,
                         receiver = receiver,
-                        school = school
+                        school = school,
+                        isBlocked = false
                     )
-                })
+                }, hasNext = true)
             }
         }
 
@@ -194,31 +236,69 @@ class GetMessageServiceTest : BehaviorSpec({
             val messages = initializeMessages()
             val cursorId = messages[9].id
             val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
+            val blockedUserIds = listOf<Long>()
 
-            every { SecurityUtils.getLoginUser(userPort) } returns receiver // receiver로 변경
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
-            every { userPort.findById(sender.id) } returns sender // sender로 변경
+            every { userPort.findById(sender.id) } returns sender
             every { schoolPort.findById(receiver.schoolId) } returns school
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     MessageType.RECEIVED,
                     receiver.id,
                     cursorId,
+                    blockedUserIds,
                     pageRequest
                 )
             } returns messages.drop(10)
+            every {
+                messagePort.countMessagesAfterCursor(
+                    MessageType.RECEIVED,
+                    receiver.id,
+                    cursorId,
+                    blockedUserIds
+                )
+            } returns 1
 
             val result = getMessageService.getReceivedMessages(cursorId)
 
             then("다음 페이지의 수신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 1
+                result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
                     MessageResponse.from(
                         message = message,
                         receiver = receiver,
-                        school = school
+                        school = school,
+                        isBlocked = false
                     )
-                })
+                }, hasNext = false)
+            }
+        }
+
+        `when`("차단된 유저가 있는 경우 수신 메시지를 조회하면") {
+            val messages = initializeMessages()
+            val cursorId = Long.MAX_VALUE
+            val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
+            val blockedUserIds = listOf(blockedSender.id)
+
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { userPort.findById(receiver.id) } returns receiver
+            every { userPort.findById(blockedSender.id) } returns blockedSender
+            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { messagePort.countMessagesAfterCursor(any(), any(), any(), any()) } returns 5
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, sender.id))
+
+            every { messagePort.findAllMessagesByTypeAndReceiverAfterCursor(any(), receiver.id, any(), any(), pageRequest) } returns messages.filter { message ->
+                !blockedUserIds.contains(message.senderId)
+            }
+
+            val result = getMessageService.getReceivedMessages(cursorId)
+
+            then("차단된 유저의 메시지는 조회되지 않아야 한다") {
+                result.messages.size shouldBe 6  // 차단된 유저의 메시지를 제외한 수신 메시지 수
+                result.hasNext shouldBe false
             }
         }
 
