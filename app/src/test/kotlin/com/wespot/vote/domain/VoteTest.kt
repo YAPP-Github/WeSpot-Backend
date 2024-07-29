@@ -26,14 +26,14 @@ class VoteTest() : BehaviorSpec({
 
         `when`("voteNumber가 0일 때의 오늘의 질문지를") {
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, Collections.emptyList())
-            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions).voteOptions
+            val todayVoteOptions = vote.findVoteOptionsByVoteDate(voteOptions).voteOptionsByVoteDate
 
             then("정상적으로 반환한다.") {
-                todayVoteOptions[0].id shouldBe 1
-                todayVoteOptions[1].id shouldBe 2
-                todayVoteOptions[2].id shouldBe 3
-                todayVoteOptions[3].id shouldBe 4
-                todayVoteOptions[4].id shouldBe 5
+                todayVoteOptions[0].voteOption.id shouldBe 1
+                todayVoteOptions[1].voteOption.id shouldBe 2
+                todayVoteOptions[2].voteOption.id shouldBe 3
+                todayVoteOptions[3].voteOption.id shouldBe 4
+                todayVoteOptions[4].voteOption.id shouldBe 5
             }
         }
 
@@ -221,6 +221,7 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(10)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+            println(voteOptionsByVoteDate)
             val rankedVoteResults = vote.getRankedVoteResults(voteOptionsByVoteDate, users, RankCalculateService())
 
             then("결과를 반환한다.") {
@@ -246,11 +247,11 @@ class VoteTest() : BehaviorSpec({
 
             then("결과를 반환한다.") {
                 val entries = rankedVoteResults.toList()
-                entries[0].first shouldBe voteOptionsByVoteDate.voteOptions[0]
-                entries[1].first shouldBe voteOptionsByVoteDate.voteOptions[1]
-                entries[2].first shouldBe voteOptionsByVoteDate.voteOptions[2]
-                entries[3].first shouldBe voteOptionsByVoteDate.voteOptions[3]
-                entries[4].first shouldBe voteOptionsByVoteDate.voteOptions[4]
+                entries[0].first shouldBe voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption
+                entries[1].first shouldBe voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption
+                entries[2].first shouldBe voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption
+                entries[3].first shouldBe voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption
+                entries[4].first shouldBe voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption
             }
         }
 

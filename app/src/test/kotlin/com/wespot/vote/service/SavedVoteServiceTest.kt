@@ -6,11 +6,13 @@ import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.BallotJpaRepository
+import com.wespot.vote.Vote
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.fixture.VoteFixture
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
@@ -33,11 +35,13 @@ class SavedVoteServiceTest @Autowired constructor(
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var voteJpaRepository: VoteJpaRepository,
+    private var voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
     private var ballotJpaRepository: BallotJpaRepository,
 ) {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
+    private var vote: Vote? = null
 
     @BeforeEach
     fun setUp() {
@@ -50,9 +54,11 @@ class SavedVoteServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        val vote =
-            VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
-        voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
+        vote = VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
+        vote = VoteMapper.mapToDomainEntity(
+            voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote!!)),
+            Collections.emptyList()
+        )
     }
 
     @AfterEach
@@ -63,6 +69,15 @@ class SavedVoteServiceTest @Autowired constructor(
     @Test
     fun `투표에 지정된 질문지를 반환받는다`() {
         // given
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
         UserFixture.setSecurityContextUser(loginUser)
 
@@ -187,6 +202,17 @@ class SavedVoteServiceTest @Autowired constructor(
                 ),
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
+        val saveAll = voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
+        println("before${voteOptionsByVoteDate}")
+        println(saveAll)
 
         // when
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])

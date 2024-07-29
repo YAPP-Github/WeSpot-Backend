@@ -8,10 +8,15 @@ import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
+import com.wespot.voteoption.VoteOption
+import com.wespot.voteoption.VoteOptionJpaRepository
+import com.wespot.voteoption.VoteOptionMapper
+import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,6 +27,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     private var createdVoteService: CreatedVoteService,
     private var userJpaRepository: UserJpaRepository,
     private var voteJpaRepository: VoteJpaRepository,
+    private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var databaseCleanup: DatabaseCleanup
 ) {
 
@@ -39,6 +45,15 @@ class CreatedVoteServiceTest @Autowired constructor(
         UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber("Test10@Kakao", 1, 1, 5),
         UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber("Test11@Kakao", 1, 1, 6),
     )
+
+    @BeforeEach
+    fun setUp() {
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+    }
 
     @AfterEach
     fun tearDown() {

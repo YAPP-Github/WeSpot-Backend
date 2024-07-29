@@ -25,19 +25,21 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
         )
 
         `when`("voteNumber가 0일 때의 오늘의 질문지를") {
-            val voteOptionsByVoteDate = VoteOptionsByVoteDate.of(LocalDate.now(), 0, voteOptions)
+            val voteOptionsByVoteDate =
+                VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(0, LocalDate.now(), 0, voteOptions)
 
             then("정상적으로 반환한다.") {
-                voteOptionsByVoteDate.voteOptions[0].id shouldBe 1
-                voteOptionsByVoteDate.voteOptions[1].id shouldBe 2
-                voteOptionsByVoteDate.voteOptions[2].id shouldBe 3
-                voteOptionsByVoteDate.voteOptions[3].id shouldBe 4
-                voteOptionsByVoteDate.voteOptions[4].id shouldBe 5
+                voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption.id shouldBe 1
+                voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption.id shouldBe 2
+                voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption.id shouldBe 3
+                voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption.id shouldBe 4
+                voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption.id shouldBe 5
             }
         }
 
         `when`("오늘의 질문지를 뽑아낼 때, 범위를 벗어나는 경우") {
-            val throwingCallable = { VoteOptionsByVoteDate.of(LocalDate.now(), 1, voteOptions) }
+            val throwingCallable =
+                { VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(0,LocalDate.now(), 1, voteOptions) }
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
@@ -55,7 +57,8 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
 
         `when`("미래의 선택지인 경우") {
             val throwingCallable = {
-                VoteOptionsByVoteDate.of(
+                VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
+                    0,
                     LocalDate.now().plusDays(1L),
                     0,
                     listOf(voteOption1, voteOption2, voteOption3, voteOption4, voteOption5)
@@ -67,20 +70,22 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
             }
         }
         `when`("정상적으로 주어진 경우") {
-            val voteOptionsByVoteDate = VoteOptionsByVoteDate.of(
+            val voteOptionsByVoteDate = VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
+                0,
                 LocalDate.now(),
                 0,
                 listOf(voteOption1, voteOption2, voteOption3, voteOption4, voteOption5)
             )
             then("정상적으로 생성된다.") {
                 voteOptionsByVoteDate.voteDate shouldBe LocalDate.now()
-                voteOptionsByVoteDate.voteOptions.size shouldBe 5
+                voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
             }
         }
     }
 
     given("주어진 선택지가") {
-        val voteOptions = VoteOptionsByVoteDate.of(
+        val voteOptions = VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
+            0,
             LocalDate.now(),
             0,
             listOf(

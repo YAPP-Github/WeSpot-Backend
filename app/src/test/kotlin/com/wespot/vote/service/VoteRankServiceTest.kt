@@ -8,10 +8,12 @@ import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.Ballot
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.BallotMapper
+import com.wespot.vote.Vote
 import com.wespot.vote.VoteJpaEntity
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.fixture.VoteFixture
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
@@ -33,11 +35,13 @@ class VoteRankServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var voteJpaRepository: VoteJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
+    private var voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort
 ) {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
     private var savedVote: VoteJpaEntity? = null
+    private var vote: Vote? = null
 
     @BeforeEach
     fun setUp() {
@@ -50,9 +54,10 @@ class VoteRankServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        val vote =
+        vote =
             VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
-        savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
+        savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote!!))
+        vote = VoteMapper.mapToDomainEntity(savedVote!!, Collections.emptyList())
     }
 
     @AfterEach
@@ -96,6 +101,15 @@ class VoteRankServiceTest @Autowired constructor(
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
 
         // when
         val voteResultsOfTop5 = voteRankService.getVoteResultsOfTop5(LocalDate.now())
@@ -148,6 +162,15 @@ class VoteRankServiceTest @Autowired constructor(
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
 
         // when
         val voteResultsOfTop1 = voteRankService.getVoteResultsOfTop1(LocalDate.now())

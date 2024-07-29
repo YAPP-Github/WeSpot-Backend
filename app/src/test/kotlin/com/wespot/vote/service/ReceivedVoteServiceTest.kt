@@ -8,10 +8,12 @@ import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.Ballot
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.BallotMapper
+import com.wespot.vote.Vote
 import com.wespot.vote.VoteJpaEntity
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.fixture.VoteFixture
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
@@ -38,11 +40,15 @@ class ReceivedVoteServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var voteJpaRepository: VoteJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
+    private var voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort
 ) {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
-    private var savedVote: VoteJpaEntity? = null
+    private var savedVote1: VoteJpaEntity? = null
+    private var vote1: Vote? = null
+    private var savedVote2: VoteJpaEntity? = null
+    private var vote2: Vote? = null
 
     @BeforeEach
     fun setUp() {
@@ -55,12 +61,13 @@ class ReceivedVoteServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        savedVote = voteJpaRepository.save(
+        savedVote1 = voteJpaRepository.save(
             VoteMapper.mapToJpaEntity(
                 VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
             )
         )
-        voteJpaRepository.save(
+        vote1 = VoteMapper.mapToDomainEntity(savedVote1!!, Collections.emptyList())
+        savedVote2 = voteJpaRepository.save(
             VoteMapper.mapToJpaEntity(
                 VoteFixture.createWithIdAndVoteNumberAndBallotsAndCreatedAt(
                     0,
@@ -70,6 +77,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
                 )
             )
         )
+        vote2 = VoteMapper.mapToDomainEntity(savedVote2!!, Collections.emptyList())
     }
 
     @AfterEach
@@ -87,7 +95,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[0].id,
                     users[1].id
@@ -98,7 +106,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[1].id,
                     users[0].id
@@ -108,13 +116,24 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[1].id,
                     users[2].id,
                     users[0].id
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote1!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
+        val voteOptionsByVoteDate2 = vote2!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate2)
 
         // when
         val receivedVotes = receivedVoteService.getReceivedVotes()
@@ -143,7 +162,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[0].id,
                     users[1].id
@@ -154,7 +173,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[1].id,
                     users[0].id
@@ -164,16 +183,32 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[1].id,
                     users[2].id,
                     users[0].id
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote1!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
+        val voteOptionsByVoteDate2 = vote2!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate2)
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { receivedVoteService.getReceivedVote(voteOptions[3].id, now.toLocalDate()) }
+        val shouldThrow = shouldThrow<IllegalArgumentException> {
+            receivedVoteService.getReceivedVote(
+                voteOptions[3].id,
+                now.toLocalDate()
+            )
+        }
 
         // then
         shouldThrow shouldHaveMessage "해당 유저는 해당 질문지에 대한 투표를 받은 기록이 없습니다."
@@ -189,7 +224,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[0].id,
                     users[1].id
@@ -200,7 +235,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[1].id,
                     users[0].id
@@ -210,13 +245,24 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[1].id,
                     users[2].id,
                     users[0].id
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote1!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
+        val voteOptionsByVoteDate2 = vote2!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate2)
 
         // when
         val receivedVoteByFirstVoteOption = receivedVoteService.getReceivedVote(voteOptions[0].id, now.toLocalDate())
@@ -243,7 +289,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[0].id,
                     users[1].id
@@ -254,7 +300,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[0].id,
                     users[1].id,
                     users[0].id
@@ -264,13 +310,24 @@ class ReceivedVoteServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    savedVote1!!.id,
                     voteOptions[1].id,
                     users[0].id,
                     users[2].id
                 )
             )
         )
+        val allVoteOptions = listOf(
+            voteOptions[0],
+            voteOptions[1],
+            voteOptions[2],
+            voteOptions[3],
+            voteOptions[4],
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        val voteOptionsByVoteDate1 = vote1!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate1)
+        val voteOptionsByVoteDate2 = vote2!!.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate2)
 
         // when
         val firstReceivedVotes = receivedVoteService.getReceivedVotes()
