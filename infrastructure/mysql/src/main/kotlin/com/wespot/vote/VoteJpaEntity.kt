@@ -1,6 +1,10 @@
 package com.wespot.vote
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDate
 
@@ -27,8 +31,4 @@ class VoteJpaEntity(
     @field: NotNull
     val date: LocalDate,
 
-//    @field: NotNull
-//    @OneToMany(mappedBy = "vote", cascade = [CascadeType.PERSIST])
-//    val ballots: List<BallotJpaEntity>,
-
-)
+    )

@@ -5,8 +5,11 @@ import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.port.`in`.CreatedVoteUseCase
+import com.wespot.vote.port.out.VoteOptionPort
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
+import com.wespot.voteoption.VoteOption
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -15,25 +18,31 @@ import java.time.LocalDate
 class CreatedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
+    private val voteOptionPort: VoteOptionPort,
+    private val voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort
 ) : CreatedVoteUseCase {
 
     @Transactional
     override fun createVotes() {
         val today = LocalDate.now()
+        val allVoteOptions = voteOptionPort.findAll()
 
         userPort.findAll()
             .map { VoteIdentifier.of(it, today) }
             .distinct()
-            .forEach { saveVote(it) }
+            .forEach { saveVote(it, allVoteOptions) }
     }
 
-    private fun saveVote(voteIdentifier: VoteIdentifier) {
+    private fun saveVote(voteIdentifier: VoteIdentifier, allVoteOptions: List<VoteOption>) {
         if (isAlreadyExistsVote(voteIdentifier)) {
             return
         }
 
         val vote = Vote.of(voteIdentifier, getPreviousVoteNumber(voteIdentifier))
         votePort.save(vote)
+
+        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(allVoteOptions)
+        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
     }
 
     private fun isAlreadyExistsVote(voteIdentifier: VoteIdentifier): Boolean {
@@ -60,9 +69,10 @@ class CreatedVoteService(
     @Transactional
     override fun createVoteByUser(user: User) {
         VoteServiceHelper.findUser(userPort, user.id)
+        val allVoteOptions = voteOptionPort.findAll()
         val today = LocalDate.now()
         val voteIdentifier = VoteIdentifier.of(user, today)
-        saveVote(voteIdentifier)
+        saveVote(voteIdentifier, allVoteOptions)
     }
 
 }

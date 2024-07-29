@@ -9,7 +9,7 @@ import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.SavedVoteUseCase
-import com.wespot.vote.port.out.VoteOptionPort
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import jakarta.transaction.Transactional
@@ -19,8 +19,8 @@ import java.time.LocalDate
 @Service
 class SavedVoteService(
     private val votePort: VotePort,
-    private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
+    private val voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
 ) : SavedVoteUseCase {
 
     override fun getVoteOptions(): VoteItems {
@@ -30,12 +30,14 @@ class SavedVoteService(
         val today = LocalDate.now()
 
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
-        val todayVoteOptions: VoteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote)
+        val todayVoteOptions: VoteOptionsByVoteDate =
+            VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionsByVoteDatePort, vote)
+        println(todayVoteOptions)
         val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
 
         return VoteItems.of(
             classmates = usersForVote,
-            voteOptions = todayVoteOptions.voteOptions
+            voteOptionsByVoteDate = todayVoteOptions
         )
     }
 
@@ -52,7 +54,10 @@ class SavedVoteService(
         requests.voteRequests.stream()
             .forEach { request ->
                 vote.addBallot(
-                    voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote),
+                    voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(
+                        voteOptionsByVoteDatePort,
+                        vote
+                    ),
                     voteOptionId = request.voteOptionId,
                     senderId = userId,
                     receiverId = request.userId

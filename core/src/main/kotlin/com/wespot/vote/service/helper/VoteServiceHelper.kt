@@ -5,7 +5,7 @@ import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
 import com.wespot.vote.VoteOptionsByVoteDate
-import com.wespot.vote.port.out.VoteOptionPort
+import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
 import java.time.LocalDate
@@ -38,10 +38,11 @@ object VoteServiceHelper {
         ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
     }
 
-    fun findVoteOptionsByVoteDate(voteOptionPort: VoteOptionPort, vote: Vote): VoteOptionsByVoteDate {
-        val voteOptions: List<VoteOption> = voteOptionPort.findAllVoteOption()
-
-        return vote.findVoteOptionsByVoteDate(voteOptions)
+    fun findVoteOptionsByVoteDate(
+        voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
+        vote: Vote
+    ): VoteOptionsByVoteDate {
+        return voteOptionsByVoteDatePort.findAllByVoteId(vote.voteIdentifier.date, vote.id)
     }
 
     fun findVotesOrderByDateDesc(votePort: VotePort, user: User): List<Vote> {
@@ -52,12 +53,14 @@ object VoteServiceHelper {
         )
     }
 
-    fun findVoteOptionOnAllVoteOptions(
-        voteOptions: List<VoteOption>,
+    fun findVoteOptionOnVoteOptions(
+        voteOptions: VoteOptionsByVoteDate,
         optionId: Long
     ): VoteOption {
-        val voteOption = voteOptions.find { it.id == optionId }
-            ?: throw IllegalArgumentException("존재하지 않는 질문지입니다.")
+        val voteOption = voteOptions.voteOptionsByVoteDate
+            .map { it.voteOption }
+            .find { it.id == optionId }
+            ?: throw IllegalArgumentException("오늘의 선택지가 아닙니다.")
 
         return voteOption
     }
