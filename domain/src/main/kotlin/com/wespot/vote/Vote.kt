@@ -56,9 +56,13 @@ data class Vote(
     }
 
     fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-        return VoteOptionsByVoteDate.of(voteIdentifier.date, voteNumber, allVoteOptions)
+        return VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
+            voteId = this.id,
+            date = voteIdentifier.date,
+            voteNumber = voteNumber,
+            allVoteOptions = allVoteOptions
+        )
     }
-
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
@@ -101,8 +105,9 @@ data class Vote(
     ): Map<VoteOption, List<VoteRecord>> {
         val rankedVoteResults = rankCalculateService.calculate(users, getBallots())
 
-        return voteOptionsByVoteDate.voteOptions
-            .associateWith { rankedVoteResults[it.id] ?: emptyList() }
+        return voteOptionsByVoteDate.voteOptionsByVoteDate
+            .associateWith { rankedVoteResults[it.voteOption.id] ?: emptyList() }
+            .mapKeys { it.key.voteOption }
             .toMap(LinkedHashMap())
     }
 
@@ -113,9 +118,10 @@ data class Vote(
     ): Map<VoteOption, VoteRecord> {
         val receivedVotes = receivedVoteCalculateService.calculateUserReceivedVotes(user, getBallots())
 
-        return voteOptionsByVoteDate.voteOptions
-            .filter { receivedVotes.contains(it.id) }
-            .associateWith { receivedVotes[it.id]!! }
+        return voteOptionsByVoteDate.voteOptionsByVoteDate
+            .filter { receivedVotes.contains(it.voteOption.id) }
+            .associateWith { receivedVotes[it.voteOption.id]!! }
+            .mapKeys { it.key.voteOption }
             .toMap(LinkedHashMap())
     }
 
@@ -136,8 +142,9 @@ data class Vote(
     ): Map<VoteOption, List<Ballot>> {
         val ballots = ballots.findSentBallotsByUser(user.id)
 
-        return voteOptionsByVoteDate.voteOptions
-            .filter { voteOption -> containVoteOptionOnBallots(ballots, voteOption) }
+        return voteOptionsByVoteDate.voteOptionsByVoteDate
+            .filter { containVoteOptionOnBallots(ballots, it.voteOption) }
+            .map { it.voteOption }
             .associateWith { voteOption -> ballots.filter { voteOption.id == it.voteOptionId } }
     }
 
