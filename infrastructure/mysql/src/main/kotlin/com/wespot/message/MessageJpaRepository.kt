@@ -21,18 +21,31 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         @Param("date") date: LocalDate
     ): Boolean
 
-    @Query("""
+    @Query(
+        """
         SELECT m
         FROM MessageJpaEntity m
         WHERE m.messageType = :messageType
         AND m.receiverId = :receiverId
         AND m.id < :cursorId
+        AND m.isDeleted = false
+        AND m.receivedAt IS NOT NULL
+        AND (
+            m.senderId NOT IN :blockedUserIds OR
+            m.sendAt < (
+                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
+                FROM BlockedUserJpaEntity bu
+                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
+            )
+        )
         ORDER BY m.receivedAt DESC, m.id DESC
-    """)
+    """
+    )
     fun findAllByMessageTypeAndReceiverIdAfterCursor(
         @Param("messageType") messageType: MessageType,
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
+        @Param("blockedUserIds") blockedUserIds: List<Long>,
         pageable: Pageable
     ): List<MessageJpaEntity>
 
@@ -42,6 +55,7 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         WHERE m.messageType = :messageType
         AND m.senderId = :senderId
         AND m.id < :cursorId
+        AND m.isDeleted = false
         ORDER BY m.sendAt DESC, m.id DESC
     """
     )
@@ -54,5 +68,61 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
 
 
     fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean
+
+    @Query(
+        """
+        SELECT COUNT(m)
+        FROM MessageJpaEntity m
+        WHERE m.messageType = :messageType
+        AND m.receiverId = :receiverId
+        AND m.id < :cursorId
+        AND m.isDeleted = false
+        AND (
+            m.senderId NOT IN :blockedUserIds OR
+            m.sendAt < (
+                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
+                FROM BlockedUserJpaEntity bu
+                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
+            )
+        )
+    """
+    )
+    fun countMessagesAfterCursor(
+        @Param("messageType") messageType: MessageType,
+        @Param("receiverId") receiverId: Long,
+        @Param("cursorId") cursorId: Long,
+        @Param("blockedUserIds") blockedUserIds: List<Long>
+    ): Long
+
+    @Query(
+        """
+        SELECT COUNT(m)
+        FROM MessageJpaEntity m
+        WHERE m.messageType = :messageType
+        AND m.senderId = :senderId
+        AND m.id < :cursorId
+        AND m.isDeleted = false
+    """
+    )
+    fun countSentMessagesAfterCursor(
+        @Param("messageType") messageType: MessageType,
+        @Param("senderId") senderId: Long,
+        @Param("cursorId") cursorId: Long
+    ): Long
+
+    @Query(
+        """
+        SELECT m FROM MessageJpaEntity m
+        WHERE m.messageType = :messageType
+        AND m.senderId = :senderId
+        AND m.isDeleted = false
+        AND m.receivedAt IS NULL
+        ORDER BY m.baseEntity.updatedAt DESC, m.id DESC
+    """
+    )
+    fun findAllScheduledMessages(
+        @Param("messageType") messageType: MessageType,
+        @Param("senderId") senderId: Long
+    ): List<MessageJpaEntity>
 
 }

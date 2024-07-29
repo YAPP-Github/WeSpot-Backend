@@ -19,6 +19,8 @@ data class Message(
     val receivedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
+    val isDeleted: Boolean?,
+    val deletedAt: LocalDateTime?
 ) {
 
     fun updateMessage(
@@ -44,6 +46,8 @@ data class Message(
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
+            isDeleted = isDeleted,
+            deletedAt = deletedAt
         )
         message.validateMessageReceiver()
 
@@ -66,7 +70,9 @@ data class Message(
             sendAt = sendAt,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
-            receivedAt = receivedAt
+            receivedAt = receivedAt,
+            isDeleted = isDeleted,
+            deletedAt = deletedAt
         )
         message.validateSentMessage(user)
         return message
@@ -85,6 +91,22 @@ data class Message(
         require(receiverId != loginUser.id) { "본인이 받은 메시지만 읽을 수 있습니다." }
         require(messageType != MessageType.RECEIVED) { "받은 메시지만 읽을 수 있습니다." }
     }
+
+    fun validateDeleteMessage(loginUser: User) {
+        require(senderId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
+    }
+
+    fun validateReceivedMessage(loginUser: User) {
+        require(messageType == MessageType.RECEIVED) { "받은 메시지만 차단이 가능합니다." }
+        require(receiverId == loginUser.id) { "본인이 보낸 메시지는 차단이 불가능합니다." }
+    }
+
+    fun softDelete() =
+        this.copy(
+            isDeleted = true,
+            deletedAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
 
     companion object {
 
@@ -109,6 +131,8 @@ data class Message(
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 receivedAt = null,
+                isDeleted = false,
+                deletedAt = null
             )
             message.validateMessageReceiver()
 

@@ -40,6 +40,11 @@ class MessageJpaEntity(
     val readAt: LocalDateTime?,
 
     @Embedded
-    val baseEntity: BaseEntity
+    val baseEntity: BaseEntity,
+
+    @field: NotNull
+    val isDeleted: Boolean?,
+
+    val deletedAt: LocalDateTime?
 
 )

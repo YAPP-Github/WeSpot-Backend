@@ -1,10 +1,12 @@
 package com.wespot.message.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.message.Message
 import com.wespot.school.School
 import com.wespot.user.User
 import java.time.LocalDateTime
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class MessageResponse(
     val id: Long,
     val senderName: String,
@@ -14,17 +16,18 @@ data class MessageResponse(
     val receiverGrade : Int,
     val receiverClassNumber : Int,
     val content: String,
-    val receivedAt: LocalDateTime?,
-    val isRead: Boolean?,
-    val isBlocked: Boolean = false,
+    val receivedAt: String?,
+    val isRead: Boolean,
+    val isBlocked: Boolean,
     val readAt: String?
 ){
     companion object {
 
         fun from(
-           message: Message,
-           receiver: User,
-           school: School
+            message: Message,
+            receiver: User,
+            school: School,
+            isBlocked: Boolean
         ): MessageResponse {
             return MessageResponse(
                 id = message.id,
@@ -35,12 +38,12 @@ data class MessageResponse(
                 receiverGrade = receiver.grade,
                 receiverClassNumber = receiver.classNumber,
                 content = message.content,
-                receivedAt = message.receivedAt,
-                isRead = message.isReceiverRead,
-                readAt = message.readAt.toString()
+                receivedAt = message.receivedAt?.toString(),
+                isRead = message.isReceiverRead?: false,
+                isBlocked = isBlocked,
+                readAt = message.readAt?.toString()
             )
         }
-
 
     }
 }

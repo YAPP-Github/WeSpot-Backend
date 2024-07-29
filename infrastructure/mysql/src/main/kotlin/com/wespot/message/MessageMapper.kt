@@ -9,7 +9,7 @@ object MessageMapper {
             id = messageJpaEntity.id,
             content = messageJpaEntity.content,
             senderId = messageJpaEntity.senderId,
-            senderName= messageJpaEntity.senderName,
+            senderName = messageJpaEntity.senderName,
             receiverId = messageJpaEntity.receiverId,
             messageType = messageJpaEntity.messageType,
             isReceiverRead = messageJpaEntity.isReceiverRead,
@@ -18,7 +18,9 @@ object MessageMapper {
             sendAt = messageJpaEntity.sendAt,
             receivedAt = messageJpaEntity.receivedAt,
             createdAt = messageJpaEntity.baseEntity.createdAt,
-            updatedAt = messageJpaEntity.baseEntity.updatedAt
+            updatedAt = messageJpaEntity.baseEntity.updatedAt,
+            isDeleted = messageJpaEntity.isDeleted,
+            deletedAt = messageJpaEntity.deletedAt
         )
 
     fun mapToJpaEntity(message: Message): MessageJpaEntity =
@@ -37,7 +39,9 @@ object MessageMapper {
             baseEntity = BaseEntity(
                 createdAt = message.createdAt,
                 updatedAt = message.updatedAt
-            )
+            ),
+            isDeleted = message.isDeleted,
+            deletedAt = message.deletedAt
         )
 
 }
