@@ -21,6 +21,7 @@ object MessageFixture {
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         receivedAt = LocalDateTime.now(),
+        isReported = false,
         isDeleted = false,
         deletedAt = null
     )
@@ -39,6 +40,7 @@ object MessageFixture {
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         receivedAt = LocalDateTime.now(),
+        isReported = false,
         isDeleted = false,
         deletedAt = null
     )
@@ -63,6 +65,7 @@ object MessageFixture {
             receivedAt = null,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
+            isReported = false,
             isDeleted = false,
             deletedAt = null
         )

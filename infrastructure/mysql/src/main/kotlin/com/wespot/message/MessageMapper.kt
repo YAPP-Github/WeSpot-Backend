@@ -17,6 +17,7 @@ object MessageMapper {
             isSend = messageJpaEntity.isSend,
             sendAt = messageJpaEntity.sendAt,
             receivedAt = messageJpaEntity.receivedAt,
+            isReported = messageJpaEntity.isReported,
             createdAt = messageJpaEntity.baseEntity.createdAt,
             updatedAt = messageJpaEntity.baseEntity.updatedAt,
             isDeleted = messageJpaEntity.isDeleted,
@@ -36,6 +37,7 @@ object MessageMapper {
             isSend = message.isSend,
             sendAt = message.sendAt,
             receivedAt = message.receivedAt,
+            isReported = message.isReported,
             baseEntity = BaseEntity(
                 createdAt = message.createdAt,
                 updatedAt = message.updatedAt

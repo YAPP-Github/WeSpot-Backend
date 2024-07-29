@@ -1,6 +1,7 @@
 package com.wespot.report.service
 
 import com.wespot.auth.service.SecurityUtils
+import com.wespot.message.Message
 import com.wespot.message.port.out.MessagePort
 import com.wespot.report.Report
 import com.wespot.report.ReportType
@@ -88,7 +89,14 @@ class SavedReportService(
             return
         }
 
-        messagePort.deleteById(report.targetId)
+        val message = messagePort.findById(report.targetId)
+            ?: throw NoSuchElementException("메시지를 찾을 수 없습니다.")
+
+        messagePort.save(message.applySoftDelete())
+    }
+
+    private fun Message.applySoftDelete(): Message {
+        return this.reported().softDelete()
     }
 
 }

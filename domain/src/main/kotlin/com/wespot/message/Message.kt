@@ -11,15 +11,16 @@ data class Message(
     val senderId: Long,
     val senderName: String,
     val receiverId: Long,
-    val isReceiverRead: Boolean?,
+    val isReceiverRead: Boolean,
     val messageType: MessageType,
     val readAt: LocalDateTime?,
     val isSend: Boolean,
     val sendAt: LocalDateTime?,
     val receivedAt: LocalDateTime?,
+    val isReported: Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val isDeleted: Boolean?,
+    val isDeleted: Boolean,
     val deletedAt: LocalDateTime?
 ) {
 
@@ -43,6 +44,7 @@ data class Message(
             readAt = readAt,
             isSend = isSend,
             sendAt = LocalDateTime.now(),
+            isReported = isReported,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
@@ -68,6 +70,7 @@ data class Message(
             readAt = LocalDateTime.now(),
             isSend = isSend,
             sendAt = sendAt,
+            isReported = isReported,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
@@ -96,10 +99,22 @@ data class Message(
         require(senderId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
     }
 
+    fun validateReadMessage(loginUser: User) {
+        require(senderId == loginUser.id || receiverId == loginUser.id) { "메시지를 읽을 수 있는 권한이 없습니다." }
+    }
+
     fun validateReceivedMessage(loginUser: User) {
         require(messageType == MessageType.RECEIVED) { "받은 메시지만 차단이 가능합니다." }
-        require(receiverId == loginUser.id) { "본인이 보낸 메시지는 차단이 불가능합니다." }
+        require(senderId != loginUser.id) { "받은 메시지만 차단이 가능합니다" }
+        require(receiverId == loginUser.id) { "받은 메시지만 차단이 가능합니다" }
     }
+
+    fun reported() =
+        this.copy(
+            isReported = true,
+            updatedAt = LocalDateTime.now()
+        )
+
 
     fun softDelete() =
         this.copy(
@@ -128,6 +143,7 @@ data class Message(
                 readAt = null,
                 isSend = false,
                 sendAt = LocalDateTime.now(),
+                isReported = false,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 receivedAt = null,

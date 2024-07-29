@@ -37,6 +37,7 @@ class GetMessageService(
         val loginUser = getLoginUser(userPort)
         val blockedUserIds = findAllByBlockerId(loginUser.id)
         val message = findMessageById(messageId, messagePort)
+        message.validateReadMessage(loginUser)
         val receiver = findUserById(message.receiverId, userPort)
         val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
 
