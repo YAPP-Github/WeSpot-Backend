@@ -7,8 +7,11 @@ import com.wespot.message.dto.response.SendMessageResponse
 import com.wespot.message.port.`in`.SendMessageUseCase
 import com.wespot.message.port.out.MessagePort
 import com.wespot.message.service.MessageFinder.findUserById
-import com.wespot.message.service.MessageSendValidator.validateAlreadySentMessageToday
 import com.wespot.message.service.MessageSendValidator.validateSendMessageLimit
+import com.wespot.message.MessageTimeValidator.validateMessageSendTime
+import com.wespot.message.service.MessageSendValidator.validateAlreadySentMessageToday
+import com.wespot.message.service.MessageSendValidator.validateUserBlockStatus
+import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class SendMessageService(
     private val messagePort: MessagePort,
-    private val userPort: UserPort
+    private val userPort: UserPort,
+    private val blockedUserPort: BlockedUserPort
 ) : SendMessageUseCase {
 
     override fun send(sendMessageRequest: SendMessageRequest): SendMessageResponse {
@@ -27,7 +31,8 @@ class SendMessageService(
 
         validateSendMessageLimit(user = loginUser, messagePort = messagePort)
         validateAlreadySentMessageToday(senderId = loginUser.id, receiverId = receiver.id, messagePort = messagePort)
-        validateUserBlockStatus()
+        validateUserBlockStatus(senderId = loginUser.id, receiverId = receiver.id, blockedUserPort = blockedUserPort)
+        validateMessageSendTime()
 
         val sendMessage = Message.sendMessage(
             content = sendMessageRequest.content,
@@ -39,10 +44,6 @@ class SendMessageService(
         val saveMessage = messagePort.save(sendMessage)
 
         return SendMessageResponse.from(saveMessage.id)
-    }
-
-    private fun validateUserBlockStatus() {
-        //TODO: 차단, 정지 확인
     }
 
 }
