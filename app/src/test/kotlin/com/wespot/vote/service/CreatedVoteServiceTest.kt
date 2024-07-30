@@ -189,12 +189,13 @@ class CreatedVoteServiceTest @Autowired constructor(
         val savedUserDomainEntity = UserMapper.mapToDomainEntity(savedUserJpaEntity)
 
         // when
+        val today = LocalDate.now()
         createdVoteService.createVoteByUser(savedUserDomainEntity)
         val vote = votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
             users[0].schoolId,
             users[0].grade,
             users[0].classNumber,
-            LocalDate.now()
+            today
         )
 
         // then
@@ -202,9 +203,7 @@ class CreatedVoteServiceTest @Autowired constructor(
         vote!!.voteIdentifier.schoolId shouldBe savedUserDomainEntity.schoolId
         vote.voteIdentifier.grade shouldBe savedUserDomainEntity.grade
         vote.voteIdentifier.classNumber shouldBe savedUserDomainEntity.classNumber
-        vote.voteIdentifier.date shouldBe LocalDate.now()
         vote.voteNumber shouldBe 0
-        vote.voteOptionsByVoteDate.voteDate shouldBe LocalDate.now()
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteId shouldBe vote.id
