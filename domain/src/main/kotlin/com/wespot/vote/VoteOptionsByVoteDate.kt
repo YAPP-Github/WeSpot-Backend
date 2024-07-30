@@ -54,7 +54,7 @@ data class VoteOptionsByVoteDate(
     fun validateVoteOption(
         voteOptionId: Long
     ) {
-        require(voteOptionsByVoteDate.find { it.containVoteOptionInVoteOptionByVoteDate(voteOptionId) } != null) {
+        require(voteOptionsByVoteDate.find { it.isSameVoteOption(voteOptionId) } != null) {
             throw IllegalArgumentException("오늘 제공된 질문지만 선택해 투표할 수 있습니다.")
         }
     }
