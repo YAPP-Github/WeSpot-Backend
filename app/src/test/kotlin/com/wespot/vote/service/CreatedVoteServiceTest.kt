@@ -55,18 +55,9 @@ class CreatedVoteServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        voteOptions = mutableListOf(
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
-            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+        voteOptions = (1..10).map {
             voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        ).map { VoteOptionMapper.mapToDomainEntity(it) }
+        }.map { VoteOptionMapper.mapToDomainEntity(it) }
     }
 
     @AfterEach
@@ -78,20 +69,8 @@ class CreatedVoteServiceTest @Autowired constructor(
     fun `학급당 하루에 하나만의 투표를 만든다`() {
         // given
         userJpaRepository.saveAll(
-            listOf(
-                UserMapper.mapToJpaEntity(users[0]),
-                UserMapper.mapToJpaEntity(users[1]),
-                UserMapper.mapToJpaEntity(users[2]),
-                UserMapper.mapToJpaEntity(users[3]),
-                UserMapper.mapToJpaEntity(users[4]),
-                UserMapper.mapToJpaEntity(users[5]),
-                UserMapper.mapToJpaEntity(users[6]),
-                UserMapper.mapToJpaEntity(users[7]),
-                UserMapper.mapToJpaEntity(users[8]),
-                UserMapper.mapToJpaEntity(users[9]),
-                UserMapper.mapToJpaEntity(users[10]),
-                UserMapper.mapToJpaEntity(users[11]),
-            )
+            users.map { UserMapper.mapToJpaEntity(it) }
+                .take(12)
         )
 
         // when
