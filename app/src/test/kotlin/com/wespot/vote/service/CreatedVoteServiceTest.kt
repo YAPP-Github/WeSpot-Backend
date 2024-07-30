@@ -203,7 +203,9 @@ class CreatedVoteServiceTest @Autowired constructor(
         vote!!.voteIdentifier.schoolId shouldBe savedUserDomainEntity.schoolId
         vote.voteIdentifier.grade shouldBe savedUserDomainEntity.grade
         vote.voteIdentifier.classNumber shouldBe savedUserDomainEntity.classNumber
+        vote.voteIdentifier.date shouldBe today
         vote.voteNumber shouldBe 0
+        vote.voteOptionsByVoteDate.voteDate shouldBe today
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteId shouldBe vote.id
