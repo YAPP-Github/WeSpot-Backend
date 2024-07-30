@@ -284,21 +284,21 @@ class VoteTest() : BehaviorSpec({
                 1L,
                 2L,
                 1L,
-                LocalDateTime.now().minusHours(10)
+                LocalDateTime.now().minusSeconds(2)
             ),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAt(
                 1L,
                 1L,
                 3L,
                 1L,
-                LocalDateTime.now().minusHours(8)
+                LocalDateTime.now().minusSeconds(1)
             ),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiverAndCreatedAt(
                 1L,
                 2L,
                 4L,
                 1L,
-                LocalDateTime.now().minusHours(8)
+                LocalDateTime.now().minusSeconds(1)
             ),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 2L, 1L, 2L),
         )
