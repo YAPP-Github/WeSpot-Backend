@@ -146,9 +146,6 @@ data class Vote(
         receivedVoteCalculateService: ReceivedVoteCalculateService
     ): VoteRecord {
         voteOptionsByVoteDate.validateVoteOption(voteOption.id)
-        println(voteOption)
-        println(getBallots())
-        println(voteOptionsByVoteDate)
 
         return receivedVoteCalculateService.calculateUserReceivedVote(voteOption, user, getBallots())
     }

@@ -99,6 +99,20 @@ class CreatedVoteServiceTest @Autowired constructor(
         val votes = voteJpaRepository.findAll()
             .sortedBy { it.classNumber }
 
+        println(votes.size)
+        println(votes[0].classNumber)
+        println(votes[0].voteNumber)
+        println(votes[1].classNumber)
+        println(votes[1].voteNumber)
+        println(votes[2].classNumber)
+        println(votes[2].voteNumber)
+        println(votes[3].classNumber)
+        println(votes[3].voteNumber)
+        println(votes[4].classNumber)
+        println(votes[4].voteNumber)
+        println(votes[5].classNumber)
+        println(votes[5].voteNumber)
+
         // then
         votes.size shouldBe 6
         votes[0].classNumber shouldBe 1
@@ -196,6 +210,30 @@ class CreatedVoteServiceTest @Autowired constructor(
             users[0].classNumber,
             LocalDate.now()
         )
+
+        println(vote)
+        println(vote!!.voteIdentifier.schoolId)
+        println(vote.voteIdentifier.grade)
+        println(vote.voteIdentifier.classNumber)
+        println(vote.voteIdentifier.date)
+        println(vote.voteNumber)
+        println(vote.voteOptionsByVoteDate.voteDate)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate.size)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].id)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteId)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].id)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteId)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].id)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteId)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].id)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteId)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].id)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteId)
+        println(vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption)
 
         // then
         vote shouldNotBe null
