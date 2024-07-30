@@ -6,7 +6,7 @@ import java.time.LocalDate
 object VoteJpaEntityFixture {
 
     fun create() = VoteJpaEntity(
-        id = 1L,
+        id = 0L,
         schoolId = 1L,
         grade = 1,
         classNumber = 1,

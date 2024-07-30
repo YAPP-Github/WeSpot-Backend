@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 object VoteOptionFixture {
 
     fun create() = VoteOption(
-        id = 1L,
+        id = 0L,
         content = "Mock 질문을 만듭니다.",
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),

@@ -10,7 +10,7 @@ import java.util.*
 object VoteFixture {
 
     fun create() = Vote(
-        id = 1L,
+        id = 0L,
         voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
         voteNumber = 0,
         voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
