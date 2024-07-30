@@ -11,4 +11,10 @@ object VoteOptionByVoteDateFixture {
         voteOption = VoteOptionFixture.create(),
     )
 
+    fun createWithVoteId(voteId: Long) = VoteOptionByVoteDate(
+        id = 0L,
+        voteId = voteId,
+        voteOption = VoteOptionFixture.create(),
+    )
+
 }

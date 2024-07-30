@@ -8,7 +8,7 @@ data class VoteOptionByVoteDate(
     val voteOption: VoteOption
 ) {
 
-    fun containVoteOptionInVoteOptionByVoteDate(
+    fun isSameVoteOption(
         voteOptionId: Long
     ): Boolean {
         return voteOptionId == voteOption.id

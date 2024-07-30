@@ -9,11 +9,14 @@ import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.port.out.VoteOptionPort
+import com.wespot.vote.port.out.VotePort
+import com.wespot.voteoption.VoteOption
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -29,8 +32,11 @@ class CreatedVoteServiceTest @Autowired constructor(
     private var voteJpaRepository: VoteJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var voteOptionPort: VoteOptionPort,
+    private var votePort: VotePort,
     private var databaseCleanup: DatabaseCleanup
 ) {
+
+    private var voteOptions: List<VoteOption> = mutableListOf()
 
     private var users = listOf(
         UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber("Test0@Kakao", 1, 1, 1),
@@ -49,16 +55,18 @@ class CreatedVoteServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
-        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptions = listOf(
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create())),
+            voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        ).map { VoteOptionMapper.mapToDomainEntity(it) }
     }
 
     @AfterEach
@@ -177,11 +185,42 @@ class CreatedVoteServiceTest @Autowired constructor(
 
     @Test
     fun `오늘의 질문이 잘 생성되는지 확인한다`() {
-        // given
+        val savedUserJpaEntity = userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
+        val savedUserDomainEntity = UserMapper.mapToDomainEntity(savedUserJpaEntity)
 
         // when
+        createdVoteService.createVoteByUser(savedUserDomainEntity)
+        val vote = votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
+            users[0].schoolId,
+            users[0].grade,
+            users[0].classNumber,
+            LocalDate.now()
+        )
 
         // then
+        vote shouldNotBe null
+        vote!!.voteIdentifier.schoolId shouldBe savedUserDomainEntity.schoolId
+        vote.voteIdentifier.grade shouldBe savedUserDomainEntity.grade
+        vote.voteIdentifier.classNumber shouldBe savedUserDomainEntity.classNumber
+        vote.voteIdentifier.date shouldBe LocalDate.now()
+        vote.voteNumber shouldBe 0
+        vote.voteOptionsByVoteDate.voteDate shouldBe LocalDate.now()
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].id shouldNotBe null
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteId shouldBe vote.id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption shouldBe voteOptions[0]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].id shouldNotBe null
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteId shouldBe vote.id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption shouldBe voteOptions[1]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].id shouldNotBe null
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteId shouldBe vote.id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption shouldBe voteOptions[2]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].id shouldNotBe null
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteId shouldBe vote.id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption shouldBe voteOptions[3]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].id shouldNotBe null
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteId shouldBe vote.id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption shouldBe voteOptions[4]
     }
 
 }
