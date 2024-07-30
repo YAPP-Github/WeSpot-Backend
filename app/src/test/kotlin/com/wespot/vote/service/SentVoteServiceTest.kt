@@ -10,18 +10,12 @@ import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.BallotMapper
 import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
-import com.wespot.vote.VoteJpaEntity
-import com.wespot.vote.VoteJpaRepository
-import com.wespot.vote.VoteMapper
-import com.wespot.vote.fixture.VoteFixture
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockkStatic
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 @SpringBootTest
 class SentVoteServiceTest @Autowired constructor(

@@ -8,11 +8,8 @@ import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
-import com.wespot.vote.VoteJpaRepository
-import com.wespot.vote.VoteMapper
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
-import com.wespot.vote.fixture.VoteFixture
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
@@ -27,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
