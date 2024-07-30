@@ -209,19 +209,24 @@ class CreatedVoteServiceTest @Autowired constructor(
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteId shouldBe vote.id
-        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption shouldBe voteOptions[0]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption.id shouldBe voteOptions[0].id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[0].voteOption.content shouldBe voteOptions[0].content
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteId shouldBe vote.id
-        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption shouldBe voteOptions[1]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption.id shouldBe voteOptions[1].id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[1].voteOption.content shouldBe voteOptions[1].content
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteId shouldBe vote.id
-        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption shouldBe voteOptions[2]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption.id shouldBe voteOptions[2].id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[2].voteOption.content shouldBe voteOptions[2].content
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteId shouldBe vote.id
-        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption shouldBe voteOptions[3]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption.id shouldBe voteOptions[3].id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[3].voteOption.content shouldBe voteOptions[3].content
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].id shouldNotBe null
         vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteId shouldBe vote.id
-        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption shouldBe voteOptions[4]
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption.id shouldBe voteOptions[4].id
+        vote.voteOptionsByVoteDate.voteOptionsByVoteDate[4].voteOption.content shouldBe voteOptions[4].content
     }
 
 }
