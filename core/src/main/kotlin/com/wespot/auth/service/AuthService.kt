@@ -1,6 +1,6 @@
 package com.wespot.auth.service
 
-import com.wespot.auth.dto.*
+import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
@@ -13,11 +13,18 @@ import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.*
+import com.wespot.user.ConsentType
+import com.wespot.user.Profile
+import com.wespot.user.Social
+import com.wespot.user.SocialType
+import com.wespot.user.User
+import com.wespot.user.UserConsent
+import com.wespot.user.event.VoteCreateEvent
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -40,6 +47,7 @@ class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenService: RefreshTokenService,
+    private val eventPublisher: ApplicationEventPublisher,
 
     @Value("\${jwt.secret}")
     private val secretKey: String
@@ -82,6 +90,7 @@ class AuthService(
 
         val user = createUser(signUpToken, signUpRequest)
         val savedUser = userPort.save(user)
+        createVoteIfRegisterFirstForClass(user)
 
         saveRelatedEntities(savedUser, signUpRequest)
 
@@ -111,6 +120,14 @@ class AuthService(
             social = social,
             gender = signUpRequest.gender
         )
+    }
+
+    fun createVoteIfRegisterFirstForClass(user: User) {
+        if (userPort.existsBySchoolIdAndGradeAndClassNumber(user.schoolId, user.grade, user.classNumber)) {
+            return
+        }
+
+        eventPublisher.publishEvent(VoteCreateEvent(user))
     }
 
     fun saveRelatedEntities(

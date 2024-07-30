@@ -5,12 +5,6 @@ import java.time.LocalDate
 
 interface VoteJpaRepository : JpaRepository<VoteJpaEntity, Long> {
 
-    fun findTop1BySchoolIdAndGradeAndClassNumberOrderByDateDesc(
-        schoolId: Long,
-        grade: Int,
-        classNumber: Int,
-    ): VoteJpaEntity?
-
     fun existsBySchoolIdAndGradeAndClassNumberAndDate(
         schoolId: Long,
         grade: Int,

@@ -6,29 +6,19 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
-import java.time.LocalDate
 
 @Entity
-@Table(name = "vote")
-class VoteJpaEntity(
+@Table(name = "vote_option_by_date")
+class VoteOptionByVoteDateJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
     @field: NotNull
-    val schoolId: Long,
+    val voteId: Long,
 
     @field: NotNull
-    val grade: Int,
+    val voteOptionId: Long
 
-    @field: NotNull
-    val classNumber: Int,
-
-    @field: NotNull
-    val voteNumber: Int,
-
-    @field: NotNull
-    val date: LocalDate,
-
-    )
+)

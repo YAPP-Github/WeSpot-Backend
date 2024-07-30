@@ -1,5 +1,6 @@
 package com.wespot.vote
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -15,18 +16,26 @@ data class Ballot(
 ) {
 
     companion object {
-        fun of(voteId: Long, voteOptionId: Long, senderId: Long, receiverId: Long): Ballot {
+        fun of(
+            voteId: Long,
+            voteDate: LocalDate,
+            voteOptionId: Long,
+            senderId: Long,
+            receiverId: Long,
+            voteTime: LocalDateTime
+        ): Ballot {
             validateVote(voteId)
             validateVoteOption(voteOptionId)
             validateSenderAndReceiver(senderId, receiverId)
+            validateVoteDateTime(voteDate, voteTime)
             return Ballot(
                 id = 0L,
                 voteId = voteId,
                 voteOptionId = voteOptionId,
                 senderId = senderId,
                 receiverId = receiverId,
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
+                createdAt = voteTime,
+                updatedAt = voteTime,
                 isReceiverRead = false
             )
         }
@@ -47,6 +56,10 @@ data class Ballot(
             if (senderId == receiverId) {
                 throw IllegalArgumentException("본인을 투표할 수 없습니다.")
             }
+        }
+
+        private fun validateVoteDateTime(voteDate: LocalDate, voteTime: LocalDateTime) {
+            require(voteDate == voteTime.toLocalDate()) { throw IllegalArgumentException("투표한 시각이 잘못되었습니다.") }
         }
 
     }
