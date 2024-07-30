@@ -26,6 +26,9 @@ class MessageJpaEntity(
     val receiverId: Long,
 
     @field: NotNull
+    val isAnonymous: Boolean,
+
+    @field: NotNull
     val isReceiverRead: Boolean,
 
     @Enumerated(EnumType.STRING)

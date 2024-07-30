@@ -58,7 +58,8 @@ class SendMessageServiceTest : BehaviorSpec({
             val sendMessageRequest = SendMessageRequest(
                 content = "Hello",
                 receiverId = receiver.id,
-                senderName = "sender"
+                senderName = "sender",
+                isAnonymous = false
             )
 
             every { userPort.findById(sender.id) } returns sender
@@ -102,7 +103,8 @@ class SendMessageServiceTest : BehaviorSpec({
             val sendMessageRequest = SendMessageRequest(
                 content = "Hello",
                 receiverId = receiver.id,
-                senderName = "sender"
+                senderName = "sender",
+                isAnonymous = false
             )
 
             every { userPort.findById(sender.id) } returns sender

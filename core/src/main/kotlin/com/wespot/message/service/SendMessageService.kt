@@ -38,7 +38,8 @@ class SendMessageService(
             content = sendMessageRequest.content,
             receiverId = receiver.id,
             senderId = loginUser.id,
-            senderName = sendMessageRequest.senderName
+            senderName = sendMessageRequest.senderName,
+            isAnonymous = sendMessageRequest.isAnonymous
         )
 
         val saveMessage = messagePort.save(sendMessage)

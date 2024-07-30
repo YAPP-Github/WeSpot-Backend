@@ -12,6 +12,7 @@ data class Message(
     val senderName: String,
     val receiverId: Long,
     val isReceiverRead: Boolean,
+    val isAnonymous: Boolean,
     val messageType: MessageType,
     val readAt: LocalDateTime?,
     val isSend: Boolean,
@@ -40,6 +41,7 @@ data class Message(
             senderName = senderName,
             messageType = MessageType.SENT,
             receiverId = receiverId,
+            isAnonymous = isAnonymous,
             isReceiverRead = isReceiverRead,
             readAt = readAt,
             isSend = isSend,
@@ -66,6 +68,7 @@ data class Message(
             senderName = senderName,
             messageType = MessageType.SENT,
             receiverId = receiverId,
+            isAnonymous = isAnonymous,
             isReceiverRead = true,
             readAt = LocalDateTime.now(),
             isSend = isSend,
@@ -129,7 +132,8 @@ data class Message(
             content: String,
             receiverId: Long,
             senderId: Long,
-            senderName: String
+            senderName: String,
+            isAnonymous: Boolean
         ): Message {
             validateMessageSendTime()
             val message = Message(
@@ -139,6 +143,7 @@ data class Message(
                 senderName = senderName,
                 messageType = MessageType.SENT,
                 receiverId = receiverId,
+                isAnonymous = isAnonymous,
                 isReceiverRead = false,
                 readAt = null,
                 isSend = false,

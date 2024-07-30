@@ -14,6 +14,7 @@ object MessageFixture {
         senderName = "senderName",
         receiverId = 2,
         isReceiverRead = true,
+        isAnonymous = false,
         messageType = MessageType.SENT,
         readAt = LocalDateTime.now(),
         isSend = true,
@@ -33,6 +34,7 @@ object MessageFixture {
         senderName = "senderName",
         receiverId = receiverId,
         isReceiverRead = true,
+        isAnonymous = false,
         readAt = LocalDateTime.now(),
         messageType = MessageType.SENT,
         isSend = true,
@@ -58,6 +60,7 @@ object MessageFixture {
             senderName = senderName,
             receiverId = receiverId,
             isReceiverRead = false,
+            isAnonymous = false,
             messageType = MessageType.RECEIVED,
             readAt = null,
             isSend = false,
@@ -81,7 +84,8 @@ object MessageFixture {
             content = content,
             receiverId = receiverId,
             senderId = senderId,
-            senderName = senderName
+            senderName = senderName,
+            isAnonymous = false,
         )
     }
 
