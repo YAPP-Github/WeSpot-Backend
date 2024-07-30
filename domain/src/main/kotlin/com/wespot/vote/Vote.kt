@@ -2,12 +2,15 @@ package com.wespot.vote
 
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 data class Vote(
     val id: Long,
     val voteIdentifier: VoteIdentifier,
     val voteNumber: Int,
+    val voteOptionsByVoteDate: VoteOptionsByVoteDate,
     val ballots: Ballots,
 ) {
 
@@ -17,6 +20,7 @@ data class Vote(
 
         fun of(
             voteIdentifier: VoteIdentifier,
+            allVoteOptions: List<VoteOption>,
             previousVote: Vote?,
         ): Vote {
             if (Objects.isNull(previousVote)) {
@@ -24,6 +28,7 @@ data class Vote(
                     id = 0L,
                     voteIdentifier = voteIdentifier,
                     voteNumber = 0,
+                    voteOptionsByVoteDate = findVoteOptionsByVoteDate(voteIdentifier.date, 0, allVoteOptions),
                     ballots = Ballots.createEmptyBallots()
                 )
             }
@@ -33,7 +38,25 @@ data class Vote(
                 id = 0L,
                 voteIdentifier = voteIdentifier,
                 voteNumber = previousVote.voteNumber + 1,
+                voteOptionsByVoteDate = findVoteOptionsByVoteDate(
+                    voteIdentifier.date,
+                    previousVote.voteNumber + 1,
+                    allVoteOptions
+                ),
                 ballots = Ballots.createEmptyBallots()
+            )
+        }
+
+        private fun findVoteOptionsByVoteDate(
+            date: LocalDate,
+            voteNumber: Int,
+            allVoteOptions: List<VoteOption>
+        ): VoteOptionsByVoteDate {
+            return VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
+                voteId = 0L,
+                date = date,
+                voteNumber = voteNumber,
+                allVoteOptions = allVoteOptions
             )
         }
 
@@ -55,14 +78,6 @@ data class Vote(
         }
     }
 
-    fun findVoteOptionsByVoteDate(allVoteOptions: List<VoteOption>): VoteOptionsByVoteDate {
-        return VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(
-            voteId = this.id,
-            date = voteIdentifier.date,
-            voteNumber = voteNumber,
-            allVoteOptions = allVoteOptions
-        )
-    }
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
@@ -75,18 +90,20 @@ data class Vote(
     private fun isNotMe(classmate: User, user: User) = classmate != user
 
     fun addBallot(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         voteOptionId: Long,
         senderId: Long,
-        receiverId: Long
+        receiverId: Long,
+        voteTime: LocalDateTime
     ) {
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
         ballots.add(
             Ballot.of(
-                voteId = id,
+                voteId = this.id,
+                voteDate = voteIdentifier.date,
                 voteOptionId = voteOptionId,
                 senderId = senderId,
-                receiverId = receiverId
+                receiverId = receiverId,
+                voteTime = voteTime
             )
         )
     }
@@ -99,7 +116,6 @@ data class Vote(
     }
 
     fun getRankedVoteResults(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         users: List<User>,
         rankCalculateService: RankCalculateService
     ): Map<VoteOption, List<VoteRecord>> {
@@ -112,7 +128,6 @@ data class Vote(
     }
 
     fun getUserReceivedVotes(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         user: User,
         receivedVoteCalculateService: ReceivedVoteCalculateService
     ): Map<VoteOption, VoteRecord> {
@@ -126,18 +141,19 @@ data class Vote(
     }
 
     fun getUserReceivedVote(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         voteOption: VoteOption,
         user: User,
         receivedVoteCalculateService: ReceivedVoteCalculateService
     ): VoteRecord {
         voteOptionsByVoteDate.validateVoteOption(voteOption.id)
+        println(voteOption)
+        println(getBallots())
+        println(voteOptionsByVoteDate)
 
         return receivedVoteCalculateService.calculateUserReceivedVote(voteOption, user, getBallots())
     }
 
     fun getUserSentVotes(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         user: User,
     ): Map<VoteOption, List<Ballot>> {
         val ballots = ballots.findSentBallotsByUser(user.id)
@@ -155,7 +171,6 @@ data class Vote(
         .anyMatch { it.voteOptionId == voteOption.id }
 
     fun getUserSentVote(
-        voteOptionsByVoteDate: VoteOptionsByVoteDate,
         voteOption: VoteOption,
         user: User,
     ): List<Ballot> {

@@ -8,7 +8,7 @@ import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
-import com.wespot.voteoption.VoteOption
+import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
@@ -28,6 +28,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     private var userJpaRepository: UserJpaRepository,
     private var voteJpaRepository: VoteJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
+    private var voteOptionPort: VoteOptionPort,
     private var databaseCleanup: DatabaseCleanup
 ) {
 
@@ -48,6 +49,11 @@ class CreatedVoteServiceTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
+        voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
@@ -106,7 +112,7 @@ class CreatedVoteServiceTest @Autowired constructor(
         // given
         userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
         val voteIdentifier = VoteIdentifier.of(users[0], LocalDate.now())
-        val vote = Vote.of(voteIdentifier, null)
+        val vote = Vote.of(voteIdentifier, voteOptionPort.findAll(), null)
         val savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
 
         // when
@@ -126,7 +132,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     fun `처음으로 생기는 투표가 아니라면, 이전 날의 투표의 VoteNumber에서 1만큼 높게 설정된다`() {
         userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
         val voteIdentifier = VoteIdentifier.of(users[0], LocalDate.now().minusDays(1))
-        val vote = Vote.of(voteIdentifier, null)
+        val vote = Vote.of(voteIdentifier, voteOptionPort.findAll(), null)
         val savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
 
         // when
@@ -167,6 +173,15 @@ class CreatedVoteServiceTest @Autowired constructor(
 
         // then
         shouldThrow shouldHaveMessage "ID에 해당하는 사용자가 존재하지 않습니다."
+    }
+
+    @Test
+    fun `오늘의 질문이 잘 생성되는지 확인한다`() {
+        // given
+
+        // when
+
+        // then
     }
 
 }

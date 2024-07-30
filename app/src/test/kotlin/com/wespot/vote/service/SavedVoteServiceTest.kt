@@ -7,12 +7,13 @@ import com.wespot.user.mapper.UserMapper
 import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.Vote
+import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.VoteJpaRepository
 import com.wespot.vote.VoteMapper
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.fixture.VoteFixture
-import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
+import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 
@@ -34,9 +36,8 @@ class SavedVoteServiceTest @Autowired constructor(
     private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    private var voteJpaRepository: VoteJpaRepository,
-    private var voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
     private var ballotJpaRepository: BallotJpaRepository,
+    private var votePort: VotePort,
 ) {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -54,11 +55,13 @@ class SavedVoteServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        vote = VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
-        vote = VoteMapper.mapToDomainEntity(
-            voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote!!)),
-            Collections.emptyList()
-        )
+        val voteIdentifier =
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                LocalDate.now()
+            )
+        vote =
+            votePort.save(Vote.of(voteIdentifier, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
     }
 
     @AfterEach
@@ -69,15 +72,6 @@ class SavedVoteServiceTest @Autowired constructor(
     @Test
     fun `투표에 지정된 질문지를 반환받는다`() {
         // given
-        val allVoteOptions = listOf(
-            voteOptions[0],
-            voteOptions[1],
-            voteOptions[2],
-            voteOptions[3],
-            voteOptions[4],
-        ).map { VoteOptionMapper.mapToDomainEntity(it) }
-        val voteOptionsByVoteDate = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
-        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
         UserFixture.setSecurityContextUser(loginUser)
 
@@ -202,17 +196,6 @@ class SavedVoteServiceTest @Autowired constructor(
                 ),
             )
         )
-        val allVoteOptions = listOf(
-            voteOptions[0],
-            voteOptions[1],
-            voteOptions[2],
-            voteOptions[3],
-            voteOptions[4],
-        ).map { VoteOptionMapper.mapToDomainEntity(it) }
-        val voteOptionsByVoteDate = vote!!.findVoteOptionsByVoteDate(allVoteOptions)
-        val saveAll = voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
-        println("before${voteOptionsByVoteDate}")
-        println(saveAll)
 
         // when
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])

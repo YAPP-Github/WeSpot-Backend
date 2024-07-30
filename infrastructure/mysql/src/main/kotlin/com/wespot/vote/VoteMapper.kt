@@ -2,7 +2,11 @@ package com.wespot.vote
 
 object VoteMapper {
 
-    fun mapToDomainEntity(voteJpaEntity: VoteJpaEntity, ballots: List<Ballot>): Vote =
+    fun mapToDomainEntity(
+        voteJpaEntity: VoteJpaEntity,
+        voteOptionsByVoteDate: VoteOptionsByVoteDate,
+        ballots: List<Ballot>
+    ): Vote =
         Vote(
             id = voteJpaEntity.id,
             voteIdentifier = VoteIdentifier(
@@ -12,6 +16,7 @@ object VoteMapper {
                 date = voteJpaEntity.date
             ),
             voteNumber = voteJpaEntity.voteNumber,
+            voteOptionsByVoteDate = voteOptionsByVoteDate,
             ballots = Ballots.from(ballots)
         )
 

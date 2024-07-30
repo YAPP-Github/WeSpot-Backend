@@ -4,10 +4,10 @@ import com.wespot.voteoption.VoteOption
 
 object VoteOptionByVoteDateMapper {
 
-    fun mapToJpaEntity(voteOptionByVoteDate: VoteOptionByVoteDate): VoteOptionByVoteDateJpaEntity {
+    fun mapToJpaEntity(voteId: Long, voteOptionByVoteDate: VoteOptionByVoteDate): VoteOptionByVoteDateJpaEntity {
         return VoteOptionByVoteDateJpaEntity(
             id = voteOptionByVoteDate.id,
-            voteId = voteOptionByVoteDate.voteId,
+            voteId = voteId,
             voteOptionId = voteOptionByVoteDate.voteOption.id
         )
     }

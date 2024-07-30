@@ -3,24 +3,22 @@ package com.wespot.vote.service
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
-import com.wespot.vote.VoteOptionsByVoteDate
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.port.`in`.SavedVoteUseCase
-import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class SavedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
-    private val voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
 ) : SavedVoteUseCase {
 
     override fun getVoteOptions(): VoteItems {
@@ -30,14 +28,11 @@ class SavedVoteService(
         val today = LocalDate.now()
 
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
-        val todayVoteOptions: VoteOptionsByVoteDate =
-            VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionsByVoteDatePort, vote)
-        println(todayVoteOptions)
         val usersForVote: List<User> = vote.findUsersForVote(classmates, user)
 
         return VoteItems.of(
             classmates = usersForVote,
-            voteOptionsByVoteDate = todayVoteOptions
+            voteOptionsByVoteDate = vote.voteOptionsByVoteDate
         )
     }
 
@@ -49,18 +44,15 @@ class SavedVoteService(
         validateUserIdsInRequests(requests.voteRequests)
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user: User = VoteServiceHelper.findUser(userPort, userId)
-        val today = LocalDate.now()
-        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, today)
+        val todayTime = LocalDateTime.now()
+        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, todayTime.toLocalDate())
         requests.voteRequests.stream()
             .forEach { request ->
                 vote.addBallot(
-                    voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(
-                        voteOptionsByVoteDatePort,
-                        vote
-                    ),
                     voteOptionId = request.voteOptionId,
                     senderId = userId,
-                    receiverId = request.userId
+                    receiverId = request.userId,
+                    voteTime = todayTime
                 )
             }
 

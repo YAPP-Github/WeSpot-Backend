@@ -13,6 +13,7 @@ object VoteFixture {
         id = 1L,
         voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
         voteNumber = 0,
+        voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
         ballots = Ballots.from(Collections.emptyList())
     )
 
@@ -20,6 +21,7 @@ object VoteFixture {
         id = 1L,
         voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
         voteNumber = voteNumber,
+        voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
         ballots = Ballots.from(ballots)
     )
 
@@ -28,6 +30,7 @@ object VoteFixture {
             id = id,
             voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
             voteNumber = voteNumber,
+            voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
             ballots = Ballots.from(ballots)
         )
 
@@ -41,6 +44,7 @@ object VoteFixture {
             id = id,
             voteIdentifier = VoteIdentifier(1L, 1, 1,createdAt),
             voteNumber = voteNumber,
+            voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
             ballots = Ballots.from(ballots)
         )
 

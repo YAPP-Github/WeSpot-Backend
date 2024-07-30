@@ -6,7 +6,6 @@ import com.wespot.vote.Vote
 import com.wespot.vote.VoteIdentifier
 import com.wespot.vote.port.`in`.CreatedVoteUseCase
 import com.wespot.vote.port.out.VoteOptionPort
-import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
@@ -19,7 +18,6 @@ class CreatedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
     private val voteOptionPort: VoteOptionPort,
-    private val voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort
 ) : CreatedVoteUseCase {
 
     @Transactional
@@ -38,11 +36,8 @@ class CreatedVoteService(
             return
         }
 
-        val vote = Vote.of(voteIdentifier, getPreviousVoteNumber(voteIdentifier))
+        val vote = Vote.of(voteIdentifier, allVoteOptions, getPreviousVoteNumber(voteIdentifier))
         votePort.save(vote)
-
-        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(allVoteOptions)
-        voteOptionsByVoteDatePort.saveAll(voteOptionsByVoteDate)
     }
 
     private fun isAlreadyExistsVote(voteIdentifier: VoteIdentifier): Boolean {

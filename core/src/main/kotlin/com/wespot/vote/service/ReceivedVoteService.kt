@@ -8,7 +8,7 @@ import com.wespot.vote.VoteRecord
 import com.wespot.vote.dto.response.received.ReceivedVoteResponse
 import com.wespot.vote.dto.response.received.ReceivedVotesResponses
 import com.wespot.vote.port.`in`.ReceivedVoteUseCase
-import com.wespot.vote.port.out.VoteOptionsByVoteDatePort
+import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
@@ -20,7 +20,7 @@ import java.time.LocalDate
 class ReceivedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
-    private val voteOptionsByVoteDatePort: VoteOptionsByVoteDatePort,
+    private val voteOptionPort: VoteOptionPort,
     private val receivedVoteCalculateService: ReceivedVoteCalculateService
 ) : ReceivedVoteUseCase {
 
@@ -37,10 +37,7 @@ class ReceivedVoteService(
         vote: Vote,
         user: User
     ): Map<VoteOption, VoteRecord> {
-        val voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionsByVoteDatePort, vote)
-
         return vote.getUserReceivedVotes(
-            voteOptionsByVoteDate = voteOptionsByVoteDate,
             user = user,
             receivedVoteCalculateService = receivedVoteCalculateService
         )
@@ -54,10 +51,8 @@ class ReceivedVoteService(
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
-        val voteOptionsByVoteDate = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionsByVoteDatePort, vote)
-        val voteOption = VoteServiceHelper.findVoteOptionOnVoteOptions(voteOptionsByVoteDate, optionId)
+        val voteOption = VoteServiceHelper.findVoteOptionById(voteOptionPort, optionId)
         val voteRecord = vote.getUserReceivedVote(
-            voteOptionsByVoteDate = voteOptionsByVoteDate,
             voteOption = voteOption,
             user = user,
             receivedVoteCalculateService = receivedVoteCalculateService

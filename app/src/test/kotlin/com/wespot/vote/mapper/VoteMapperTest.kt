@@ -6,6 +6,7 @@ import com.wespot.vote.VoteMapper
 import com.wespot.vote.fixture.BallotJpaEntityFixture
 import com.wespot.vote.fixture.VoteFixture
 import com.wespot.vote.fixture.VoteJpaEntityFixture
+import com.wespot.vote.fixture.VoteOptionsByVoteDateFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -14,9 +15,11 @@ class VoteMapperTest : BehaviorSpec({
     given("Jpa Entity 투표가 주어지고") {
         val voteJpaEntity = VoteJpaEntityFixture.create()
         val ballotJpaEntity = BallotJpaEntityFixture.create()
+        val voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create()
         `when`("Mapper를 통해 이를 Domain Entity로 변환하면") {
             val voteDomainEntity = VoteMapper.mapToDomainEntity(
                 voteJpaEntity,
+                voteOptionsByVoteDate,
                 listOf(BallotMapper.mapToDomainEntity(ballotJpaEntity))
             )
             then("Domain Entity를 반환한다") {
@@ -27,6 +30,8 @@ class VoteMapperTest : BehaviorSpec({
                 voteDomainEntity.voteNumber shouldBe voteJpaEntity.voteNumber
                 voteDomainEntity.voteIdentifier.date shouldBe voteJpaEntity.date
                 voteDomainEntity.ballots::class shouldBe Ballots::class
+                voteDomainEntity.voteOptionsByVoteDate.voteDate shouldBe voteJpaEntity.date
+                voteDomainEntity.voteOptionsByVoteDate.voteOptionsByVoteDate.size shouldBe 5
             }
         }
     }
