@@ -15,7 +15,7 @@ class VoteOptionPersistenceAdapter(
             ?.let { voteOptionJpaEntity -> VoteOptionMapper.mapToDomainEntity(voteOptionJpaEntity) }
     }
 
-    override fun findAllVoteOption(): List<VoteOption> {
+    override fun findAll(): List<VoteOption> {
         return voteOptionJpaRepository.findAll()
             .stream()
             .map { voteOptionJpaEntity -> VoteOptionMapper.mapToDomainEntity(voteOptionJpaEntity) }

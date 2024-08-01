@@ -13,7 +13,7 @@ data class SentVotesResponse(
 
         fun of(vote: Vote, voteResults: Map<VoteOption, List<Ballot>>): SentVotesResponse {
             return SentVotesResponse(
-                vote.date.toString(),
+                vote.voteIdentifier.date.toString(),
                 voteResults.map { SentVotesResultsResponse.of(it.key, it.value.size) }
                     .toList()
             )

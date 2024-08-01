@@ -10,7 +10,7 @@ class ReportScheduler(
     private val revokeRestrictionUseCase: RevokeRestrictionUseCase
 ) {
 
-    @Scheduled(cron = "0 0 0 * * *") // TODO : 매일 00시에 실행되도록 설정했어요.
+    @Scheduled(cron = "0 0 0 * * *") // 매일 00시 실행
     fun revokeRestriction() {
         val today = LocalDate.now()
         revokeRestrictionUseCase.revokeRestriction(today)

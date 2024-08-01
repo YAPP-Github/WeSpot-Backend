@@ -17,41 +17,35 @@ import java.time.LocalDate
 @Service
 class SentVoteService(
     private val votePort: VotePort,
-    private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
+    private val voteOptionPort: VoteOptionPort
 ) : SentVoteUseCase {
 
     override fun getSentVotes(): SentVotesResponses {
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
-        val voteOptions = voteOptionPort.findAllVoteOption()
-        val voteResults = votes.associateWith { getSentVotes(it, voteOptions, user) }
+        val voteResults = votes.associateWith { getSentVotes(it, user) }
 
         return SentVotesResponses.from(voteResults)
     }
 
     private fun getSentVotes(
         vote: Vote,
-        voteOptions: List<VoteOption>,
         user: User
     ): Map<VoteOption, List<Ballot>> {
-        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-
-        return vote.getUserSentVotes(voteOptionsByVoteDate = voteOptionsByVoteDate, user = user)
+        return vote.getUserSentVotes(user = user)
     }
 
     override fun getSentVote(optionId: Long, date: LocalDate): SentVoteResponse {
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
-        val voteOptions = voteOptionPort.findAllVoteOption()
-        val voteOption = VoteServiceHelper.findVoteOptionOnAllVoteOptions(voteOptions, optionId)
-        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
+        val voteOption = VoteServiceHelper.findVoteOptionById(voteOptionPort, optionId)
 
         return SentVoteResponse.of(
             voteOption = voteOption,
-            users = vote.getUserSentVote(voteOptionsByVoteDate, voteOption, user)
+            users = vote.getUserSentVote(voteOption, user)
                 .map { VoteServiceHelper.findUser(userPort, it.receiverId) }
                 .toList()
         )

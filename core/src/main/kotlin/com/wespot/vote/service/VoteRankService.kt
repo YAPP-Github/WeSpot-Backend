@@ -6,7 +6,6 @@ import com.wespot.vote.VoteRecord
 import com.wespot.vote.dto.response.top1.VoteResultResponsesOfTop1
 import com.wespot.vote.dto.response.top5.VoteResultResponsesOfTop5
 import com.wespot.vote.port.`in`.VoteRankUseCase
-import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
@@ -16,7 +15,6 @@ import java.time.LocalDate
 @Service
 class VoteRankService(
     private val votePort: VotePort,
-    private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
     private val rankCalculateService: RankCalculateService
 ) : VoteRankUseCase {
@@ -32,8 +30,7 @@ class VoteRankService(
         val user = VoteServiceHelper.findUser(userPort, userId)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
-        val voteOptions = VoteServiceHelper.findVoteOptionsByVoteDate(voteOptionPort, vote)
-        val rankedVoteResults = vote.getRankedVoteResults(voteOptions, classmates, rankCalculateService)
+        val rankedVoteResults = vote.getRankedVoteResults(classmates, rankCalculateService)
 
         return rankedVoteResults
     }

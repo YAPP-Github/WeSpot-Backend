@@ -19,8 +19,8 @@ import java.time.LocalDate
 @Service
 class ReceivedVoteService(
     private val votePort: VotePort,
-    private val voteOptionPort: VoteOptionPort,
     private val userPort: UserPort,
+    private val voteOptionPort: VoteOptionPort,
     private val receivedVoteCalculateService: ReceivedVoteCalculateService
 ) : ReceivedVoteUseCase {
 
@@ -28,21 +28,16 @@ class ReceivedVoteService(
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
-        val voteOptions = voteOptionPort.findAllVoteOption()
-        val voteResults = votes.associateWith { getUserReceivedVotesByVote(it, voteOptions, user) }
+        val voteResults = votes.associateWith { getUserReceivedVotesByVote(it, user) }
 
         return ReceivedVotesResponses.of(voteResults = voteResults)
     }
 
     private fun getUserReceivedVotesByVote(
         vote: Vote,
-        voteOptions: List<VoteOption>,
         user: User
     ): Map<VoteOption, VoteRecord> {
-        val voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions)
-
         return vote.getUserReceivedVotes(
-            voteOptionsByVoteDate = voteOptionsByVoteDate,
             user = user,
             receivedVoteCalculateService = receivedVoteCalculateService
         )
@@ -56,10 +51,8 @@ class ReceivedVoteService(
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user = VoteServiceHelper.findUser(userPort, userId)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
-        val voteOptions = voteOptionPort.findAllVoteOption()
-        val voteOption = VoteServiceHelper.findVoteOptionOnAllVoteOptions(voteOptions, optionId)
+        val voteOption = VoteServiceHelper.findVoteOptionById(voteOptionPort, optionId)
         val voteRecord = vote.getUserReceivedVote(
-            voteOptionsByVoteDate = vote.findVoteOptionsByVoteDate(voteOptions),
             voteOption = voteOption,
             user = user,
             receivedVoteCalculateService = receivedVoteCalculateService

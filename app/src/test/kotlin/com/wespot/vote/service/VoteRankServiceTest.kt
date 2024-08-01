@@ -8,10 +8,9 @@ import com.wespot.user.repository.UserJpaRepository
 import com.wespot.vote.Ballot
 import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.BallotMapper
-import com.wespot.vote.VoteJpaEntity
-import com.wespot.vote.VoteJpaRepository
-import com.wespot.vote.VoteMapper
-import com.wespot.vote.fixture.VoteFixture
+import com.wespot.vote.Vote
+import com.wespot.vote.VoteIdentifier
+import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOptionJpaEntity
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
@@ -23,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import java.util.*
+import java.time.LocalDateTime
 
 @SpringBootTest
 class VoteRankServiceTest @Autowired constructor(
@@ -31,13 +30,13 @@ class VoteRankServiceTest @Autowired constructor(
     private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    private var voteJpaRepository: VoteJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
+    private var votePort: VotePort
 ) {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
-    private var savedVote: VoteJpaEntity? = null
+    private var vote: Vote? = null
 
     @BeforeEach
     fun setUp() {
@@ -50,9 +49,13 @@ class VoteRankServiceTest @Autowired constructor(
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
-        val vote =
-            VoteFixture.createWithIdAndVoteNumberAndBallots(0, 0, Collections.emptyList())
-        savedVote = voteJpaRepository.save(VoteMapper.mapToJpaEntity(vote))
+        val voteIdentifier =
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                LocalDate.now()
+            )
+        vote =
+            votePort.save(Vote.of(voteIdentifier, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
     }
 
     @AfterEach
@@ -63,15 +66,18 @@ class VoteRankServiceTest @Autowired constructor(
     @Test
     fun `투표 결과 1~5등을 조회한다`() {
         // given
+        val now=LocalDateTime.now()
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[0].id,
                     users[0].id,
-                    users[1].id
+                    users[1].id,
+                    now
                 )
             )
         )
@@ -79,20 +85,24 @@ class VoteRankServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[0].id,
                     users[1].id,
-                    users[0].id
+                    users[0].id,
+                    now
                 )
             )
         )
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[1].id,
                     users[0].id,
-                    users[2].id
+                    users[2].id,
+                    now
                 )
             )
         )
@@ -115,15 +125,18 @@ class VoteRankServiceTest @Autowired constructor(
     @Test
     fun `투표 결과 1등을 조회한다`() {
         // given
+        val now=LocalDateTime.now()
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[0].id,
                     users[0].id,
-                    users[1].id
+                    users[1].id,
+                    now
                 )
             )
         )
@@ -131,26 +144,30 @@ class VoteRankServiceTest @Autowired constructor(
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[0].id,
                     users[1].id,
-                    users[0].id
+                    users[0].id,
+                    now
                 )
             )
         )
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
                 Ballot.of(
-                    savedVote!!.id,
+                    vote!!.id,
+                    vote!!.voteIdentifier.date,
                     voteOptions[1].id,
                     users[0].id,
-                    users[2].id
+                    users[2].id,
+                    now
                 )
             )
         )
 
         // when
-        val voteResultsOfTop1 = voteRankService.getVoteResultsOfTop1(LocalDate.now())
+        val voteResultsOfTop1 = voteRankService.getVoteResultsOfTop1(now.toLocalDate())
 
         // then
         voteResultsOfTop1.voteResults.size shouldBe 5

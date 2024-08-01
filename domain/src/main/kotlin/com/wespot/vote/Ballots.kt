@@ -35,6 +35,9 @@ data class Ballots(
             }
         }
 
+        fun createEmptyBallots(): Ballots {
+            return Ballots(LinkedHashMap())
+        }
     }
 
     fun add(ballot: Ballot) {
