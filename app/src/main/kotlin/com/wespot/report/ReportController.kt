@@ -17,9 +17,8 @@ class ReportController(
     val savedReportUseCase: SavedReportUseCase
 ) {
 
-    @PostMapping("/users/{userId}/reports")
+    @PostMapping
     fun createReport(
-        @PathVariable("userId") targetUserId: Long,
         @RequestBody reportRequest: ReportRequest,
     ): ResponseEntity<ReportResponse> {
         val response: ReportResponse = savedReportUseCase.reportReceived(reportRequest)
