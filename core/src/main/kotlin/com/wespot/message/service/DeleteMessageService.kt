@@ -19,9 +19,7 @@ class DeleteMessageService(
 
         val loginUser = getLoginUser(userPort = userPort)
         val message = findMessageById(id = messageId, messagePort = messagePort)
-        message.validateDeleteMessage(loginUser)
-
-        val softDelete = message.softDelete()
+        val softDelete = message.softDelete(loginUser = loginUser)
         messagePort.save(softDelete)
 
     }

@@ -29,15 +29,17 @@ class ModifyMessageServiceTest : BehaviorSpec({
     lateinit var sender: User
     lateinit var receiver: User
     lateinit var message: Message
+    lateinit var receivedMessage: Message
 
     beforeContainer {
         // 시간을 조작하여 테스트 시간 설정
         val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
         MessageTimeValidator.setClock(fixedClock)
-        
+
         sender = UserFixture.createSender()
         receiver = UserFixture.createReceiver()
         message = MessageFixture.createMessage("Hello", receiver.id, sender.id, sender.name)
+        receivedMessage = MessageFixture.createMessageWithReceived("Hello", receiver.id, sender.id, sender.name)
 
         UserFixture.setSecurityContextUser(sender)
     }
@@ -87,8 +89,8 @@ class ModifyMessageServiceTest : BehaviorSpec({
         `when`("readMessage() 메서드를 호출할 때") {
             val messageId = message.id
 
-            every { SecurityUtils.getLoginUser(userPort) } returns sender
-            every { messagePort.findById(messageId) } returns message
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { messagePort.findById(messageId) } returns receivedMessage
             every { messagePort.save(any()) } returns message.copy(isReceiverRead = true)
 
             then("메시지가 읽은 상태로 업데이트되어야 한다") {

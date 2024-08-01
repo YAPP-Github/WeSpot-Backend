@@ -96,7 +96,8 @@ class SavedReportService(
     }
 
     private fun Message.applySoftDelete(): Message {
-        return this.reported().softDelete()
+        val loginUser = findLoginUser()
+        return this.reported().softDelete(loginUser = loginUser)
     }
 
 }
