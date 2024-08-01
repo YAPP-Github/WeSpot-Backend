@@ -9,7 +9,9 @@ import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
@@ -21,9 +23,11 @@ class SendMessageServiceTest : BehaviorSpec({
 
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
+    val blockedUserPort = mockk<BlockedUserPort>()
     val sendMessageService = SendMessageService(
         messagePort = messagePort,
-        userPort = userPort
+        userPort = userPort,
+        blockedUserPort = blockedUserPort
     )
 
     lateinit var sender: User
@@ -54,7 +58,8 @@ class SendMessageServiceTest : BehaviorSpec({
             val sendMessageRequest = SendMessageRequest(
                 content = "Hello",
                 receiverId = receiver.id,
-                senderName = "sender"
+                senderName = "sender",
+                isAnonymous = false
             )
 
             every { userPort.findById(sender.id) } returns sender
@@ -63,6 +68,12 @@ class SendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message
             every { messagePort.sendMessageCount(sender.id) } returns 0
             every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
+            every { blockedUserPort.existsByBlockerIdAndBlockedId(sender.id, receiver.id) } returns false
+            every { blockedUserPort.existsByBlockerIdAndBlockedId(receiver.id, sender.id) } returns false
+
+            // 시간을 조작하여 테스트 시간 설정
+            val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+            MessageTimeValidator.setClock(fixedClock)
 
             val response = sendMessageService.send(sendMessageRequest)
 
@@ -80,6 +91,33 @@ class SendMessageServiceTest : BehaviorSpec({
 
             then("메시지를 저장해야 한다") {
                 verify { messagePort.save(any()) }
+            }
+
+            then("차단된 사용자를 확인해야 한다") {
+                verify { blockedUserPort.existsByBlockerIdAndBlockedId(sender.id, receiver.id) }
+                verify { blockedUserPort.existsByBlockerIdAndBlockedId(receiver.id, sender.id) }
+            }
+        }
+
+        `when`("차단된 사용자가 메시지를 보내려 할 때") {
+            val sendMessageRequest = SendMessageRequest(
+                content = "Hello",
+                receiverId = receiver.id,
+                senderName = "sender",
+                isAnonymous = false
+            )
+
+            every { userPort.findById(sender.id) } returns sender
+            every { userPort.findById(receiver.id) } returns receiver
+            every { userPort.findByEmail(sender.email) } returns sender
+            every { messagePort.sendMessageCount(sender.id) } returns 0
+            every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
+            every { blockedUserPort.existsByBlockerIdAndBlockedId(sender.id, receiver.id) } returns true
+
+            then("예외를 발생시켜야 한다") {
+                shouldThrow<IllegalStateException> {
+                    sendMessageService.send(sendMessageRequest)
+                }.message shouldBe "차단된 유저에게 메시지를 보낼 수 없습니다."
             }
         }
     }

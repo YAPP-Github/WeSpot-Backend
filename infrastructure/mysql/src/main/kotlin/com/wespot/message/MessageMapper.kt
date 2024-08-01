@@ -9,16 +9,20 @@ object MessageMapper {
             id = messageJpaEntity.id,
             content = messageJpaEntity.content,
             senderId = messageJpaEntity.senderId,
-            senderName= messageJpaEntity.senderName,
+            senderName = messageJpaEntity.senderName,
             receiverId = messageJpaEntity.receiverId,
+            isAnonymous = messageJpaEntity.isAnonymous,
             messageType = messageJpaEntity.messageType,
             isReceiverRead = messageJpaEntity.isReceiverRead,
             readAt = messageJpaEntity.readAt,
             isSend = messageJpaEntity.isSend,
             sendAt = messageJpaEntity.sendAt,
             receivedAt = messageJpaEntity.receivedAt,
+            isReported = messageJpaEntity.isReported,
             createdAt = messageJpaEntity.baseEntity.createdAt,
-            updatedAt = messageJpaEntity.baseEntity.updatedAt
+            updatedAt = messageJpaEntity.baseEntity.updatedAt,
+            isDeleted = messageJpaEntity.isDeleted,
+            deletedAt = messageJpaEntity.deletedAt
         )
 
     fun mapToJpaEntity(message: Message): MessageJpaEntity =
@@ -28,16 +32,20 @@ object MessageMapper {
             senderId = message.senderId,
             senderName = message.senderName,
             receiverId = message.receiverId,
+            isAnonymous = message.isAnonymous,
             isReceiverRead = message.isReceiverRead,
             messageType = message.messageType,
             readAt = message.readAt,
             isSend = message.isSend,
             sendAt = message.sendAt,
             receivedAt = message.receivedAt,
+            isReported = message.isReported,
             baseEntity = BaseEntity(
                 createdAt = message.createdAt,
                 updatedAt = message.updatedAt
-            )
+            ),
+            isDeleted = message.isDeleted,
+            deletedAt = message.deletedAt
         )
 
 }

@@ -1,8 +1,8 @@
 package com.wespot.message.port.`in`
 
-import com.wespot.message.MessageType
 import com.wespot.message.dto.response.MessageListResponse
 import com.wespot.message.dto.response.MessageResponse
+import com.wespot.message.dto.response.MessageSimpleListResponse
 import com.wespot.message.dto.response.SendMessageStatusResponse
 
 interface GetMessageUseCase {
@@ -14,5 +14,7 @@ interface GetMessageUseCase {
     fun getSendMessages(cursorId: Long): MessageListResponse
 
     fun status(): SendMessageStatusResponse
+
+    fun getScheduledMessages(): MessageSimpleListResponse
 
 }

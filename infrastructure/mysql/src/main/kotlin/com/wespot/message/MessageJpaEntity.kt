@@ -25,7 +25,11 @@ class MessageJpaEntity(
     @field: NotNull
     val receiverId: Long,
 
-    val isReceiverRead: Boolean?,
+    @field: NotNull
+    val isAnonymous: Boolean,
+
+    @field: NotNull
+    val isReceiverRead: Boolean,
 
     @Enumerated(EnumType.STRING)
     val messageType: MessageType,
@@ -39,7 +43,15 @@ class MessageJpaEntity(
 
     val readAt: LocalDateTime?,
 
+    @field: NotNull
+    val isReported: Boolean,
+
     @Embedded
-    val baseEntity: BaseEntity
+    val baseEntity: BaseEntity,
+
+    @field: NotNull
+    val isDeleted: Boolean,
+
+    val deletedAt: LocalDateTime?
 
 )

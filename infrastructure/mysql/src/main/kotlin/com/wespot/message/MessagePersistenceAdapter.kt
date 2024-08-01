@@ -36,20 +36,18 @@ class MessagePersistenceAdapter(
             ?.let { MessageMapper.mapToDomainEntity(it) }
     }
 
-    override fun delete() {
-        TODO("Not yet implemented")
-    }
-
     override fun findAllMessagesByTypeAndReceiverAfterCursor(
         messageType: MessageType,
         receiverId: Long,
         cursorId: Long,
+        blockedUserIds: List<Long>,
         pageable: Pageable
     ): List<Message> {
         return messageJpaRepository.findAllByMessageTypeAndReceiverIdAfterCursor(
             messageType = messageType,
             receiverId = receiverId,
             cursorId = cursorId,
+            blockedUserIds = blockedUserIds,
             pageable = pageable
         ).map { MessageMapper.mapToDomainEntity(it) }
     }
@@ -77,6 +75,42 @@ class MessagePersistenceAdapter(
             receiverId = receiverId,
             date = LocalDate.now()
         )
+    }
+
+    override fun countMessagesAfterCursor(
+        messageType: MessageType,
+        receiverId: Long,
+        cursorId: Long,
+        blockedIds: List<Long>
+    ): Long {
+        return messageJpaRepository.countMessagesAfterCursor(
+            messageType = messageType,
+            receiverId = receiverId,
+            cursorId = cursorId,
+            blockedUserIds = blockedIds
+        )
+    }
+
+    override fun countSentMessagesAfterCursor(
+        messageType: MessageType,
+        senderId: Long,
+        cursorId: Long
+    ): Long {
+        return messageJpaRepository.countSentMessagesAfterCursor(
+            messageType = messageType,
+            senderId = senderId,
+            cursorId = cursorId
+        )
+    }
+
+    override fun findAllScheduledMessages(
+        messageType: MessageType,
+        senderId: Long
+    ): List<Message> {
+        return messageJpaRepository.findAllScheduledMessages(
+            messageType = messageType,
+            senderId = senderId
+        ).map { MessageMapper.mapToDomainEntity(it) }
     }
 
 }

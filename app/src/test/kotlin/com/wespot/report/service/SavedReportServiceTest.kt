@@ -198,7 +198,8 @@ class SavedReportServiceTest @Autowired constructor(
         val existsById = reportJpaRepository.existsById(savedReportResponse.id)
 
         // then
-        messages.size shouldBe 0
+        messages[0].isDeleted shouldBe true
+        messages[0].isReported shouldBe true
         existsById shouldBe true
     }
 

@@ -2,6 +2,7 @@ package com.wespot.message
 
 import com.wespot.message.dto.response.MessageListResponse
 import com.wespot.message.dto.response.MessageResponse
+import com.wespot.message.dto.response.MessageSimpleListResponse
 import com.wespot.message.dto.response.SendMessageStatusResponse
 import com.wespot.message.port.`in`.GetMessageUseCase
 import org.springframework.http.ResponseEntity
@@ -40,6 +41,15 @@ class GetMessageController(
         @PathVariable messageId: Long
     ): ResponseEntity<MessageResponse> {
         val response = getMessageUseCase.getMessage(messageId)
+
+        return ResponseEntity.ok()
+            .body(response)
+    }
+
+
+    @GetMapping("/scheduled")
+    fun getScheduledMessages(): ResponseEntity<MessageSimpleListResponse> {
+        val response = getMessageUseCase.getScheduledMessages()
 
         return ResponseEntity.ok()
             .body(response)

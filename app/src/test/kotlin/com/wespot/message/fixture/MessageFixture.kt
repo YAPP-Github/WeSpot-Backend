@@ -14,13 +14,17 @@ object MessageFixture {
         senderName = "senderName",
         receiverId = 2,
         isReceiverRead = true,
+        isAnonymous = false,
         messageType = MessageType.SENT,
         readAt = LocalDateTime.now(),
         isSend = true,
         sendAt = LocalDateTime.now(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        receivedAt = LocalDateTime.now()
+        receivedAt = LocalDateTime.now(),
+        isReported = false,
+        isDeleted = false,
+        deletedAt = null
     )
 
     fun createWithIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long) = Message(
@@ -30,13 +34,17 @@ object MessageFixture {
         senderName = "senderName",
         receiverId = receiverId,
         isReceiverRead = true,
+        isAnonymous = false,
         readAt = LocalDateTime.now(),
         messageType = MessageType.SENT,
         isSend = true,
         sendAt = LocalDateTime.now(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        receivedAt = LocalDateTime.now()
+        receivedAt = LocalDateTime.now(),
+        isReported = false,
+        isDeleted = false,
+        deletedAt = null
     )
 
     fun createMessageWithReceived(
@@ -52,6 +60,7 @@ object MessageFixture {
             senderName = senderName,
             receiverId = receiverId,
             isReceiverRead = false,
+            isAnonymous = false,
             messageType = MessageType.RECEIVED,
             readAt = null,
             isSend = false,
@@ -59,6 +68,9 @@ object MessageFixture {
             receivedAt = null,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
+            isReported = false,
+            isDeleted = false,
+            deletedAt = null
         )
     }
 
@@ -72,7 +84,8 @@ object MessageFixture {
             content = content,
             receiverId = receiverId,
             senderId = senderId,
-            senderName = senderName
+            senderName = senderName,
+            isAnonymous = false,
         )
     }
 
