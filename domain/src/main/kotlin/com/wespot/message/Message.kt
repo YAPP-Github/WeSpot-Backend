@@ -94,10 +94,6 @@ data class Message(
     }
 
     fun validateSentMessage(loginUser: User) {
-        println("senderId: $senderId")
-        println("loginUser.id: ${loginUser.id}")
-        println("receiverId: $receiverId")
-        println("messageType: $messageType")
         require(receiverId == loginUser.id) { "본인이 받은 메시지만 읽을 수 있습니다." }
         require(messageType == MessageType.RECEIVED) { "받은 메시지만 읽을 수 있습니다." }
     }
