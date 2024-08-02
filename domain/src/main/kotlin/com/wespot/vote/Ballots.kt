@@ -76,4 +76,8 @@ data class Ballots(
             .toList()
     }
 
+    fun getNumberOfSender(): Int {
+        return ballots.size
+    }
+
 }

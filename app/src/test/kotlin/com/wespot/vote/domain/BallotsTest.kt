@@ -99,4 +99,21 @@ class BallotsTest : BehaviorSpec({
         }
     }
 
+    given("투표지 목록을 통해") {
+        val ballots = listOf(
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 1, 2),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 1, 3),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 2, 4),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 2, 1),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 3, 1),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 4, 2),
+        )
+        `when`("투표를 진행한 인원의 수를") {
+            val numberOfSender = Ballots.from(ballots).getNumberOfSender()
+            then("반환한다.") {
+                numberOfSender shouldBe 4
+            }
+        }
+    }
+
 })
