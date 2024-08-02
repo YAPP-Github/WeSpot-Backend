@@ -5,6 +5,7 @@ import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.UpdateMessageRequest
 import com.wespot.message.dto.response.UpdateMessageResponse
+import com.wespot.message.event.ReadMessageByReceiverEvent
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.User
@@ -12,7 +13,11 @@ import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -21,9 +26,11 @@ class ModifyMessageServiceTest : BehaviorSpec({
 
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
+    val eventPublisher = mockk<ApplicationEventPublisher>()
     val modifyMessageService = ModifyMessageService(
         messagePort = messagePort,
-        userPort = userPort
+        userPort = userPort,
+        eventPublisher = eventPublisher
     )
 
     lateinit var sender: User
@@ -63,8 +70,6 @@ class ModifyMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { messagePort.save(any()) } returns message.copy(content = updateMessageRequest.content)
 
-
-
             then("메시지가 올바르게 업데이트되어야 한다") {
                 val response = modifyMessageService.updateMessage(message.id, updateMessageRequest)
                 response shouldBe UpdateMessageResponse.from(message.id)
@@ -90,8 +95,19 @@ class ModifyMessageServiceTest : BehaviorSpec({
             val messageId = message.id
 
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { userPort.findById(1) } returns sender
             every { messagePort.findById(messageId) } returns receivedMessage
-            every { messagePort.save(any()) } returns message.copy(isReceiverRead = true)
+            every { messagePort.save(any()) } returns receivedMessage.copy(isReceiverRead = true)
+            every {
+                eventPublisher.publishEvent(
+                    ReadMessageByReceiverEvent(
+                        sender,
+                        receiver,
+                        messageId,
+                        false
+                    )
+                )
+            } returns Unit
 
             then("메시지가 읽은 상태로 업데이트되어야 한다") {
                 modifyMessageService.readMessage(messageId)
