@@ -4,8 +4,6 @@ import com.wespot.user.UserClass
 import com.wespot.user.fixture.UserFixture
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class UserClassTest : BehaviorSpec({
 
