@@ -5,6 +5,8 @@ import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.SendMessageRequest
 import com.wespot.message.dto.response.SendMessageResponse
+import com.wespot.message.event.MessageLimitEvent
+import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.User
@@ -12,7 +14,11 @@ import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -21,9 +27,11 @@ class SendMessageServiceTest : BehaviorSpec({
 
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
+    val eventPublisher = mockk<ApplicationEventPublisher>()
     val sendMessageService = SendMessageService(
         messagePort = messagePort,
-        userPort = userPort
+        userPort = userPort,
+        eventPublisher = eventPublisher
     )
 
     lateinit var sender: User
@@ -63,6 +71,8 @@ class SendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message
             every { messagePort.sendMessageCount(sender.id) } returns 0
             every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
+            every { eventPublisher.publishEvent(MessageLimitEvent(0, 0)) } returns Unit
+            every { eventPublisher.publishEvent(ReceivedMessageEvent(receiver, 0)) } returns Unit
 
             val response = sendMessageService.send(sendMessageRequest)
 

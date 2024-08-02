@@ -531,6 +531,14 @@ class VoteTest() : BehaviorSpec({
         }
     }
 
+    // 보낸 이의 수를 카운트
+    given("") {
+        `when`("") {
+            then("") {
+            }
+        }
+    }
+
 })
 
 private fun createVoteOptionByCount(voteOptionCount: Long): List<VoteOption> {

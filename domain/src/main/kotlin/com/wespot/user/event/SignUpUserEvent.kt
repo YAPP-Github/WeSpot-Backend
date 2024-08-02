@@ -2,6 +2,6 @@ package com.wespot.user.event
 
 import com.wespot.user.User
 
-class VoteCreateEvent(
+data class SignUpUserEvent(
     val user: User
 )

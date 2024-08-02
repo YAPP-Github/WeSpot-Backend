@@ -1,6 +1,6 @@
-package com.wespot.vote.service
+package com.wespot.vote.service.listener
 
-import com.wespot.user.event.VoteCreateEvent
+import com.wespot.user.event.SignUpUserEvent
 import com.wespot.vote.port.`in`.CreatedVoteUseCase
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -11,7 +11,7 @@ class VoteEventListener(
 ) {
 
     @EventListener
-    fun signUpNewUser(event: VoteCreateEvent) {
+    fun signUpNewUser(event: SignUpUserEvent) {
         createdVoteUseCase.createVoteByUser(event.user)
     }
 

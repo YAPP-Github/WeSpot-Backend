@@ -177,4 +177,8 @@ data class Vote(
             .filter { it.voteOptionId == voteOption.id }
     }
 
+    fun getNumberOfSender(): Int {
+        return ballots.getNumberOfSender()
+    }
+
 }

@@ -7,10 +7,13 @@ import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
+import com.wespot.vote.event.ReceivedVoteEvent
+import com.wespot.vote.event.RegisteredVoteEvent
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import jakarta.transaction.Transactional
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,6 +22,7 @@ import java.time.LocalDateTime
 class SavedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
+    private val eventPublisher: ApplicationEventPublisher,
 ) : SavedVoteUseCase {
 
     override fun getVoteOptions(): VoteItems {
@@ -44,19 +48,30 @@ class SavedVoteService(
         validateUserIdsInRequests(requests.voteRequests)
         val userId = VoteServiceHelper.findLoginUserId(userPort)
         val user: User = VoteServiceHelper.findUser(userPort, userId)
-        val todayTime = LocalDateTime.now()
-        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, todayTime.toLocalDate())
-        requests.voteRequests.stream()
-            .forEach { request ->
-                vote.addBallot(
-                    voteOptionId = request.voteOptionId,
-                    senderId = userId,
-                    receiverId = request.userId,
-                    voteTime = todayTime
-                )
-            }
+        val voteTime = LocalDateTime.now()
+        val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
+        requests.voteRequests
+            .stream()
+            .forEach { request -> addBallot(request, vote, userId, voteTime) }
+        eventPublisher.publishEvent(RegisteredVoteEvent(user, vote))
 
         return SaveVoteResponse(votePort.save(vote).id)
+    }
+
+    private fun addBallot(
+        request: VoteRequest,
+        vote: Vote,
+        userId: Long,
+        voteTime: LocalDateTime
+    ) {
+        val receiver = VoteServiceHelper.findUser(userPort, request.userId)
+        eventPublisher.publishEvent(ReceivedVoteEvent(receiver))
+        vote.addBallot(
+            voteOptionId = request.voteOptionId,
+            senderId = userId,
+            receiverId = request.userId,
+            voteTime = voteTime
+        )
     }
 
     private fun validateRequestsSize(requestsSize: Int) {

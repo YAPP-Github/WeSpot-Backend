@@ -3,6 +3,7 @@ package com.wespot.notification
 import com.wespot.common.BaseEntity
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -18,6 +19,9 @@ class NotificationJpaEntity(
 
     @Enumerated(value = EnumType.STRING)
     val type: NotificationType,
+
+    @field: NotNull
+    val date: LocalDate,
 
     @field: NotNull
     val targetId: Long,

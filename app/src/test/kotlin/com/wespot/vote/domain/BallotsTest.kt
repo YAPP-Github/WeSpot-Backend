@@ -99,4 +99,12 @@ class BallotsTest : BehaviorSpec({
         }
     }
 
+    // 보낸 이의 수를 카운트
+    given("") {
+        `when`("") {
+            then("") {
+            }
+        }
+    }
+
 })
