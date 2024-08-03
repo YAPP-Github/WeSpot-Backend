@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest
 class SavedReportServiceTest @Autowired constructor(
     private val savedReportService: SavedReportService,
     private val userJpaRepository: UserJpaRepository,
-    private val voteJpaRepository: VoteJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
     private val databaseCleanup: DatabaseCleanup,
     private val reportJpaRepository: ReportJpaRepository
@@ -42,11 +41,8 @@ class SavedReportServiceTest @Autowired constructor(
         val loginUser = UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")
         UserFixture.setSecurityContextUser(loginUser)
         val savedMessage = messageJpaRepository.save(MessageMapper.mapToJpaEntity(MessageFixture.createWithId(0L)))
-        val savedUser =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail1@Kakao")))
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            targetUserId = savedUser.id,
             reportType = ReportType.MESSAGE
         )
 
@@ -63,11 +59,9 @@ class SavedReportServiceTest @Autowired constructor(
         val userJpaEntity =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(userJpaEntity))
-        messageJpaRepository.save(MessageMapper.mapToJpaEntity(MessageFixture.createWithId(0L)))
         val reportRequest = ReportRequest(
-            targetId = 1L,
-            targetUserId = 100L,
-            reportType = ReportType.MESSAGE
+            targetId = 100L,
+            reportType = ReportType.VOTE
         )
 
         // when
@@ -83,43 +77,39 @@ class SavedReportServiceTest @Autowired constructor(
         val sender =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
-        val receiver =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail1@Kakao")))
         val reportRequest = ReportRequest(
             targetId = 1L,
-            targetUserId = receiver.id,
             reportType = ReportType.MESSAGE
         )
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
 
         // then
-        shouldThrow shouldHaveMessage "존재하지 않는 쪽지에 신고를 할 수 없습니다."
+        shouldThrow shouldHaveMessage "신고하고자 하는 쪽지가 존재하지 않습니다."
     }
 
     @Test
-    fun `쪽지의 송신자, 수진자에 맞춰 신고하지 않은 경우, 예외가 발생한다`() {
+    fun `신고한 이가 쪽지의 수신자가 아닌 경우 예외가 발생한다`() {
         // given
         val reportSender =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
         val messageSender =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail2@Kakao")))
+        val otherPerson =
+            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail3@Kakao")))
         val savedMessage = messageJpaRepository.save(
             MessageMapper.mapToJpaEntity(
                 MessageFixture.createWithIdAndSenderIdAndReceiverId(
                     0L,
                     messageSender.id,
-                    reportSender.id
+                    otherPerson.id
                 )
             )
         )
-        val receiver =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail1@Kakao")))
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            targetUserId = receiver.id,
             reportType = ReportType.MESSAGE
         )
 
@@ -127,7 +117,7 @@ class SavedReportServiceTest @Autowired constructor(
         val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
 
         // then
-        shouldThrow shouldHaveMessage "존재하지 않는 쪽지에 신고를 할 수 없습니다."
+        shouldThrow shouldHaveMessage "본인이 받은 쪽지가 아닙니다."
     }
 
     @Test
@@ -144,7 +134,6 @@ class SavedReportServiceTest @Autowired constructor(
                 )
             )
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
-        val savedVote = voteJpaRepository.save(VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1))
         val reportReceiver =
             userJpaRepository.save(
                 UserMapper.mapToJpaEntity(
@@ -157,8 +146,7 @@ class SavedReportServiceTest @Autowired constructor(
                 )
             )
         val reportRequest = ReportRequest(
-            targetId = savedVote.id,
-            targetUserId = reportReceiver.id,
+            targetId = reportReceiver.id,
             reportType = ReportType.VOTE
         )
 
@@ -166,29 +154,28 @@ class SavedReportServiceTest @Autowired constructor(
         val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
 
         // then
-        shouldThrow shouldHaveMessage "존재하지 않는 투표에 신고를 할 수 없습니다."
+        shouldThrow shouldHaveMessage "같은 반 친구가 아닙니다."
     }
 
     @Test
     fun `쪽지를 신고하는 경우, 쪽지가 지워진다`() {
         // given
-        val sender =
+        val reportSender =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
-        val receiver =
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
+        val reportReceiver =
             userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail1@Kakao")))
         val savedMessage = messageJpaRepository.save(
             MessageMapper.mapToJpaEntity(
                 MessageFixture.createWithIdAndSenderIdAndReceiverId(
                     0,
-                    sender.id,
-                    receiver.id
+                    reportReceiver.id,
+                    reportSender.id,
                 )
             )
         )
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            targetUserId = receiver.id,
             reportType = ReportType.MESSAGE
         )
 
@@ -218,7 +205,6 @@ class SavedReportServiceTest @Autowired constructor(
                 )
             )
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
-        val savedVote = voteJpaRepository.save(VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1))
         val reportReceiver =
             userJpaRepository.save(
                 UserMapper.mapToJpaEntity(
@@ -231,8 +217,7 @@ class SavedReportServiceTest @Autowired constructor(
                 )
             )
         val reportRequest = ReportRequest(
-            targetId = savedVote.id,
-            targetUserId = reportReceiver.id,
+            targetId = reportReceiver.id,
             reportType = ReportType.VOTE
         )
 
