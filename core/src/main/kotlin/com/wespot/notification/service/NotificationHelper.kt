@@ -6,11 +6,11 @@ import com.wespot.user.User
 import org.springframework.stereotype.Component
 
 @Component
-class NotificationServiceHelper(
+class NotificationHelper(
     private val notificationSendService: NotificationSendService,
 ) {
 
-    fun sendMulticastNotification(users: List<User>, notifications: List<Notification>) {
+    fun sendNotifications(users: List<User>, notifications: List<Notification>) {
         if (notifications.isEmpty()) {
             return
         }

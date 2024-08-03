@@ -17,7 +17,7 @@ class CreatedMessageNotificationService(
     private val openMessageNotificationService: OpenMessageNotificationService,
     private val receivedMessageNotificationService: ReceivedMessageNotificationService,
     private val readMessageByReceiverService: ReadMessageByReceiverService,
-    private val notificationServiceHelper: NotificationServiceHelper
+    private val notificationHelper: NotificationHelper
 ) : MessageNotificationUseCase {
 
     @Transactional
@@ -26,14 +26,14 @@ class CreatedMessageNotificationService(
         val notifications = openMessageNotificationService.getNotifications(users)
         notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
-        notifications.forEach { notificationServiceHelper.sendNotification(usersGroup[it.userId], it) }
+        notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
     }
 
     @Transactional
     override fun receiveMessage(receiver: User, messageId: Long) {
         val notification = receivedMessageNotificationService.getNotification(receiver.id, receiver.name, messageId)
         notificationPort.save(notification)
-        notificationServiceHelper.sendNotification(receiver, notification)
+        notificationHelper.sendNotification(receiver, notification)
     }
 
     @Transactional
@@ -42,7 +42,7 @@ class CreatedMessageNotificationService(
             readMessageByReceiverService.getNotification(sender.id, receiver.name, messageId, beforeIsReceiverRead)
                 ?: return
         notificationPort.save(notification)
-        notificationServiceHelper.sendNotification(sender, notification)
+        notificationHelper.sendNotification(sender, notification)
     }
 
 }

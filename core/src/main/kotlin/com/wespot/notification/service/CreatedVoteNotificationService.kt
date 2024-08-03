@@ -22,7 +22,7 @@ class CreatedVoteNotificationService(
     private val receivedVoteNotificationService: ReceivedVoteNotificationService,
     private val registeredVoteNotificationService: RegisteredVoteNotificationService,
     private val endVoteNotificationService: EndVoteNotificationService,
-    private val notificationServiceHelper: NotificationServiceHelper
+    private val notificationHelper: NotificationHelper
 ) : VoteNotificationUseCase {
 
     @Transactional
@@ -31,7 +31,7 @@ class CreatedVoteNotificationService(
         val notifications = encourageVoteNotificationService.getNotifications(users)
         notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
-        notifications.forEach { notificationServiceHelper.sendNotification(usersGroup[it.userId], it) }
+        notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
     }
 
     @Transactional
@@ -40,7 +40,7 @@ class CreatedVoteNotificationService(
         val notifications = signUpVoteNotificationService.getNotifications(user, users)
         notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
-        notifications.forEach { notificationServiceHelper.sendNotification(usersGroup[it.userId], it) }
+        notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
     }
 
     @Transactional
@@ -48,7 +48,7 @@ class CreatedVoteNotificationService(
         val users = userPort.findAllBySchoolIdAndGradeAndClassNumber(sender.schoolId, sender.grade, sender.classNumber)
         val notifications = registeredVoteNotificationService.getNotifications(sender, users, vote)
         notificationPort.saveAll(notifications)
-        notificationServiceHelper.sendMulticastNotification(users, notifications)
+        notificationHelper.sendNotifications(users, notifications)
     }
 
     @Transactional
@@ -57,14 +57,14 @@ class CreatedVoteNotificationService(
         val notifications = endVoteNotificationService.getNotifications(users)
         notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
-        notifications.forEach { notificationServiceHelper.sendNotification(usersGroup[it.userId], it) }
+        notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
     }
 
     @Transactional
     override fun receiveVote(user: User) {
         val notification = receivedVoteNotificationService.getNotification(user.id, user.gender)
         notificationPort.save(notification)
-        notificationServiceHelper.sendNotification(user, notification)
+        notificationHelper.sendNotification(user, notification)
     }
 
 }
