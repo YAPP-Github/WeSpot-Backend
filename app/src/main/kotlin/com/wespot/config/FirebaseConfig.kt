@@ -26,7 +26,6 @@ class FirebaseConfig {
                 FirebaseApp.initializeApp(options)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             throw IllegalArgumentException("Firebase APP 연결에 실패했습니다.")
         }
     }
