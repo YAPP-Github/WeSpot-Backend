@@ -12,7 +12,7 @@ class VoteEventListener(
 
     @EventListener
     fun signUpNewUser(event: SignUpUserEvent) {
-        createdVoteUseCase.createVoteByUser(event.user)
+        createdVoteUseCase.createVoteByUser(event.signUpUser)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.wespot.notification.service
 
 import com.wespot.DatabaseCleanup
+import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationInfo
 import com.wespot.notification.NotificationType
@@ -19,7 +20,7 @@ class NotificationHelperTest @Autowired constructor(
     private val databaseCleanup: DatabaseCleanup
 ) {
 
-    private val notificationSendService = mockk<NotificationSendService>()
+    private val notificationSendService = mockk<FirebaseNotificationService>()
     private val notificationHelper = NotificationHelper(notificationSendService)
 
     @AfterEach

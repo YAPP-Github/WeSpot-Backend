@@ -1,9 +1,9 @@
 package com.wespot.notification.service.listener
 
 import com.wespot.DatabaseCleanup
+import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
-import com.wespot.notification.service.NotificationSendService
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
@@ -43,7 +43,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
         // given
         val user1 = userPort.save(UserFixture.createWithId(0))
         val user2 = userPort.save(UserFixture.createWithId(0))
-        val sendService = mockk<NotificationSendService>()
+        val sendService = mockk<FirebaseNotificationService>()
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit
@@ -60,7 +60,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `새로운 인원이 투표에 참여한 경우 알림이 발송된다`() {
         // given
-        val sendService = mockk<NotificationSendService>()
+        val sendService = mockk<FirebaseNotificationService>()
         val users = (1..6).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao")) }
         val voteOptions = (1..5).map { voteOptionPort.save(VoteOptionFixture.create()) }
         val voteIdentifier = VoteIdentifier.of(users[0], LocalDate.now())
@@ -87,7 +87,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     fun `투표를 받은 이에게 알림이 발송된다`() {
         // given
         val receiver = userPort.save(UserFixture.createWithId(0))
-        val sendService = mockk<NotificationSendService>()
+        val sendService = mockk<FirebaseNotificationService>()
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit
@@ -105,7 +105,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `투표가 종료되었을 때, 반 친구들에게 알림이 발송된다`() {
         // given
-        val sendService = mockk<NotificationSendService>()
+        val sendService = mockk<FirebaseNotificationService>()
         val users = (1..5).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao")) }
 
         // when

@@ -15,7 +15,7 @@ class VoteNotificationEventListener(
 
     @EventListener
     fun signUpNewUser(signUpUserEvent: SignUpUserEvent) {
-        voteNotificationUseCase.signUpUser(signUpUserEvent.user)
+        voteNotificationUseCase.signUpUser(signUpUserEvent.signUpUser)
     }
 
     @EventListener

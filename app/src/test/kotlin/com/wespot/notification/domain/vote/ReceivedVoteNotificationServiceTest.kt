@@ -18,6 +18,7 @@ class ReceivedVoteNotificationServiceTest : BehaviorSpec({
                 notification.targetId shouldBe 0
                 notification.date shouldBe LocalDate.now()
                 notification.title shouldBe "방금 우리 반 여학생이 나에게 투표했어요 \uD83D\uDCA5"
+                notification.body shouldBe "어떤 내용일지 눌러서 바로 확인해 보세요"
             }
         }
     }
@@ -32,6 +33,7 @@ class ReceivedVoteNotificationServiceTest : BehaviorSpec({
                 notification.targetId shouldBe 0
                 notification.date shouldBe LocalDate.now()
                 notification.title shouldBe "방금 우리 반 남학생이 나에게 투표했어요 \uD83D\uDCA5"
+                notification.body shouldBe "어떤 내용일지 눌러서 바로 확인해 보세요"
             }
         }
     }

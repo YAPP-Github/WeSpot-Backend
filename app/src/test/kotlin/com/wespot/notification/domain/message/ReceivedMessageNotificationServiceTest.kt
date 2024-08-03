@@ -16,6 +16,7 @@ class ReceivedMessageNotificationServiceTest : BehaviorSpec({
                 notification.type shouldBe NotificationType.MESSAGE_RECEIVED
                 notification.targetId shouldBe 100L
                 notification.title shouldBe "누군가의 소중한 마음이 담긴 쪽지가 도착했어요 \uD83D\uDC8C"
+                notification.body shouldBe "김재연님에게 전하고 싶은 이야기가 있대요"
             }
         }
     }

@@ -79,6 +79,7 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
                 notifications1[0].userId shouldBe 0
                 notifications1[0].type shouldBe NotificationType.VOTE_RESULT
                 notifications1[0].title shouldBe "우리 반 투표 결과가 업데이트 되었어요 \uD83D\uDC40"
+                notifications1[0].body shouldBe "실시간 1등은 누구일까요? 눌러서 바로 확인해 보세요"
                 notifications1[0].date shouldBe LocalDate.now()
                 notifications1[0].targetId shouldBe 0
             }

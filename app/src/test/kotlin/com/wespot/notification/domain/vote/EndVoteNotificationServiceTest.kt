@@ -37,6 +37,7 @@ class EndVoteNotificationServiceTest : BehaviorSpec({
                 notifications[0].date shouldBe LocalDate.now().minusDays(1)
                 notifications[0].targetId shouldBe 0
                 notifications[0].title shouldBe "어제의 투표 결과를 분석했어요 📝"
+                notifications[0].body shouldBe "친구들은 어제 ${users[0].name}님을 어떻게 생각했을까요?"
             }
         }
     }

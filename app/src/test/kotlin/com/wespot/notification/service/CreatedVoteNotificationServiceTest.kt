@@ -1,8 +1,10 @@
 package com.wespot.notification.service
 
 import com.wespot.DatabaseCleanup
+import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.notification.port.out.NotificationServicePort
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
@@ -30,7 +32,7 @@ class CreatedVoteNotificationServiceTest @Autowired constructor(
     fun `투표 생성 알림을 발송한다`() {
         // given
         (1..5).map { UserFixture.createWithId(0) }.forEach { userPort.save(it) }
-        val sendService = mockk<NotificationSendService>()
+        val sendService = mockk<FirebaseNotificationService>()
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit

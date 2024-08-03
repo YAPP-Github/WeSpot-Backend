@@ -13,6 +13,6 @@ interface VoteNotificationUseCase {
 
     fun endVote()
 
-    fun receiveVote(user: User)
+    fun receiveVote(receiver: User)
 
 }

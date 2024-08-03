@@ -37,6 +37,7 @@ class OpenMessageNotificationServiceTest : BehaviorSpec({
                 notifications[0].date shouldBe LocalDate.now()
                 notifications[0].targetId shouldBe 0
                 notifications[0].title shouldBe "TestUser님의 마음을 들려주세요 에버가 전달해 드릴게요 \uD83D\uDC98"
+                notifications[0].body shouldBe "오늘 TestUser님을 설레게 한 친구는 누구인가요?"
             }
         }
     }

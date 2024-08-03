@@ -37,6 +37,7 @@ class EncourageVoteNotificationServiceTest : BehaviorSpec({
                 notifications[0].date shouldBe LocalDate.now()
                 notifications[0].targetId shouldBe 0
                 notifications[0].title shouldBe "${LocalDate.now().monthValue}월 ${LocalDate.now().dayOfMonth}일 우리 반 투표가 진행 중이에요 \uD83D\uDD25"
+                notifications[0].body shouldBe "친구들이 ${users[0].name}님의 투표를 기다리고 있어요"
             }
         }
     }

@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure:mysql"))
     implementation(project(":infrastructure:redis"))
-
+    implementation(project(":infrastructure:fcm"))
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     testImplementation("io.jsonwebtoken:jjwt-api:0.11.2")

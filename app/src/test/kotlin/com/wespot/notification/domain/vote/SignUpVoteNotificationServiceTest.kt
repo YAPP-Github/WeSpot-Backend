@@ -12,65 +12,22 @@ class SignUpVoteNotificationServiceTest : BehaviorSpec({
 
     given("반에 새로운 이가 가입했을 때") {
         val service = SignUpVoteNotificationService()
-        `when`("반에 존재하는 인원이 2의 배수가 아니라면") {
-            val users = mutableListOf(
-                UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(1, 1, 1, 1),
-            )
-            val notifications1 = service.getNotifications(users[0], users)
-            then("알림이 발생하지 않는다.") {
-                notifications1.size shouldBe 0
-            }
-            users.add(UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(2, 1, 1, 1))
-            users.add(UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(3, 1, 1, 1))
-            val notifications2 = service.getNotifications(users[0], users)
-            then("알림이 발생하지 않는다.") {
-                notifications2.size shouldBe 0
-            }
-        }
-        `when`("반에 존재하는 인원이 2의 배수라면") {
+        `when`("반에 새로운 인원이 가입할 때") {
             val users = mutableListOf(
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(1, 1, 1, 1),
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(2, 1, 1, 1),
             )
-            val notifications1 = service.getNotifications(users[0], users)
+            val notifications = service.getNotifications(users[0], users)
 
             then("알림이 발생한다.") {
-                notifications1.size shouldBe 1
-                val userSet = notifications1.map { it.userId }.toSet()
-                val typeSet = notifications1.map { it.type }.toSet()
-                val contentSet = notifications1.map { it.title }.toSet()
-                val targetIdSet = notifications1.map { it.date }.toSet()
-                val doesNotExistsFirstUser = notifications1.stream().allMatch { it.userId != users[0].id }
-                userSet.size shouldBe 1
-                typeSet.size shouldBe 1
-                contentSet.size shouldBe 1
-                targetIdSet.size shouldBe 1
+                notifications.size shouldBe 1
+                val doesNotExistsFirstUser = notifications.stream().allMatch { it.userId != users[0].id }
                 doesNotExistsFirstUser shouldBe true
-                notifications1[0].type shouldBe NotificationType.VOTE
-                notifications1[0].date shouldBe LocalDate.now()
-                notifications1[0].targetId shouldBe 0
-                notifications1[0].title shouldBe "새로운 친구들이 위스팟에 입장했어요 \uD83D\uDE4B\uD83C\uDFFB"
-            }
-            users.add(UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(3, 1, 1, 1))
-            users.add(UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(4, 1, 1, 1))
-            val notifications2 = service.getNotifications(users[0], users)
-
-            then("알림이 발생한다.") {
-                val userSet = notifications2.map { it.userId }.toSet()
-                val typeSet = notifications2.map { it.type }.toSet()
-                val contentSet = notifications2.map { it.title }.toSet()
-                val targetIdSet = notifications2.map { it.date }.toSet()
-                val doesNotExistsFirstUser = notifications2.stream().allMatch { it.userId != users[0].id }
-                notifications2.size shouldBe 3
-                userSet.size shouldBe 3
-                typeSet.size shouldBe 1
-                contentSet.size shouldBe 1
-                targetIdSet.size shouldBe 1
-                doesNotExistsFirstUser shouldBe true
-                notifications2[0].type shouldBe NotificationType.VOTE
-                notifications2[0].date shouldBe LocalDate.now()
-                notifications2[0].targetId shouldBe 0
-                notifications2[0].title shouldBe "새로운 친구들이 위스팟에 입장했어요 \uD83D\uDE4B\uD83C\uDFFB"
+                notifications[0].type shouldBe NotificationType.VOTE
+                notifications[0].date shouldBe LocalDate.now()
+                notifications[0].targetId shouldBe 0
+                notifications[0].title shouldBe "${users[0].name}님이 위스팟에 입장했어요 \uD83D\uDE4B\uD83C\uDFFB"
+                notifications[0].body shouldBe "${users[1].name}님이 자신을 어떻게 생각하고 있을지 궁금하대요"
             }
         }
     }

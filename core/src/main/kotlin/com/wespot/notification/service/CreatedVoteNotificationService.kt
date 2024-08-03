@@ -35,9 +35,13 @@ class CreatedVoteNotificationService(
     }
 
     @Transactional
-    override fun signUpUser(user: User) {
-        val users = userPort.findAllBySchoolIdAndGradeAndClassNumber(user.schoolId, user.grade, user.classNumber)
-        val notifications = signUpVoteNotificationService.getNotifications(user, users)
+    override fun signUpUser(signUpUser: User) {
+        val users = userPort.findAllBySchoolIdAndGradeAndClassNumber(
+            signUpUser.schoolId,
+            signUpUser.grade,
+            signUpUser.classNumber
+        )
+        val notifications = signUpVoteNotificationService.getNotifications(signUpUser, users)
         notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
         notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
@@ -61,10 +65,10 @@ class CreatedVoteNotificationService(
     }
 
     @Transactional
-    override fun receiveVote(user: User) {
-        val notification = receivedVoteNotificationService.getNotification(user.id, user.gender)
+    override fun receiveVote(receiver: User) {
+        val notification = receivedVoteNotificationService.getNotification(receiver.id, receiver.gender)
         notificationPort.save(notification)
-        notificationHelper.sendNotification(user, notification)
+        notificationHelper.sendNotification(receiver, notification)
     }
 
 }
