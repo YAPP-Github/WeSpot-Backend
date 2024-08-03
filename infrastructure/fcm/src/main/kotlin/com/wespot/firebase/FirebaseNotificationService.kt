@@ -1,17 +1,18 @@
-package com.wespot.notification.service
+package com.wespot.firebase
 
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.MulticastMessage
 import com.wespot.notification.NotificationInfo
+import com.wespot.notification.port.out.NotificationServicePort
 import com.wespot.user.User
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.util.*
 
-@Service
-class NotificationSendService {
+@Component
+class FirebaseNotificationService : NotificationServicePort {
 
-    fun sendMulticastNotification(users: List<User>, notificationInfo: NotificationInfo) {
+    override fun sendMulticastNotification(users: List<User>, notificationInfo: NotificationInfo) {
         val tokens = users.filter { isPossibleNotification(it) }
             .map { it.fcm!!.fcmToken }
 
@@ -38,7 +39,7 @@ class NotificationSendService {
         }
     }
 
-    fun sendNotification(user: User, notificationInfo: NotificationInfo) {
+    override fun sendNotification(user: User, notificationInfo: NotificationInfo) {
         if (!isPossibleNotification(user)) {
             return
         }
