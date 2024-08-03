@@ -19,7 +19,7 @@ import com.wespot.user.Social
 import com.wespot.user.SocialType
 import com.wespot.user.User
 import com.wespot.user.UserConsent
-import com.wespot.user.event.VoteCreateEvent
+import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
@@ -127,7 +127,7 @@ class AuthService(
             return
         }
 
-        eventPublisher.publishEvent(VoteCreateEvent(user))
+        eventPublisher.publishEvent(SignUpUserEvent(user))
     }
 
     fun saveRelatedEntities(

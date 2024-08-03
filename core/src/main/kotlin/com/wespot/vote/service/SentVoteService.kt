@@ -22,8 +22,7 @@ class SentVoteService(
 ) : SentVoteUseCase {
 
     override fun getSentVotes(): SentVotesResponses {
-        val userId = VoteServiceHelper.findLoginUserId(userPort)
-        val user = VoteServiceHelper.findUser(userPort, userId)
+        val user = VoteServiceHelper.findLoginUser(userPort)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
         val voteResults = votes.associateWith { getSentVotes(it, user) }
 
@@ -38,8 +37,7 @@ class SentVoteService(
     }
 
     override fun getSentVote(optionId: Long, date: LocalDate): SentVoteResponse {
-        val userId = VoteServiceHelper.findLoginUserId(userPort)
-        val user = VoteServiceHelper.findUser(userPort, userId)
+        val user = VoteServiceHelper.findLoginUser(userPort)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
         val voteOption = VoteServiceHelper.findVoteOptionById(voteOptionPort, optionId)
 

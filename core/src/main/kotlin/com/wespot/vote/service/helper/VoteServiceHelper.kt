@@ -12,8 +12,8 @@ import java.time.LocalDate
 
 object VoteServiceHelper {
 
-    fun findLoginUserId(userPort: UserPort): Long {
-        return SecurityUtils.getLoginUserId(userPort)
+    fun findLoginUser(userPort: UserPort): User {
+        return SecurityUtils.getLoginUser(userPort)
     }
 
     fun findUser(userPort: UserPort, userId: Long): User {

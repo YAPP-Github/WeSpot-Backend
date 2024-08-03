@@ -77,14 +77,18 @@ class VoteTest() : BehaviorSpec({
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1L, 1, 1), LocalDate.now())
         `when`("중복된 투표를 하는 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            vote.addBallot(1, 1, 2, LocalDateTime.now())
+            val users = listOf(
+                UserFixture.createWithId(1),
+                UserFixture.createWithId(2)
+            )
+            vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
                     vote.addBallot(
                         1L,
-                        1L,
-                        2L,
+                        users[0],
+                        users[1],
                         LocalDateTime.now()
                     )
                 }
@@ -94,14 +98,18 @@ class VoteTest() : BehaviorSpec({
 
         `when`("중복되지 않은 투표를 하는 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            vote.addBallot(1, 1, 2, LocalDateTime.now())
+            val users = listOf(
+                UserFixture.createWithId(1),
+                UserFixture.createWithId(2)
+            )
+            vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
             then("정상적으로 투표가 진행된다.") {
                 shouldNotThrow<IllegalArgumentException> {
                     vote.addBallot(
                         1L,
-                        1L,
-                        3L,
+                        users[1],
+                        users[0],
                         LocalDateTime.now()
                     )
                 }
@@ -110,14 +118,17 @@ class VoteTest() : BehaviorSpec({
 
         `when`("오늘의 질문지가 아닌 질문지를 선택한 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            vote.addBallot(1, 1, 2, LocalDateTime.now())
+            val users = listOf(
+                UserFixture.createWithId(1),
+                UserFixture.createWithId(2)
+            )
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
                     vote.addBallot(
                         6L,
-                        1L,
-                        3L,
+                        users[0],
+                        users[1],
                         LocalDateTime.now()
                     )
                 }
@@ -131,7 +142,7 @@ class VoteTest() : BehaviorSpec({
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 1L, 2L)
         )
         `when`("5명 이하의 학생들을") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
@@ -144,7 +155,7 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("최대 5명의 학생들을") {
-            val users = createUserOptionByCount(8)
+            val users = createUserByCount(8)
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
@@ -172,10 +183,17 @@ class VoteTest() : BehaviorSpec({
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
 
         `when`("등수를 집계할 때, 존재하지 않는 유저의 통계는") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("집계하지 않는다.") {
@@ -185,10 +203,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("등수를 집계할 때, 존재하지 않는 VoteOption에 대해") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("집계하지 않는다.") {
@@ -197,10 +222,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("등수를 집계할 때, VoteOption의 Id로") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("정렬되어 집계한다.") {
@@ -214,10 +246,18 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("등수를 집계할 때, 주어진 User를 매핑해서") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("결과를 반환한다.") {
@@ -235,10 +275,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("등수를 집계할 때, 주어진 VoteOption을 매핑해서") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("결과를 반환한다.") {
@@ -252,10 +299,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("등수를 집계할 때, 등수도 함께 포함해서") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, LocalDateTime.now()) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
             val rankedVoteResults = vote.getRankedVoteResults(users, RankCalculateService())
 
             then("결과를 반환한다.") {
@@ -306,10 +360,17 @@ class VoteTest() : BehaviorSpec({
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
 
         `when`("목록을 조회하는 경우") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
             val receivedVotes = vote.getUserReceivedVotes(users[0], ReceivedVoteCalculateService())
 
             then("결과를 정상적으로 반환한다.") {
@@ -326,10 +387,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("개별 조회하는 경우, 오늘의 질문이 아니면") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
@@ -343,10 +411,17 @@ class VoteTest() : BehaviorSpec({
             }
         }
         `when`("개별 조회하는 경우") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
             val userReceivedVoteByFirstVoteOption =
                 vote.getUserReceivedVote(
                     voteOptions[0],
@@ -404,10 +479,17 @@ class VoteTest() : BehaviorSpec({
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
 
         `when`("목록을 조회하는 경우") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
             val userReceivedVote = vote.getUserSentVotes(users[0])
 
             then("결과를 정상적으로 반환한다.") {
@@ -428,10 +510,17 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("개별 조회하는 경우, 오늘의 질문지가 아니면") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
 
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<IllegalArgumentException> {
@@ -444,10 +533,17 @@ class VoteTest() : BehaviorSpec({
             }
         }
         `when`("개별 조회하는 경우") {
-            val users = createUserOptionByCount(5)
+            val users = createUserByCount(5)
             val voteOptions = createVoteOptionByCount(10)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach { vote.addBallot(it.voteOptionId, it.senderId, it.receiverId, it.createdAt) }
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    it.createdAt
+                )
+            }
             val userSentVoteByFirstVoteOption = vote.getUserSentVote(voteOptions[0], users[0])
             val userSentVoteBySecondVoteOption = vote.getUserSentVote(voteOptions[1], users[0])
 
@@ -531,6 +627,76 @@ class VoteTest() : BehaviorSpec({
         }
     }
 
+    given("투표에") {
+        val ballots = listOf(
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 1, 2),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 1, 3),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 2, 4),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 2, 1),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 3, 1),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 4, 2),
+        )
+        `when`("참여한 인원의 수를") {
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val voteOptions = createVoteOptionByCount(5)
+            val voteIdentifier = VoteIdentifier.of(user, LocalDate.now())
+            val vote = Vote.of(voteIdentifier, voteOptions, null)
+            ballots.forEach {
+                vote.addBallot(
+                    it.voteOptionId,
+                    UserFixture.createWithId(it.senderId),
+                    UserFixture.createWithId(it.receiverId),
+                    LocalDateTime.now()
+                )
+            }
+            val numberOfSender = vote.getNumberOfSender()
+
+            then("반환한다.") {
+                numberOfSender shouldBe 4
+            }
+        }
+    }
+
+    given("투표하고자 하는 친구를 찾을 때") {
+        `when`("입력된 친구들이 투표함의 학급에 해당하지 않는 경우") {
+            val classmates = createUserByCount(5).toMutableList()
+            val otherClassmateUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val voteIdentifier = VoteIdentifier.of(classmates[0], LocalDate.now())
+            val voteOptions = createVoteOptionByCount(5)
+            val vote = Vote.of(voteIdentifier, voteOptions, null)
+            val shouldThrow1 =
+                shouldThrow<IllegalArgumentException> { vote.findUsersForVote(classmates, otherClassmateUser) }
+
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            classmates.add(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2))
+            val shouldThrow2 =
+                shouldThrow<IllegalArgumentException> { vote.findUsersForVote(classmates, user) }
+
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+            }
+        }
+    }
+
+    given("투표에 참여한 인원이") {
+        `when`("투표함의 학급에 해당하지 않는 경우") {
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val voteOptions = createVoteOptionByCount(5)
+            val voteIdentifier = VoteIdentifier.of(user, LocalDate.now())
+            val vote = Vote.of(voteIdentifier, voteOptions, null)
+            val otherClassmate = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val shouldThrow1 =
+                shouldThrow<IllegalArgumentException> { vote.addBallot(1, user, otherClassmate, LocalDateTime.now()) }
+            val shouldThrow2 =
+                shouldThrow<IllegalArgumentException> { vote.addBallot(1, otherClassmate, user, LocalDateTime.now()) }
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+            }
+        }
+    }
+
 })
 
 private fun createVoteOptionByCount(voteOptionCount: Long): List<VoteOption> {
@@ -541,7 +707,7 @@ private fun createVoteOptionByCount(voteOptionCount: Long): List<VoteOption> {
     return voteOptions
 }
 
-private fun createUserOptionByCount(userCount: Long): List<User> {
+private fun createUserByCount(userCount: Long): List<User> {
     val users = ArrayList<User>()
     for (id in 1..userCount) {
         users.add(UserFixture.createWithId(id))

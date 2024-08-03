@@ -80,7 +80,10 @@ data class Vote(
 
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
+        validateClassmate(user)
+        classmates.forEach { validateClassmate(it) }
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
+
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
@@ -91,21 +94,28 @@ data class Vote(
 
     fun addBallot(
         voteOptionId: Long,
-        senderId: Long,
-        receiverId: Long,
+        sender: User,
+        receiver: User,
         voteTime: LocalDateTime
     ) {
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
+        validateClassmate(sender)
+        validateClassmate(receiver)
         ballots.add(
             Ballot.of(
                 voteId = this.id,
                 voteDate = voteIdentifier.date,
                 voteOptionId = voteOptionId,
-                senderId = senderId,
-                receiverId = receiverId,
+                senderId = sender.id,
+                receiverId = receiver.id,
                 voteTime = voteTime
             )
         )
+    }
+
+    private fun validateClassmate(user: User) {
+        val userVoteIdentifier = VoteIdentifier.of(user, voteIdentifier.date)
+        require(voteIdentifier.isSameClass(userVoteIdentifier)) { "다른 반의 학생이(을) 투표할 수 없습니다." }
     }
 
     fun getBallots(): List<Ballot> {
@@ -175,6 +185,10 @@ data class Vote(
 
         return ballots.findSentBallotsByUser(user.id)
             .filter { it.voteOptionId == voteOption.id }
+    }
+
+    fun getNumberOfSender(): Int {
+        return ballots.getNumberOfSender()
     }
 
 }

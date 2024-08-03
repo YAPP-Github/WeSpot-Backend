@@ -26,8 +26,7 @@ class VoteRankService(
     private fun getRankedVoteResults(
         date: LocalDate
     ): Map<VoteOption, List<VoteRecord>> {
-        val userId = VoteServiceHelper.findLoginUserId(userPort)
-        val user = VoteServiceHelper.findUser(userPort, userId)
+        val user = VoteServiceHelper.findLoginUser(userPort)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
         val rankedVoteResults = vote.getRankedVoteResults(classmates, rankCalculateService)

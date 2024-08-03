@@ -4,6 +4,8 @@ import com.wespot.voteoption.VoteOption
 
 interface VoteOptionPort {
 
+    fun save(voteOption: VoteOption): VoteOption
+
     fun findById(id: Long): VoteOption?
 
     fun findAll(): List<VoteOption>

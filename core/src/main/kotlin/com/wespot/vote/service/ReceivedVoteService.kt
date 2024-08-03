@@ -25,8 +25,7 @@ class ReceivedVoteService(
 ) : ReceivedVoteUseCase {
 
     override fun getReceivedVotes(): ReceivedVotesResponses {
-        val userId = VoteServiceHelper.findLoginUserId(userPort)
-        val user = VoteServiceHelper.findUser(userPort, userId)
+        val user = VoteServiceHelper.findLoginUser(userPort)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
         val voteResults = votes.associateWith { getUserReceivedVotesByVote(it, user) }
 
@@ -48,8 +47,7 @@ class ReceivedVoteService(
         optionId: Long,
         date: LocalDate
     ): ReceivedVoteResponse {
-        val userId = VoteServiceHelper.findLoginUserId(userPort)
-        val user = VoteServiceHelper.findUser(userPort, userId)
+        val user = VoteServiceHelper.findLoginUser(userPort)
         val vote = VoteServiceHelper.findVoteByUser(votePort, user, date)
         val voteOption = VoteServiceHelper.findVoteOptionById(voteOptionPort, optionId)
         val voteRecord = vote.getUserReceivedVote(

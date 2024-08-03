@@ -1,9 +1,9 @@
 package com.wespot.user.adapter
 
 import com.wespot.user.User
-import com.wespot.user.repository.UserJpaRepository
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
+import com.wespot.user.repository.UserJpaRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository

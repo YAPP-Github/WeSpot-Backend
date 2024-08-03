@@ -251,6 +251,43 @@ object UserFixture {
         withdrawAt = LocalDateTime.now(),
     )
 
+    fun createWithIdAndSchoolIdAndGradeAndClassNumber(
+        id:Long,
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ) = User(
+        id = id,
+        email = "TestEmail@Kakako",
+        password = "TestPassword",
+        role = Role.USER,
+        name = "TestUser",
+        introduction = "hello",
+        gender = "male",
+        schoolId = schoolId,
+        grade = grade,
+        classNumber = classNumber,
+        setting = Setting(),
+        profile = Profile(0, "black", "image.png"),
+        fcm = FCM(0, "token", LocalDateTime.now()),
+        social = Social(
+            socialType = SocialType.KAKAO,
+            socialId = "1123123",
+            socialEmail = null,
+            socialRefreshToken = "refreshToken"
+        ),
+        userConsent = UserConsent(
+            id = 0,
+            consentType = ConsentType.MARKETING,
+            consentValue = true,
+            consentedAt = LocalDateTime.now()
+        ),
+        restriction = Restriction.createInitialState(),
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+        withdrawAt = LocalDateTime.now(),
+    )
+
     fun createWithEmailAndSchoolIdAndGradeAndClassNumber(
         email: String,
         schoolId: Long,

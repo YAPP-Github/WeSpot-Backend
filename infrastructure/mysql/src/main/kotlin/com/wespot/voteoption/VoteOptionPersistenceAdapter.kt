@@ -9,6 +9,12 @@ class VoteOptionPersistenceAdapter(
     private val voteOptionJpaRepository: VoteOptionJpaRepository
 ) : VoteOptionPort {
 
+    override fun save(voteOption: VoteOption): VoteOption {
+        val voteOptionJpaEntity = VoteOptionMapper.mapToJpaEntity(voteOption)
+
+        return VoteOptionMapper.mapToDomainEntity(voteOptionJpaRepository.save(voteOptionJpaEntity))
+    }
+
     override fun findById(id: Long): VoteOption? {
         return voteOptionJpaRepository.findById(id)
             .getOrNull()
