@@ -23,7 +23,7 @@ class NotificationController(
         return ResponseEntity.ok(notifications)
     }
 
-    @PatchMapping("{notificationId}")
+    @PatchMapping("/{notificationId}")
     fun readNotification(@PathVariable notificationId: Long): ResponseEntity<Void> {
         inquiryNotificationUseCase.readNotification(notificationId)
 
