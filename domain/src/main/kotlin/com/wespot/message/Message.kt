@@ -102,6 +102,10 @@ data class Message(
         require(senderId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
     }
 
+    private fun validateReportMessage(reportSenderId: Long) {
+        require(receiverId == reportSenderId) { "수신자만이 메시지를 신고할 수 있습니다." }
+    }
+
     fun validateReadMessage(loginUser: User) {
         require(senderId == loginUser.id || receiverId == loginUser.id) { "메시지를 읽을 수 있는 권한이 없습니다." }
     }
@@ -112,14 +116,17 @@ data class Message(
         require(receiverId == loginUser.id) { "받은 메시지만 차단이 가능합니다" }
     }
 
-    fun reported() =
-        this.copy(
+    fun reported(senderId: Long): Message {
+        validateReportMessage(senderId)
+        return this.copy(
+            isDeleted = true,
             isReported = true,
+            deletedAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
+    }
 
-
-    fun softDelete(loginUser: User) : Message{
+    fun softDelete(loginUser: User): Message {
         validateDeleteMessage(loginUser)
         return this.copy(
             isDeleted = true,
