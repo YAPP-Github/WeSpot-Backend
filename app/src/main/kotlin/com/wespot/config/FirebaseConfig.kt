@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import jakarta.annotation.PostConstruct
 import org.springframework.context.annotation.Configuration
-import java.io.FileInputStream
 
 @Configuration
 class FirebaseConfig {
@@ -13,7 +12,7 @@ class FirebaseConfig {
     @PostConstruct
     fun init() {
         try {
-            val serviceAccount = FileInputStream("src/main/resources/config/serviceAccountKey.json")
+            val serviceAccount = javaClass.classLoader.getResourceAsStream("config/serviceAccountKey.json")
             val options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build()
@@ -22,7 +21,7 @@ class FirebaseConfig {
                 FirebaseApp.initializeApp(options)
             }
         } catch (e: Exception) {
-            throw IllegalArgumentException("Firebase APP 연결에 실패했습니다.")
+            throw IllegalArgumentException("Firebase APP 연결에 실패했습니다.", e)
         }
     }
 
