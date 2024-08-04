@@ -31,19 +31,14 @@ class CustomUrlFilter(
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
         "/api/v1/users/search",
-        "/api/v1/votes/options",
-        "/api/v1/votes",
-        "/api/v1/votes/tops",
-        "/api/v1/votes/sent",
-        "/api/v1/votes/received",
-        "/api/v1/votes/sent/options",
-        "/api/v1/votes/received/options",
-        "/api/v1/reports/users",
         "/api/v1/messages",
         "/api/v1/messages/send",
         "/api/v1/messages/status/me",
         "/api/v1/messages/check-profanity",
         "/api/v1/messages/**",
+        "/api/v1/votes/**",
+        "/api/v1/reports/**",
+        "/api/v1/notifications/**",
     )
 
     override fun doFilterInternal(
