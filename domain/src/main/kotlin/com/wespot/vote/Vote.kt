@@ -80,6 +80,7 @@ data class Vote(
 
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
+        validateClassmate(user)
         classmates.forEach { validateClassmate(it) }
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
 

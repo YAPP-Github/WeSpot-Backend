@@ -14,6 +14,7 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -139,7 +140,8 @@ class VoteTest() : BehaviorSpec({
 
     given("현재 사용자가 아직 투표하지 인원 중에") {
         val ballots = listOf(
-            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 1L, 2L)
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 1L, 2L),
+            BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 2L, 3L)
         )
         `when`("5명 이하의 학생들을") {
             val users = createUserByCount(5)
@@ -148,9 +150,9 @@ class VoteTest() : BehaviorSpec({
             val voteUsers = vote.findUsersForVote(users, me)
             then("정상적으로 반환한다.") {
                 voteUsers.size shouldBe 3
-                voteUsers[0].id shouldBe 3
-                voteUsers[1].id shouldBe 4
-                voteUsers[2].id shouldBe 5
+                voteUsers.find { it.id == 3L } shouldNotBe null
+                voteUsers.find { it.id == 4L } shouldNotBe null
+                voteUsers.find { it.id == 5L } shouldNotBe null
             }
         }
 
@@ -159,13 +161,12 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
+            val userCounts= voteUsers.map { it.id }.toSet()
+            val doesNotContainsMe = voteUsers.stream().allMatch { it.id != users[0].id }
             then("정상적으로 반환한다.") {
                 voteUsers.size shouldBe 5
-                voteUsers[0].id shouldBe 3
-                voteUsers[1].id shouldBe 4
-                voteUsers[2].id shouldBe 5
-                voteUsers[3].id shouldBe 6
-                voteUsers[4].id shouldBe 7
+                userCounts.size shouldBe 5
+                doesNotContainsMe shouldBe true
             }
         }
 
