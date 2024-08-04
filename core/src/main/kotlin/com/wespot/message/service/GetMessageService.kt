@@ -57,18 +57,16 @@ class GetMessageService(
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
 
         val messages = messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-            messageType = MessageType.RECEIVED,
             receiverId = loginUser.id,
             cursorId = cursorValue,
             blockedUserIds = blockedUserIds,
             pageable = pageRequest
         )
 
-        val hasNext = messagePort.countMessagesAfterCursor(
-            messageType = MessageType.RECEIVED,
+        val hasNext = messagePort.countReceivedMessagesAfterCursor(
             receiverId = loginUser.id,
             cursorId = cursorValue,
-            blockedIds = blockedUserIds
+            blockedUserIds = blockedUserIds
         ) > 10
 
         return MessageListResponse.from(
@@ -89,14 +87,12 @@ class GetMessageService(
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
 
         val messages = messagePort.findAllMessagesByTypeAndSenderAfterCursor(
-            messageType = MessageType.SENT,
             senderId = loginUser.id,
             cursorId = cursorValue,
             pageable = pageRequest
         )
 
         val hasNext = messagePort.countSentMessagesAfterCursor(
-            messageType = MessageType.SENT,
             senderId = loginUser.id,
             cursorId = cursorValue
         ) > 10
@@ -144,6 +140,10 @@ class GetMessageService(
             )
         })
 
+    }
+
+    override fun getBlockedMessages(): MessageSimpleListResponse {
+        TODO("Not yet implemented")
     }
 
     override fun findAllByBlockerId(blockerId: Long): List<Long> {

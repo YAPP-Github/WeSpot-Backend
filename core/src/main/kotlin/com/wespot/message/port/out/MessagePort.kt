@@ -3,8 +3,6 @@ package com.wespot.message.port.out
 import com.wespot.message.Message
 import com.wespot.message.MessageType
 import org.springframework.data.domain.Pageable
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 interface MessagePort {
 
@@ -15,7 +13,6 @@ interface MessagePort {
     fun findById(id: Long): Message?
 
     fun findAllMessagesByTypeAndReceiverAfterCursor(
-        messageType: MessageType,
         receiverId: Long,
         cursorId: Long,
         blockedUserIds: List<Long>,
@@ -23,7 +20,6 @@ interface MessagePort {
     ): List<Message>
 
     fun findAllMessagesByTypeAndSenderAfterCursor(
-        messageType: MessageType,
         senderId: Long,
         cursorId: Long,
         pageable: Pageable
@@ -34,15 +30,13 @@ interface MessagePort {
         receiverId: Long
     ): Boolean
 
-    fun countMessagesAfterCursor(
-        messageType: MessageType,
+    fun countReceivedMessagesAfterCursor(
         receiverId: Long,
         cursorId: Long,
-        blockedIds: List<Long>
+        blockedUserIds: List<Long>
     ): Long
 
     fun countSentMessagesAfterCursor(
-        messageType: MessageType,
         senderId: Long,
         cursorId: Long
     ): Long

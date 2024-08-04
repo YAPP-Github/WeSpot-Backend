@@ -116,17 +116,15 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId,
-                    pageRequest
+                    senderId = sender.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
                 )
             } returns messages.take(10)
             every {
                 messagePort.countSentMessagesAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId
+                    senderId = sender.id,
+                    cursorId = cursorId,
                 )
             } returns 11
 
@@ -157,15 +155,13 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId,
-                    pageRequest
+                    senderId = sender.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
                 )
             } returns messages.drop(10)
             every {
                 messagePort.countSentMessagesAfterCursor(
-                    MessageType.SENT,
                     sender.id,
                     cursorId
                 )
@@ -199,19 +195,17 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds,
-                    pageRequest
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedUserIds = blockedUserIds,
+                    pageable = pageRequest
                 )
             } returns messages.take(10)
             every {
-                messagePort.countMessagesAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds
+                messagePort.countReceivedMessagesAfterCursor(
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedUserIds = blockedUserIds
                 )
             } returns 11
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
@@ -245,19 +239,17 @@ class GetMessageServiceTest : BehaviorSpec({
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds,
-                    pageRequest
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedUserIds = blockedUserIds,
+                    pageable = pageRequest
                 )
             } returns messages.drop(10)
             every {
-                messagePort.countMessagesAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds
+                messagePort.countReceivedMessagesAfterCursor(
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedUserIds = blockedUserIds
                 )
             } returns 1
 
@@ -287,10 +279,10 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
             every { schoolPort.findById(receiver.schoolId) } returns school
-            every { messagePort.countMessagesAfterCursor(any(), any(), any(), any()) } returns 5
+            every { messagePort.countReceivedMessagesAfterCursor(any(), any(), any()) } returns 5
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, sender.id))
 
-            every { messagePort.findAllMessagesByTypeAndReceiverAfterCursor(any(), receiver.id, any(), any(), pageRequest) } returns messages.filter { message ->
+            every { messagePort.findAllMessagesByTypeAndReceiverAfterCursor(receiver.id, any(), any(), pageRequest) } returns messages.filter { message ->
                 !blockedUserIds.contains(message.senderId)
             }
 
