@@ -5,9 +5,7 @@ import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
-import com.wespot.auth.dto.response.SignUpResponse
-import com.wespot.auth.dto.response.SocialResponse
-import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.dto.response.*
 import com.wespot.auth.fixture.AuthFixture
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
@@ -130,10 +128,16 @@ class AuthServiceTest : BehaviorSpec({
 
         `when`("기존 사용자가 loginAccess를 호출할 때") {
             val user = UserFixture.createWithId(1)
-            val tokenResponse = TokenResponse(
+            val tokenResponse = TokenAndUserDetailResponse(
                 accessToken = "accessToken",
                 refreshToken = "refreshToken",
-                refreshTokenExpiredAt = refreshTokenExpiredAt
+                refreshTokenExpiredAt = refreshTokenExpiredAt,
+                setting = SettingResponse(
+                    isMessageNotification = false,
+                    isVoteNotification = false,
+                    isMarketingNotification = user.userConsent.consentValue ?: false
+                ),
+                name = user.name
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
@@ -168,13 +172,24 @@ class AuthServiceTest : BehaviorSpec({
         val authData = AuthFixture.createAuthData()
         val user = AuthFixture.createUser()
         val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
-
+        val generateToken = AuthFixture.createTokenResponse(refreshTokenExpiredAt)
+        val tokenAndUserDetailResponse = TokenAndUserDetailResponse(
+            accessToken = generateToken.accessToken,
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt,
+            setting = SettingResponse(
+                isMessageNotification = false,
+                isVoteNotification = false,
+                isMarketingNotification = signUpRequest.consents.marketing
+            ),
+            name = user.name
+        )
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
         every { authService.createUser(authData, signUpRequest) } returns user
         every { userPort.existsBySchoolIdAndGradeAndClassNumber(any(), any(), any()) } returns true
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
-        every { authService.signIn(any()) } returns AuthFixture.createTokenResponse(refreshTokenExpiredAt)
+        every { authService.signIn(any()) } returns tokenAndUserDetailResponse
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)
@@ -196,7 +211,7 @@ class AuthServiceTest : BehaviorSpec({
                     email = authData.email,
                     password = "${authData.email}$secretKey"
                 )
-                authService.signIn(signInRequest) shouldBe AuthFixture.createTokenResponse(refreshTokenExpiredAt)
+                authService.signIn(signInRequest) shouldBe tokenAndUserDetailResponse
             }
 
             then("TokenResponse를 반환한다") {
