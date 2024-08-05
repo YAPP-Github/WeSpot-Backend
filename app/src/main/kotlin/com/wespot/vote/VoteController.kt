@@ -75,7 +75,6 @@ class VoteController(
 
     @GetMapping("/received/options/{optionId}")
     fun getReceivedVote(
-        userId: Long,
         @PathVariable optionId: Long,
         @RequestParam date: LocalDate
     ): ResponseEntity<ReceivedVoteResponse> {

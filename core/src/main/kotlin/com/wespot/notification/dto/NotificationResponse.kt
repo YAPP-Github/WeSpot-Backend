@@ -5,6 +5,7 @@ import com.wespot.notification.Notification
 data class NotificationResponse(
     val id: Long,
     val type: String,
+    val date: String,
     val targetId: Long,
     val content: String,
     val isNew: Boolean,
@@ -18,6 +19,7 @@ data class NotificationResponse(
             return NotificationResponse(
                 id = notification.id,
                 type = notification.type.name,
+                date = notification.date.toString(),
                 targetId = notification.targetId,
                 content = notification.title,
                 isNew = !notification.isRead,

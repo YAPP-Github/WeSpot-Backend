@@ -87,6 +87,7 @@ data class Vote(
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
             .toList()
+            .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
     }
 
