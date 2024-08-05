@@ -16,7 +16,7 @@ data class User(
     val classNumber: Int,
     val profile: Profile,
     val fcm: FCM?,
-    val setting: Setting,
+    var setting: Setting,
     val social: Social,
     val userConsent: UserConsent,
     var restriction: Restriction,
@@ -154,6 +154,17 @@ data class User(
     ) {
         this.restriction = restriction
     }
+
+    fun changeSettings(
+        isEnableVoteNotification: Boolean,
+        isEnableMessageNotification: Boolean
+    ) {
+        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification)
+    }
+
+    fun isEnableVoteNotification() = setting.isEnableVoteNotification
+
+    fun isEnableMessageNotification() = setting.isEnableMessageNotification
 
     fun getCurrentUserRestrictionBasedOnTime(date: LocalDate) =
         restriction.getCurrentRestrictionBasedOnTime(date)
