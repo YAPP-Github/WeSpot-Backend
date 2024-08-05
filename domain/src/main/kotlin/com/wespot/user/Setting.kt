@@ -1,6 +1,6 @@
 package com.wespot.user
 
 data class Setting(
-    val isEnableNotification: Boolean = false
-) {
-}
+    val isEnableVoteNotification: Boolean = false,
+    val isEnableMessageNotification: Boolean = false,
+)

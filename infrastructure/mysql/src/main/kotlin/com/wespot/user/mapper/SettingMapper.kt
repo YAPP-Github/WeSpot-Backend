@@ -7,12 +7,14 @@ object SettingMapper {
 
     fun mapToDomainEntity(settingJpaEntity: SettingJpaEntity): Setting =
         Setting(
-            isEnableNotification = settingJpaEntity.isEnableNotification
+            isEnableVoteNotification = settingJpaEntity.isEnableVoteNotification,
+            isEnableMessageNotification = settingJpaEntity.isEnableMessageNotification
         )
 
     fun mapToJpaEntity(setting: Setting): SettingJpaEntity =
         SettingJpaEntity(
-            isEnableNotification = setting.isEnableNotification
+            isEnableVoteNotification = setting.isEnableVoteNotification,
+            isEnableMessageNotification = setting.isEnableMessageNotification
         )
 
 }

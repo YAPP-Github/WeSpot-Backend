@@ -29,7 +29,7 @@ class FirebaseNotificationService : NotificationServicePort {
         pushNotification { FirebaseMessaging.getInstance().sendMulticast(multicastMessage) }
     }
 
-    private fun isPossibleNotification(it: User) = Objects.nonNull(it.fcm) && it.setting.isEnableNotification
+    private fun isPossibleNotification(it: User) = Objects.nonNull(it.fcm) && it.setting.isEnableVoteNotification
 
     private fun pushNotification(messageSend: () -> Unit) {
         try {
