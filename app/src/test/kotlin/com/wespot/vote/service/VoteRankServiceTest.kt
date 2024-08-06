@@ -1,6 +1,6 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -16,7 +16,6 @@ import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,12 +26,11 @@ import java.time.LocalDateTime
 @SpringBootTest
 class VoteRankServiceTest @Autowired constructor(
     private var voteRankService: VoteRankService,
-    private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort
-) {
+) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
@@ -58,15 +56,10 @@ class VoteRankServiceTest @Autowired constructor(
             votePort.save(Vote.of(voteIdentifier, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
     }
 
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
-
     @Test
     fun `투표 결과 1~5등을 조회한다`() {
         // given
-        val now=LocalDateTime.now()
+        val now = LocalDateTime.now()
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
@@ -125,7 +118,7 @@ class VoteRankServiceTest @Autowired constructor(
     @Test
     fun `투표 결과 1등을 조회한다`() {
         // given
-        val now=LocalDateTime.now()
+        val now = LocalDateTime.now()
         val loginUser = UserMapper.mapToDomainEntity(users[0])
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(

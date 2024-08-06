@@ -1,6 +1,7 @@
 package com.wespot.report.service
 
 import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.message.MessageJpaRepository
 import com.wespot.message.MessageMapper
 import com.wespot.message.fixture.MessageFixture
@@ -26,14 +27,8 @@ class SavedReportServiceTest @Autowired constructor(
     private val savedReportService: SavedReportService,
     private val userJpaRepository: UserJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
-    private val databaseCleanup: DatabaseCleanup,
     private val reportJpaRepository: ReportJpaRepository
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) : ServiceTest(){
 
     @Test
     fun `로그인하지 않은 유저가 신고하는 경우, 예외가 발생한다`() {

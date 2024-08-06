@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -34,7 +35,7 @@ class SavedVoteServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
-) {
+) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
@@ -58,11 +59,6 @@ class SavedVoteServiceTest @Autowired constructor(
             )
         vote =
             votePort.save(Vote.of(voteIdentifier, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
     }
 
     @Test

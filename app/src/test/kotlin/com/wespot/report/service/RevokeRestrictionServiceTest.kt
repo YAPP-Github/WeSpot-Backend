@@ -1,5 +1,6 @@
 package com.wespot.report.service
 
+import com.wespot.common.service.ServiceTest
 import com.wespot.user.Restriction
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
@@ -15,7 +16,7 @@ import java.time.LocalDate
 class RevokeRestrictionServiceTest @Autowired constructor(
     private val revokeRestrictionService: RevokeRestrictionService,
     private val userJpaRepository: UserJpaRepository,
-) {
+) : ServiceTest() {
 
     @Test
     fun `이용 제한 기간이 지난 유저는 제한이 풀린다`() {

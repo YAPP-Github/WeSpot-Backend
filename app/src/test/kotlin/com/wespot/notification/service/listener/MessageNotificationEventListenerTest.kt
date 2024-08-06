@@ -1,6 +1,7 @@
 package com.wespot.notification.service.listener
 
 import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.message.event.MessageLimitEvent
 import com.wespot.message.event.ReadMessageByReceiverEvent
@@ -27,12 +28,7 @@ class MessageNotificationEventListenerTest @Autowired constructor(
     private val userPort: UserPort,
     private val messagePort: MessagePort,
     private val notificationPort: NotificationPort,
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) :ServiceTest(){
 
     @Test
     fun `쪽지를 3개를 보내 알림이 비활성화된다`() {

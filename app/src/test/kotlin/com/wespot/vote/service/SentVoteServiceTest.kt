@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -27,12 +28,11 @@ import java.time.LocalDateTime
 @SpringBootTest
 class SentVoteServiceTest @Autowired constructor(
     private var sentVoteService: SentVoteService,
-    private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
-) {
+) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
@@ -61,11 +61,6 @@ class SentVoteServiceTest @Autowired constructor(
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
         vote1 =
             votePort.save(Vote.of(voteIdentifier1, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, vote2))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
     }
 
     @Test

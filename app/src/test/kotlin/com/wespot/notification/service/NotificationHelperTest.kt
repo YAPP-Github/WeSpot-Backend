@@ -1,6 +1,6 @@
 package com.wespot.notification.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationFilterService
@@ -10,25 +10,16 @@ import com.wespot.user.fixture.UserFixture
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class NotificationHelperTest @Autowired constructor(
-    private val databaseCleanup: DatabaseCleanup
-) {
+class NotificationHelperTest : ServiceTest() {
 
     private val notificationSendService = mockk<FirebaseNotificationService>()
     private val notificationFilterService = NotificationFilterService()
     private val notificationHelper = NotificationHelper(notificationSendService, notificationFilterService)
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
 
     @Test
     fun `쪽지 알림 여러개를 한번에 발송한다`() {
