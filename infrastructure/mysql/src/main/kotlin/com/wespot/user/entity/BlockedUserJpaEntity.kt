@@ -18,5 +18,8 @@ class BlockedUserJpaEntity(
     val blockedId: Long,
 
     @field:NotNull
+    val messageId: Long,
+
+    @field:NotNull
     val createdAt: LocalDateTime
 )
