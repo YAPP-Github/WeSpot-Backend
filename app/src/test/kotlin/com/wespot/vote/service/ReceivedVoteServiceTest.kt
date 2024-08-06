@@ -1,6 +1,5 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -19,7 +18,6 @@ import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +32,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
-) : ServiceTest(){
+) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()

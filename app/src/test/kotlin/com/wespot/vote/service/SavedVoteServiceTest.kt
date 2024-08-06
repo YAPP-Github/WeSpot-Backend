@@ -1,6 +1,5 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -20,7 +19,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,7 +28,6 @@ import kotlin.test.Test
 @SpringBootTest
 class SavedVoteServiceTest @Autowired constructor(
     private var voteService: SavedVoteService,
-    private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,

@@ -16,7 +16,6 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,7 +27,7 @@ class MessageNotificationEventListenerTest @Autowired constructor(
     private val userPort: UserPort,
     private val messagePort: MessagePort,
     private val notificationPort: NotificationPort,
-) :ServiceTest(){
+) : ServiceTest() {
 
     @Test
     fun `쪽지를 3개를 보내 알림이 비활성화된다`() {

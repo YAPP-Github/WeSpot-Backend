@@ -1,6 +1,5 @@
 package com.wespot.notification.service.listener
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType

@@ -1,6 +1,5 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -17,7 +16,6 @@ import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

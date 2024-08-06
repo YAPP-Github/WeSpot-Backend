@@ -1,6 +1,5 @@
 package com.wespot.report.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.message.MessageJpaRepository
 import com.wespot.message.MessageMapper
@@ -12,12 +11,9 @@ import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.repository.UserJpaRepository
-import com.wespot.vote.VoteJpaRepository
-import com.wespot.vote.fixture.VoteJpaEntityFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,7 +24,7 @@ class SavedReportServiceTest @Autowired constructor(
     private val userJpaRepository: UserJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
     private val reportJpaRepository: ReportJpaRepository
-) : ServiceTest(){
+) : ServiceTest() {
 
     @Test
     fun `로그인하지 않은 유저가 신고하는 경우, 예외가 발생한다`() {

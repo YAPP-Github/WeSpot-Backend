@@ -1,6 +1,5 @@
 package com.wespot.notification.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.notification.NotificationType
 import com.wespot.notification.fixtrue.NotificationFixture
@@ -8,7 +7,6 @@ import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
