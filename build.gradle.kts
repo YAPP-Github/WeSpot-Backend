@@ -71,6 +71,10 @@ subprojects {
         testImplementation("io.kotest:kotest-assertions-core:5.8.0")
         testImplementation("io.kotest:kotest-property:5.8.0")
         testImplementation("io.mockk:mockk:1.13.12")
+
+        testImplementation("org.testcontainers:testcontainers:1.19.0")
+        testImplementation("org.testcontainers:junit-jupiter:1.19.0")
+
     }
 
 
