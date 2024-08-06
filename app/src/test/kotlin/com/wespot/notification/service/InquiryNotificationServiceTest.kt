@@ -1,13 +1,12 @@
 package com.wespot.notification.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.notification.NotificationType
 import com.wespot.notification.fixtrue.NotificationFixture
 import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,13 +16,7 @@ class InquiryNotificationServiceTest @Autowired constructor(
     private val inquiryNotificationService: InquiryNotificationService,
     private val userPort: UserPort,
     private val notificationPort: NotificationPort,
-    private val databaseCleanup: DatabaseCleanup
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) : ServiceTest() {
 
     @Test
     fun `유저가 알림을 조회한다`() {

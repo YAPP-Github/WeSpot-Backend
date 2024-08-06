@@ -1,11 +1,10 @@
 package com.wespot.notification.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.notification.NotificationType
 import com.wespot.notification.fixtrue.NotificationFixture
 import com.wespot.notification.port.out.NotificationPort
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,13 +14,7 @@ import java.time.LocalDate
 class DisabledNotificationServiceTest @Autowired constructor(
     private val notificationPort: NotificationPort,
     private val disabledNotificationService: DisabledNotificationService,
-    private val databaseCleanup: DatabaseCleanup
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) : ServiceTest() {
 
     @Test
     fun `투표 관련 알림을 비활성화한다`() {

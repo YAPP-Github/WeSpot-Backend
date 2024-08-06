@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component
 @Component
 class ReadMessageByReceiverService {
 
-    fun getNotification(senderId: Long, receiverName: String, messageId: Long, isReceiverRead: Boolean): Notification? {
-        if (isReceiverRead) {
+    fun getNotification(senderId: Long, receiverName: String, messageId: Long, alreadyReceiverRead: Boolean): Notification? {
+        if (alreadyReceiverRead) {
             return null
         }
 

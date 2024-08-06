@@ -1,6 +1,6 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -18,7 +18,6 @@ import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,12 +28,11 @@ import java.time.LocalDateTime
 @SpringBootTest
 class ReceivedVoteServiceTest @Autowired constructor(
     private var receivedVoteService: ReceivedVoteService,
-    private var databaseCleanup: DatabaseCleanup,
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
-) {
+) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
     private var voteOptions: MutableList<VoteOptionJpaEntity> = mutableListOf()
@@ -63,11 +61,6 @@ class ReceivedVoteServiceTest @Autowired constructor(
             VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
         vote1 =
             votePort.save(Vote.of(voteIdentifier1, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, vote2))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
     }
 
     @Test

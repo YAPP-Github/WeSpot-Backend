@@ -1,6 +1,6 @@
 package com.wespot.notification.service.listener
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
@@ -17,7 +17,6 @@ import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -30,13 +29,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     private val userPort: UserPort,
     private val voteOptionPort: VoteOptionPort,
     private val notificationPort: NotificationPort,
-    private val databaseCleanup: DatabaseCleanup
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) : ServiceTest() {
 
     @Test
     fun `학급에 새로운 친구가 가입하면 알림이 발송된다`() {

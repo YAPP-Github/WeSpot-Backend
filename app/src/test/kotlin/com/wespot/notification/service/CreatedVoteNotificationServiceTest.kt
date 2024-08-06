@@ -1,16 +1,14 @@
 package com.wespot.notification.service
 
-import com.wespot.DatabaseCleanup
+import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
-import com.wespot.notification.port.out.NotificationServicePort
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.Test
@@ -20,13 +18,7 @@ class CreatedVoteNotificationServiceTest @Autowired constructor(
     private val createdVoteNotificationService: CreatedVoteNotificationService,
     private val notificationPort: NotificationPort,
     private val userPort: UserPort,
-    private val databaseCleanup: DatabaseCleanup
-) {
-
-    @AfterEach
-    fun tearDown() {
-        databaseCleanup.execute()
-    }
+) : ServiceTest() {
 
     @Test
     fun `투표 생성 알림을 발송한다`() {

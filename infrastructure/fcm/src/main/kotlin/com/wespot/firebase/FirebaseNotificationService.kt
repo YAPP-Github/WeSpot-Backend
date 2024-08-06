@@ -7,13 +7,12 @@ import com.wespot.notification.NotificationInfo
 import com.wespot.notification.port.out.NotificationServicePort
 import com.wespot.user.User
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class FirebaseNotificationService : NotificationServicePort {
 
     override fun sendMulticastNotification(users: List<User>, notificationInfo: NotificationInfo) {
-        val tokens = users.filter { isPossibleNotification(it) }
+        val tokens = users.filter { it.fcm != null }
             .map { it.fcm!!.fcmToken }
 
         if (tokens.isEmpty()) {
@@ -29,8 +28,6 @@ class FirebaseNotificationService : NotificationServicePort {
         pushNotification { FirebaseMessaging.getInstance().sendMulticast(multicastMessage) }
     }
 
-    private fun isPossibleNotification(it: User) = Objects.nonNull(it.fcm) && it.setting.isEnableNotification
-
     private fun pushNotification(messageSend: () -> Unit) {
         try {
             messageSend()
@@ -40,7 +37,7 @@ class FirebaseNotificationService : NotificationServicePort {
     }
 
     override fun sendNotification(user: User, notificationInfo: NotificationInfo) {
-        if (!isPossibleNotification(user)) {
+        if (user.fcm == null) {
             return
         }
 

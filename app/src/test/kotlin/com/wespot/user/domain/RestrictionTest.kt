@@ -13,9 +13,9 @@ class RestrictionTest : BehaviorSpec({
     given("Restriction의") {
         `when`("초기 상태는") {
             val restriction = Restriction.createInitialState()
-            then("None이고, 해제일은 LocalDate.MAX이다.") {
+            then("None이고, 해제일은 9999-12-31 이다.") {
                 restriction.restrictionType shouldBe RestrictionType.NONE
-                restriction.releaseDate shouldBe LocalDate.MAX
+                restriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
             }
         }
     }
@@ -24,13 +24,33 @@ class RestrictionTest : BehaviorSpec({
         `when`("정상적인 값이 아닌 값이 입력되게 되면") {
             then("예외가 발생한다.") {
                 val shouldThrow =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 29L) }
+                    shouldThrow<IllegalArgumentException> {
+                        Restriction.of(
+                            RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                            29L
+                        )
+                    }
                 val shouldThrow1 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 31L) }
+                    shouldThrow<IllegalArgumentException> {
+                        Restriction.of(
+                            RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                            31L
+                        )
+                    }
                 val shouldThrow2 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 89L) }
+                    shouldThrow<IllegalArgumentException> {
+                        Restriction.of(
+                            RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                            89L
+                        )
+                    }
                 val shouldThrow3 =
-                    shouldThrow<IllegalArgumentException> { Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 91L) }
+                    shouldThrow<IllegalArgumentException> {
+                        Restriction.of(
+                            RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                            91L
+                        )
+                    }
                 val shouldThrow4 = shouldThrow<IllegalArgumentException> {
                     Restriction.of(
                         RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
@@ -63,9 +83,9 @@ class RestrictionTest : BehaviorSpec({
                 messageUsage2.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 messageUsage2.releaseDate shouldBe LocalDate.now().plusDays(90)
                 messagePermanent.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
-                messagePermanent.releaseDate shouldBe LocalDate.MAX
+                messagePermanent.releaseDate shouldBe LocalDate.of(9999, 12, 31)
                 votePermanent.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
-                votePermanent.releaseDate shouldBe LocalDate.MAX
+                votePermanent.releaseDate shouldBe LocalDate.of(9999, 12, 31)
             }
         }
     }
