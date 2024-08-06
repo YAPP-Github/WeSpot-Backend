@@ -9,7 +9,7 @@ data class Restriction(
 
     companion object {
 
-        private val PERMANENT_BAN_DATE = LocalDate.MAX
+        private val PERMANENT_BAN_DATE = LocalDate.of(9999, 12, 31)
         private const val PERMANENT_BAN_DAY = Long.MAX_VALUE
         private const val FIRST_MESSAGE_USAGE_RESTRICTION_DAY = 30L
         private const val SECOND_MESSAGE_USAGE_RESTRICTION_DAY = 90L

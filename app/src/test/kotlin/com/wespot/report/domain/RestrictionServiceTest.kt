@@ -87,7 +87,7 @@ class RestrictionServiceTest : BehaviorSpec({
 
             then("영구 이용제한 된다.") {
                 newRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
-                newRestriction.releaseDate shouldBe LocalDate.MAX
+                newRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
             }
         }
         `when`("투표에 대한 신고가 14개가 들어오더라도 제한은") {
@@ -111,7 +111,7 @@ class RestrictionServiceTest : BehaviorSpec({
 
             then("영구 이용제한 된다.") {
                 newRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
-                newRestriction.releaseDate shouldBe LocalDate.MAX
+                newRestriction.releaseDate shouldBe LocalDate.of(9999,12,31)
             }
         }
         `when`("기존의 제한과 상관없이 현재 이용 제한 원칙에 따라") {
