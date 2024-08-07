@@ -32,9 +32,21 @@ class NotificationFilterTest : BehaviorSpec({
         }.toMutableList()
         val notificationFilterService = NotificationFilterService()
         `when`("메시지 알림 설정에 따라") {
-            users[0].changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = true)
-            users[1].changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = true)
-            users[2].changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = true)
+            users[0].changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
+            users[1].changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
+            users[2].changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
             val filteredNotifications =
                 notificationFilterService.filterNotifications(users, messageNotifications)
             then("필터링한다.") {
@@ -53,9 +65,21 @@ class NotificationFilterTest : BehaviorSpec({
             )
         }
         `when`("투표 알림 설정에 따라") {
-            users[0].changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
-            users[1].changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
-            users[2].changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
+            users[0].changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
+            users[1].changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
+            users[2].changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
             val filteredNotifications =
                 notificationFilterService.filterNotifications(users, voteNotifications)
             then("필터링한다.") {
@@ -97,10 +121,18 @@ class NotificationFilterTest : BehaviorSpec({
         )
         val notificationFilterService = NotificationFilterService()
         `when`("메시지 알림 설정에 따라") {
-            user.changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = true)
+            user.changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
             val filterNotification1 =
                 notificationFilterService.filterNotification(user, messageNotification)
-            user.changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = false)
+            user.changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
             val filterNotification2 =
                 notificationFilterService.filterNotification(user, messageNotification)
             then("필터링한다.") {
@@ -116,10 +148,18 @@ class NotificationFilterTest : BehaviorSpec({
             type = NotificationType.VOTE
         )
         `when`("투표 알림 설정에 따라") {
-            user.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
+            user.changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
             val filterNotification1 =
                 notificationFilterService.filterNotification(user, voteNotification)
-            user.changeSettings(isEnableVoteNotification = false, isEnableMessageNotification = false)
+            user.changeSettings(
+                isEnableVoteNotification = false,
+                isEnableMessageNotification = false,
+                isEnableEventNotification = false
+            )
             val filterNotification2 =
                 notificationFilterService.filterNotification(user, voteNotification)
             then("필터링한다.") {

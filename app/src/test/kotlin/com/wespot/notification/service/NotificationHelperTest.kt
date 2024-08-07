@@ -25,7 +25,13 @@ class NotificationHelperTest : ServiceTest() {
     fun `쪽지 알림 여러개를 한번에 발송한다`() {
         // given
         val users = (1..5).map { UserFixture.createWithId(it.toLong()) }
-        users.forEach { it.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = true) }
+        users.forEach {
+            it.changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
+        }
         val notifications = (1..5).map {
             Notification.createMessageInitialState(
                 userId = users[it - 1].id,
@@ -53,7 +59,13 @@ class NotificationHelperTest : ServiceTest() {
     fun `투표 알림 여러개를 한번에 발송한다`() {
         // given
         val users = (1..5).map { UserFixture.createWithId(it.toLong()) }
-        users.forEach { it.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = true) }
+        users.forEach {
+            it.changeSettings(
+                isEnableVoteNotification = true,
+                isEnableMessageNotification = true,
+                isEnableEventNotification = false
+            )
+        }
         val notifications = (1..5).map {
             Notification.createVoteInitialState(
                 userId = users[it - 1].id,
@@ -81,7 +93,11 @@ class NotificationHelperTest : ServiceTest() {
     fun `쪽지 알림을 발송한다`() {
         // given
         val user = UserFixture.createWithId(1)
-        user.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = true)
+        user.changeSettings(
+            isEnableVoteNotification = true,
+            isEnableMessageNotification = true,
+            isEnableEventNotification = false
+        )
         val notification = Notification.createMessageInitialState(
             userId = user.id,
             title = "title",
@@ -102,7 +118,11 @@ class NotificationHelperTest : ServiceTest() {
     fun `투표 알림을 발송한다`() {
         // given
         val user = UserFixture.createWithId(1)
-        user.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = true)
+        user.changeSettings(
+            isEnableVoteNotification = true,
+            isEnableMessageNotification = true,
+            isEnableEventNotification = false
+        )
         val notification = Notification.createVoteInitialState(
             userId = user.id,
             title = "title",
@@ -132,8 +152,16 @@ class NotificationHelperTest : ServiceTest() {
                 type = NotificationType.VOTE
             )
         }
-        users[0].changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
-        users[1].changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
+        users[0].changeSettings(
+            isEnableVoteNotification = true,
+            isEnableMessageNotification = false,
+            isEnableEventNotification = false
+        )
+        users[1].changeSettings(
+            isEnableVoteNotification = true,
+            isEnableMessageNotification = false,
+            isEnableEventNotification = false
+        )
 
         // when
         every { notificationSendService.sendMulticastNotification(any(), any()) } returns Unit
@@ -159,7 +187,11 @@ class NotificationHelperTest : ServiceTest() {
             date = LocalDate.now(),
             type = NotificationType.VOTE
         )
-        user.changeSettings(isEnableVoteNotification = true, isEnableMessageNotification = false)
+        user.changeSettings(
+            isEnableVoteNotification = true,
+            isEnableMessageNotification = false,
+            isEnableEventNotification = false
+        )
 
         // when
         every { notificationSendService.sendNotification(any(), any()) } returns Unit
