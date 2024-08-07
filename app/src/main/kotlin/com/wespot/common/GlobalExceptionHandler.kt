@@ -1,6 +1,7 @@
 package com.wespot.common
 
 import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
@@ -11,14 +12,18 @@ import java.net.URI
 @ControllerAdvice
 class GlobalExceptionHandler {
 
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(
-        ex: IllegalArgumentException,
+        exception: IllegalArgumentException,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        logger.error("요청된 정보가 잘못되었습니다.", exception)
+
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.BAD_REQUEST,
-            ex.message
+            exception.message
         ).apply {
             type = URI.create("/errors/illegal-argument")
             instance = URI.create(request.requestURI)
@@ -28,12 +33,14 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNoSuchElementException(
-        ex: NoSuchElementException,
+        exception: NoSuchElementException,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        logger.error("자원을 찾을 수 없습니다.", exception)
+
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.NOT_FOUND,
-            ex.message
+            exception.message
         ).apply {
             type = URI.create("/errors/no-such-element")
             instance = URI.create(request.requestURI)
@@ -42,10 +49,12 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleNoSuchElementException(
-        ex: Exception,
+    fun handleException(
+        exception: Exception,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        logger.error("서버에서 알 수 없는 에러가 발생했습니다.", exception)
+
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "서버에서 알 수 없는 에러가 발생했습니다."
