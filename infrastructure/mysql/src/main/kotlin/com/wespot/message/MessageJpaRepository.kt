@@ -23,28 +23,21 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
 
     @Query(
         """
-        SELECT m
-        FROM MessageJpaEntity m
-        WHERE 1 = 1
-        AND m.receiverId = :receiverId
-        AND m.id < :cursorId
-        AND m.isReceiverDeleted = false
-        AND m.receivedAt IS NOT NULL
-        AND (
-            m.senderId NOT IN :blockedUserIds OR
-            m.sendAt < (
-                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
-                FROM BlockedUserJpaEntity bu
-                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
-            )
-        )
-        ORDER BY m.receivedAt DESC, m.id DESC
+    SELECT m
+    FROM MessageJpaEntity m
+    WHERE m.receiverId = :receiverId
+    AND m.id < :cursorId
+    AND m.isReceiverDeleted = false
+    AND m.receivedAt IS NOT NULL
+    AND m.id NOT IN :blockedMessages
+    AND m.senderId NOT IN :blockedMessages OR m.senderId = :receiverId
+    ORDER BY m.receivedAt DESC, m.id DESC
     """
     )
     fun findAllByMessageTypeAndReceiverIdAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedUserIds") blockedUserIds: List<Long>,
+        @Param("blockedMessages") blockedMessages: List<Long>,
         pageable: Pageable
     ): List<MessageJpaEntity>
 
@@ -75,20 +68,13 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         AND m.receiverId = :receiverId
         AND m.id < :cursorId
         AND m.isReceiverDeleted = false
-        AND (
-            m.senderId NOT IN :blockedUserIds OR
-            m.sendAt < (
-                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
-                FROM BlockedUserJpaEntity bu
-                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
-            )
-        )
+        AND  m.senderId NOT IN :blockedMessages OR m.senderId = :receiverId
     """
     )
     fun countReceivedMessagesAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedUserIds") blockedUserIds: List<Long>
+        @Param("blockedMessages") blockedMessages: List<Long>
     ): Long
 
     @Query(

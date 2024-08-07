@@ -15,7 +15,7 @@ interface MessagePort {
     fun findAllMessagesByTypeAndReceiverAfterCursor(
         receiverId: Long,
         cursorId: Long,
-        blockedUserIds: List<Long>,
+        blockedMessages: List<Long>,
         pageable: Pageable
     ): List<Message>
 
@@ -33,7 +33,7 @@ interface MessagePort {
     fun countReceivedMessagesAfterCursor(
         receiverId: Long,
         cursorId: Long,
-        blockedUserIds: List<Long>
+        blockedMessages: List<Long>
     ): Long
 
     fun countSentMessagesAfterCursor(
@@ -49,5 +49,4 @@ interface MessagePort {
     fun deleteById(id: Long)
 
     fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean
-
 }
