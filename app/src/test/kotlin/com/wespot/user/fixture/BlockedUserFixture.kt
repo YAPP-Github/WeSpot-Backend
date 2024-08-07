@@ -8,11 +8,13 @@ object BlockedUserFixture {
     fun createWithIdAndBlockedIdAndBlockerId(
         id: Long,
         blockedId: Long,
-        blockerId: Long
+        blockerId: Long,
+        messageId: Long
     ) = BlockedUser(
         id = id,
         blockedId = blockedId,
         blockerId = blockerId,
-        createdAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now(),
+        messageId = messageId
     )
 }
