@@ -25,24 +25,48 @@ class BlockedUserService(
         message.validateReceivedMessage(loginUser)
         val blockedUser = findUserById(id = message.senderId, userPort = userPort)
 
-        return when (isBlocked(loginUser.id, blockedUser.id)) {
-            true -> unblockUser(loginUser.id, blockedUser.id)
-            false -> blockUser(loginUser.id, blockedUser.id)
+        return when (isBlocked(loginUser.id, blockedUser.id, messageId)) {
+            true -> unblockUser(loginUser.id, blockedUser.id, messageId)
+            false -> blockUser(loginUser.id, blockedUser.id, messageId)
         }
     }
 
-    private fun isBlocked(blockerId: Long, blockedId: Long): Boolean {
-        return blockedUserPort.existsByBlockerIdAndBlockedId(blockerId, blockedId)
+    private fun isBlocked(
+        blockerId: Long,
+        blockedId: Long,
+        messageId: Long
+    ): Boolean {
+        return blockedUserPort.existsByBlockerIdAndBlockedIdAndMessageId(
+            blockerId = blockerId,
+            blockedId = blockedId,
+            messageId = messageId
+        )
     }
 
-    private fun blockUser(blockerId: Long, blockedId: Long): Boolean {
-        val blockedUser = BlockedUser.create(blockerId, blockedId)
+    private fun blockUser(
+        blockerId: Long,
+        blockedId: Long,
+        messageId: Long
+    ): Boolean {
+        val blockedUser = BlockedUser.create(
+            blockerId = blockerId,
+            blockedId = blockedId,
+            messageId = messageId
+        )
         blockedUserPort.save(blockedUser)
         return true
     }
 
-    private fun unblockUser(blockerId: Long, blockedId: Long): Boolean {
-        blockedUserPort.deleteByBlockerIdAndBlockedId(blockerId, blockedId)
+    private fun unblockUser(
+        blockerId: Long,
+        blockedId: Long,
+        messageId: Long
+    ): Boolean {
+        blockedUserPort.deleteByBlockerIdAndBlockedIdAndMessageId(
+            blockerId = blockerId,
+            blockedId = blockedId,
+            messageId = messageId
+        )
         return false
     }
 }
