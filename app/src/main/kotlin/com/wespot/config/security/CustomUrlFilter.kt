@@ -27,6 +27,8 @@ class CustomUrlFilter(
         "/api/v1/auth/login",
         "/api/v1/auth/signup",
         "/api/v1/auth/revoke",
+        "/api/v1/check-profanity",
+        "/api/v1/schools/search",
         "/api/v1/users/me",
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
@@ -42,7 +44,8 @@ class CustomUrlFilter(
         "/api/v1/messages",
         "/api/v1/messages/send",
         "/api/v1/messages/status/me",
-        "/api/v1/messages/check-profanity",
+        "/api/v1/messages/scheduled",
+        "/api/v1/messages/blocked",
         "/api/v1/messages/**",
     )
 
