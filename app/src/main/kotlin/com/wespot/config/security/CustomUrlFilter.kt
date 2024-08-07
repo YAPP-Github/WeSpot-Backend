@@ -45,7 +45,8 @@ class CustomUrlFilter(
         "/api/v1/messages/send",
         "/api/v1/messages/status/me",
         "/api/v1/messages/scheduled",
-        "/api/v1/messages/blocked",
+        "/api/v1/messages/block",
+        "/api/v1/messages/unblock",
         "/api/v1/messages/**",
     )
 

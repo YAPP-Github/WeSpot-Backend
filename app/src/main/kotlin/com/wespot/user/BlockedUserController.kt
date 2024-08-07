@@ -21,7 +21,7 @@ class BlockedUserController(
         return ResponseEntity.ok().body(blockedUser)
     }
 
-    @DeleteMapping("/{messageId}/block")
+    @PostMapping("/{messageId}/unblock")
     fun unblockUser(@PathVariable messageId: Long): ResponseEntity<Unit> {
         blockedUserUseCase.unblockedUser(messageId)
         return ResponseEntity.noContent().build()
