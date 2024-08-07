@@ -10,6 +10,10 @@ class SettingJpaEntity(
     val isEnableVoteNotification: Boolean,
 
     @field: NotNull
-    val isEnableMessageNotification: Boolean
+    val isEnableMessageNotification: Boolean,
+
+    @field: NotNull
+    val isEnableEventNotification: Boolean
+
 
 )
