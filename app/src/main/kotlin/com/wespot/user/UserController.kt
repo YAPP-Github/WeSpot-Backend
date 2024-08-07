@@ -5,7 +5,8 @@ import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.BackgroundListResponse
 import com.wespot.user.dto.response.CharacterListResponse
 import com.wespot.user.dto.response.UserResponse
-import com.wespot.user.port.`in`.ModifiedSettingUseCase
+import com.wespot.user.dto.response.UserSettingResponse
+import com.wespot.user.port.`in`.UserSettingUseCase
 import com.wespot.user.port.`in`.UserUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/users")
 class UserController(
     private val userUseCase: UserUseCase,
-    private val modifiedSettingUseCase: ModifiedSettingUseCase
+    private val userSettingUseCase: UserSettingUseCase
 ) {
 
     @GetMapping("/me")
@@ -55,11 +56,18 @@ class UserController(
             .body(response)
     }
 
+    @GetMapping("/settings")
+    fun getUserSettings(): ResponseEntity<UserSettingResponse> {
+        val response = userSettingUseCase.getSetting()
+
+        return ResponseEntity.ok(response)
+    }
+
     @PutMapping("/settings")
-    fun searchUser(
+    fun modifyUserSetting(
         @RequestBody request: ModifiedSettingRequest
     ): ResponseEntity<Unit> {
-        modifiedSettingUseCase.modifySetting(request)
+        userSettingUseCase.modifySetting(request)
 
         return ResponseEntity.noContent()
             .build()

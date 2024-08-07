@@ -166,6 +166,8 @@ data class User(
 
     fun isEnableMessageNotification() = setting.isEnableMessageNotification
 
+    fun isEnableEventNotification() = setting.isEnableEventNotification
+
     fun getCurrentUserRestrictionBasedOnTime(date: LocalDate) =
         restriction.getCurrentRestrictionBasedOnTime(date)
 
