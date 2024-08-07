@@ -157,9 +157,10 @@ data class User(
 
     fun changeSettings(
         isEnableVoteNotification: Boolean,
-        isEnableMessageNotification: Boolean
+        isEnableMessageNotification: Boolean,
+        isEnableEventNotification: Boolean
     ) {
-        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification)
+        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification, isEnableEventNotification)
     }
 
     fun isEnableVoteNotification() = setting.isEnableVoteNotification

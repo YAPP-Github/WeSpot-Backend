@@ -45,17 +45,27 @@ class UserTest : BehaviorSpec({
     given("유저의") {
         val user = UserFixture.createWithId(1L)
         `when`("메시지 알림 설정을") {
-            user.changeSettings(isEnableMessageNotification = true, isEnableVoteNotification = false)
+            user.changeSettings(
+                isEnableMessageNotification = true,
+                isEnableVoteNotification = false,
+                isEnableEventNotification = false
+            )
             then("변경한다.") {
                 user.isEnableMessageNotification() shouldBe true
                 user.isEnableVoteNotification() shouldBe false
+                user.isEnableEventNotification() shouldBe false
             }
         }
         `when`("투표 알림 설정을") {
-            user.changeSettings(isEnableMessageNotification = false, isEnableVoteNotification = true)
+            user.changeSettings(
+                isEnableMessageNotification = false,
+                isEnableVoteNotification = true,
+                isEnableEventNotification = true
+            )
             then("변경한다.") {
                 user.isEnableMessageNotification() shouldBe false
                 user.isEnableVoteNotification() shouldBe true
+                user.isEnableEventNotification() shouldBe true
             }
         }
     }

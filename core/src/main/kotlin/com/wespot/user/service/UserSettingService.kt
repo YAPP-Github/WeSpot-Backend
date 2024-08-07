@@ -18,7 +18,8 @@ class UserSettingService(
         val loginUser = SecurityUtils.getLoginUser(userPort)
         loginUser.changeSettings(
             isEnableVoteNotification = modifiedSettingRequest.isEnableVoteNotification,
-            isEnableMessageNotification = modifiedSettingRequest.isEnableMessageNotification
+            isEnableMessageNotification = modifiedSettingRequest.isEnableMessageNotification,
+            isEnableEventNotification = modifiedSettingRequest.isEnableEventNotification
         )
         userPort.save(loginUser)
     }
