@@ -28,7 +28,9 @@ class GlobalExceptionHandler {
             type = URI.create("/errors/illegal-argument")
             instance = URI.create(request.requestURI)
         }
-        return ResponseEntity(problemDetail, HttpStatus.BAD_REQUEST)
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(problemDetail)
     }
 
     @ExceptionHandler(NoSuchElementException::class)
@@ -45,7 +47,9 @@ class GlobalExceptionHandler {
             type = URI.create("/errors/no-such-element")
             instance = URI.create(request.requestURI)
         }
-        return ResponseEntity(problemDetail, HttpStatus.NOT_FOUND)
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(problemDetail)
     }
 
     @ExceptionHandler(Exception::class)
@@ -62,7 +66,9 @@ class GlobalExceptionHandler {
             type = URI.create("/errors/internal-server-error")
             instance = URI.create(request.requestURI)
         }
-        return ResponseEntity(problemDetail, HttpStatus.NOT_FOUND)
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(problemDetail)
     }
 
 }
