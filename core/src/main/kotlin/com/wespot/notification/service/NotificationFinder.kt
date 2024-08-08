@@ -15,8 +15,13 @@ object NotificationFinder {
             ?: throw IllegalArgumentException("ID에 해당하는 알림이 없습니다.")
     }
 
-    fun findAllByUserIdOrderByCreatedAtDesc(notificationPort: NotificationPort, userId: Long): List<Notification> {
-        return notificationPort.findAllByUserIdOrderByCreatedAtDesc(userId)
+    fun findAllByUserIdOrderByCreatedAtDesc(
+        notificationPort: NotificationPort,
+        userId: Long,
+        cursorId: Long,
+        limit: Long
+    ): List<Notification> {
+        return notificationPort.findAllByUserIdOrderByCreatedAtDesc(userId, cursorId, limit)
     }
 
     fun findAllFromDateYesterday(notificationPort: NotificationPort, today: LocalDate): List<Notification> {

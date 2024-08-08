@@ -90,18 +90,23 @@ class VotePersistenceAdapter(
     override fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
         schoolId: Long,
         grade: Int,
-        classNumber: Int
+        classNumber: Int,
+        cursorId: Long,
+        limit: Long
     ): List<Vote> {
-        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(schoolId, grade, classNumber)
-            .stream()
-            .map {
-                VoteMapper.mapToDomainEntity(
-                    it,
-                    findAllByVoteId(it.date, it.id),
-                    findBallotsByVote(it.id)
-                )
-            }
-            .toList()
+        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(
+            schoolId,
+            grade,
+            classNumber,
+            cursorId,
+            limit
+        ).map {
+            VoteMapper.mapToDomainEntity(
+                it,
+                findAllByVoteId(it.date, it.id),
+                findBallotsByVote(it.id)
+            )
+        }.toList()
     }
 
 }

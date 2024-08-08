@@ -1,21 +1,21 @@
 package com.wespot.vote.dto.response.sent
 
-import com.wespot.vote.Ballot
+import com.wespot.vote.CompleteBallot
 import com.wespot.vote.Vote
-import com.wespot.voteoption.VoteOption
 
 data class SentVotesResponse(
+    val voteId: Long,
     val date: String,
     val sentVoteResults: List<SentVotesResultsResponse>
 ) {
 
     companion object {
 
-        fun of(vote: Vote, voteResults: Map<VoteOption, List<Ballot>>): SentVotesResponse {
+        fun of(vote: Vote, ballots: List<CompleteBallot>): SentVotesResponse {
             return SentVotesResponse(
+                vote.id,
                 vote.voteIdentifier.date.toString(),
-                voteResults.map { SentVotesResultsResponse.of(it.key, it.value.size) }
-                    .toList()
+                ballots.map { SentVotesResultsResponse.of(it) }
             )
         }
 

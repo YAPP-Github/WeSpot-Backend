@@ -13,7 +13,7 @@ interface NotificationPort {
 
     fun findById(id: Long): Notification?
 
-    fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<Notification>
+    fun findAllByUserIdOrderByCreatedAtDesc(userId: Long, cursorId: Long, limit: Long): List<Notification>
 
     fun findAllFromDateYesterday(today: LocalDate): List<Notification>
 

@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 interface ReceivedVoteUseCase {
 
-    fun getReceivedVotes(): ReceivedVotesResponses
+    fun getReceivedVotes(cursorId: Long?, limit: Long): ReceivedVotesResponses
 
     fun getReceivedVote(optionId: Long, date: LocalDate): ReceivedVoteResponse
 

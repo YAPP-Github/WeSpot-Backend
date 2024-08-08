@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.CursorUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.ReceivedVoteCalculateService
@@ -24,12 +25,17 @@ class ReceivedVoteService(
     private val receivedVoteCalculateService: ReceivedVoteCalculateService
 ) : ReceivedVoteUseCase {
 
-    override fun getReceivedVotes(): ReceivedVotesResponses {
+    override fun getReceivedVotes(cursorId: Long?, limit: Long): ReceivedVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
-        val voteResults = votes.associateWith { getUserReceivedVotesByVote(it, user) }
+        val votes = VoteServiceHelper.findVotesOrderByDateDesc(
+            votePort = votePort,
+            user = user,
+            cursorId = CursorUtils.getEffectiveCursorId(cursorId),
+            limit = limit + 1
+        )
+        val voteResults = votes.take(limit.toInt()).associateWith { getUserReceivedVotesByVote(it, user) }
 
-        return ReceivedVotesResponses.of(voteResults = voteResults)
+        return ReceivedVotesResponses.of(voteResults = voteResults, votes.size.toLong() == limit + 1)
     }
 
     private fun getUserReceivedVotesByVote(

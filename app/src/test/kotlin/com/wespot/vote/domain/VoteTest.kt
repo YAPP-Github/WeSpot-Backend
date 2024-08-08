@@ -161,7 +161,7 @@ class VoteTest() : BehaviorSpec({
             val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
-            val userCounts= voteUsers.map { it.id }.toSet()
+            val userCounts = voteUsers.map { it.id }.toSet()
             val doesNotContainsMe = voteUsers.stream().allMatch { it.id != users[0].id }
             then("정상적으로 반환한다.") {
                 voteUsers.size shouldBe 5
@@ -491,75 +491,22 @@ class VoteTest() : BehaviorSpec({
                     it.createdAt
                 )
             }
-            val userReceivedVote = vote.getUserSentVotes(users[0])
+            val userSentVotes = vote.getUserSentVotes(users[0], users)
 
             then("결과를 정상적으로 반환한다.") {
-                userReceivedVote.size shouldBe 3
-                userReceivedVote[voteOptions[0]]!!.size shouldBe 2
-                userReceivedVote[voteOptions[0]]!!.size shouldBe 2
-                userReceivedVote[voteOptions[0]]!![0].receiverId shouldBe 2
-                userReceivedVote[voteOptions[0]]!![0].senderId shouldBe 1
-                userReceivedVote[voteOptions[0]]!![1].receiverId shouldBe 3
-                userReceivedVote[voteOptions[0]]!![1].senderId shouldBe 1
-                userReceivedVote[voteOptions[1]]!!.size shouldBe 1
-                userReceivedVote[voteOptions[1]]!![0].senderId shouldBe 1
-                userReceivedVote[voteOptions[1]]!![0].receiverId shouldBe 4
-                userReceivedVote[voteOptions[2]]!!.size shouldBe 1
-                userReceivedVote[voteOptions[2]]!![0].senderId shouldBe 1
-                userReceivedVote[voteOptions[2]]!![0].receiverId shouldBe 5
-            }
-        }
-
-        `when`("개별 조회하는 경우, 오늘의 질문지가 아니면") {
-            val users = createUserByCount(5)
-            val voteOptions = createVoteOptionByCount(10)
-            val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach {
-                vote.addBallot(
-                    it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
-                    it.createdAt
-                )
-            }
-
-            then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
-                    vote.getUserSentVote(
-                        voteOptions[5],
-                        users[0]
-                    )
-                }
-                shouldThrow shouldHaveMessage "오늘 제공된 질문지만 선택해 투표할 수 있습니다."
-            }
-        }
-        `when`("개별 조회하는 경우") {
-            val users = createUserByCount(5)
-            val voteOptions = createVoteOptionByCount(10)
-            val vote = Vote.of(voteIdentifier, voteOptions, null)
-            ballots.forEach {
-                vote.addBallot(
-                    it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
-                    it.createdAt
-                )
-            }
-            val userSentVoteByFirstVoteOption = vote.getUserSentVote(voteOptions[0], users[0])
-            val userSentVoteBySecondVoteOption = vote.getUserSentVote(voteOptions[1], users[0])
-
-            then("결과를 정상적으로 반환한다.") {
-                userSentVoteByFirstVoteOption.size shouldBe 2
-                userSentVoteByFirstVoteOption[0].voteOptionId shouldBe 1
-                userSentVoteByFirstVoteOption[0].senderId shouldBe 1
-                userSentVoteByFirstVoteOption[0].receiverId shouldBe 2
-                userSentVoteByFirstVoteOption[1].voteOptionId shouldBe 1
-                userSentVoteByFirstVoteOption[1].senderId shouldBe 1
-                userSentVoteByFirstVoteOption[1].receiverId shouldBe 3
-                userSentVoteBySecondVoteOption.size shouldBe 1
-                userSentVoteBySecondVoteOption[0].voteOptionId shouldBe 2
-                userSentVoteBySecondVoteOption[0].senderId shouldBe 1
-                userSentVoteBySecondVoteOption[0].receiverId shouldBe 4
+                userSentVotes.size shouldBe 4
+                userSentVotes[0].voteOption shouldBe voteOptions[0]
+                userSentVotes[0].sender shouldBe users[0]
+                userSentVotes[0].receiver shouldBe users[1]
+                userSentVotes[1].voteOption shouldBe voteOptions[0]
+                userSentVotes[1].sender shouldBe users[0]
+                userSentVotes[1].receiver shouldBe users[2]
+                userSentVotes[2].voteOption shouldBe voteOptions[1]
+                userSentVotes[2].sender shouldBe users[0]
+                userSentVotes[2].receiver shouldBe users[3]
+                userSentVotes[3].voteOption shouldBe voteOptions[2]
+                userSentVotes[3].sender shouldBe users[0]
+                userSentVotes[3].receiver shouldBe users[4]
             }
         }
     }

@@ -4,7 +4,6 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
-import com.wespot.vote.VoteOptionsByVoteDate
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
@@ -43,24 +42,14 @@ object VoteServiceHelper {
             ?: throw IllegalArgumentException("ID에 해당하는 선택지가 존재하지 않습니다.")
     }
 
-    fun findVotesOrderByDateDesc(votePort: VotePort, user: User): List<Vote> {
+    fun findVotesOrderByDateDesc(votePort: VotePort, user: User, cursorId: Long, limit: Long): List<Vote> {
         return votePort.findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
             schoolId = user.schoolId,
             grade = user.grade,
-            classNumber = user.classNumber
+            classNumber = user.classNumber,
+            cursorId = cursorId,
+            limit = limit
         )
-    }
-
-    fun findVoteOptionOnVoteOptions(
-        voteOptions: VoteOptionsByVoteDate,
-        optionId: Long
-    ): VoteOption {
-        val voteOption = voteOptions.voteOptionsByVoteDate
-            .map { it.voteOption }
-            .find { it.id == optionId }
-            ?: throw IllegalArgumentException("오늘의 선택지가 아닙니다.")
-
-        return voteOption
     }
 
 }

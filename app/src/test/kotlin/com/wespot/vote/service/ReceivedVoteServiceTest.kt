@@ -107,20 +107,28 @@ class ReceivedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val receivedVotes = receivedVoteService.getReceivedVotes()
+        val receivedVotes1 = receivedVoteService.getReceivedVotes(null, 100)
+        val receivedVotes2 = receivedVoteService.getReceivedVotes(null, 1)
+        val receivedVotes3 = receivedVoteService.getReceivedVotes(receivedVotes2.voteData[0].voteId, 1)
 
         // then
-        receivedVotes.voteData.size shouldBe 2
-        receivedVotes.voteData[0].date shouldBe plusOneMinute.toLocalDate().toString()
-        receivedVotes.voteData[0].receivedVoteResults.size shouldBe 2
-        receivedVotes.voteData[0].receivedVoteResults[0].voteOption.id shouldBe voteOptions[5].id
-        receivedVotes.voteData[0].receivedVoteResults[0].voteCount shouldBe 1
-        receivedVotes.voteData[0].receivedVoteResults[0].isNew shouldBe true
-        receivedVotes.voteData[0].receivedVoteResults[1].voteOption.id shouldBe voteOptions[6].id
-        receivedVotes.voteData[0].receivedVoteResults[1].voteCount shouldBe 1
-        receivedVotes.voteData[0].receivedVoteResults[1].isNew shouldBe true
-        receivedVotes.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
-        receivedVotes.voteData[1].receivedVoteResults.size shouldBe 0
+        receivedVotes1.voteData.size shouldBe 2
+        receivedVotes1.voteData[0].date shouldBe plusOneMinute.toLocalDate().toString()
+        receivedVotes1.voteData[0].receivedVoteResults.size shouldBe 2
+        receivedVotes1.voteData[0].receivedVoteResults[0].voteOption.id shouldBe voteOptions[5].id
+        receivedVotes1.voteData[0].receivedVoteResults[0].voteCount shouldBe 1
+        receivedVotes1.voteData[0].receivedVoteResults[0].isNew shouldBe true
+        receivedVotes1.voteData[0].receivedVoteResults[1].voteOption.id shouldBe voteOptions[6].id
+        receivedVotes1.voteData[0].receivedVoteResults[1].voteCount shouldBe 1
+        receivedVotes1.voteData[0].receivedVoteResults[1].isNew shouldBe true
+        receivedVotes1.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
+        receivedVotes1.voteData[1].receivedVoteResults.size shouldBe 0
+        receivedVotes2.voteData.size shouldBe 1
+        receivedVotes2.voteData[0].voteId shouldBe vote1!!.id
+        receivedVotes2.hasNext shouldBe true
+        receivedVotes3.voteData.size shouldBe 1
+        receivedVotes3.voteData[0].voteId shouldBe vote2!!.id
+        receivedVotes3.hasNext shouldBe false
     }
 
     @Test
@@ -282,9 +290,9 @@ class ReceivedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val firstReceivedVotes = receivedVoteService.getReceivedVotes()
+        val firstReceivedVotes = receivedVoteService.getReceivedVotes(null, 100)
         receivedVoteService.getReceivedVote(voteOptions[5].id, now.toLocalDate())
-        val secondReceivedVotes = receivedVoteService.getReceivedVotes()
+        val secondReceivedVotes = receivedVoteService.getReceivedVotes(null, 100)
 
         // then
         firstReceivedVotes.voteData[0].receivedVoteResults[0].isNew shouldBe true

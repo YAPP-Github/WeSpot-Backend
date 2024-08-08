@@ -163,29 +163,21 @@ data class Vote(
 
     fun getUserSentVotes(
         user: User,
-    ): Map<VoteOption, List<Ballot>> {
+        classmates: List<User>
+    ): List<CompleteBallot> {
         val ballots = ballots.findSentBallotsByUser(user.id)
-
-        return voteOptionsByVoteDate.voteOptionsByVoteDate
-            .filter { containVoteOptionOnBallots(ballots, it.voteOption) }
+        val classmateGroup = classmates.associateBy { it.id }
+        val voteOptionGroup = voteOptionsByVoteDate.voteOptionsByVoteDate
             .map { it.voteOption }
-            .associateWith { voteOption -> ballots.filter { voteOption.id == it.voteOptionId } }
-    }
+            .associateBy { it.id }
 
-    private fun containVoteOptionOnBallots(
-        ballots: List<Ballot>,
-        voteOption: VoteOption
-    ) = ballots.stream()
-        .anyMatch { it.voteOptionId == voteOption.id }
-
-    fun getUserSentVote(
-        voteOption: VoteOption,
-        user: User,
-    ): List<Ballot> {
-        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
-
-        return ballots.findSentBallotsByUser(user.id)
-            .filter { it.voteOptionId == voteOption.id }
+        return ballots.filter { voteOptionGroup.containsKey(it.voteOptionId) }
+            .filter { classmateGroup.containsKey(it.receiverId) }
+            .map {
+                CompleteBallot.of(
+                    this, voteOptionGroup[it.voteOptionId]!!, user, classmateGroup[it.receiverId]!!, it
+                )
+            }.toList()
     }
 
     fun getNumberOfSender(): Int {

@@ -4,7 +4,7 @@ import com.wespot.notification.dto.NotificationResponses
 
 interface InquiryNotificationUseCase {
 
-    fun getNotifications(): NotificationResponses
+    fun getNotifications(cursorId: Long?, limit: Long): NotificationResponses
 
     fun readNotification(readNotificationId: Long)
 
