@@ -67,7 +67,7 @@ class SecurityConfig(
                         "/api/v1/auth/reissue",
                         "/api/v1/users/backgrounds",
                         "/api/v1/users/characters",
-                        "/api/v1/users/search",
+                        "/api/v1/schools/search/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

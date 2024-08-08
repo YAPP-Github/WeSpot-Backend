@@ -39,6 +39,7 @@ class CustomUrlFilter(
         "/api/v1/votes/**",
         "/api/v1/reports/**",
         "/api/v1/notifications/**",
+        "/api/v1/schools/search/**",
     )
 
     override fun doFilterInternal(
