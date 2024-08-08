@@ -31,6 +31,7 @@ class CustomUrlFilter(
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
         "/api/v1/users/search",
+        "/api/v1/users/settings",
         "/api/v1/messages",
         "/api/v1/messages/send",
         "/api/v1/messages/status/me",
