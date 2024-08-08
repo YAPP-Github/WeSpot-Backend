@@ -196,7 +196,7 @@ class GetMessageServiceTest : BehaviorSpec({
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
                     cursorId = cursorId,
-                    blockedMessages = blockedUserIds,
+                    blockedMessageIds = blockedUserIds,
                     pageable = pageRequest
                 )
             } returns messages.take(10)
@@ -204,7 +204,7 @@ class GetMessageServiceTest : BehaviorSpec({
                 messagePort.countReceivedMessagesAfterCursor(
                     receiverId = receiver.id,
                     cursorId = cursorId,
-                    blockedMessages = blockedUserIds
+                    blockedMessageIds = blockedUserIds
                 )
             } returns 11
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
@@ -240,7 +240,7 @@ class GetMessageServiceTest : BehaviorSpec({
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
                     cursorId = cursorId,
-                    blockedMessages = blockedUserIds,
+                    blockedMessageIds = blockedUserIds,
                     pageable = pageRequest
                 )
             } returns messages.drop(10)
@@ -248,7 +248,7 @@ class GetMessageServiceTest : BehaviorSpec({
                 messagePort.countReceivedMessagesAfterCursor(
                     receiverId = receiver.id,
                     cursorId = cursorId,
-                    blockedMessages = blockedUserIds
+                    blockedMessageIds = blockedUserIds
                 )
             } returns 1
 

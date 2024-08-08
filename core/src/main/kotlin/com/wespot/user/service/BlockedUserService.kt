@@ -28,14 +28,15 @@ class BlockedUserService(
             blockedId = blockedUser.id,
             messageId = messageId
         )
-        check(!isAlreadyBlocked) { "이미 차단된 사용자입니다." }
 
         val createBlockedUser = BlockedUser.create(
             blockerId = loginUser.id,
             blockedId = blockedUser.id,
-            messageId = messageId
+            messageId = messageId,
+            isAlreadyBlocked = isAlreadyBlocked
         )
         val saveBlockedUser = blockedUserPort.save(createBlockedUser)
+
         return BlockedUserResponse.of(saveBlockedUser.id)
     }
 
@@ -53,6 +54,7 @@ class BlockedUserService(
         val message = findMessageById(id = messageId, messagePort = messagePort)
         message.validateReceivedMessage(loginUser)
         val blockedUser = findUserById(id = message.senderId, userPort = userPort)
+        
         return Pair(loginUser, blockedUser)
     }
 
