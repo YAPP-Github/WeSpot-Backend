@@ -33,8 +33,16 @@ class NotificationPersistenceAdapter(
             ?.let { NotificationMapper.mapToDomainEntity(it) }
     }
 
-    override fun findAllByUserIdOrderByCreatedAtDesc(userId: Long): List<Notification> {
-        return notificationJpaRepository.findAllByUserIdOrderByBaseEntityCreatedAtDesc(userId)
+    override fun findAllByUserIdOrderByCreatedAtDesc(userId: Long, cursorId: Long?, limit: Long): List<Notification> {
+        if (cursorId == null) {
+            return notificationJpaRepository.findAllByUserIdOrderByBaseEntityCreatedAtDesc(
+                userId,
+                Long.MAX_VALUE,
+                limit
+            ).map { NotificationMapper.mapToDomainEntity(it) }
+        }
+
+        return notificationJpaRepository.findAllByUserIdOrderByBaseEntityCreatedAtDesc(userId, cursorId, limit)
             .map { NotificationMapper.mapToDomainEntity(it) }
     }
 

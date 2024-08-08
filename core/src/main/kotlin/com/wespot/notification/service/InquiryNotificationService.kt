@@ -15,11 +15,12 @@ class InquiryNotificationService(
 ) : InquiryNotificationUseCase {
 
     @Transactional(readOnly = true)
-    override fun getNotifications(): NotificationResponses {
+    override fun getNotifications(cursorId: Long?, limit: Long): NotificationResponses {
         val loginUser = SecurityUtils.getLoginUser(userPort)
-        val notifications = NotificationFinder.findAllByUserIdOrderByCreatedAtDesc(notificationPort, loginUser.id)
+        val notifications =
+            NotificationFinder.findAllByUserIdOrderByCreatedAtDesc(notificationPort, loginUser.id, cursorId, limit + 1)
 
-        return NotificationResponses.from(notifications)
+        return NotificationResponses.from(notifications, notifications.size.toLong() == limit + 1)
     }
 
     @Transactional

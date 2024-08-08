@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -17,8 +18,11 @@ class NotificationController(
 ) {
 
     @GetMapping
-    fun getNotifications(): ResponseEntity<NotificationResponses> {
-        val notifications = inquiryNotificationUseCase.getNotifications()
+    fun getNotifications(
+        @RequestParam(required = false) cursorId: Long?,
+        @RequestParam limit: Long
+    ): ResponseEntity<NotificationResponses> {
+        val notifications = inquiryNotificationUseCase.getNotifications(cursorId, limit)
 
         return ResponseEntity.ok(notifications)
     }
