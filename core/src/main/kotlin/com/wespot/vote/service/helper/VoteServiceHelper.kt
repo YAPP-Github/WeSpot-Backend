@@ -4,7 +4,6 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
-import com.wespot.vote.VoteOptionsByVoteDate
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
