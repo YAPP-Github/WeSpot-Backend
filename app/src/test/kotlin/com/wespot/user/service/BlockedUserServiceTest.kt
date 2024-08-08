@@ -8,6 +8,7 @@ import com.wespot.message.port.out.MessagePort
 import com.wespot.message.service.MessageFinder
 import com.wespot.user.User
 import com.wespot.user.block.BlockedUser
+import com.wespot.user.dto.response.BlockedUserResponse
 import com.wespot.user.fixture.BlockedUserFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.BlockedUserPort
@@ -15,7 +16,6 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe
 import io.mockk.*
 
@@ -49,12 +49,27 @@ class BlockedUserServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { MessageFinder.findMessageById(message.id, messagePort) } returns message
             every { MessageFinder.findUserById(sender.id, userPort) } returns sender
-            every { blockedUserPort.existsByBlockerIdAndBlockedId(receiver.id, sender.id) } returns false
-            every { blockedUserPort.save(any<BlockedUser>()) } returns BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, sender.id)
+            every { blockedUserPort.existsByBlockerIdAndBlockedIdAndMessageId(receiver.id, sender.id, message.id) } returns false
+            every { blockedUserPort.save(any<BlockedUser>()) } returns BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, sender.id, message.id)
 
             then("사용자를 차단해야 한다") {
-                blockedUserService.blockedUser(message.id).shouldBeTrue()
+                val response = blockedUserService.blockedUser(message.id)
+                response shouldBe BlockedUserResponse.of(1)
                 verify { blockedUserPort.save(any<BlockedUser>()) }
+            }
+        }
+
+        `when`("이미 차단된 메시지를 차단할 때") {
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { MessageFinder.findMessageById(message.id, messagePort) } returns message
+            every { MessageFinder.findUserById(sender.id, userPort) } returns sender
+            every { blockedUserPort.existsByBlockerIdAndBlockedIdAndMessageId(receiver.id, sender.id, message.id) } returns true
+
+            then("예외를 발생시켜야 한다") {
+                val exception = shouldThrow<IllegalStateException> {
+                    blockedUserService.blockedUser(message.id)
+                }
+                exception.message shouldBe "이미 차단된 사용자입니다."
             }
         }
 
@@ -62,12 +77,11 @@ class BlockedUserServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { MessageFinder.findMessageById(message.id, messagePort) } returns message
             every { MessageFinder.findUserById(sender.id, userPort) } returns sender
-            every { blockedUserPort.existsByBlockerIdAndBlockedId(receiver.id, sender.id) } returns true
-            every { blockedUserPort.deleteByBlockerIdAndBlockedId(receiver.id, sender.id) } just Runs
+            every { blockedUserPort.deleteByBlockerIdAndBlockedIdAndMessageId(receiver.id, sender.id, message.id) } just Runs
 
             then("사용자의 차단을 해제해야 한다") {
-                blockedUserService.blockedUser(message.id).shouldBeFalse()
-                verify { blockedUserPort.deleteByBlockerIdAndBlockedId(receiver.id, sender.id) }
+                blockedUserService.unblockedUser(message.id)
+                verify { blockedUserPort.deleteByBlockerIdAndBlockedIdAndMessageId(receiver.id, sender.id, message.id) }
             }
         }
     }

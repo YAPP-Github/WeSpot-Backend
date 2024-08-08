@@ -21,9 +21,9 @@ class MessageTest : BehaviorSpec({
             val reportedMessage = message.reported(2)
 
             then("메시지 신고 처리가 된다.") {
-                reportedMessage.isDeleted shouldBe true
+                reportedMessage.isReceiverDeleted shouldBe true
                 reportedMessage.isReported shouldBe true
-                reportedMessage.deletedAt shouldBe now
+                reportedMessage.receiverDeletedAt shouldBe now
                 reportedMessage.updatedAt shouldBe now
             }
         }

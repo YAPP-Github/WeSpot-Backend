@@ -23,8 +23,10 @@ object MessageFixture {
         updatedAt = LocalDateTime.now(),
         receivedAt = LocalDateTime.now(),
         isReported = false,
-        isDeleted = false,
-        deletedAt = null
+        isSenderDeleted = false,
+        senderDeletedAt = null,
+        isReceiverDeleted = false,
+        receiverDeletedAt = null
     )
 
     fun createWithIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long) = Message(
@@ -43,8 +45,10 @@ object MessageFixture {
         updatedAt = LocalDateTime.now(),
         receivedAt = LocalDateTime.now(),
         isReported = false,
-        isDeleted = false,
-        deletedAt = null
+        isSenderDeleted = false,
+        senderDeletedAt = null,
+        isReceiverDeleted = false,
+        receiverDeletedAt = null
     )
 
     fun createMessageWithReceived(
@@ -69,8 +73,10 @@ object MessageFixture {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             isReported = false,
-            isDeleted = false,
-            deletedAt = null
+            isSenderDeleted = false,
+            senderDeletedAt = null,
+            isReceiverDeleted = false,
+            receiverDeletedAt = null
         )
     }
 

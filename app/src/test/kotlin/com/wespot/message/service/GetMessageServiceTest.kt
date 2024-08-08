@@ -4,15 +4,14 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.MessageType
-import com.wespot.message.dto.response.MessageListResponse
-import com.wespot.message.dto.response.MessageResponse
-import com.wespot.message.dto.response.SendMessageStatusResponse
+import com.wespot.message.dto.response.*
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.school.School
 import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
+import com.wespot.user.Profile
 import com.wespot.user.User
 import com.wespot.user.fixture.BlockedUserFixture
 import com.wespot.user.fixture.UserFixture
@@ -116,17 +115,15 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId,
-                    pageRequest
+                    senderId = sender.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
                 )
             } returns messages.take(10)
             every {
                 messagePort.countSentMessagesAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId
+                    senderId = sender.id,
+                    cursorId = cursorId,
                 )
             } returns 11
 
@@ -157,15 +154,13 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
-                    MessageType.SENT,
-                    sender.id,
-                    cursorId,
-                    pageRequest
+                    senderId = sender.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
                 )
             } returns messages.drop(10)
             every {
                 messagePort.countSentMessagesAfterCursor(
-                    MessageType.SENT,
                     sender.id,
                     cursorId
                 )
@@ -199,19 +194,17 @@ class GetMessageServiceTest : BehaviorSpec({
             every { schoolPort.findById(receiver.schoolId) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds,
-                    pageRequest
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedMessageIds = blockedUserIds,
+                    pageable = pageRequest
                 )
             } returns messages.take(10)
             every {
-                messagePort.countMessagesAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds
+                messagePort.countReceivedMessagesAfterCursor(
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedMessageIds = blockedUserIds
                 )
             } returns 11
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
@@ -245,19 +238,17 @@ class GetMessageServiceTest : BehaviorSpec({
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds,
-                    pageRequest
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedMessageIds = blockedUserIds,
+                    pageable = pageRequest
                 )
             } returns messages.drop(10)
             every {
-                messagePort.countMessagesAfterCursor(
-                    MessageType.RECEIVED,
-                    receiver.id,
-                    cursorId,
-                    blockedUserIds
+                messagePort.countReceivedMessagesAfterCursor(
+                    receiverId = receiver.id,
+                    cursorId = cursorId,
+                    blockedMessageIds = blockedUserIds
                 )
             } returns 1
 
@@ -287,10 +278,10 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
             every { schoolPort.findById(receiver.schoolId) } returns school
-            every { messagePort.countMessagesAfterCursor(any(), any(), any(), any()) } returns 5
-            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, sender.id))
+            every { messagePort.countReceivedMessagesAfterCursor(any(), any(), any()) } returns 5
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, blockedSender.id, 1))
 
-            every { messagePort.findAllMessagesByTypeAndReceiverAfterCursor(any(), receiver.id, any(), any(), pageRequest) } returns messages.filter { message ->
+            every { messagePort.findAllMessagesByTypeAndReceiverAfterCursor(receiver.id, any(), any(), pageRequest) } returns messages.filter { message ->
                 !blockedUserIds.contains(message.senderId)
             }
 
@@ -319,5 +310,50 @@ class GetMessageServiceTest : BehaviorSpec({
                 verify { messagePort.sendMessageCount(sender.id) }
             }
         }
+
+        `when`("차단된 메시지 목록을 조회하면") {
+            val messages = initializeMessages()
+            val cursorId = Long.MAX_VALUE
+            val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
+            val blockedUserIds = listOf(blockedSender.id)
+
+            every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { userPort.findById(receiver.id) } returns receiver
+            every { userPort.findById(blockedSender.id) } returns blockedSender
+            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { messagePort.findById(1) } returns messages[0]
+
+            every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(
+                BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, blockedSender.id, 1),
+            )
+
+            every {
+                blockedUserPort.findAllByBlockerIdAfterCursor(
+                    blockerId = receiver.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
+                )
+            } returns listOf(BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(1, receiver.id, blockedSender.id, 1))
+
+            every {
+                blockedUserPort.countBlockedUsersAfterCursor(
+                    blockerId = receiver.id,
+                    cursorId = cursorId,
+                    pageable = pageRequest
+                )
+            } returns 1
+
+            messages.filter { blockedUserIds.contains(it.senderId) }.forEach { message ->
+                every { messagePort.findById(message.id) } returns message
+            }
+
+            val result = getMessageService.getBlockedMessages(cursorId)
+
+            then("차단된 메시지 목록을 반환해야 한다") {
+                result.messages.size shouldBe 1  // 차단된 유저의 메시지 수
+                result.hasNext shouldBe false
+            }
+        }
+
     }
 })

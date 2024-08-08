@@ -7,8 +7,9 @@ object BlockedUserMapper {
     fun mapToDomainEntity(blockUserJpaEntity: BlockedUserJpaEntity): BlockedUser =
         BlockedUser(
             id = blockUserJpaEntity.id,
-            blockerId = blockUserJpaEntity.blockedId,
+            blockerId = blockUserJpaEntity.blockerId,
             blockedId = blockUserJpaEntity.blockedId,
+            messageId = blockUserJpaEntity.messageId,
             createdAt = blockUserJpaEntity.createdAt
         )
 
@@ -17,6 +18,7 @@ object BlockedUserMapper {
             id = blockedUser.id,
             blockerId = blockedUser.blockerId,
             blockedId = blockedUser.blockedId,
+            messageId = blockedUser.messageId,
             createdAt = blockedUser.createdAt
         )
 }

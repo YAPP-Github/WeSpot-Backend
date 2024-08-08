@@ -1,9 +1,6 @@
 package com.wespot.message
 
-import com.wespot.message.dto.response.MessageListResponse
-import com.wespot.message.dto.response.MessageResponse
-import com.wespot.message.dto.response.MessageSimpleListResponse
-import com.wespot.message.dto.response.SendMessageStatusResponse
+import com.wespot.message.dto.response.*
 import com.wespot.message.port.`in`.GetMessageUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -54,5 +51,16 @@ class GetMessageController(
         return ResponseEntity.ok()
             .body(response)
     }
+
+    @GetMapping("/blocked")
+    fun getBlockedMessages(
+        @RequestParam(required = false, defaultValue = "0") cursorId: Long,
+    ): ResponseEntity<MessageBlockedListResponse> {
+        val response = getMessageUseCase.getBlockedMessages(cursorId)
+
+        return ResponseEntity.ok()
+            .body(response)
+    }
+
 
 }

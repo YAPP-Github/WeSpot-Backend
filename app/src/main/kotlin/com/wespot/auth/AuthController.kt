@@ -4,6 +4,7 @@ import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignUpRequest
 import com.wespot.auth.dto.response.SignUpResponse
+import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.service.AuthService
 import org.springframework.http.HttpStatus
@@ -26,7 +27,8 @@ class AuthController(
         val response = authService.socialAccess(request)
 
         return if (response is SignUpResponse) {
-            ResponseEntity.status(HttpStatus.ACCEPTED).body(response)
+            ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(response)
         } else {
             ResponseEntity.ok()
                 .body(response)
@@ -36,7 +38,7 @@ class AuthController(
     @PostMapping("/signup")
     fun signUp(
         @RequestBody request: SignUpRequest
-    ): ResponseEntity<TokenResponse> {
+    ): ResponseEntity<TokenAndUserDetailResponse> {
         val signUp = authService.signUp(request)
 
         return ResponseEntity.ok()

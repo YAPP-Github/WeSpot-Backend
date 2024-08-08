@@ -50,8 +50,13 @@ class MessageJpaEntity(
     val baseEntity: BaseEntity,
 
     @field: NotNull
-    val isDeleted: Boolean,
+    val isSenderDeleted: Boolean,
 
-    val deletedAt: LocalDateTime?
+    val senderDeletedAt: LocalDateTime?,
+
+    @field: NotNull
+    val isReceiverDeleted: Boolean,
+
+    val receiverDeletedAt: LocalDateTime?
 
 )
