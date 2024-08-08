@@ -53,16 +53,4 @@ object VoteServiceHelper {
         )
     }
 
-    fun findVoteOptionOnVoteOptions(
-        voteOptions: VoteOptionsByVoteDate,
-        optionId: Long
-    ): VoteOption {
-        val voteOption = voteOptions.voteOptionsByVoteDate
-            .map { it.voteOption }
-            .find { it.id == optionId }
-            ?: throw IllegalArgumentException("오늘의 선택지가 아닙니다.")
-
-        return voteOption
-    }
-
 }

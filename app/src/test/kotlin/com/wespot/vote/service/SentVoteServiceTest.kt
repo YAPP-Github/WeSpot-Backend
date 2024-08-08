@@ -106,7 +106,7 @@ class SentVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val sentVotes = sentVoteService.getSentVotes()
+        val sentVotes = sentVoteService.getSentVotes(null, 100)
 
         // then
         sentVotes.voteData.size shouldBe 2
