@@ -41,11 +41,16 @@ class InquiryNotificationServiceTest @Autowired constructor(
         )
 
         // when
-        val responses = inquiryNotificationService.getNotifications(null, 1).notifications
+        val responses1 = inquiryNotificationService.getNotifications(null, 1)
+        val responses2= inquiryNotificationService.getNotifications(responses1.notifications[0].id, 1)
 
         // then
-        responses.size shouldBe 1
-        responses[0].id shouldBe savedNotification.id
+        responses1.notifications.size shouldBe 1
+        responses1.notifications[0].id shouldBe savedNotification.id
+        responses1.hasNext shouldBe true
+        responses2.notifications.size shouldBe 1
+        responses2.notifications[0].id shouldBe notifications[0].id
+        responses2.hasNext shouldBe false
     }
 
     @Test

@@ -106,18 +106,27 @@ class SentVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val sentVotes = sentVoteService.getSentVotes(null, 100)
+        val sentVotes1 = sentVoteService.getSentVotes(null, 100)
+        val sentVotes2 = sentVoteService.getSentVotes(null, 1)
+        val sentVotes3 = sentVoteService.getSentVotes(sentVotes1.voteData[0].voteId, 1)
 
         // then
-        sentVotes.voteData.size shouldBe 2
-        sentVotes.voteData[0].date shouldBe now.toLocalDate().toString()
-        sentVotes.voteData[0].sentVoteResults.size shouldBe 2
-        sentVotes.voteData[0].sentVoteResults[0].vote.voteOption.id shouldBe voteOptions[5].id
-        sentVotes.voteData[0].sentVoteResults[1].vote.voteOption.id shouldBe voteOptions[7].id
-        sentVotes.voteData[0].sentVoteResults[0].vote.user.id shouldBe users[1].id
-        sentVotes.voteData[0].sentVoteResults[1].vote.user.id shouldBe users[2].id
-        sentVotes.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
-        sentVotes.voteData[1].sentVoteResults.size shouldBe 0
+        sentVotes1.voteData.size shouldBe 2
+        sentVotes1.voteData[0].date shouldBe now.toLocalDate().toString()
+        sentVotes1.voteData[0].sentVoteResults.size shouldBe 2
+        sentVotes1.voteData[0].sentVoteResults[0].vote.voteOption.id shouldBe voteOptions[5].id
+        sentVotes1.voteData[0].sentVoteResults[1].vote.voteOption.id shouldBe voteOptions[7].id
+        sentVotes1.voteData[0].sentVoteResults[0].vote.user.id shouldBe users[1].id
+        sentVotes1.voteData[0].sentVoteResults[1].vote.user.id shouldBe users[2].id
+        sentVotes1.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
+        sentVotes1.voteData[1].sentVoteResults.size shouldBe 0
+        sentVotes1.hasNext shouldBe false
+        sentVotes2.voteData.size shouldBe 1
+        sentVotes2.voteData[0].voteId shouldBe vote1!!.id
+        sentVotes2.hasNext shouldBe true
+        sentVotes3.voteData.size shouldBe 1
+        sentVotes3.voteData[0].voteId shouldBe vote2!!.id
+        sentVotes3.hasNext shouldBe false
     }
 
 }
