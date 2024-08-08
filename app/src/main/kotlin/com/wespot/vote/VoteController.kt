@@ -5,7 +5,6 @@ import com.wespot.vote.dto.response.SaveVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.dto.response.received.ReceivedVoteResponse
 import com.wespot.vote.dto.response.received.ReceivedVotesResponses
-import com.wespot.vote.dto.response.sent.SentVoteResponse
 import com.wespot.vote.dto.response.sent.SentVotesResponses
 import com.wespot.vote.dto.response.top1.VoteResultResponsesOfTop1
 import com.wespot.vote.dto.response.top5.VoteResultResponsesOfTop5
@@ -66,6 +65,7 @@ class VoteController(
         return ResponseEntity.ok(responses)
     }
 
+    // Pagination
     @GetMapping("/received")
     fun getReceivedVotes(): ResponseEntity<ReceivedVotesResponses> {
         val responses = receivedVoteUseCase.getReceivedVotes()
@@ -83,21 +83,12 @@ class VoteController(
         return ResponseEntity.ok(response)
     }
 
+    // Pagination
     @GetMapping("/sent")
     fun getSentVotes(): ResponseEntity<SentVotesResponses> {
         val responses = sentVoteUseCase.getSentVotes()
 
         return ResponseEntity.ok(responses)
-    }
-
-    @GetMapping("/sent/options/{optionId}")
-    fun getSentVote(
-        @PathVariable optionId: Long,
-        @RequestParam date: LocalDate
-    ): ResponseEntity<SentVoteResponse> {
-        val response = sentVoteUseCase.getSentVote(optionId, date)
-
-        return ResponseEntity.ok(response)
     }
 
 }

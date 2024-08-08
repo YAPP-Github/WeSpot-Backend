@@ -1,9 +1,10 @@
 package com.wespot.vote.dto.response.top1
 
 import com.wespot.vote.VoteRecord
+import com.wespot.vote.dto.response.VoteUserResponse
 
 data class VoteDetailResultResponseOfTop1(
-    val user: VoteUserResponseOfTop1,
+    val user: VoteUserResponse,
     val voteCount: Int
 ) {
 
@@ -11,7 +12,7 @@ data class VoteDetailResultResponseOfTop1(
 
         fun from(voteRecords: VoteRecord): VoteDetailResultResponseOfTop1 {
             return VoteDetailResultResponseOfTop1(
-                VoteUserResponseOfTop1.from(voteRecords.user),
+                VoteUserResponse.from(voteRecords.user),
                 voteRecords.voteCount
             )
         }

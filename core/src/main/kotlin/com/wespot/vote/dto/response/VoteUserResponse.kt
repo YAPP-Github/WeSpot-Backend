@@ -6,6 +6,7 @@ import com.wespot.user.dto.response.ProfileResponse
 data class VoteUserResponse(
     val id: Long,
     val name: String,
+    val introduction: String,
     val profile: ProfileResponse
 ) {
 
@@ -15,6 +16,7 @@ data class VoteUserResponse(
             return VoteUserResponse(
                 id = user.id,
                 name = user.name,
+                introduction = user.introduction,
                 profile = user.profile.let { ProfileResponse.from(it) }
             )
         }

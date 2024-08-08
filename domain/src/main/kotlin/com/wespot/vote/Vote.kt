@@ -180,22 +180,6 @@ data class Vote(
             }.toList()
     }
 
-//    private fun containVoteOptionOnBallots(
-//        ballots: List<Ballot>,
-//        voteOption: VoteOption
-//    ) = ballots.stream()
-//        .anyMatch { it.voteOptionId == voteOption.id }
-//
-//    fun getUserSentVote(
-//        voteOption: VoteOption,
-//        user: User,
-//    ): List<Ballot> {
-//        voteOptionsByVoteDate.validateVoteOption(voteOption.id)
-//
-//        return ballots.findSentBallotsByUser(user.id)
-//            .filter { it.voteOptionId == voteOption.id }
-//    }
-
     fun getNumberOfSender(): Int {
         return ballots.getNumberOfSender()
     }
