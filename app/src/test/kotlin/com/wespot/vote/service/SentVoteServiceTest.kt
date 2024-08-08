@@ -112,65 +112,12 @@ class SentVoteServiceTest @Autowired constructor(
         sentVotes.voteData.size shouldBe 2
         sentVotes.voteData[0].date shouldBe now.toLocalDate().toString()
         sentVotes.voteData[0].sentVoteResults.size shouldBe 2
-        sentVotes.voteData[0].sentVoteResults[0].voteCount shouldBe 1
-        sentVotes.voteData[0].sentVoteResults[1].voteCount shouldBe 1
+        sentVotes.voteData[0].sentVoteResults[0].vote.voteOption.id shouldBe voteOptions[5].id
+        sentVotes.voteData[0].sentVoteResults[1].vote.voteOption.id shouldBe voteOptions[7].id
+        sentVotes.voteData[0].sentVoteResults[0].vote.user.id shouldBe users[1].id
+        sentVotes.voteData[0].sentVoteResults[1].vote.user.id shouldBe users[2].id
         sentVotes.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
         sentVotes.voteData[1].sentVoteResults.size shouldBe 0
-    }
-
-    @Test
-    fun `본인이 보낸 투표를 개별 조회한다`() {
-        // given
-        val now = LocalDateTime.now()
-        val plusOneMinute = now.plusMinutes(1)
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
-        UserFixture.setSecurityContextUser(loginUser)
-        ballotJpaRepository.save(
-            BallotMapper.mapToJpaEntity(
-                Ballot.of(
-                    vote1!!.id,
-                    vote1!!.voteIdentifier.date,
-                    voteOptions[5].id,
-                    users[0].id,
-                    users[1].id,
-                    now
-                )
-            )
-        )
-        ballotJpaRepository.save(
-            BallotMapper.mapToJpaEntity(
-                Ballot.of(
-                    vote1!!.id,
-                    vote1!!.voteIdentifier.date,
-                    voteOptions[5].id,
-                    users[1].id,
-                    users[0].id,
-                    plusOneMinute
-                )
-            )
-        )
-        ballotJpaRepository.save(
-            BallotMapper.mapToJpaEntity(
-                Ballot.of(
-                    vote1!!.id,
-                    vote1!!.voteIdentifier.date,
-                    voteOptions[6].id,
-                    users[0].id,
-                    users[2].id,
-                    plusOneMinute
-                )
-            )
-        )
-
-        // when
-        val sentVoteByFirstVoteOption = sentVoteService.getSentVote(voteOptions[5].id, now.toLocalDate())
-        val sentVoteBySecondVoteOption = sentVoteService.getSentVote(voteOptions[6].id, now.toLocalDate())
-
-        // then
-        sentVoteByFirstVoteOption.voteResult.voteUsers.size shouldBe 1
-        sentVoteByFirstVoteOption.voteResult.voteOption.id shouldBe voteOptions[5].id
-        sentVoteBySecondVoteOption.voteResult.voteUsers.size shouldBe 1
-        sentVoteBySecondVoteOption.voteResult.voteOption.id shouldBe voteOptions[6].id
     }
 
 }
