@@ -23,44 +23,35 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
 
     @Query(
         """
-        SELECT m
-        FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
-        AND m.receiverId = :receiverId
-        AND m.id < :cursorId
-        AND m.isDeleted = false
-        AND m.receivedAt IS NOT NULL
-        AND (
-            m.senderId NOT IN :blockedUserIds OR
-            m.sendAt < (
-                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
-                FROM BlockedUserJpaEntity bu
-                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
-            )
-        )
-        ORDER BY m.receivedAt DESC, m.id DESC
+    SELECT m
+    FROM MessageJpaEntity m
+    WHERE m.receiverId = :receiverId
+    AND m.id < :cursorId
+    AND m.isReceiverDeleted = false
+    AND m.receivedAt IS NOT NULL
+    AND m.id NOT IN :blockedMessageIds
+    AND m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
+    ORDER BY m.receivedAt DESC, m.id DESC
     """
     )
     fun findAllByMessageTypeAndReceiverIdAfterCursor(
-        @Param("messageType") messageType: MessageType,
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedUserIds") blockedUserIds: List<Long>,
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<MessageJpaEntity>
 
     @Query(
         """
         SELECT m FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
+        WHERE 1 = 1
         AND m.senderId = :senderId
         AND m.id < :cursorId
-        AND m.isDeleted = false
+        AND m.isSenderDeleted = false
         ORDER BY m.sendAt DESC, m.id DESC
     """
     )
     fun findAllMessagesByTypeAndSenderAfterCursor(
-        @Param("messageType") messageType: MessageType,
         @Param("senderId") senderId: Long,
         @Param("cursorId") cursorId: Long,
         pageable: Pageable
@@ -73,39 +64,30 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         """
         SELECT COUNT(m)
         FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
+        WHERE 1 = 1
         AND m.receiverId = :receiverId
         AND m.id < :cursorId
-        AND m.isDeleted = false
-        AND (
-            m.senderId NOT IN :blockedUserIds OR
-            m.sendAt < (
-                SELECT COALESCE(MAX(bu.createdAt), '9999-12-31T23:59:59')
-                FROM BlockedUserJpaEntity bu
-                WHERE bu.blockerId = :receiverId AND bu.blockedId = m.senderId
-            )
-        )
+        AND m.isReceiverDeleted = false
+        AND  m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
     """
     )
-    fun countMessagesAfterCursor(
-        @Param("messageType") messageType: MessageType,
+    fun countReceivedMessagesAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedUserIds") blockedUserIds: List<Long>
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>
     ): Long
 
     @Query(
         """
         SELECT COUNT(m)
         FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
+        WHERE 1 = 1
         AND m.senderId = :senderId
         AND m.id < :cursorId
-        AND m.isDeleted = false
+        AND m.isSenderDeleted = false
     """
     )
-    fun countSentMessagesAfterCursor(
-        @Param("messageType") messageType: MessageType,
+    fun countSendMessagesAfterCursor(
         @Param("senderId") senderId: Long,
         @Param("cursorId") cursorId: Long
     ): Long
@@ -113,9 +95,10 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
     @Query(
         """
         SELECT m FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
+        WHERE 1 = 1
+        AND m.messageType = :messageType
         AND m.senderId = :senderId
-        AND m.isDeleted = false
+        AND m.isSenderDeleted = false
         AND m.receivedAt IS NULL
         ORDER BY m.baseEntity.updatedAt DESC, m.id DESC
     """

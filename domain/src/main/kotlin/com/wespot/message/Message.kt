@@ -21,8 +21,10 @@ data class Message(
     val isReported: Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val isDeleted: Boolean,
-    val deletedAt: LocalDateTime?
+    val isSenderDeleted: Boolean,
+    val senderDeletedAt: LocalDateTime?,
+    val isReceiverDeleted: Boolean,
+    val receiverDeletedAt: LocalDateTime?
 ) {
 
     fun updateMessage(
@@ -50,8 +52,10 @@ data class Message(
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
-            isDeleted = isDeleted,
-            deletedAt = deletedAt
+            isSenderDeleted = isSenderDeleted,
+            senderDeletedAt = senderDeletedAt,
+            isReceiverDeleted = isReceiverDeleted,
+            receiverDeletedAt = receiverDeletedAt
         )
         message.validateMessageReceiver()
 
@@ -77,8 +81,10 @@ data class Message(
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             receivedAt = receivedAt,
-            isDeleted = isDeleted,
-            deletedAt = deletedAt
+            isSenderDeleted = isSenderDeleted,
+            senderDeletedAt = senderDeletedAt,
+            isReceiverDeleted = isReceiverDeleted,
+            receiverDeletedAt = receiverDeletedAt
         )
         message.validateSentMessage(user)
         return message
@@ -98,8 +104,12 @@ data class Message(
         require(messageType == MessageType.RECEIVED) { "받은 메시지만 읽을 수 있습니다." }
     }
 
-    fun validateDeleteMessage(loginUser: User) {
+    fun validateDeleteSendMessage(loginUser: User) {
         require(senderId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
+    }
+
+    fun validateDeleteReceivedMessage(loginUser: User) {
+        require(receiverId == loginUser.id)  { "메시지를 삭제할 권한이 없습니다." }
     }
 
     private fun validateReportMessage(reportSenderId: Long) {
@@ -119,18 +129,27 @@ data class Message(
     fun reported(senderId: Long): Message {
         validateReportMessage(senderId)
         return this.copy(
-            isDeleted = true,
+            isReceiverDeleted = true,
             isReported = true,
-            deletedAt = LocalDateTime.now(),
+            receiverDeletedAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
     }
 
-    fun softDelete(loginUser: User): Message {
-        validateDeleteMessage(loginUser)
+    fun sendMessageSoftDelete(loginUser: User): Message {
+        validateDeleteSendMessage(loginUser)
         return this.copy(
-            isDeleted = true,
-            deletedAt = LocalDateTime.now(),
+            isSenderDeleted = true,
+            senderDeletedAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+    }
+
+    fun receivedMessageSoftDelete(loginUser: User): Message {
+        validateDeleteReceivedMessage(loginUser)
+        return this.copy(
+            isReceiverDeleted = true,
+            receiverDeletedAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
     }
@@ -161,8 +180,10 @@ data class Message(
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 receivedAt = null,
-                isDeleted = false,
-                deletedAt = null
+                isSenderDeleted = false,
+                senderDeletedAt = null,
+                isReceiverDeleted = false,
+                receiverDeletedAt = null
             )
             message.validateMessageReceiver()
 

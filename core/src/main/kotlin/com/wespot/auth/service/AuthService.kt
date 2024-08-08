@@ -5,9 +5,7 @@ import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
 import com.wespot.auth.dto.request.SignUpRequest
-import com.wespot.auth.dto.response.SignUpResponse
-import com.wespot.auth.dto.response.SocialResponse
-import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.dto.response.*
 import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
@@ -70,22 +68,28 @@ class AuthService(
     }
 
 
-    fun signIn(signInRequest: SignInRequest): TokenResponse {
+    fun signIn(signInRequest: SignInRequest): TokenAndUserDetailResponse {
         val authentication = authenticateUser(signInRequest)
         val generateToken = jwtTokenProvider.generateToken(authentication)
         val user = getUserByEmail(authentication.name)
 
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
 
-        return TokenResponse(
+        return TokenAndUserDetailResponse(
             accessToken = generateToken.accessToken,
             refreshToken = generateToken.refreshToken,
-            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt,
+            setting = SettingResponse(
+                isMessageNotification = false, // TODO : userConsent에 저장되어 있는 값으로 변경
+                isVoteNotification = false, // TODO : userConsent에 저장되어 있는 값으로 변경
+                isMarketingNotification = user.userConsent.consentValue ?: false
+            ),
+            name = user.name
         )
     }
 
 
-    override fun signUp(signUpRequest: SignUpRequest): TokenResponse {
+    override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
 
         val user = createUser(signUpToken, signUpRequest)
@@ -94,7 +98,19 @@ class AuthService(
 
         saveRelatedEntities(savedUser, signUpRequest)
 
-        return signIn(createSignInRequest(savedUser))
+        val signIn = signIn(createSignInRequest(savedUser))
+
+        return TokenAndUserDetailResponse(
+            accessToken = signIn.accessToken,
+            refreshToken = signIn.refreshToken,
+            refreshTokenExpiredAt = signIn.refreshTokenExpiredAt,
+            setting = SettingResponse(
+                isMessageNotification = false,
+                isVoteNotification = false,
+                isMarketingNotification = signUpRequest.consents.marketing
+            ),
+            name = signIn.name
+        )
     }
 
     fun createUser(
@@ -134,7 +150,6 @@ class AuthService(
         user: User,
         signUpRequest: SignUpRequest
     ) {
-
         var userConsent: UserConsent? = null
         if (signUpRequest.consents.marketing) {
             val marketingConsent = UserConsent.create(

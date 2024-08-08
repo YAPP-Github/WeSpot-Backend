@@ -68,6 +68,8 @@ class SecurityConfig(
                         "/api/v1/users/backgrounds",
                         "/api/v1/users/characters",
                         "/api/v1/users/search",
+                        "/api/v1/schools/search",
+                        "/api/v1/check-profanity",
                     ).permitAll()
                     .anyRequest().authenticated()
             }

@@ -37,29 +37,25 @@ class MessagePersistenceAdapter(
     }
 
     override fun findAllMessagesByTypeAndReceiverAfterCursor(
-        messageType: MessageType,
         receiverId: Long,
         cursorId: Long,
-        blockedUserIds: List<Long>,
+        blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<Message> {
         return messageJpaRepository.findAllByMessageTypeAndReceiverIdAfterCursor(
-            messageType = messageType,
             receiverId = receiverId,
             cursorId = cursorId,
-            blockedUserIds = blockedUserIds,
+            blockedMessageIds = blockedMessageIds,
             pageable = pageable
         ).map { MessageMapper.mapToDomainEntity(it) }
     }
 
     override fun findAllMessagesByTypeAndSenderAfterCursor(
-        messageType: MessageType,
         senderId: Long,
         cursorId: Long,
         pageable: Pageable
     ): List<Message> {
         return messageJpaRepository.findAllMessagesByTypeAndSenderAfterCursor(
-            messageType = messageType,
             senderId = senderId,
             cursorId = cursorId,
             pageable = pageable
@@ -77,27 +73,23 @@ class MessagePersistenceAdapter(
         )
     }
 
-    override fun countMessagesAfterCursor(
-        messageType: MessageType,
+    override fun countReceivedMessagesAfterCursor(
         receiverId: Long,
         cursorId: Long,
-        blockedIds: List<Long>
+        blockedMessageIds: List<Long>
     ): Long {
-        return messageJpaRepository.countMessagesAfterCursor(
-            messageType = messageType,
+        return messageJpaRepository.countReceivedMessagesAfterCursor(
             receiverId = receiverId,
             cursorId = cursorId,
-            blockedUserIds = blockedIds
+            blockedMessageIds = blockedMessageIds
         )
     }
 
     override fun countSentMessagesAfterCursor(
-        messageType: MessageType,
         senderId: Long,
         cursorId: Long
     ): Long {
-        return messageJpaRepository.countSentMessagesAfterCursor(
-            messageType = messageType,
+        return messageJpaRepository.countSendMessagesAfterCursor(
             senderId = senderId,
             cursorId = cursorId
         )
