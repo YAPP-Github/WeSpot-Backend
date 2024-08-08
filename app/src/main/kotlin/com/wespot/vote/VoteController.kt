@@ -65,10 +65,12 @@ class VoteController(
         return ResponseEntity.ok(responses)
     }
 
-    // Pagination
     @GetMapping("/received")
-    fun getReceivedVotes(): ResponseEntity<ReceivedVotesResponses> {
-        val responses = receivedVoteUseCase.getReceivedVotes()
+    fun getReceivedVotes(
+        @RequestParam(required = false) cursorId: Long?,
+        @RequestParam limit: Long
+    ): ResponseEntity<ReceivedVotesResponses> {
+        val responses = receivedVoteUseCase.getReceivedVotes(cursorId, limit)
 
         return ResponseEntity.ok(responses)
     }
@@ -83,10 +85,12 @@ class VoteController(
         return ResponseEntity.ok(response)
     }
 
-    // Pagination
     @GetMapping("/sent")
-    fun getSentVotes(): ResponseEntity<SentVotesResponses> {
-        val responses = sentVoteUseCase.getSentVotes()
+    fun getSentVotes(
+        @RequestParam(required = false) cursorId: Long?,
+        @RequestParam limit: Long
+    ): ResponseEntity<SentVotesResponses> {
+        val responses = sentVoteUseCase.getSentVotes(cursorId, limit)
 
         return ResponseEntity.ok(responses)
     }

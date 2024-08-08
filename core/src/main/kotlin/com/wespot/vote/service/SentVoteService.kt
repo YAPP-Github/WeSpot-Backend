@@ -16,13 +16,13 @@ class SentVoteService(
     private val userPort: UserPort,
 ) : SentVoteUseCase {
 
-    override fun getSentVotes(): SentVotesResponses {
+    override fun getSentVotes(cursorId: Long?, limit: Long): SentVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user)
+        val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user, cursorId, limit + 1)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
-        val voteResults = votes.associateWith { getSentVotes(it, user, classmates) }
+        val voteResults = votes.take(limit.toInt()).associateWith { getSentVotes(it, user, classmates) }
 
-        return SentVotesResponses.from(voteResults)
+        return SentVotesResponses.from(voteResults, votes.size.toLong() == limit + 1)
     }
 
     private fun getSentVotes(

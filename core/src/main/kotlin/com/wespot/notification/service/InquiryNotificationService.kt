@@ -20,7 +20,7 @@ class InquiryNotificationService(
         val notifications =
             NotificationFinder.findAllByUserIdOrderByCreatedAtDesc(notificationPort, loginUser.id, cursorId, limit + 1)
 
-        return NotificationResponses.from(notifications, notifications.size.toLong() == limit + 1)
+        return NotificationResponses.from(notifications.take(limit.toInt()), notifications.size.toLong() == limit + 1)
     }
 
     @Transactional

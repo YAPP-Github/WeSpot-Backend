@@ -26,7 +26,9 @@ interface VotePort {
     fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
         schoolId: Long,
         grade: Int,
-        classNumber: Int
+        classNumber: Int,
+        cursorId: Long?,
+        limit: Long
     ): List<Vote>
 
 
