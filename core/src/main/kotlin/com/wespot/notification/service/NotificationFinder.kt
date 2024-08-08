@@ -18,7 +18,7 @@ object NotificationFinder {
     fun findAllByUserIdOrderByCreatedAtDesc(
         notificationPort: NotificationPort,
         userId: Long,
-        cursorId: Long?,
+        cursorId: Long,
         limit: Long
     ): List<Notification> {
         return notificationPort.findAllByUserIdOrderByCreatedAtDesc(userId, cursorId, limit)

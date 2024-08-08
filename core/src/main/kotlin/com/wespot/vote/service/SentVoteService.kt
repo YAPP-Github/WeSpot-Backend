@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.CursorUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.CompleteBallot
@@ -18,7 +19,12 @@ class SentVoteService(
 
     override fun getSentVotes(cursorId: Long?, limit: Long): SentVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        val votes = VoteServiceHelper.findVotesOrderByDateDesc(votePort, user, cursorId, limit + 1)
+        val votes = VoteServiceHelper.findVotesOrderByDateDesc(
+            votePort = votePort,
+            user = user,
+            cursorId = CursorUtils.getEffectiveCursorId(cursorId),
+            limit = limit + 1
+        )
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val voteResults = votes.take(limit.toInt()).associateWith { getSentVotes(it, user, classmates) }
 

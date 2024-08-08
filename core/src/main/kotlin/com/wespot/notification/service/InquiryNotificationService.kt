@@ -1,5 +1,6 @@
 package com.wespot.notification.service
 
+import com.wespot.CursorUtils
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.notification.dto.NotificationResponses
 import com.wespot.notification.port.`in`.InquiryNotificationUseCase
@@ -17,8 +18,12 @@ class InquiryNotificationService(
     @Transactional(readOnly = true)
     override fun getNotifications(cursorId: Long?, limit: Long): NotificationResponses {
         val loginUser = SecurityUtils.getLoginUser(userPort)
-        val notifications =
-            NotificationFinder.findAllByUserIdOrderByCreatedAtDesc(notificationPort, loginUser.id, cursorId, limit + 1)
+        val notifications = NotificationFinder.findAllByUserIdOrderByCreatedAtDesc(
+            notificationPort = notificationPort,
+            userId = loginUser.id,
+            cursorId = CursorUtils.getEffectiveCursorId(cursorId),
+            limit = limit + 1
+        )
 
         return NotificationResponses.from(notifications.take(limit.toInt()), notifications.size.toLong() == limit + 1)
     }

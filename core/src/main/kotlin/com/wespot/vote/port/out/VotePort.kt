@@ -27,7 +27,7 @@ interface VotePort {
         schoolId: Long,
         grade: Int,
         classNumber: Int,
-        cursorId: Long?,
+        cursorId: Long,
         limit: Long
     ): List<Vote>
 

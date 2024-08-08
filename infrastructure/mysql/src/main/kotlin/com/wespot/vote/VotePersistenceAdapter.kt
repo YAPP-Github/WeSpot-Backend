@@ -91,48 +91,22 @@ class VotePersistenceAdapter(
         schoolId: Long,
         grade: Int,
         classNumber: Int,
-        cursorId: Long?,
+        cursorId: Long,
         limit: Long
     ): List<Vote> {
-        return getAllBySchoolIdAndGradeAndClassNumberByOrderByDateDescByCursorBasedPagination(
-            schoolId,
-            grade,
-            classNumber,
-            cursorId,
-            limit
-        ).map {
-                VoteMapper.mapToDomainEntity(
-                    it,
-                    findAllByVoteId(it.date, it.id),
-                    findBallotsByVote(it.id)
-                )
-            }
-            .toList()
-    }
-
-    private fun getAllBySchoolIdAndGradeAndClassNumberByOrderByDateDescByCursorBasedPagination(
-        schoolId: Long,
-        grade: Int,
-        classNumber: Int,
-        cursorId: Long?,
-        limit: Long
-    ): List<VoteJpaEntity> {
-        if (cursorId == null) {
-            return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(
-                schoolId,
-                grade,
-                classNumber,
-                Long.MAX_VALUE,
-                limit
-            )
-        }
         return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(
             schoolId,
             grade,
             classNumber,
             cursorId,
             limit
-        )
+        ).map {
+            VoteMapper.mapToDomainEntity(
+                it,
+                findAllByVoteId(it.date, it.id),
+                findBallotsByVote(it.id)
+            )
+        }.toList()
     }
 
 }
