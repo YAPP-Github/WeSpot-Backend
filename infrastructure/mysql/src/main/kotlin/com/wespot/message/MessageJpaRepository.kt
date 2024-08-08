@@ -29,15 +29,15 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
     AND m.id < :cursorId
     AND m.isReceiverDeleted = false
     AND m.receivedAt IS NOT NULL
-    AND m.id NOT IN :blockedMessages
-    AND m.senderId NOT IN :blockedMessages OR m.senderId = :receiverId
+    AND m.id NOT IN :blockedMessageIds
+    AND m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
     ORDER BY m.receivedAt DESC, m.id DESC
     """
     )
     fun findAllByMessageTypeAndReceiverIdAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedMessages") blockedMessages: List<Long>,
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<MessageJpaEntity>
 
@@ -68,13 +68,13 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         AND m.receiverId = :receiverId
         AND m.id < :cursorId
         AND m.isReceiverDeleted = false
-        AND  m.senderId NOT IN :blockedMessages OR m.senderId = :receiverId
+        AND  m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
     """
     )
     fun countReceivedMessagesAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
-        @Param("blockedMessages") blockedMessages: List<Long>
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>
     ): Long
 
     @Query(

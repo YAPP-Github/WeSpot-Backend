@@ -52,7 +52,7 @@ class GetMessageService(
         val cursorValue = getEffectiveCursorId(cursorId)
         val loginUser = getLoginUser(userPort)
         val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
-        val blockedMessages= blockedUsers.map { it.messageId }
+        val blockedMessageIds= blockedUsers.map { it.messageId }
         val receiver = findUserById(loginUser.id, userPort)
         val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
@@ -60,14 +60,14 @@ class GetMessageService(
         val messages = messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
             receiverId = loginUser.id,
             cursorId = cursorValue,
-            blockedMessages = blockedMessages,
+            blockedMessageIds = blockedMessageIds,
             pageable = pageRequest
         )
 
         val hasNext = messagePort.countReceivedMessagesAfterCursor(
             receiverId = loginUser.id,
             cursorId = cursorValue,
-            blockedMessages = blockedMessages
+            blockedMessageIds = blockedMessageIds
         ) > 10
 
         return MessageListResponse.from(
@@ -76,7 +76,7 @@ class GetMessageService(
                     message = message,
                     receiver = receiver,
                     school =  receiverSchool,
-                    isBlocked = blockedMessages.contains(message.id))
+                    isBlocked = blockedMessageIds.contains(message.id))
             },
             hasNext = hasNext
         )

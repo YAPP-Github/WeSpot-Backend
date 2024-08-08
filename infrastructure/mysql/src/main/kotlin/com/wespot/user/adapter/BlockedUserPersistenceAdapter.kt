@@ -40,8 +40,6 @@ class BlockedUserPersistenceAdapter(
     }
 
     override fun findAllByBlockerId(blockerId: Long): List<BlockedUser> {
-        println("findAllByBlockerId")
-        println(blockerId)
         return blockedUserJpaRepository.findAllByBlockerId(blockerId)
             .map { BlockedUserMapper.mapToDomainEntity(it) }
             .toList()
