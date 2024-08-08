@@ -29,7 +29,7 @@ class NotificationHelperTest : ServiceTest() {
             it.changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
         }
         val notifications = (1..5).map {
@@ -63,7 +63,7 @@ class NotificationHelperTest : ServiceTest() {
             it.changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
         }
         val notifications = (1..5).map {
@@ -96,7 +96,7 @@ class NotificationHelperTest : ServiceTest() {
         user.changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = true,
-            isEnableEventNotification = false
+            isEnableMarketingNotification = false
         )
         val notification = Notification.createMessageInitialState(
             userId = user.id,
@@ -121,7 +121,7 @@ class NotificationHelperTest : ServiceTest() {
         user.changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = true,
-            isEnableEventNotification = false
+            isEnableMarketingNotification = false
         )
         val notification = Notification.createVoteInitialState(
             userId = user.id,
@@ -155,12 +155,12 @@ class NotificationHelperTest : ServiceTest() {
         users[0].changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableEventNotification = false
+            isEnableMarketingNotification = false
         )
         users[1].changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableEventNotification = false
+            isEnableMarketingNotification = false
         )
 
         // when
@@ -190,7 +190,7 @@ class NotificationHelperTest : ServiceTest() {
         user.changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableEventNotification = false
+            isEnableMarketingNotification = false
         )
 
         // when

@@ -35,17 +35,17 @@ class NotificationFilterTest : BehaviorSpec({
             users[0].changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             users[1].changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             users[2].changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filteredNotifications =
                 notificationFilterService.filterNotifications(users, messageNotifications)
@@ -68,17 +68,17 @@ class NotificationFilterTest : BehaviorSpec({
             users[0].changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             users[1].changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             users[2].changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filteredNotifications =
                 notificationFilterService.filterNotifications(users, voteNotifications)
@@ -124,14 +124,14 @@ class NotificationFilterTest : BehaviorSpec({
             user.changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = true,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filterNotification1 =
                 notificationFilterService.filterNotification(user, messageNotification)
             user.changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filterNotification2 =
                 notificationFilterService.filterNotification(user, messageNotification)
@@ -151,14 +151,14 @@ class NotificationFilterTest : BehaviorSpec({
             user.changeSettings(
                 isEnableVoteNotification = true,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filterNotification1 =
                 notificationFilterService.filterNotification(user, voteNotification)
             user.changeSettings(
                 isEnableVoteNotification = false,
                 isEnableMessageNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             val filterNotification2 =
                 notificationFilterService.filterNotification(user, voteNotification)

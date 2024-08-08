@@ -158,16 +158,16 @@ data class User(
     fun changeSettings(
         isEnableVoteNotification: Boolean,
         isEnableMessageNotification: Boolean,
-        isEnableEventNotification: Boolean
+        isEnableMarketingNotification: Boolean
     ) {
-        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification, isEnableEventNotification)
+        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification, isEnableMarketingNotification)
     }
 
     fun isEnableVoteNotification() = setting.isEnableVoteNotification
 
     fun isEnableMessageNotification() = setting.isEnableMessageNotification
 
-    fun isEnableEventNotification() = setting.isEnableEventNotification
+    fun isEnableMarketingNotification() = setting.isEnableMarketingNotification
 
     fun getCurrentUserRestrictionBasedOnTime(date: LocalDate) =
         restriction.getCurrentRestrictionBasedOnTime(date)

@@ -19,7 +19,7 @@ class UserSettingService(
         loginUser.changeSettings(
             isEnableVoteNotification = modifiedSettingRequest.isEnableVoteNotification,
             isEnableMessageNotification = modifiedSettingRequest.isEnableMessageNotification,
-            isEnableEventNotification = modifiedSettingRequest.isEnableEventNotification
+            isEnableMarketingNotification = modifiedSettingRequest.isEnableMarketingNotification
         )
         userPort.save(loginUser)
     }

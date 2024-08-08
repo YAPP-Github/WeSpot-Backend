@@ -13,7 +13,6 @@ class SettingJpaEntity(
     val isEnableMessageNotification: Boolean,
 
     @field: NotNull
-    val isEnableEventNotification: Boolean
-
+    val isEnableMarketingNotification: Boolean
 
 )

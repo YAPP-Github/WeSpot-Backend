@@ -4,7 +4,6 @@ import com.wespot.common.service.ServiceTest
 import com.wespot.user.dto.request.ModifiedSettingRequest
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +24,7 @@ class UserSettingServiceTest @Autowired constructor(
         val modifiedSettingRequest = ModifiedSettingRequest(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableEventNotification = true
+            isEnableMarketingNotification = true
         )
 
         // when
@@ -34,8 +33,8 @@ class UserSettingServiceTest @Autowired constructor(
 
         // then
         userByFindById.isEnableVoteNotification() shouldBe true
-        userByFindById.isEnableMessageNotification() shouldBe  false
-        userByFindById.isEnableEventNotification() shouldBe  true
+        userByFindById.isEnableMessageNotification() shouldBe false
+        userByFindById.isEnableMarketingNotification() shouldBe true
     }
 
     @Test
@@ -46,7 +45,7 @@ class UserSettingServiceTest @Autowired constructor(
         val modifiedSettingRequest = ModifiedSettingRequest(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableEventNotification = true
+            isEnableMarketingNotification = true
         )
 
         // when
@@ -55,8 +54,8 @@ class UserSettingServiceTest @Autowired constructor(
 
         // then
         setting.isEnableVoteNotification shouldBe true
-        setting.isEnableMessageNotification shouldBe  false
-        setting.isEnableEventNotification shouldBe  true
+        setting.isEnableMessageNotification shouldBe false
+        setting.isEnableMarketingNotification shouldBe true
     }
 
 }

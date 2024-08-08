@@ -48,24 +48,24 @@ class UserTest : BehaviorSpec({
             user.changeSettings(
                 isEnableMessageNotification = true,
                 isEnableVoteNotification = false,
-                isEnableEventNotification = false
+                isEnableMarketingNotification = false
             )
             then("변경한다.") {
                 user.isEnableMessageNotification() shouldBe true
                 user.isEnableVoteNotification() shouldBe false
-                user.isEnableEventNotification() shouldBe false
+                user.isEnableMarketingNotification() shouldBe false
             }
         }
         `when`("투표 알림 설정을") {
             user.changeSettings(
                 isEnableMessageNotification = false,
                 isEnableVoteNotification = true,
-                isEnableEventNotification = true
+                isEnableMarketingNotification = true
             )
             then("변경한다.") {
                 user.isEnableMessageNotification() shouldBe false
                 user.isEnableVoteNotification() shouldBe true
-                user.isEnableEventNotification() shouldBe true
+                user.isEnableMarketingNotification() shouldBe true
             }
         }
     }
