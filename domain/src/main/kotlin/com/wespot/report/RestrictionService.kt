@@ -56,19 +56,19 @@ class RestrictionService {
         }
         val reportsCount = previousReports.size + 1
         if (reportsCount == FIRST_MESSAGE_USAGE_RESTRICTION_COUNT) {
-            return originRestriction.changeRestrict(
+            return originRestriction.addRestrict(
                 RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                 FIRST_MESSAGE_USAGE_RESTRICTION_DAY
             )
         }
         if (reportsCount == SECOND_MESSAGE_USAGE_RESTRICTION_COUNT) {
-            return originRestriction.changeRestrict(
+            return originRestriction.addRestrict(
                 RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                 SECOND_MESSAGE_USAGE_RESTRICTION_DAY
             )
         }
         if (reportsCount == MESSAGE_PERMANENT_RESTRICTION_COUNT) {
-            return originRestriction.changeRestrict(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, PERMANENT_BAN_DAY)
+            return originRestriction.addRestrict(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, PERMANENT_BAN_DAY)
         }
 
         return originRestriction
@@ -88,7 +88,7 @@ class RestrictionService {
         val reportsCount = previousReports.size + 1
 
         if (reportsCount == VOTE_PERMANENT_RESTRICTION_COUNT) {
-            return originRestriction.changeRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, PERMANENT_BAN_DAY)
+            return originRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, PERMANENT_BAN_DAY)
         }
 
         return originRestriction

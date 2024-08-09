@@ -18,7 +18,7 @@ data class Restriction(
 
     }
 
-    fun changeRestrict(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
+    fun addRestrict(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
         validate(restrictionType)
 
         if (restrictionType.isVoteRestriction()) {
@@ -35,7 +35,7 @@ data class Restriction(
     }
 
     private fun validate(restrictionType: RestrictionType) {
-        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) { "createInitialState 메서드를 사용해주세요." }
+        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) { "RestrictionType.NONE을 추가할 수 없습니다." }
     }
 
 

@@ -23,7 +23,7 @@ class RevokeRestrictionServiceTest @Autowired constructor(
         // given
         val user = UserFixture.createWithId(0)
         val initialRestriction = Restriction.createInitialState()
-        val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
+        val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
         user.restrict(restriction)
         val savedUser = userJpaRepository.save(UserMapper.mapToJpaEntity(user))
         val now = LocalDate.now().plusDays(31)
@@ -41,7 +41,7 @@ class RevokeRestrictionServiceTest @Autowired constructor(
         // given
         val user = UserFixture.createWithId(0)
         val initialRestriction = Restriction.createInitialState()
-        val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
+        val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
         user.restrict(restriction)
         val savedUser = userJpaRepository.save(UserMapper.mapToJpaEntity(user))
         val now = LocalDate.now().plusDays(29)

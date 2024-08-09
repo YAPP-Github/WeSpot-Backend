@@ -9,7 +9,6 @@ import com.wespot.user.restriction.Restriction
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import java.time.LocalDate
@@ -117,7 +116,7 @@ class RestrictionServiceTest : BehaviorSpec({
         }
         `when`("기존의 제한과 상관없이 현재 이용 제한 원칙에 따라") {
             val initialRestriction = Restriction.createInitialState()
-            val originRestriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
+            val originRestriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
             val reports = getReportByCount(ReportType.MESSAGE, 9)
             val report =
                 ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.MESSAGE, 10, 1, 2)
