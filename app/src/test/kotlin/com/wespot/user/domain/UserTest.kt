@@ -2,9 +2,11 @@ package com.wespot.user.domain
 
 import com.wespot.user.fixture.RestrictionFixture
 import com.wespot.user.fixture.UserFixture
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.throwable.shouldHaveMessage
 
 class UserTest : BehaviorSpec({
 
@@ -66,6 +68,17 @@ class UserTest : BehaviorSpec({
                 user.isEnableMessageNotification() shouldBe false
                 user.isEnableVoteNotification() shouldBe true
                 user.isEnableMarketingNotification() shouldBe true
+            }
+        }
+    }
+
+    given("소개에") {
+        val badWordsIntroduction = "ㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅂㅂㅂㅂㅂ"
+        `when`("욕설이 포함되어 있는 경우") {
+            val createUser = UserFixture.createWithId(1)
+            val shouldThrow = shouldThrow<IllegalArgumentException> { createUser.updateProfile(badWordsIntroduction) }
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "소개에는 욕설이 포함될 수 없습니다."
             }
         }
     }

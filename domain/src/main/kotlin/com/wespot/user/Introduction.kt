@@ -2,21 +2,22 @@ package com.wespot.user
 
 import com.wespot.common.BadWordsChecker
 
-data class Introduction(
+data class UserIntroduction(
     val introduction: String
 ) {
     companion object {
 
-        fun emptyIntroduction(): Introduction {
-            return Introduction("")
+        fun emptyUserIntroduction(): UserIntroduction {
+            return UserIntroduction("")
         }
 
-        fun from(introduction: String): Introduction {
-            BadWordsChecker.checkProfanity(introduction)
-            return Introduction(introduction)
+        fun from(introduction: String): UserIntroduction {
+            validateUserIntroduction(introduction)
+
+            return UserIntroduction(introduction)
         }
 
-        private fun validateIntroduction(content: String) {
+        private fun validateUserIntroduction(content: String) {
             require(!BadWordsChecker.checkProfanity(content)) { "소개에는 욕설이 포함될 수 없습니다." }
         }
 
