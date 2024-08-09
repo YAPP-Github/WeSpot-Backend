@@ -19,6 +19,6 @@ interface NotificationPort {
 
     fun findAllFromDate(today: LocalDate): List<Notification>
 
-    fun findAllByTargetId(targetId: Long): List<Notification>
+    fun findAllByUserIdAndFromDate(userId: Long, today: LocalDate): List<Notification>
 
 }

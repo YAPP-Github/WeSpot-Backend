@@ -28,11 +28,11 @@ class DisabledNotificationService(
     }
 
     @Transactional
-    override fun disableMessageNotification(messageId: Long, sendMessageCount: Int) {
+    override fun disableMessageNotification(senderId: Long, sendMessageCount: Int) {
+        val today = LocalDate.now()
         val notifications = disabledMessageNotificationByLimitService.disableMessageNotification(
-            messageId,
             sendMessageCount
-        ) { NotificationFinder.findAllByTargetId(notificationPort, messageId) }
+        ) { NotificationFinder.findAllByUserIdAndFromDate(notificationPort, senderId, today) }
         notificationPort.saveAll(notifications)
     }
 

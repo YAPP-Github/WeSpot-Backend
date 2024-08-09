@@ -43,7 +43,7 @@ class MessageNotificationEventListenerTest @Autowired constructor(
         )
 
         // when
-        messageNotificationEventListener.disableMessageNotificationByLimit(MessageLimitEvent(message.id, 3))
+        messageNotificationEventListener.disableMessageNotificationByLimit(MessageLimitEvent(sender.id, 3))
         val disableNotification = notificationPort.findById(notification.id)
 
         // then
