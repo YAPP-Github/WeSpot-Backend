@@ -1,6 +1,6 @@
 package com.wespot.user.domain
 
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.RestrictionType
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec

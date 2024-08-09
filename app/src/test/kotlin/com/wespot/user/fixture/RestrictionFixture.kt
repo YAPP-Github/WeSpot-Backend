@@ -1,6 +1,6 @@
 package com.wespot.user.fixture
 
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.RestrictionType
 
 object RestrictionFixture {

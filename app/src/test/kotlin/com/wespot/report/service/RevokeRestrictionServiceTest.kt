@@ -1,7 +1,7 @@
 package com.wespot.report.service
 
 import com.wespot.common.service.ServiceTest
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper

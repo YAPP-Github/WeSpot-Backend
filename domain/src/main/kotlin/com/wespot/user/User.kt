@@ -1,5 +1,6 @@
 package com.wespot.user
 
+import com.wespot.user.restriction.Restriction
 import java.time.LocalDate
 import java.time.LocalDateTime
 

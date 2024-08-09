@@ -1,7 +1,7 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.User
 import com.wespot.user.entity.UserJpaEntity
 

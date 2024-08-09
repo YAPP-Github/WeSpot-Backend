@@ -4,7 +4,7 @@ import com.wespot.report.Report
 import com.wespot.report.ReportType
 import com.wespot.report.RestrictionService
 import com.wespot.report.fixture.ReportFixture
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.RestrictionType
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow

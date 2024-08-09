@@ -1,6 +1,6 @@
 package com.wespot.report
 
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.RestrictionType
 import org.springframework.stereotype.Component
 

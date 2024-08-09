@@ -1,0 +1,55 @@
+package com.wespot.user.restriction
+
+import com.wespot.user.RestrictionType
+import java.time.LocalDate
+
+data class MessageRestriction(
+    val restrictionType: RestrictionType,
+    val releaseDate: LocalDate
+) {
+
+    companion object {
+
+        private val PERMANENT_BAN_DATE = LocalDate.of(9999, 12, 31)
+        private const val PERMANENT_BAN_DAY = Long.MAX_VALUE
+        private const val FIRST_MESSAGE_USAGE_RESTRICTION_DAY = 30L
+        private const val SECOND_MESSAGE_USAGE_RESTRICTION_DAY = 90L
+
+        fun createInitialState() =
+            MessageRestriction(
+                restrictionType = RestrictionType.NONE,
+                releaseDate = PERMANENT_BAN_DATE
+            )
+
+        fun of(restrictionType: RestrictionType, restrictionDay: Long): MessageRestriction {
+            validate(restrictionType, restrictionDay)
+
+            if (restrictionDay == PERMANENT_BAN_DAY) {
+                return MessageRestriction(restrictionType, PERMANENT_BAN_DATE)
+            }
+
+            return MessageRestriction(restrictionType, LocalDate.now().plusDays(restrictionDay))
+        }
+
+        private fun validate(restrictionType: RestrictionType, restrictionDay: Long) {
+            require(restrictionType.isMessageRestriction()) { "쪽지로 인한 제재 타입을 입력해주세요." }
+            require(
+                (restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT && restrictionDay == PERMANENT_BAN_DAY)
+                    || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
+                    || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
+            ) { "올바른 영구 제재 타입과 영구 제재 일 수를 입력해주세요." }
+        }
+
+    }
+
+    fun getCurrentRestrictionBasedOnTime(date: LocalDate): MessageRestriction {
+        if (releaseDate.isBefore(date)) {
+            return createInitialState()
+        }
+
+        return MessageRestriction(restrictionType, releaseDate)
+    }
+
+    fun isKeepRestriction() = restrictionType != RestrictionType.NONE
+
+}
