@@ -85,7 +85,7 @@ class UserTest : BehaviorSpec({
         }
         `when`("탈퇴 할 때, 제재가 풀리지 않았으면") {
             val initialRestriction = Restriction.createInitialState()
-            val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
+            val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
             user.restrict(restriction)
             val shouldThrow = shouldThrow<IllegalArgumentException> { user.withdraw() }
             then("예외가 발생한다.") {
@@ -98,7 +98,7 @@ class UserTest : BehaviorSpec({
         val user = UserFixture.createWithId(1L)
         `when`("제재가 풀렸는지") {
             val initialRestriction = Restriction.createInitialState()
-            val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
+            val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
             user.restrict(restriction)
             val actual = user.getCurrentUserRestrictionBasedOnTime(LocalDate.now().plusDays(31))
             then("확인한다.") {
