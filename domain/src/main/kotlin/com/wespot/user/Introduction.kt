@@ -1,6 +1,6 @@
 package com.wespot.user
 
-import com.wespot.common.BadWordsChecker
+import com.wespot.common.ProfanityChecker
 
 data class UserIntroduction(
     val introduction: String
@@ -18,7 +18,7 @@ data class UserIntroduction(
         }
 
         private fun validateUserIntroduction(content: String) {
-            require(!BadWordsChecker.checkProfanity(content)) { "소개에는 욕설이 포함될 수 없습니다." }
+            require(!ProfanityChecker.checkProfanity(content)) { "소개에는 욕설이 포함될 수 없습니다." }
         }
 
     }

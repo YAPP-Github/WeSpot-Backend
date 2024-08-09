@@ -1,6 +1,6 @@
 package com.wespot.common.domain
 
-import com.wespot.common.BadWordsChecker
+import com.wespot.common.ProfanityChecker
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
@@ -14,12 +14,12 @@ class BadWordsCheckerTest : BehaviorSpec({
             "너는 f@uck"
         )
         `when`("욕설이 존재하면") {
-            println(BadWordsChecker.checkProfanity(badWords[0]))
-            println(BadWordsChecker.checkProfanity(badWords[1]))
-            println(BadWordsChecker.checkProfanity(badWords[2]))
-            println(BadWordsChecker.checkProfanity(badWords[3]))
+            println(ProfanityChecker.checkProfanity(badWords[0]))
+            println(ProfanityChecker.checkProfanity(badWords[1]))
+            println(ProfanityChecker.checkProfanity(badWords[2]))
+            println(ProfanityChecker.checkProfanity(badWords[3]))
             val allMatch = badWords.stream()
-                .allMatch { BadWordsChecker.checkProfanity(it) }
+                .allMatch { ProfanityChecker.checkProfanity(it) }
             then("true를 반환한다.") {
                 allMatch shouldBe true
             }

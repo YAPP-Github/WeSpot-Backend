@@ -1,6 +1,6 @@
 package com.wespot.common
 
-object BadWordsChecker {
+object ProfanityChecker {
 
     private val replaceCharacters = listOf(
         " ",
@@ -51,6 +51,10 @@ object BadWordsChecker {
         "'",
         "\""
     )
+
+    fun validateContent(content: String) {
+        require(!checkProfanity(content)) { "비속어가 포함되어 있습니다." }
+    }
 
     fun checkProfanity(content: String): Boolean {
         val contentAfterRemoveProfanityMasking = removeProfanityMasking(content)
