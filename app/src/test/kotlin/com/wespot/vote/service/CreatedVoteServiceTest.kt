@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
-@SpringBootTest
 class CreatedVoteServiceTest @Autowired constructor(
     private var createdVoteService: CreatedVoteService,
     private var userJpaRepository: UserJpaRepository,

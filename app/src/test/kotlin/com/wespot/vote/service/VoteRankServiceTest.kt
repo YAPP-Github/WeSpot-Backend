@@ -23,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
 class VoteRankServiceTest @Autowired constructor(
     private var voteRankService: VoteRankService,
     private var userJpaRepository: UserJpaRepository,

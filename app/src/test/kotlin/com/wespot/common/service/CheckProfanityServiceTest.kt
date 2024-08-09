@@ -5,8 +5,9 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 
-class CheckProfanityServiceTest(
+class CheckProfanityServiceTest @Autowired constructor(
     private val checkProfanityService: CheckProfanityService
 ) : ServiceTest() {
 

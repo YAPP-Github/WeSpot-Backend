@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
-@SpringBootTest
 class NotificationHelperTest : ServiceTest() {
 
     private val notificationSendService = mockk<FirebaseNotificationService>()

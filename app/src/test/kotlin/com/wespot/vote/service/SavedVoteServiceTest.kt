@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import kotlin.test.Test
 
-@SpringBootTest
 class SavedVoteServiceTest @Autowired constructor(
     private var voteService: SavedVoteService,
     private var userJpaRepository: UserJpaRepository,
