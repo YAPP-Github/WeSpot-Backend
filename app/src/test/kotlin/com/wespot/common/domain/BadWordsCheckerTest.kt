@@ -14,12 +14,12 @@ class BadWordsCheckerTest : BehaviorSpec({
             "너는 f@uck"
         )
         `when`("욕설이 존재하면") {
-            println(BadWordsChecker.check(badWords[0]))
-            println(BadWordsChecker.check(badWords[1]))
-            println(BadWordsChecker.check(badWords[2]))
-            println(BadWordsChecker.check(badWords[3]))
+            println(BadWordsChecker.checkProfanity(badWords[0]))
+            println(BadWordsChecker.checkProfanity(badWords[1]))
+            println(BadWordsChecker.checkProfanity(badWords[2]))
+            println(BadWordsChecker.checkProfanity(badWords[3]))
             val allMatch = badWords.stream()
-                .allMatch { BadWordsChecker.check(it) }
+                .allMatch { BadWordsChecker.checkProfanity(it) }
             then("true를 반환한다.") {
                 allMatch shouldBe true
             }

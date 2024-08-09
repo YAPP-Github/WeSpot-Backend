@@ -52,7 +52,7 @@ object BadWordsChecker {
         "\""
     )
 
-    fun check(content: String): Boolean {
+    fun checkProfanity(content: String): Boolean {
         val contentAfterRemoveProfanityMasking = removeProfanityMasking(content)
         println(contentAfterRemoveProfanityMasking)
 

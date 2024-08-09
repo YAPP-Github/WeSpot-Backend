@@ -1,7 +1,6 @@
 package com.wespot.voteoption
 
 import java.time.LocalDateTime
-import java.util.*
 
 data class VoteOption(
     val id: Long,

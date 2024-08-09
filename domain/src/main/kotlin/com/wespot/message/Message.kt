@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 data class Message(
     val id: Long,
-    val content: String,
+    val content: MessageContent,
     val senderId: Long,
     val senderName: String,
     val receiverId: Long,
@@ -38,7 +38,7 @@ data class Message(
         validateMessageUpdateTime()
         val message = Message(
             id = id,
-            content = content,
+            content = MessageContent.from(content),
             senderId = senderId,
             senderName = senderName,
             messageType = MessageType.SENT,
@@ -109,7 +109,7 @@ data class Message(
     }
 
     fun validateDeleteReceivedMessage(loginUser: User) {
-        require(receiverId == loginUser.id)  { "메시지를 삭제할 권한이 없습니다." }
+        require(receiverId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
     }
 
     private fun validateReportMessage(reportSenderId: Long) {
@@ -166,7 +166,7 @@ data class Message(
             validateMessageSendTime()
             val message = Message(
                 id = 0L,
-                content = content,
+                content = MessageContent.from(content),
                 senderId = senderId,
                 senderName = senderName,
                 messageType = MessageType.SENT,
