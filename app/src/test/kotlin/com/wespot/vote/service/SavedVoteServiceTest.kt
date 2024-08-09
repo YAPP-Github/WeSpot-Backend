@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -21,16 +22,16 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import kotlin.test.Test
 
 class SavedVoteServiceTest @Autowired constructor(
-    private var voteService: SavedVoteService,
-    private var userJpaRepository: UserJpaRepository,
-    private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    private var ballotJpaRepository: BallotJpaRepository,
-    private var votePort: VotePort,
+    private val voteService: SavedVoteService,
+    private val userJpaRepository: UserJpaRepository,
+    private val voteOptionJpaRepository: VoteOptionJpaRepository,
+    private val ballotJpaRepository: BallotJpaRepository,
+    private val votePort: VotePort,
+    private val notificationPort: NotificationPort,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -189,6 +190,7 @@ class SavedVoteServiceTest @Autowired constructor(
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests)
+        val notifications = notificationPort.findAll()
 
         // then
         val ballots = ballotJpaRepository.findAll()
@@ -206,6 +208,7 @@ class SavedVoteServiceTest @Autowired constructor(
         ballots[2].receiverId shouldBeIn votedUserIds
         ballots[3].receiverId shouldBeIn votedUserIds
         ballots[4].receiverId shouldBeIn votedUserIds
+        notifications.size shouldBe 5
     }
 
 }

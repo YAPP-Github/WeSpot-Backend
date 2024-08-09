@@ -24,6 +24,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -42,6 +43,7 @@ class AuthServiceTest : BehaviorSpec({
     val authenticationManager = mockk<AuthenticationManager>()
     val passwordEncoder = mockk<PasswordEncoder>()
     val refreshTokenService = mockk<RefreshTokenService>()
+    val eventPublisher = mockk<ApplicationEventPublisher>()
 
     val secretKey = "testSecretKey"
 
@@ -59,7 +61,7 @@ class AuthServiceTest : BehaviorSpec({
             authenticationManager = authenticationManager,
             passwordEncoder = passwordEncoder,
             refreshTokenService = refreshTokenService,
-            eventPublisher = mockk(),
+            eventPublisher = eventPublisher,
             secretKey = secretKey
         )
     )
