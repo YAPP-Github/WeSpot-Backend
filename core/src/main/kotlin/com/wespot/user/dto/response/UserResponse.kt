@@ -19,7 +19,7 @@ data class UserResponse(
             return UserResponse(
                 id = user.id,
                 name = user.name,
-                gender = user.name,
+                gender = user.gender.name,
                 introduction = user.introduction.introduction,
                 schoolName = school,
                 grade = user.grade,

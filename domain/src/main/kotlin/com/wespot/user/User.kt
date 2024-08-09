@@ -10,7 +10,7 @@ data class User(
     val password: String,
     val name: String,
     val introduction: UserIntroduction,
-    val gender: String,
+    val gender: Gender,
     val role: Role,
     val schoolId: Long,
     val grade: Int,
@@ -91,9 +91,8 @@ data class User(
             grade: Int,
             groupNumber: Int,
             social: Social,
-            gender: String
-        ) =
-            User(
+            gender: Gender
+        ) = User(
                 id = 0L,
                 email = email,
                 password = password,
@@ -105,8 +104,8 @@ data class User(
                 grade = grade,
                 classNumber = groupNumber,
                 profile = Profile.create(
-                    backgroundColor = "",
-                    iconUrl = "",
+                    backgroundColor = "#FFFFFF",
+                    iconUrl = ""
                 ),
                 fcm = null,
                 setting = Setting(),

@@ -1,6 +1,8 @@
 package com.wespot.user.entity
 
 import com.wespot.common.BaseEntity
+import com.wespot.user.Gender
+import com.wespot.user.RestrictionType
 import com.wespot.user.Role
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Embedded
@@ -39,7 +41,8 @@ class UserJpaEntity(
     val introduction: String,
 
     @field: NotNull
-    val gender: String,
+    @Enumerated(EnumType.STRING)
+    val gender: Gender,
 
     @field: NotNull
     val schoolId: Long,

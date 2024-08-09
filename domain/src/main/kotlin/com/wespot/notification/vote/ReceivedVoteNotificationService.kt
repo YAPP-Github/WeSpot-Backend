@@ -2,13 +2,14 @@ package com.wespot.notification.vote
 
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationType
+import com.wespot.user.Gender
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
 class ReceivedVoteNotificationService {
 
-    fun getNotification(userId: Long, gender: String): Notification {
+    fun getNotification(userId: Long, gender: Gender): Notification {
         val genderKeyword = getGenderKeyword(gender)
 
         return Notification.createVoteInitialState(
@@ -20,8 +21,8 @@ class ReceivedVoteNotificationService {
         )
     }
 
-    private fun getGenderKeyword(gender: String): String {
-        if (gender == "female") {
+    private fun getGenderKeyword(gender: Gender): String {
+        if (gender.name == "female") {
             return "여학생"
         }
 
