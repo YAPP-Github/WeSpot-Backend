@@ -1,9 +1,12 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.restriction.Restriction
 import com.wespot.user.User
+import com.wespot.user.entity.RestrictionJpaEntity
 import com.wespot.user.entity.UserJpaEntity
+import com.wespot.user.restriction.MessageRestriction
+import com.wespot.user.restriction.Restriction
+import com.wespot.user.restriction.VoteRestriction
 
 object UserMapper {
 
@@ -24,7 +27,16 @@ object UserMapper {
             fcm = FCMMapper.mapToDomainEntity(userJpaEntity.fcm),
             social = SocialMapper.mapToDomainEntity(userJpaEntity.social),
             userConsent = UserConsentMapper.mapToDomainEntity(userJpaEntity.userConsent),
-            restriction = Restriction(userJpaEntity.restrictionType, userJpaEntity.releaseDate),
+            restriction = Restriction(
+                voteRestriction = VoteRestriction(
+                    userJpaEntity.restriction.voteRestrictionType,
+                    userJpaEntity.restriction.voteReleaseDate
+                ),
+                messageRestriction = MessageRestriction(
+                    userJpaEntity.restriction.messageRestrictionType,
+                    userJpaEntity.restriction.messageReleaseDate
+                ),
+            ),
             createdAt = userJpaEntity.baseEntity.createdAt,
             updatedAt = userJpaEntity.baseEntity.updatedAt,
             withdrawAt = userJpaEntity.withdrawAt,
@@ -48,8 +60,12 @@ object UserMapper {
             fcm = FCMMapper.mapToJpaEntity(user.fcm),
             social = SocialMapper.mapToJpaEntity(user.social),
             userConsent = UserConsentMapper.mapToJpaEntity(user.userConsent),
-            restrictionType = user.restriction.restrictionType,
-            releaseDate = user.restriction.releaseDate,
+            restriction = RestrictionJpaEntity(
+                voteRestrictionType = user.restriction.voteRestriction.restrictionType,
+                voteReleaseDate = user.restriction.voteRestriction.releaseDate,
+                messageRestrictionType = user.restriction.messageRestriction.restrictionType,
+                messageReleaseDate = user.restriction.messageRestriction.releaseDate,
+            ),
             withdrawAt = user.withdrawAt,
             baseEntity = BaseEntity(
                 createdAt = user.createdAt,

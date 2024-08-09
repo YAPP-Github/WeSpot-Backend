@@ -16,27 +16,28 @@ data class Restriction(
                 messageRestriction = MessageRestriction.createInitialState()
             )
 
-        fun of(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
-            validate(restrictionType)
+    }
 
-            if (restrictionType.isVoteRestriction()) {
-                return Restriction(
-                    voteRestriction = VoteRestriction.of(restrictionType, restrictionDay),
-                    messageRestriction = MessageRestriction.createInitialState()
-                )
-            }
+    fun changeRestrict(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
+        validate(restrictionType)
 
+        if (restrictionType.isVoteRestriction()) {
             return Restriction(
-                voteRestriction = VoteRestriction.createInitialState(),
-                messageRestriction = MessageRestriction.of(restrictionType, restrictionDay)
+                voteRestriction = VoteRestriction.of(restrictionType, restrictionDay),
+                messageRestriction = messageRestriction
             )
         }
 
-        private fun validate(restrictionType: RestrictionType) {
-            require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) { "createInitialState 메서드를 사용해주세요." }
-        }
-
+        return Restriction(
+            voteRestriction = voteRestriction,
+            messageRestriction = MessageRestriction.of(restrictionType, restrictionDay)
+        )
     }
+
+    private fun validate(restrictionType: RestrictionType) {
+        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) { "createInitialState 메서드를 사용해주세요." }
+    }
+
 
     fun getCurrentRestrictionBasedOnTime(date: LocalDate): Restriction {
         return Restriction(

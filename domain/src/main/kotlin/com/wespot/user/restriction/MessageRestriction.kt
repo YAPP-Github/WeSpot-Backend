@@ -37,7 +37,7 @@ data class MessageRestriction(
                 (restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT && restrictionDay == PERMANENT_BAN_DAY)
                     || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
                     || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
-            ) { "올바른 영구 제재 타입과 영구 제재 일 수를 입력해주세요." }
+            ) { "올바르지 않은 제재 타입과 제재 일 수 입니다." }
         }
 
     }
