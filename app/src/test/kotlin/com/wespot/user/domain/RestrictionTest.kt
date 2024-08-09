@@ -22,46 +22,46 @@ class RestrictionTest : BehaviorSpec({
         }
     }
 
-    given("Restriction에") {
-        `when`("정상적인 값이 아닌 값이 입력되게 되면") {
+    given("Restriction을") {
+        `when`("정상적인 값이 아닌 값으로 변경하게 되면") {
             then("예외가 발생한다.") {
                 val initialRestriction = Restriction.createInitialState()
                 val shouldThrow =
                     shouldThrow<IllegalArgumentException> {
-                        initialRestriction.changeRestrict(
+                        initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             29L
                         )
                     }
                 val shouldThrow1 =
                     shouldThrow<IllegalArgumentException> {
-                        initialRestriction.changeRestrict(
+                        initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             31L
                         )
                     }
                 val shouldThrow2 =
                     shouldThrow<IllegalArgumentException> {
-                        initialRestriction.changeRestrict(
+                        initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             89L
                         )
                     }
                 val shouldThrow3 =
                     shouldThrow<IllegalArgumentException> {
-                        initialRestriction.changeRestrict(
+                        initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             91L
                         )
                     }
                 val shouldThrow4 = shouldThrow<IllegalArgumentException> {
-                    initialRestriction.changeRestrict(
+                    initialRestriction.addRestrict(
                         RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
                         Long.MAX_VALUE - 1L
                     )
                 }
                 val shouldThrow5 = shouldThrow<IllegalArgumentException> {
-                    initialRestriction.changeRestrict(
+                    initialRestriction.addRestrict(
                         RestrictionType.PERMANENT_BAN_VOTE_REPORT,
                         Long.MAX_VALUE - 1L
                     )
@@ -75,14 +75,14 @@ class RestrictionTest : BehaviorSpec({
                 shouldThrow5 shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
             }
         }
-        `when`("정해진 규격의 값을 입력하게 되면") {
+        `when`("정해진 규격의 값으로 변경하면") {
             val initialRestriction = Restriction.createInitialState()
-            val messageUsage1 = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
-            val messageUsage2 = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90L)
+            val messageUsage1 = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
+            val messageUsage2 = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90L)
             val messagePermanent =
-                initialRestriction.changeRestrict(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE)
+                initialRestriction.addRestrict(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE)
             val votePermanent =
-                initialRestriction.changeRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
+                initialRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
             then("정상적으로 객체를 생성한다.") {
                 messageUsage1.messageRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 messageUsage1.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(30)
@@ -92,6 +92,55 @@ class RestrictionTest : BehaviorSpec({
                 messagePermanent.messageRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
                 votePermanent.voteRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
                 votePermanent.voteRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+            }
+        }
+    }
+
+    given("제재를 추가할 때") {
+        val initialRestriction = Restriction.createInitialState()
+        `when`("None을 추가하면") {
+            val shouldThrow =
+                shouldThrow<IllegalArgumentException> { initialRestriction.addRestrict(RestrictionType.NONE, 0) }
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+            }
+        }
+        `when`("정상적인 값을 추가하면") {
+            val newRestriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30L)
+            then("정상적으로 추가된다.") {
+                newRestriction.messageRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
+                newRestriction.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(30)
+            }
+        }
+    }
+
+    given("여러 제재가 존재하더라도") {
+        val initialRestriction = Restriction.createInitialState()
+        `when`("주어진 시간에 따라 제재가") {
+            val messageRestriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90)
+            val restriction =
+                messageRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
+            then("정상적으로 풀린다.") {
+                restriction.voteRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
+                restriction.voteRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+                restriction.messageRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
+                restriction.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(90)
+            }
+        }
+    }
+
+    given("하나의") {
+        val initialRestriction = Restriction.createInitialState()
+        `when`("제재라도 걸려있으면") {
+            val messageRestriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90)
+            val voteRestriction =
+                messageRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
+            val restriction =
+                voteRestriction.getCurrentRestrictionBasedOnTime(LocalDate.now().plusDays(91))
+            then("제재중인 것으로 판단된다.") {
+                restriction.messageRestriction.restrictionType shouldBe RestrictionType.NONE
+                restriction.voteRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
+                restriction.isKeepRestriction()
             }
         }
     }
