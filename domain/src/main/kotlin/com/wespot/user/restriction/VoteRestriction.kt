@@ -33,7 +33,6 @@ data class VoteRestriction(
 
     }
 
-
     fun getCurrentRestrictionBasedOnTime(date: LocalDate): VoteRestriction {
         if (releaseDate.isBefore(date)) {
             return createInitialState()

@@ -102,7 +102,7 @@ class RestrictionTest : BehaviorSpec({
             val shouldThrow =
                 shouldThrow<IllegalArgumentException> { initialRestriction.addRestrict(RestrictionType.NONE, 0) }
             then("예외가 발생한다.") {
-                shouldThrow shouldHaveMessage "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                shouldThrow shouldHaveMessage "RestrictionType.NONE을 추가할 수 없습니다."
             }
         }
         `when`("정상적인 값을 추가하면") {
@@ -120,10 +120,10 @@ class RestrictionTest : BehaviorSpec({
             val messageRestriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 90)
             val restriction =
                 messageRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, Long.MAX_VALUE)
-            then("정상적으로 풀린다.") {
+            then("정상적으로 생긴다.") {
                 restriction.voteRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
                 restriction.voteRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
-                restriction.messageRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
+                restriction.messageRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 restriction.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(90)
             }
         }

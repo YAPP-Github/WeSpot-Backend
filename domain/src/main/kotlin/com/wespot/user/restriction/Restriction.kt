@@ -47,7 +47,7 @@ data class Restriction(
     }
 
     fun isKeepRestriction(): Boolean {
-        return voteRestriction.isKeepRestriction() && messageRestriction.isKeepRestriction()
+        return voteRestriction.isKeepRestriction() || messageRestriction.isKeepRestriction()
     }
 
 }
