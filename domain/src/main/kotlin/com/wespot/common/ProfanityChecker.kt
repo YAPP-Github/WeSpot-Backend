@@ -58,7 +58,6 @@ object ProfanityChecker {
 
     fun checkProfanity(content: String): Boolean {
         val contentAfterRemoveProfanityMasking = removeProfanityMasking(content)
-        println(contentAfterRemoveProfanityMasking)
 
         return BadWords.badWords
             .stream()
