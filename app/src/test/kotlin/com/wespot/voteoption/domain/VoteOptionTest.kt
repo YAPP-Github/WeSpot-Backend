@@ -21,7 +21,7 @@ class VoteOptionTest() : BehaviorSpec() {
                 val voteOption = VoteOption.of(id, content, createdAt, updatedAt)
                 then("정상적으로 생성된다.") {
                     voteOption.id shouldBe id
-                    voteOption.content shouldBe content
+                    voteOption.content.content shouldBe content
                     voteOption.createdAt shouldBe createdAt
                     voteOption.updatedAt shouldBe updatedAt
                 }

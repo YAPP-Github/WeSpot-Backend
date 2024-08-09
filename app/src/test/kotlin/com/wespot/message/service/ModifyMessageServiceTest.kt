@@ -2,6 +2,7 @@ package com.wespot.message.service
 
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
+import com.wespot.message.MessageContent
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.UpdateMessageRequest
 import com.wespot.message.dto.response.UpdateMessageResponse
@@ -68,7 +69,7 @@ class ModifyMessageServiceTest : BehaviorSpec({
             every { userPort.findById(receiver.id) } returns receiver
             every { messagePort.findById(message.id) } returns message
             every { SecurityUtils.getLoginUser(userPort) } returns sender
-            every { messagePort.save(any()) } returns message.copy(content = updateMessageRequest.content)
+            every { messagePort.save(any()) } returns message.copy(content = MessageContent.from(updateMessageRequest.content))
 
             then("메시지가 올바르게 업데이트되어야 한다") {
                 val response = modifyMessageService.updateMessage(message.id, updateMessageRequest)

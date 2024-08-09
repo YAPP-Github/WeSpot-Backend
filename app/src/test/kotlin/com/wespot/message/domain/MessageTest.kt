@@ -1,17 +1,32 @@
 package com.wespot.message.domain
 
 import com.wespot.message.Message
+import com.wespot.message.MessageTimeValidator
 import com.wespot.message.fixture.MessageFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class MessageTest : BehaviorSpec({
+
+    beforeContainer {
+        val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
+        MessageTimeValidator.setClock(fixedClock)
+    }
+
+    afterContainer {
+        clearAllMocks()
+        MessageTimeValidator.resetClock()
+    }
 
     given("메시지를") {
         val message = MessageFixture.createWithIdAndSenderIdAndReceiverId(1, 1, 2)
