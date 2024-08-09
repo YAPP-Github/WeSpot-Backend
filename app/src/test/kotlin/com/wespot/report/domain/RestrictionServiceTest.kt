@@ -9,6 +9,7 @@ import com.wespot.user.restriction.Restriction
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import java.time.LocalDate
@@ -174,6 +175,27 @@ class RestrictionServiceTest : BehaviorSpec({
                         reports
                     )
                 }
+            }
+        }
+    }
+
+    given("사용자가") {
+        val restrictionService = RestrictionService()
+        `when`("동시에 여러 제재를 걸리더라도") {
+            val originRestriction = Restriction.createInitialState()
+            val messageReports = getReportByCount(ReportType.MESSAGE, 14)
+            val report =
+                ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.MESSAGE, 15, 1, 2)
+            val messageReportRestriction = restrictionService.calculateRestrictionByReports(originRestriction, report, messageReports)
+            val voteReports = getReportByCount(ReportType.VOTE, 14)
+            val voteReport =
+                ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.VOTE, 15, 1, 2)
+            val actual= restrictionService.calculateRestrictionByReports(messageReportRestriction, voteReport, voteReports)
+            then("모든 정보가 유지된다.") {
+                actual.voteRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
+                actual.voteRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+                actual.messageRestriction.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
+                actual.messageRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
             }
         }
     }
