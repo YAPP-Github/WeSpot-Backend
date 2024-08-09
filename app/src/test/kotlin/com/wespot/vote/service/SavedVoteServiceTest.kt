@@ -211,4 +211,72 @@ class SavedVoteServiceTest @Autowired constructor(
         notifications.size shouldBe 5
     }
 
+    @Test
+    fun `투표를 5명이 보내면 알림이 발생한다`() {
+        // given
+        val requests1 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[0].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests2 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[1].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests3 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[2].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests4 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[3].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests5 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[4].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+
+        // when
+        var loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests1)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 2])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests2)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 3])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests3)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 6])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests4)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 7])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests5)
+        val notifications = notificationPort.findAll()
+
+        // then
+        notifications.size shouldBe 12
+        notifications[5].title shouldBe "우리 반 투표 결과가 업데이트 되었어요 \uD83D\uDC40"
+        notifications[5].body shouldBe "실시간 1등은 누구일까요? 눌러서 바로 확인해 보세요"
+    }
+
 }

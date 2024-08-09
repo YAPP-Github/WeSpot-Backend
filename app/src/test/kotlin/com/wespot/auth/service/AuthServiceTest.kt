@@ -12,6 +12,8 @@ import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.SocialType
+import com.wespot.user.event.CreatedVoteEvent
+import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
@@ -192,6 +194,8 @@ class AuthServiceTest : BehaviorSpec({
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
         every { authService.signIn(any()) } returns tokenAndUserDetailResponse
+        every { eventPublisher.publishEvent(SignUpUserEvent(user)) } returns Unit
+        every { eventPublisher.publishEvent(CreatedVoteEvent(user)) } returns Unit
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)
