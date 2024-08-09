@@ -7,7 +7,7 @@ object VoteOptionMapper {
     fun mapToDomainEntity(voteOptionJpaEntity: VoteOptionJpaEntity): VoteOption =
         VoteOption(
             id = voteOptionJpaEntity.id,
-            content = voteOptionJpaEntity.content,
+            content = VoteOptionContent.from(voteOptionJpaEntity.content),
             createdAt = voteOptionJpaEntity.baseEntity.createdAt,
             updatedAt = voteOptionJpaEntity.baseEntity.updatedAt
         )
@@ -15,7 +15,7 @@ object VoteOptionMapper {
     fun mapToJpaEntity(voteOption: VoteOption): VoteOptionJpaEntity =
         VoteOptionJpaEntity(
             id = voteOption.id,
-            content = voteOption.content,
+            content = voteOption.content.content,
             baseEntity = BaseEntity(
                 createdAt = voteOption.createdAt,
                 updatedAt = voteOption.updatedAt

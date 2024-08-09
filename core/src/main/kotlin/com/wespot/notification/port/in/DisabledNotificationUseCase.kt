@@ -8,6 +8,6 @@ interface DisabledNotificationUseCase {
 
     fun disableMessageNotifications(today: LocalDate)
 
-    fun disableMessageNotification(messageId: Long, sendMessageCount: Int)
+    fun disableMessageNotification(senderId: Long, sendMessageCount: Int)
 
 }

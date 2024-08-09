@@ -18,12 +18,16 @@ class NotificationJpaRepositoryTest @Autowired constructor(
     @Test
     fun `알림 목록 조회에 Cursor Based Pagination을 도입한다`() {
         // given
-        val notification1 = createSavedNotification()
-        val notification2 = createSavedNotification()
-        val notification3 = createSavedNotification()
-        val notification4 = createSavedNotification()
-        val notification5 = createSavedNotification()
-        val userId = notification1.userId
+        val userId = 1L
+        val notification1 = createSavedNotificationBy(userId)
+        createSavedNotificationBy(2)
+        val notification2 = createSavedNotificationBy(userId)
+        createSavedNotificationBy(3)
+        val notification3 = createSavedNotificationBy(userId)
+        createSavedNotificationBy(4)
+        val notification4 = createSavedNotificationBy(userId)
+        createSavedNotificationBy(5)
+        val notification5 = createSavedNotificationBy(userId)
 
         // when
         val firstSearch =
@@ -41,8 +45,8 @@ class NotificationJpaRepositoryTest @Autowired constructor(
         secondSearch[1] shouldBe notification1
     }
 
-    private fun createSavedNotification(): NotificationJpaEntity {
-        val notification = NotificationFixture.createWithType(NotificationType.MESSAGE)
+    private fun createSavedNotificationBy(userId: Long): NotificationJpaEntity {
+        val notification = NotificationFixture.createWithUserIdAndType(userId, NotificationType.MESSAGE)
         val notificationJpaEntity = NotificationMapper.mapToJpaEntity(notification)
 
         return notificationJpaRepository.save(notificationJpaEntity)

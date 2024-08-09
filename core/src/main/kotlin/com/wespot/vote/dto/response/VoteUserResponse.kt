@@ -16,7 +16,7 @@ data class VoteUserResponse(
             return VoteUserResponse(
                 id = user.id,
                 name = user.name,
-                introduction = user.introduction,
+                introduction = user.introduction.introduction,
                 profile = user.profile.let { ProfileResponse.from(it) }
             )
         }

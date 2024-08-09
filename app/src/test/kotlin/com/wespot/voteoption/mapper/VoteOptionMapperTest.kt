@@ -14,7 +14,7 @@ class VoteOptionMapperTest : BehaviorSpec({
             val domainEntity = VoteOptionMapper.mapToDomainEntity(jpaEntity)
             then("Domain Entity를 반환한다") {
                 domainEntity.id shouldBe jpaEntity.id
-                domainEntity.content shouldBe jpaEntity.content
+                domainEntity.content.content shouldBe jpaEntity.content
                 domainEntity.createdAt shouldBe jpaEntity.baseEntity.createdAt
                 domainEntity.updatedAt shouldBe jpaEntity.baseEntity.updatedAt
             }
@@ -27,7 +27,7 @@ class VoteOptionMapperTest : BehaviorSpec({
             val jpaEntity = VoteOptionMapper.mapToJpaEntity(domainEntity)
             then("Jpa Entity를 반환한다") {
                 jpaEntity.id shouldBe domainEntity.id
-                jpaEntity.content shouldBe domainEntity.content
+                jpaEntity.content shouldBe domainEntity.content.content
                 jpaEntity.baseEntity.createdAt shouldBe domainEntity.createdAt
                 jpaEntity.baseEntity.updatedAt shouldBe domainEntity.updatedAt
             }

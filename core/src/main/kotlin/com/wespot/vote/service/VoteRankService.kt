@@ -10,6 +10,7 @@ import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
@@ -19,6 +20,7 @@ class VoteRankService(
     private val rankCalculateService: RankCalculateService
 ) : VoteRankUseCase {
 
+    @Transactional(readOnly = true)
     override fun getVoteResultsOfTop5(date: LocalDate): VoteResultResponsesOfTop5 {
         return VoteResultResponsesOfTop5.from(getRankedVoteResults(date))
     }
@@ -34,6 +36,7 @@ class VoteRankService(
         return rankedVoteResults
     }
 
+    @Transactional(readOnly = true)
     override fun getVoteResultsOfTop1(date: LocalDate): VoteResultResponsesOfTop1 {
         return VoteResultResponsesOfTop1.from(getRankedVoteResults(date))
     }

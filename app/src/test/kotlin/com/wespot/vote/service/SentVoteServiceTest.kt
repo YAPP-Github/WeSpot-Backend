@@ -19,11 +19,9 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
 class SentVoteServiceTest @Autowired constructor(
     private var sentVoteService: SentVoteService,
     private var userJpaRepository: UserJpaRepository,
@@ -120,12 +118,15 @@ class SentVoteServiceTest @Autowired constructor(
         sentVotes1.voteData[0].sentVoteResults[1].vote.user.id shouldBe users[2].id
         sentVotes1.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
         sentVotes1.voteData[1].sentVoteResults.size shouldBe 0
+        sentVotes1.lastCursorId shouldBe vote2!!.id
         sentVotes1.hasNext shouldBe false
         sentVotes2.voteData.size shouldBe 1
         sentVotes2.voteData[0].voteId shouldBe vote1!!.id
+        sentVotes2.lastCursorId shouldBe vote1!!.id
         sentVotes2.hasNext shouldBe true
         sentVotes3.voteData.size shouldBe 1
         sentVotes3.voteData[0].voteId shouldBe vote2!!.id
+        sentVotes3.lastCursorId shouldBe vote2!!.id
         sentVotes3.hasNext shouldBe false
     }
 

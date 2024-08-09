@@ -67,10 +67,9 @@ class VoteController(
 
     @GetMapping("/received")
     fun getReceivedVotes(
-        @RequestParam(required = false) cursorId: Long?,
-        @RequestParam limit: Long
+        @RequestParam(required = false) cursorId: Long?
     ): ResponseEntity<ReceivedVotesResponses> {
-        val responses = receivedVoteUseCase.getReceivedVotes(cursorId, limit)
+        val responses = receivedVoteUseCase.getReceivedVotes(cursorId, 10)
 
         return ResponseEntity.ok(responses)
     }
@@ -88,9 +87,8 @@ class VoteController(
     @GetMapping("/sent")
     fun getSentVotes(
         @RequestParam(required = false) cursorId: Long?,
-        @RequestParam limit: Long
     ): ResponseEntity<SentVotesResponses> {
-        val responses = sentVoteUseCase.getSentVotes(cursorId, limit)
+        val responses = sentVoteUseCase.getSentVotes(cursorId, 10)
 
         return ResponseEntity.ok(responses)
     }

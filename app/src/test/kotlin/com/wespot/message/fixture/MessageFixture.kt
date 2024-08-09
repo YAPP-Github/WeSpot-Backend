@@ -1,6 +1,7 @@
 package com.wespot.message.fixture
 
 import com.wespot.message.Message
+import com.wespot.message.MessageContent
 import com.wespot.message.MessageType
 import java.time.LocalDateTime
 
@@ -9,7 +10,7 @@ object MessageFixture {
 
     fun createWithId(id: Long) = Message(
         id = id,
-        content = "content",
+        content = MessageContent.from("content"),
         senderId = 1,
         senderName = "senderName",
         receiverId = 2,
@@ -31,7 +32,7 @@ object MessageFixture {
 
     fun createWithIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long) = Message(
         id = id,
-        content = "content",
+        content = MessageContent.from("content"),
         senderId = senderId,
         senderName = "senderName",
         receiverId = receiverId,
@@ -59,7 +60,7 @@ object MessageFixture {
     ): Message {
         return Message(
             id = 0,
-            content = content,
+            content = MessageContent.from(content),
             senderId = senderId,
             senderName = senderName,
             receiverId = receiverId,

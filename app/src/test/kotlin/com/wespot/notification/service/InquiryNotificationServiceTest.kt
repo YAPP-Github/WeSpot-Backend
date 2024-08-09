@@ -9,9 +9,7 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
 class InquiryNotificationServiceTest @Autowired constructor(
     private val inquiryNotificationService: InquiryNotificationService,
     private val userPort: UserPort,
@@ -42,14 +40,16 @@ class InquiryNotificationServiceTest @Autowired constructor(
 
         // when
         val responses1 = inquiryNotificationService.getNotifications(null, 1)
-        val responses2= inquiryNotificationService.getNotifications(responses1.notifications[0].id, 1)
+        val responses2 = inquiryNotificationService.getNotifications(responses1.notifications[0].id, 1)
 
         // then
         responses1.notifications.size shouldBe 1
         responses1.notifications[0].id shouldBe savedNotification.id
+        responses1.lastCursorId shouldBe savedNotification.id
         responses1.hasNext shouldBe true
         responses2.notifications.size shouldBe 1
         responses2.notifications[0].id shouldBe notifications[0].id
+        responses2.lastCursorId shouldBe notifications[0].id
         responses2.hasNext shouldBe false
     }
 

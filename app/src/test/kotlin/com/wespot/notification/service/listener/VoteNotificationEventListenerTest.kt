@@ -23,7 +23,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.test.Test
 
-@SpringBootTest
 class VoteNotificationEventListenerTest @Autowired constructor(
     private val voteNotificationEventListener: VoteNotificationEventListener,
     private val userPort: UserPort,

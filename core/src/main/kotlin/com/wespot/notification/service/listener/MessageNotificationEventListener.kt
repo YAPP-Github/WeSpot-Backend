@@ -17,7 +17,7 @@ class MessageNotificationEventListener(
     @EventListener
     fun disableMessageNotificationByLimit(messageLimitEvent: MessageLimitEvent) {
         disabledNotificationService.disableMessageNotification(
-            messageLimitEvent.messageId,
+            messageLimitEvent.senderId,
             messageLimitEvent.sendMessageCount
         )
     }

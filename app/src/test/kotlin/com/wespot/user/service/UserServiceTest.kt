@@ -11,6 +11,7 @@ import com.wespot.user.port.out.UserPort
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.Profile
 import com.wespot.user.User
+import com.wespot.user.UserIntroduction
 import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.port.out.ProfilePort
 import io.kotest.core.spec.style.BehaviorSpec
@@ -77,7 +78,7 @@ class UserServiceTest : BehaviorSpec({
 
             every { getLoginUser(userPort) } returns user
             every { user.updateProfile(any()) } returns user.copy(
-                introduction = profileRequest.introduction
+                introduction = UserIntroduction.from(profileRequest.introduction)
             )
             every { profile.update(any(), any()) } returns profile.copy(
                 backgroundColor = profileRequest.profile.backgroundColor,
@@ -89,7 +90,7 @@ class UserServiceTest : BehaviorSpec({
             userService.updateProfile(profileRequest)
 
             then("프로필이 업데이트 되어야 한다") {
-                user.introduction shouldBe profileRequest.introduction
+                user.introduction.introduction shouldBe profileRequest.introduction
                 user.profile.backgroundColor shouldBe profileRequest.profile.backgroundColor
                 user.profile.iconUrl shouldBe profileRequest.profile.iconUrl
             }

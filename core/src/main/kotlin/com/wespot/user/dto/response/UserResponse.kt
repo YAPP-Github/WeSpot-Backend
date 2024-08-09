@@ -20,7 +20,7 @@ data class UserResponse(
                 id = user.id,
                 name = user.name,
                 gender = user.name,
-                introduction = user.introduction,
+                introduction = user.introduction.introduction,
                 schoolName = school,
                 grade = user.grade,
                 classNumber = user.classNumber,

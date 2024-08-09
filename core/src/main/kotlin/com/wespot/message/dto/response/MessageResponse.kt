@@ -31,7 +31,7 @@ data class MessageResponse(
                 id = message.id,
                 senderName = message.senderName,
                 receiver = UserResponse.from(receiver, school.name),
-                content = message.content,
+                content = message.content.content,
                 receivedAt = message.receivedAt?.toString(),
                 isRead = message.isReceiverRead,
                 isBlocked = isBlocked,

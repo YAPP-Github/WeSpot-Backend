@@ -32,8 +32,12 @@ object NotificationFinder {
         return notificationPort.findAllFromDate(today)
     }
 
-    fun findAllByTargetId(notificationPort: NotificationPort, targetId: Long): List<Notification> {
-        return notificationPort.findAllByTargetId(targetId)
+    fun findAllByUserIdAndFromDate(
+        notificationPort: NotificationPort,
+        userId: Long,
+        today: LocalDate
+    ): List<Notification> {
+        return notificationPort.findAllByUserIdAndFromDate(userId, today)
     }
 
 }

@@ -12,7 +12,7 @@ data class VoteOptionResponse(
         fun from(voteOption: VoteOption): VoteOptionResponse {
             return VoteOptionResponse(
                 id = voteOption.id,
-                content = voteOption.content
+                content = voteOption.content.content
             )
         }
 

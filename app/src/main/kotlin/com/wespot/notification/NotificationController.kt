@@ -20,9 +20,8 @@ class NotificationController(
     @GetMapping
     fun getNotifications(
         @RequestParam(required = false) cursorId: Long?,
-        @RequestParam limit: Long
     ): ResponseEntity<NotificationResponses> {
-        val notifications = inquiryNotificationUseCase.getNotifications(cursorId, limit)
+        val notifications = inquiryNotificationUseCase.getNotifications(cursorId, 10)
 
         return ResponseEntity.ok(notifications)
     }

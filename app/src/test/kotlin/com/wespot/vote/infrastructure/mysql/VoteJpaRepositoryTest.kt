@@ -27,6 +27,14 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(3)
             )
         )
+        voteJpaRepository.save(
+            VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
+                1,
+                1,
+                2,
+                now.minusDays(3)
+            )
+        )
         val vote3 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
@@ -35,12 +43,28 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(2)
             )
         )
+        voteJpaRepository.save(
+            VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
+                1,
+                1,
+                3,
+                now.minusDays(3)
+            )
+        )
         val vote4 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
                 1,
                 1,
                 now.minusDays(1)
+            )
+        )
+        voteJpaRepository.save(
+            VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
+                1,
+                1,
+                4,
+                now.minusDays(3)
             )
         )
         val vote5 = voteJpaRepository.save(

@@ -67,11 +67,20 @@ class CreatedVoteService(
 
     @Transactional
     override fun createVoteByUser(user: User) {
-        VoteServiceHelper.findUser(userPort, user.id)
+        val savedUser = VoteServiceHelper.findUser(userPort, user.id)
+        if (!isFirstSignUpUser(savedUser)) {
+            return
+        }
         val allVoteOptions = voteOptionPort.findAll()
         val today = LocalDate.now()
-        val voteIdentifier = VoteIdentifier.of(user, today)
+        val voteIdentifier = VoteIdentifier.of(savedUser, today)
         saveVote(voteIdentifier, allVoteOptions)
+    }
+
+    private fun isFirstSignUpUser(user: User): Boolean {
+        val numberOfUsers = userPort.countBySchoolIdAndGradeAndClassNumber(user.schoolId, user.grade, user.classNumber)
+
+        return numberOfUsers == 1L
     }
 
 }
