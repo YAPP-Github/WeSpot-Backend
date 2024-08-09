@@ -6,6 +6,7 @@ import com.wespot.voteoption.VoteOption
 
 data class ReceivedVotesResponses(
     val voteData: List<ReceivedVotesResponse>,
+    val lastCursorId: Long,
     val hasNext: Boolean
 ) {
     companion object {
@@ -14,7 +15,17 @@ data class ReceivedVotesResponses(
             val voteData = voteResults
                 .map { ReceivedVotesResponse.of(it.key, it.value) }
                 .toList()
-            return ReceivedVotesResponses(voteData, hasNext)
+
+            return ReceivedVotesResponses(voteData, getLastCursorId(voteData), hasNext)
+        }
+
+        private fun getLastCursorId(receivedVotesResponse: List<ReceivedVotesResponse>): Long {
+            if (receivedVotesResponse.isEmpty()) {
+                return 0
+            }
+
+            return receivedVotesResponse.last()
+                .voteId
         }
 
     }

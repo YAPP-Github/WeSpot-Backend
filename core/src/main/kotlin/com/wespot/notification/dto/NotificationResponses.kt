@@ -4,6 +4,7 @@ import com.wespot.notification.Notification
 
 data class NotificationResponses(
     val notifications: List<NotificationResponse>,
+    val lastCursorId: Long,
     val hasNext: Boolean
 ) {
 
@@ -14,7 +15,16 @@ data class NotificationResponses(
                 .map { NotificationResponse.from(it) }
                 .toList()
 
-            return NotificationResponses(response, hasNext)
+            return NotificationResponses(response, getLastCursorId(notifications), hasNext)
+        }
+
+        private fun getLastCursorId(notifications: List<Notification>): Long {
+            if (notifications.isEmpty()) {
+                return 0
+            }
+
+            return notifications.last()
+                .id
         }
 
     }

@@ -21,7 +21,6 @@ import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -122,11 +121,14 @@ class ReceivedVoteServiceTest @Autowired constructor(
         receivedVotes1.voteData[0].receivedVoteResults[1].isNew shouldBe true
         receivedVotes1.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
         receivedVotes1.voteData[1].receivedVoteResults.size shouldBe 0
+        receivedVotes1.lastCursorId shouldBe vote2!!.id
         receivedVotes2.voteData.size shouldBe 1
         receivedVotes2.voteData[0].voteId shouldBe vote1!!.id
+        receivedVotes2.lastCursorId shouldBe vote1!!.id
         receivedVotes2.hasNext shouldBe true
         receivedVotes3.voteData.size shouldBe 1
         receivedVotes3.voteData[0].voteId shouldBe vote2!!.id
+        receivedVotes3.lastCursorId shouldBe vote2!!.id
         receivedVotes3.hasNext shouldBe false
     }
 
