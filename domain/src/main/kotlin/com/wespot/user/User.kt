@@ -52,7 +52,7 @@ data class User(
         )
 
     fun withdraw(): User {
-        require(!restriction.isKeepRestriction()) { "제재중에는 탈퇴할 수 없습니다." }
+        require(!restriction.isKeepRestriction()) { "제재가 풀리지 않은 상태에서는 탈퇴할 수 없습니다." }
 
         return User(
             id = id,

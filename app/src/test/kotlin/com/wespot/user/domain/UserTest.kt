@@ -1,10 +1,15 @@
 package com.wespot.user.domain
 
+import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.RestrictionFixture
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.restriction.Restriction
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.throwable.shouldHaveMessage
+import java.time.LocalDate
 
 class UserTest : BehaviorSpec({
 
@@ -66,6 +71,46 @@ class UserTest : BehaviorSpec({
                 user.isEnableMessageNotification() shouldBe false
                 user.isEnableVoteNotification() shouldBe true
                 user.isEnableMarketingNotification() shouldBe true
+            }
+        }
+    }
+
+    given("유저가") {
+        val user = UserFixture.createWithId(1L)
+        `when`("탈퇴를") {
+            val withdrawUser = user.withdraw()
+            then("정상적으로 진행한다.") {
+                withdrawUser.name shouldBe "탈퇴한 유저입니다."
+            }
+        }
+        `when`("탈퇴 할 때, 제재가 풀리지 않았으면") {
+            val initialRestriction = Restriction.createInitialState()
+            val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
+            user.restrict(restriction)
+            val shouldThrow = shouldThrow<IllegalArgumentException> { user.withdraw() }
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "제재가 풀리지 않은 상태에서는 탈퇴할 수 없습니다."
+            }
+        }
+    }
+
+    given("유저가") {
+        val user = UserFixture.createWithId(1L)
+        `when`("제재가 풀렸는지") {
+            val initialRestriction = Restriction.createInitialState()
+            val restriction = initialRestriction.changeRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
+            user.restrict(restriction)
+            val actual = user.getCurrentUserRestrictionBasedOnTime(LocalDate.now().plusDays(31))
+            then("확인한다.") {
+                actual.messageRestriction.restrictionType shouldBe RestrictionType.NONE
+                actual.messageRestriction.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+            }
+        }
+        `when`("아직 제재중인지") {
+            val actual = user.getCurrentUserRestrictionBasedOnTime(LocalDate.now().plusDays(29))
+            then("확인한다.") {
+                actual.messageRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
+                actual.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(30)
             }
         }
     }
