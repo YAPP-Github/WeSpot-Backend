@@ -3,7 +3,6 @@ package com.wespot.user
 import com.wespot.user.dto.response.BlockedUserResponse
 import com.wespot.user.port.`in`.BlockedUserUseCase
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
