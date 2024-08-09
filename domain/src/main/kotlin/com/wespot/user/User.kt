@@ -51,12 +51,14 @@ data class User(
             withdrawAt = withdrawAt,
         )
 
-    fun withdraw() =
-        User(
+    fun withdraw(): User {
+        require(!restriction.isKeepRestriction()) { "제재중에는 탈퇴할 수 없습니다." }
+
+        return User(
             id = id,
             email = "",
             password = "",
-            name = "",
+            name = WITHDRAW_USER_NAME,
             introduction = "",
             gender = gender,
             role = Role.GUEST,
@@ -78,8 +80,12 @@ data class User(
             updatedAt = LocalDateTime.now(),
             withdrawAt = LocalDateTime.now(),
         )
+    }
 
     companion object {
+
+        private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
+
         fun create(
             email: String,
             password: String,
