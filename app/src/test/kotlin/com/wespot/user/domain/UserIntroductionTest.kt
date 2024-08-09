@@ -14,7 +14,7 @@ class UserIntroductionTest : BehaviorSpec({
         `when`("욕설이 포함되어 있는 경우") {
             val shouldThrow = shouldThrow<IllegalArgumentException> { UserIntroduction.from(badWordsIntroduction) }
             then("예외가 발생한다.") {
-                shouldThrow shouldHaveMessage "소개에는 욕설이 포함될 수 없습니다."
+                shouldThrow shouldHaveMessage "소개에 비속어가 포함되어 있습니다."
             }
         }
         `when`("정상적인 값이 입력되는 경우") {

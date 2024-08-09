@@ -40,7 +40,7 @@ class VoteOptionTest() : BehaviorSpec() {
                     )
                 }
                 then("예외가 발생한다.") {
-                    shouldThrow shouldHaveMessage "선택지의 내용에는 욕설이 포함될 수 없습니다."
+                    shouldThrow shouldHaveMessage "선택지의 내용에 비속어가 포함되어 있습니다."
                 }
             }
         }

@@ -18,7 +18,7 @@ data class UserIntroduction(
         }
 
         private fun validateUserIntroduction(content: String) {
-            require(!ProfanityChecker.checkProfanity(content)) { "소개에는 욕설이 포함될 수 없습니다." }
+            require(!ProfanityChecker.checkProfanity(content)) { "소개에 비속어가 포함되어 있습니다." }
         }
 
     }

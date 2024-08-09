@@ -69,7 +69,7 @@ class MessageTest : BehaviorSpec({
                 )
             }
             then("예외가 발생한다.") {
-                shouldThrow shouldHaveMessage "메시지의 내용에는 욕설이 포함될 수 없습니다."
+                shouldThrow shouldHaveMessage "메시지의 내용에 비속어가 포함되어 있습니다."
             }
         }
         `when`("아무런 내용이 없는 경우") {

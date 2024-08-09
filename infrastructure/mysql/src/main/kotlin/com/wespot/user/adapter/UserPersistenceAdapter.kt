@@ -29,7 +29,6 @@ class UserPersistenceAdapter(
             .let { UserMapper.mapToDomainEntity(it) }
     }
 
-
     override fun searchUsers(
         name: String,
         cursorName: String?,
@@ -64,6 +63,10 @@ class UserPersistenceAdapter(
             cursorSchoolTypeOrder = cursorSchoolTypeOrder,
             cursorId = cursorId
         )
+    }
+
+    override fun countBySchoolIdAndGradeAndClassNumber(schoolId: Long, grade: Int, classNumber: Int): Long {
+        return userJpaRepository.countBySchoolIdAndGradeAndClassNumber(schoolId, grade, classNumber)
     }
 
     override fun findById(userId: Long): User? {

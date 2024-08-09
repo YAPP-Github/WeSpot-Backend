@@ -94,4 +94,10 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("cursorId") cursorId: Long?
     ): Long
 
+    fun countBySchoolIdAndGradeAndClassNumber(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): Long
+
 }
