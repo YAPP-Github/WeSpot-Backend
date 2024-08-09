@@ -164,11 +164,11 @@ class VoteRankServiceTest @Autowired constructor(
 
         // then
         voteResultsOfTop1.voteResults.size shouldBe 5
-        voteResultsOfTop1.voteResults[0].voteResult!!.user.id shouldBe users[1].id
-        voteResultsOfTop1.voteResults[1].voteResult!!.user.id shouldBe users[2].id
-        voteResultsOfTop1.voteResults[2].voteResult shouldBe null
-        voteResultsOfTop1.voteResults[3].voteResult shouldBe null
-        voteResultsOfTop1.voteResults[4].voteResult shouldBe null
+        voteResultsOfTop1.voteResults[0].results[0].user.id shouldBe users[1].id
+        voteResultsOfTop1.voteResults[1].results[0].user.id shouldBe users[2].id
+        voteResultsOfTop1.voteResults[2].results.size shouldBe null
+        voteResultsOfTop1.voteResults[3].results.size shouldBe null
+        voteResultsOfTop1.voteResults[4].results.size shouldBe null
     }
 
 }
