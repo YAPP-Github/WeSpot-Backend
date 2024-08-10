@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
-@SpringBootTest
 class RevokeRestrictionServiceTest @Autowired constructor(
     private val revokeRestrictionService: RevokeRestrictionService,
     private val userJpaRepository: UserJpaRepository,

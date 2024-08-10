@@ -5,7 +5,11 @@ import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
 import com.wespot.auth.dto.request.SignUpRequest
-import com.wespot.auth.dto.response.*
+import com.wespot.auth.dto.response.SettingResponse
+import com.wespot.auth.dto.response.SignUpResponse
+import com.wespot.auth.dto.response.SocialResponse
+import com.wespot.auth.dto.response.TokenAndUserDetailResponse
+import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
@@ -17,6 +21,7 @@ import com.wespot.user.Social
 import com.wespot.user.SocialType
 import com.wespot.user.User
 import com.wespot.user.UserConsent
+import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
@@ -94,7 +99,8 @@ class AuthService(
 
         val user = createUser(signUpToken, signUpRequest)
         val savedUser = userPort.save(user)
-        createVoteIfRegisterFirstForClass(user)
+        eventPublisher.publishEvent(CreatedVoteEvent(savedUser))
+        eventPublisher.publishEvent(SignUpUserEvent(savedUser))
 
         saveRelatedEntities(savedUser, signUpRequest)
 
@@ -136,14 +142,6 @@ class AuthService(
             social = social,
             gender = signUpRequest.gender
         )
-    }
-
-    fun createVoteIfRegisterFirstForClass(user: User) {
-        if (userPort.existsBySchoolIdAndGradeAndClassNumber(user.schoolId, user.grade, user.classNumber)) {
-            return
-        }
-
-        eventPublisher.publishEvent(SignUpUserEvent(user))
     }
 
     fun saveRelatedEntities(

@@ -83,15 +83,6 @@ class UserTest : BehaviorSpec({
                 withdrawUser.name shouldBe "탈퇴한 유저입니다."
             }
         }
-        `when`("탈퇴 할 때, 제재가 풀리지 않았으면") {
-            val initialRestriction = Restriction.createInitialState()
-            val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
-            user.restrict(restriction)
-            val shouldThrow = shouldThrow<IllegalArgumentException> { user.withdraw() }
-            then("예외가 발생한다.") {
-                shouldThrow shouldHaveMessage "제재가 풀리지 않은 상태에서는 탈퇴할 수 없습니다."
-            }
-        }
     }
 
     given("유저가") {
@@ -111,6 +102,17 @@ class UserTest : BehaviorSpec({
             then("확인한다.") {
                 actual.messageRestriction.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
                 actual.messageRestriction.releaseDate shouldBe LocalDate.now().plusDays(30)
+            }
+        }
+    }
+
+    given("소개에") {
+        val badWordsIntroduction = "ㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅂㅂㅂㅂㅂ"
+        `when`("욕설이 포함되어 있는 경우") {
+            val createUser = UserFixture.createWithId(1)
+            val shouldThrow = shouldThrow<IllegalArgumentException> { createUser.updateProfile(badWordsIntroduction) }
+            then("예외가 발생한다.") {
+                shouldThrow shouldHaveMessage "소개에 비속어가 포함되어 있습니다."
             }
         }
     }

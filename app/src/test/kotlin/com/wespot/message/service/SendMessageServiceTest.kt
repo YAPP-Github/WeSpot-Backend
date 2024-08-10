@@ -75,7 +75,7 @@ class SendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message
             every { messagePort.sendMessageCount(sender.id) } returns 0
             every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
-            every { eventPublisher.publishEvent(MessageLimitEvent(0, 0)) } returns Unit
+            every { eventPublisher.publishEvent(MessageLimitEvent(sender.id, 0)) } returns Unit
             every { eventPublisher.publishEvent(ReceivedMessageEvent(receiver, 0)) } returns Unit
             every { blockedUserPort.existsByBlockerIdAndBlockedId(1, 2) } returns false
             every { blockedUserPort.existsByBlockerIdAndBlockedId(2, 1) } returns false

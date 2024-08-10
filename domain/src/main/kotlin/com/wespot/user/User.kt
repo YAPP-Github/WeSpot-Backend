@@ -9,7 +9,7 @@ data class User(
     val email: String,
     val password: String,
     val name: String,
-    val introduction: String,
+    val introduction: UserIntroduction,
     val gender: String,
     val role: Role,
     val schoolId: Long,
@@ -34,7 +34,7 @@ data class User(
             email = email,
             password = password,
             name = name,
-            introduction = introduction,
+            introduction = UserIntroduction.from(introduction),
             gender = gender,
             role = role,
             schoolId = schoolId,
@@ -51,15 +51,13 @@ data class User(
             withdrawAt = withdrawAt,
         )
 
-    fun withdraw(): User {
-        require(!restriction.isKeepRestriction()) { "제재가 풀리지 않은 상태에서는 탈퇴할 수 없습니다." }
-
-        return User(
+    fun withdraw() =
+        User(
             id = id,
             email = "",
             password = "",
             name = WITHDRAW_USER_NAME,
-            introduction = "",
+            introduction = UserIntroduction.emptyUserIntroduction(),
             gender = gender,
             role = Role.GUEST,
             schoolId = schoolId,
@@ -80,7 +78,6 @@ data class User(
             updatedAt = LocalDateTime.now(),
             withdrawAt = LocalDateTime.now(),
         )
-    }
 
     companion object {
 
@@ -101,7 +98,7 @@ data class User(
                 email = email,
                 password = password,
                 name = name,
-                introduction = "",
+                introduction = UserIntroduction.emptyUserIntroduction(),
                 gender = gender,
                 role = Role.USER,
                 schoolId = schoolId,

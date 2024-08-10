@@ -13,8 +13,8 @@ import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
@@ -25,6 +25,7 @@ class ReceivedVoteService(
     private val receivedVoteCalculateService: ReceivedVoteCalculateService
 ) : ReceivedVoteUseCase {
 
+    @Transactional(readOnly = true)
     override fun getReceivedVotes(cursorId: Long?, limit: Long): ReceivedVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(

@@ -3,6 +3,7 @@ package com.wespot.user.mapper
 import com.wespot.common.BaseEntity
 import com.wespot.user.User
 import com.wespot.user.entity.RestrictionJpaEntity
+import com.wespot.user.UserIntroduction
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.restriction.MessageRestriction
 import com.wespot.user.restriction.Restriction
@@ -16,7 +17,7 @@ object UserMapper {
             email = userJpaEntity.email,
             password = userJpaEntity.password,
             name = userJpaEntity.name,
-            introduction = userJpaEntity.introduction,
+            introduction = UserIntroduction.from(userJpaEntity.introduction),
             gender = userJpaEntity.gender,
             schoolId = userJpaEntity.schoolId,
             grade = userJpaEntity.grade,
@@ -49,7 +50,7 @@ object UserMapper {
             email = user.email,
             password = user.password,
             name = user.name,
-            introduction = user.introduction,
+            introduction = user.introduction.introduction,
             gender = user.gender,
             schoolId = user.schoolId,
             grade = user.grade,

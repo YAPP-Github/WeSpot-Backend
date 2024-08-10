@@ -27,6 +27,10 @@ interface NotificationJpaRepository : JpaRepository<NotificationJpaEntity, Long>
         createdAtEnd: LocalDateTime
     ): List<NotificationJpaEntity>
 
-    fun findAllByTargetId(targetId: Long): List<NotificationJpaEntity>
+    fun findAllByUserIdAndBaseEntityCreatedAtBetween(
+        userId: Long,
+        createdAtStart: LocalDateTime,
+        createdAtEnd: LocalDateTime
+    ): List<NotificationJpaEntity>
 
 }

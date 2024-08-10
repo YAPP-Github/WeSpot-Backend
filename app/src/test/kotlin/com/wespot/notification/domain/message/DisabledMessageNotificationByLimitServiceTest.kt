@@ -16,7 +16,7 @@ class DisabledMessageNotificationByLimitServiceTest : BehaviorSpec({
             Notification.createMessageInitialState(1, NotificationType.MESSAGE_RECEIVED, 1, "title", "body"),
         )
         `when`("3개가 아니라면") {
-            val disableMessageNotification = service.disableMessageNotification(1, 2) { notifications }
+            val disableMessageNotification = service.disableMessageNotification(2) { notifications }
             then("비활성화되지 않는다.") {
                 disableMessageNotification.size shouldBe 3
                 disableMessageNotification[0].isEnabled shouldBe true
@@ -25,7 +25,7 @@ class DisabledMessageNotificationByLimitServiceTest : BehaviorSpec({
             }
         }
         `when`("3개라면") {
-            val disableMessageNotification = service.disableMessageNotification(1, 3) { notifications }
+            val disableMessageNotification = service.disableMessageNotification(3) { notifications }
             then("비활성화 된다.") {
                 disableMessageNotification.size shouldBe 3
                 disableMessageNotification[0].isEnabled shouldBe false
@@ -33,7 +33,7 @@ class DisabledMessageNotificationByLimitServiceTest : BehaviorSpec({
                 disableMessageNotification[2].isEnabled shouldBe true
             }
 
-            val enableMessageNotification = service.disableMessageNotification(1, 2) { notifications }
+            val enableMessageNotification = service.disableMessageNotification(2) { notifications }
             then("다시 3개 이하로 내려가면 활성화 된다.") {
                 enableMessageNotification.size shouldBe 3
                 enableMessageNotification[0].isEnabled shouldBe true

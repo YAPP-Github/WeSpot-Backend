@@ -54,8 +54,11 @@ class NotificationPersistenceAdapter(
             .map { NotificationMapper.mapToDomainEntity(it) }
     }
 
-    override fun findAllByTargetId(targetId: Long): List<Notification> {
-        return notificationJpaRepository.findAllByTargetId(targetId)
+    override fun findAllByUserIdAndFromDate(userId: Long, today: LocalDate): List<Notification> {
+        val todayTime = today.atStartOfDay()
+        val tomorrowTime = todayTime.plusDays(1)
+
+        return notificationJpaRepository.findAllByUserIdAndBaseEntityCreatedAtBetween(userId, todayTime, tomorrowTime)
             .map { NotificationMapper.mapToDomainEntity(it) }
     }
 

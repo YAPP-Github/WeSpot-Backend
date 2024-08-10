@@ -10,6 +10,7 @@ import com.wespot.vote.port.`in`.SentVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SentVoteService(
@@ -17,6 +18,7 @@ class SentVoteService(
     private val userPort: UserPort,
 ) : SentVoteUseCase {
 
+    @Transactional(readOnly = true)
     override fun getSentVotes(cursorId: Long?, limit: Long): SentVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
         val votes = VoteServiceHelper.findVotesOrderByDateDesc(

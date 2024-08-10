@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
-@SpringBootTest
 class DisabledNotificationServiceTest @Autowired constructor(
     private val notificationPort: NotificationPort,
     private val disabledNotificationService: DisabledNotificationService,

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 class DisabledMessageNotificationByLimitService {
 
     fun disableMessageNotification(
-        messageId: Long,
         sendMessageCount: Int,
         fetchNotifications: () -> List<Notification>
     ): List<Notification> {

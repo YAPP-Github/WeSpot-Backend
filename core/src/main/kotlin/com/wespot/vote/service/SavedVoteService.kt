@@ -12,9 +12,9 @@ import com.wespot.vote.event.RegisteredVoteEvent
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
-import jakarta.transaction.Transactional
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -25,6 +25,7 @@ class SavedVoteService(
     private val eventPublisher: ApplicationEventPublisher,
 ) : SavedVoteUseCase {
 
+    @Transactional(readOnly = true)
     override fun getVoteOptions(): VoteItems {
         val user = VoteServiceHelper.findLoginUser(userPort)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)

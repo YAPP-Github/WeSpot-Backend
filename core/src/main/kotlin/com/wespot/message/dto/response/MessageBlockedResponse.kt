@@ -35,7 +35,7 @@ data class MessageBlockedResponse(
                 senderName = message.senderName,
                 senderProfile = senderProfile,
                 receiver = UserResponse.from(receiver, school.name),
-                content = message.content,
+                content = message.content.content,
                 receivedAt = message.receivedAt?.toString(),
                 isRead = message.isReceiverRead,
                 isBlocked = isBlocked,

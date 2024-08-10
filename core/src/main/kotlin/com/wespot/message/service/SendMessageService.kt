@@ -48,7 +48,7 @@ class SendMessageService(
         val saveMessage = messagePort.save(sendMessage)
         eventPublisher.publishEvent(
             MessageLimitEvent(
-                saveMessage.id,
+                senderId = loginUser.id,
                 messagePort.sendMessageCount(loginUser.id)
             )
         ) // TODO : 나중에 메시지 예약 취소하는 경우에도 해당 이벤트 발생시켜주시면 좋을 것 같아요.

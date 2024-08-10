@@ -21,10 +21,8 @@ import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
-@SpringBootTest
 class CreatedVoteServiceTest @Autowired constructor(
     private var createdVoteService: CreatedVoteService,
     private var userJpaRepository: UserJpaRepository,
@@ -131,6 +129,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     @Test
     fun `학급에 처음으로 가입한 회원이 존재하는 경우 투표를 생성한다`() {
         // given
+        userJpaRepository.deleteAll()
         val savedUserJpaEntity = userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
         val savedUserDomainEntity = UserMapper.mapToDomainEntity(savedUserJpaEntity)
 
@@ -157,6 +156,7 @@ class CreatedVoteServiceTest @Autowired constructor(
 
     @Test
     fun `오늘의 질문이 잘 생성되는지 확인한다`() {
+        userJpaRepository.deleteAll()
         val savedUserJpaEntity = userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
         val savedUserDomainEntity = UserMapper.mapToDomainEntity(savedUserJpaEntity)
 

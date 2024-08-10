@@ -43,4 +43,10 @@ interface UserPort {
         cursorSchoolTypeOrder: Int?,
         cursorId: Long?
     ): Long
+
+    fun countBySchoolIdAndGradeAndClassNumber(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int
+    ): Long
 }

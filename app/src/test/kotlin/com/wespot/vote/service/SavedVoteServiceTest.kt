@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -21,17 +22,16 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import kotlin.test.Test
 
-@SpringBootTest
 class SavedVoteServiceTest @Autowired constructor(
-    private var voteService: SavedVoteService,
-    private var userJpaRepository: UserJpaRepository,
-    private var voteOptionJpaRepository: VoteOptionJpaRepository,
-    private var ballotJpaRepository: BallotJpaRepository,
-    private var votePort: VotePort,
+    private val voteService: SavedVoteService,
+    private val userJpaRepository: UserJpaRepository,
+    private val voteOptionJpaRepository: VoteOptionJpaRepository,
+    private val ballotJpaRepository: BallotJpaRepository,
+    private val votePort: VotePort,
+    private val notificationPort: NotificationPort,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -190,6 +190,7 @@ class SavedVoteServiceTest @Autowired constructor(
         val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests)
+        val notifications = notificationPort.findAll()
 
         // then
         val ballots = ballotJpaRepository.findAll()
@@ -207,6 +208,75 @@ class SavedVoteServiceTest @Autowired constructor(
         ballots[2].receiverId shouldBeIn votedUserIds
         ballots[3].receiverId shouldBeIn votedUserIds
         ballots[4].receiverId shouldBeIn votedUserIds
+        notifications.size shouldBe 5
+    }
+
+    @Test
+    fun `투표를 5명이 보내면 알림이 발생한다`() {
+        // given
+        val requests1 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[0].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests2 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[1].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests3 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[2].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests4 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[3].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+        val requests5 = VoteRequests(
+            listOf(
+                VoteRequest(
+                    userId = users[4].id,
+                    voteOptionId = voteOptions[0].id
+                )
+            )
+        )
+
+        // when
+        var loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests1)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 2])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests2)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 3])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests3)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 6])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests4)
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 7])
+        UserFixture.setSecurityContextUser(loginUser)
+        voteService.saveVote(requests5)
+        val notifications = notificationPort.findAll()
+
+        // then
+        notifications.size shouldBe 12
+        notifications[5].title shouldBe "우리 반 투표 결과가 업데이트 되었어요 \uD83D\uDC40"
+        notifications[5].body shouldBe "실시간 1등은 누구일까요? 눌러서 바로 확인해 보세요"
     }
 
 }

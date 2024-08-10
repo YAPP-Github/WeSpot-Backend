@@ -7,7 +7,7 @@ object MessageMapper {
     fun mapToDomainEntity(messageJpaEntity: MessageJpaEntity): Message =
         Message(
             id = messageJpaEntity.id,
-            content = messageJpaEntity.content,
+            content = MessageContent.from(messageJpaEntity.content),
             senderId = messageJpaEntity.senderId,
             senderName = messageJpaEntity.senderName,
             receiverId = messageJpaEntity.receiverId,
@@ -30,7 +30,7 @@ object MessageMapper {
     fun mapToJpaEntity(message: Message): MessageJpaEntity =
         MessageJpaEntity(
             id = message.id,
-            content = message.content,
+            content = message.content.content,
             senderId = message.senderId,
             senderName = message.senderName,
             receiverId = message.receiverId,

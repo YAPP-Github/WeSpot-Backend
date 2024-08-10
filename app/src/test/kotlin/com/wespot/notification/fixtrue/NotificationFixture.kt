@@ -22,6 +22,22 @@ object NotificationFixture {
         updatedAt = LocalDateTime.now()
     )
 
+    fun createWithUserIdAndType(userId: Long, notificationType: NotificationType) = Notification(
+        id = 0L,
+        userId = userId,
+        type = notificationType,
+        date = LocalDate.now(),
+        targetId = 1L,
+        title = "title",
+        body = "body",
+        isRead = false,
+        readAt = LocalDateTime.now(),
+        isEnabled = true,
+        createdAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now()
+    )
+
+
     fun createWithTypeAndCreatedAt(notificationType: NotificationType, createdAt: LocalDateTime) = Notification(
         id = 0L,
         userId = 1L,
