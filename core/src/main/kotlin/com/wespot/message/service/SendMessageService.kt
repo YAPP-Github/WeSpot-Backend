@@ -51,8 +51,7 @@ class SendMessageService(
                 saveMessage.id,
                 messagePort.sendMessageCount(loginUser.id)
             )
-        ) // TODO : 나중에 메시지 예약 취소하는 경우에도 해당 이벤트 발생시켜주시면 좋을 것 같아요.
-//        eventPublisher.publishEvent(ReceivedMessageEvent(receiver, saveMessage.id)) // TODO : 생각해보니 이것은 실제로 발송될 때, 전송되어야 하니 나중에 스케줄링 추가하실 때 해당 이벤트 추가해주실 수 있을까요?
+        )
 
         return SendMessageResponse.from(saveMessage.id)
     }
