@@ -19,7 +19,6 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -104,14 +103,14 @@ class VoteRankServiceTest @Autowired constructor(
 
         // then
         voteResultsOfTop5.voteResults.size shouldBe 5
-        voteResultsOfTop5.voteResults[0].voteResults.size shouldBe 2
-        voteResultsOfTop5.voteResults[0].voteResults[0].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[0].voteResults[0].user.id shouldBe users[1].id
-        voteResultsOfTop5.voteResults[0].voteResults[1].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[0].voteResults[1].user.id shouldBe users[0].id
-        voteResultsOfTop5.voteResults[1].voteResults.size shouldBe 1
-        voteResultsOfTop5.voteResults[1].voteResults[0].voteCount shouldBe 1
-        voteResultsOfTop5.voteResults[1].voteResults[0].user.id shouldBe users[2].id
+        voteResultsOfTop5.voteResults[0].results.size shouldBe 2
+        voteResultsOfTop5.voteResults[0].results[0].voteCount shouldBe 1
+        voteResultsOfTop5.voteResults[0].results[0].user.id shouldBe users[1].id
+        voteResultsOfTop5.voteResults[0].results[1].voteCount shouldBe 1
+        voteResultsOfTop5.voteResults[0].results[1].user.id shouldBe users[0].id
+        voteResultsOfTop5.voteResults[1].results.size shouldBe 1
+        voteResultsOfTop5.voteResults[1].results[0].voteCount shouldBe 1
+        voteResultsOfTop5.voteResults[1].results[0].user.id shouldBe users[2].id
     }
 
     @Test
