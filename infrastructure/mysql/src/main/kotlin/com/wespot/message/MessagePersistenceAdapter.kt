@@ -5,6 +5,7 @@ import org.springframework.data.repository.findByIdOrNull
 import com.wespot.message.port.out.MessagePort
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Repository
 class MessagePersistenceAdapter(
@@ -17,6 +18,11 @@ class MessagePersistenceAdapter(
 
     override fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean {
         return messageJpaRepository.existsByIdAndSenderIdAndReceiverId(id, senderId, receiverId)
+    }
+
+    override fun findByMessageTypeAndSendAtBefore(sendAt: LocalDateTime): List<Message> {
+        return messageJpaRepository.findByMessageTypeAndSendAtBefore(sendAt)
+            .map { MessageMapper.mapToDomainEntity(it) }
     }
 
     override fun save(message: Message): Message {

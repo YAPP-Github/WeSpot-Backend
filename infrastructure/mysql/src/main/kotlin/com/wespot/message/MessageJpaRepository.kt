@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
 
@@ -25,12 +26,14 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         """
     SELECT m
     FROM MessageJpaEntity m
-    WHERE m.receiverId = :receiverId
+    WHERE 1 = 1
+    AND m.receiverId = :receiverId
     AND m.id < :cursorId
+    AND m.messageType = 'RECEIVED'
     AND m.isReceiverDeleted = false
     AND m.receivedAt IS NOT NULL
     AND m.id NOT IN :blockedMessageIds
-    AND m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
+    AND m.senderId NOT IN :blockedMessageIds
     ORDER BY m.receivedAt DESC, m.id DESC
     """
     )
@@ -68,7 +71,7 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         AND m.receiverId = :receiverId
         AND m.id < :cursorId
         AND m.isReceiverDeleted = false
-        AND  m.senderId NOT IN :blockedMessageIds OR m.senderId = :receiverId
+        AND  m.senderId NOT IN :blockedMessageIds
     """
     )
     fun countReceivedMessagesAfterCursor(
@@ -106,6 +109,18 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
     fun findAllScheduledMessages(
         @Param("messageType") messageType: MessageType,
         @Param("senderId") senderId: Long
+    ): List<MessageJpaEntity>
+
+    @Query(
+        """
+        SELECT m FROM MessageJpaEntity m
+        WHERE m.messageType = :messageType
+        AND m.sendAt < :sendAt
+        AND m.isSenderDeleted = false
+    """
+    )
+    fun findByMessageTypeAndSendAtBefore(
+        @Param("sendAt") sendAt: LocalDateTime
     ): List<MessageJpaEntity>
 
 }

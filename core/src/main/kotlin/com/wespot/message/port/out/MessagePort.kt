@@ -3,6 +3,8 @@ package com.wespot.message.port.out
 import com.wespot.message.Message
 import com.wespot.message.MessageType
 import org.springframework.data.domain.Pageable
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface MessagePort {
 
@@ -48,5 +50,13 @@ interface MessagePort {
 
     fun deleteById(id: Long)
 
-    fun existsByIdAndSenderIdAndReceiverId(id: Long, senderId: Long, receiverId: Long): Boolean
+    fun existsByIdAndSenderIdAndReceiverId(
+        id: Long,
+        senderId: Long,
+        receiverId: Long
+    ): Boolean
+
+    fun findByMessageTypeAndSendAtBefore(sendAt: LocalDateTime): List<Message>
+
+
 }
