@@ -1,7 +1,7 @@
 package com.wespot.report
 
-import com.wespot.user.Restriction
 import com.wespot.user.RestrictionType
+import com.wespot.user.restriction.Restriction
 import org.springframework.stereotype.Component
 
 @Component
@@ -56,13 +56,19 @@ class RestrictionService {
         }
         val reportsCount = previousReports.size + 1
         if (reportsCount == FIRST_MESSAGE_USAGE_RESTRICTION_COUNT) {
-            return Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
+            return originRestriction.addRestrict(
+                RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                FIRST_MESSAGE_USAGE_RESTRICTION_DAY
+            )
         }
         if (reportsCount == SECOND_MESSAGE_USAGE_RESTRICTION_COUNT) {
-            return Restriction.of(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
+            return originRestriction.addRestrict(
+                RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+                SECOND_MESSAGE_USAGE_RESTRICTION_DAY
+            )
         }
         if (reportsCount == MESSAGE_PERMANENT_RESTRICTION_COUNT) {
-            return Restriction.of(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, PERMANENT_BAN_DAY)
+            return originRestriction.addRestrict(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, PERMANENT_BAN_DAY)
         }
 
         return originRestriction
@@ -82,7 +88,7 @@ class RestrictionService {
         val reportsCount = previousReports.size + 1
 
         if (reportsCount == VOTE_PERMANENT_RESTRICTION_COUNT) {
-            return Restriction.of(RestrictionType.PERMANENT_BAN_VOTE_REPORT, PERMANENT_BAN_DAY)
+            return originRestriction.addRestrict(RestrictionType.PERMANENT_BAN_VOTE_REPORT, PERMANENT_BAN_DAY)
         }
 
         return originRestriction

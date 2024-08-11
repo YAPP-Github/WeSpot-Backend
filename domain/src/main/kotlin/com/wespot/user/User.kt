@@ -1,5 +1,6 @@
 package com.wespot.user
 
+import com.wespot.user.restriction.Restriction
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -55,7 +56,7 @@ data class User(
             id = id,
             email = "",
             password = "",
-            name = "",
+            name = WITHDRAW_USER_NAME,
             introduction = UserIntroduction.emptyUserIntroduction(),
             gender = gender,
             role = Role.GUEST,
@@ -79,6 +80,9 @@ data class User(
         )
 
     companion object {
+
+        private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
+
         fun create(
             email: String,
             password: String,

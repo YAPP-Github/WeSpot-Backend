@@ -5,7 +5,7 @@ import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.user.ConsentType
 import com.wespot.user.FCM
 import com.wespot.user.Profile
-import com.wespot.user.Restriction
+import com.wespot.user.restriction.Restriction
 import com.wespot.user.Role
 import com.wespot.user.Setting
 import com.wespot.user.Social

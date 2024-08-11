@@ -44,12 +44,12 @@ class SavedVoteService(
     override fun saveVote(
         requests: VoteRequests
     ): SaveVoteResponse {
-        validateRequestsSize(requests.voteRequests.size)
-        validateUserIdsInRequests(requests.voteRequests)
+        validateRequestsSize(requests.votes.size)
+        validateUserIdsInRequests(requests.votes)
         val user = VoteServiceHelper.findLoginUser(userPort)
         val voteTime = LocalDateTime.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
-        requests.voteRequests
+        requests.votes
             .stream()
             .forEach { request -> addBallot(request, vote, user, voteTime) }
         eventPublisher.publishEvent(RegisteredVoteEvent(user, vote))

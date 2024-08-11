@@ -1,7 +1,6 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
-import com.wespot.user.Restriction
 import com.wespot.user.User
 import com.wespot.user.UserIntroduction
 import com.wespot.user.entity.UserJpaEntity
@@ -25,7 +24,7 @@ object UserMapper {
             fcm = FCMMapper.mapToDomainEntity(userJpaEntity.fcm),
             social = SocialMapper.mapToDomainEntity(userJpaEntity.social),
             userConsent = UserConsentMapper.mapToDomainEntity(userJpaEntity.userConsent),
-            restriction = Restriction(userJpaEntity.restrictionType, userJpaEntity.releaseDate),
+            restriction = RestrictionMapper.mapToDomainEntity(userJpaEntity.restriction),
             createdAt = userJpaEntity.baseEntity.createdAt,
             updatedAt = userJpaEntity.baseEntity.updatedAt,
             withdrawAt = userJpaEntity.withdrawAt,
@@ -49,8 +48,7 @@ object UserMapper {
             fcm = FCMMapper.mapToJpaEntity(user.fcm),
             social = SocialMapper.mapToJpaEntity(user.social),
             userConsent = UserConsentMapper.mapToJpaEntity(user.userConsent),
-            restrictionType = user.restriction.restrictionType,
-            releaseDate = user.restriction.releaseDate,
+            restriction = RestrictionMapper.mapToJpaEntity(user.restriction),
             withdrawAt = user.withdrawAt,
             baseEntity = BaseEntity(
                 createdAt = user.createdAt,

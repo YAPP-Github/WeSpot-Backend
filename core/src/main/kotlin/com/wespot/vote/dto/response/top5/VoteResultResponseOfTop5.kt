@@ -6,7 +6,7 @@ import com.wespot.voteoption.VoteOption
 
 data class VoteResultResponseOfTop5(
     val voteOption: VoteOptionResponse,
-    val voteResults: List<VoteDetailResultResponseOfTop5>
+    val results: List<VoteDetailResultResponseOfTop5>
 ) {
 
     companion object {

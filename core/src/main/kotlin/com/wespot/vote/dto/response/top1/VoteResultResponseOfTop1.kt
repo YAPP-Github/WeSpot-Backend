@@ -6,7 +6,7 @@ import com.wespot.voteoption.VoteOption
 
 data class VoteResultResponseOfTop1(
     val voteOption: VoteOptionResponse,
-    val voteResult: VoteDetailResultResponseOfTop1?
+    val results: List<VoteDetailResultResponseOfTop1>
 ) {
 
     companion object {
@@ -18,12 +18,12 @@ data class VoteResultResponseOfTop1(
             )
         }
 
-        private fun getVoteDetailResultResponseOfTop1(voteResults: List<VoteRecord>): VoteDetailResultResponseOfTop1? {
+        private fun getVoteDetailResultResponseOfTop1(voteResults: List<VoteRecord>): List<VoteDetailResultResponseOfTop1> {
             if (voteResults.isEmpty()) {
-                return null
+                return emptyList()
             }
 
-            return VoteDetailResultResponseOfTop1.from(voteResults[0])
+            return listOf(VoteDetailResultResponseOfTop1.from(voteResults[0]))
         }
 
     }

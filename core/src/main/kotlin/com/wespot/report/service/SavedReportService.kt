@@ -10,6 +10,7 @@ import com.wespot.report.dto.ReportResponse
 import com.wespot.report.port.`in`.SavedReportUseCase
 import com.wespot.report.port.out.ReportPort
 import com.wespot.user.User
+import com.wespot.user.port.out.RestrictionPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class SavedReportService(
     private val reportPort: ReportPort,
     private val userPort: UserPort,
+    private val restrictionPort: RestrictionPort,
     private val messagePort: MessagePort,
     private val restrictionService: RestrictionService
 ) : SavedReportUseCase {
@@ -50,13 +52,13 @@ class SavedReportService(
         return findTargetUserByUserId(message.senderId)
     }
 
-    private fun validateReceiverId(loginUserId: Long, receiverId: Long) {
-        require(loginUserId == receiverId) { "본인이 받은 쪽지가 아닙니다." }
-    }
-
     private fun findTargetUserByUserId(userId: Long): User {
         return userPort.findById(userId)
             ?: throw NoSuchElementException("신고하고자 하는 사용자가 존재하지 않습니다.")
+    }
+
+    private fun validateReceiverId(loginUserId: Long, receiverId: Long) {
+        require(loginUserId == receiverId) { "본인이 받은 쪽지가 아닙니다." }
     }
 
     private fun findAllUserReportByReportType(targetUser: User, reportType: ReportType): List<Report> {
@@ -75,6 +77,7 @@ class SavedReportService(
         val restriction = restrictionService.calculateRestrictionByReports(receiver.restriction, report, reports)
         receiver.restrict(restriction)
 
+        restrictionPort.save(restriction)
         userPort.save(receiver)
 
         return reportPort.save(report)

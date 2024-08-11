@@ -10,19 +10,20 @@ import com.wespot.report.dto.ReportRequest
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
+import com.wespot.user.repository.RestrictionJpaRepository
 import com.wespot.user.repository.UserJpaRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
 class SavedReportServiceTest @Autowired constructor(
     private val savedReportService: SavedReportService,
     private val userJpaRepository: UserJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
-    private val reportJpaRepository: ReportJpaRepository
+    private val reportJpaRepository: ReportJpaRepository,
+    private val restrictionJpaRepository: RestrictionJpaRepository
 ) : ServiceTest() {
 
     @Test
@@ -175,7 +176,7 @@ class SavedReportServiceTest @Autowired constructor(
         val existsById = reportJpaRepository.existsById(savedReportResponse.id)
 
         // then
-        messages[0].isReceiverDeleted  shouldBe true
+        messages[0].isReceiverDeleted shouldBe true
         messages[0].isReported shouldBe true
         existsById shouldBe true
     }
@@ -218,7 +219,7 @@ class SavedReportServiceTest @Autowired constructor(
         val permanentUser = userJpaRepository.findById(reportReceiver.id).get()
 
         // then
-        permanentUser.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
+        permanentUser.restriction.voteRestrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
     }
 
 }

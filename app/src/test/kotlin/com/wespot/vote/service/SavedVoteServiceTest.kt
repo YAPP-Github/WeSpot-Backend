@@ -194,7 +194,7 @@ class SavedVoteServiceTest @Autowired constructor(
 
         // then
         val ballots = ballotJpaRepository.findAll()
-        val votedUserIds = requests.voteRequests.stream()
+        val votedUserIds = requests.votes.stream()
             .map { it.userId }
             .toList()
         ballots.size shouldBe 5
