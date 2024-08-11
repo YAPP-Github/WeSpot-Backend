@@ -28,4 +28,5 @@ object RestrictionMapper {
             messageRestrictionType = restriction.messageRestriction.restrictionType,
             messageReleaseDate = restriction.messageRestriction.releaseDate
         )
+
 }

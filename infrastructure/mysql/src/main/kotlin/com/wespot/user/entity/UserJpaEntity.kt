@@ -74,7 +74,8 @@ class UserJpaEntity(
     val role: Role,
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
-    @JoinColumn(name = "user_restriction_id", foreignKey = ForeignKey(name = "fk_users_user_restriction_id"))
+    @JoinColumn(name = "restriction_id",foreignKey = ForeignKey(name = "fk_users_restriction_id"))
+    @field: NotNull
     val restriction: RestrictionJpaEntity,
 
     val withdrawAt: LocalDateTime?,

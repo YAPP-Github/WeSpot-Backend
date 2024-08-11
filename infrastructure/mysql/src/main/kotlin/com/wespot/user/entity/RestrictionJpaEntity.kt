@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull
 import java.time.LocalDate
 
 @Entity
-@Table(name = "profile")
-class RestrictionJpaEntity(
+@Table(name = "restriction")
+data class RestrictionJpaEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,17 +21,16 @@ class RestrictionJpaEntity(
 
     @Enumerated(EnumType.STRING)
     @field: NotNull
-    var voteRestrictionType: RestrictionType,
+    val voteRestrictionType: RestrictionType,
 
     @field: NotNull
-    var voteReleaseDate: LocalDate,
+    val voteReleaseDate: LocalDate,
 
     @Enumerated(EnumType.STRING)
     @field: NotNull
-    var messageRestrictionType: RestrictionType,
+    val messageRestrictionType: RestrictionType,
 
     @field: NotNull
-    var messageReleaseDate: LocalDate
+    val messageReleaseDate: LocalDate
 
-) {
-}
+)
