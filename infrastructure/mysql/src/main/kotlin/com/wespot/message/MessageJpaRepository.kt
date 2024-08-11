@@ -114,7 +114,8 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
     @Query(
         """
         SELECT m FROM MessageJpaEntity m
-        WHERE m.messageType = :messageType
+        WHERE 1 = 1
+        AND m.messageType = 'SENT'
         AND m.sendAt < :sendAt
         AND m.isSenderDeleted = false
     """
