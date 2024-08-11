@@ -4,6 +4,7 @@ import com.wespot.user.RestrictionType
 import java.time.LocalDate
 
 data class Restriction(
+    val id: Long,
     val voteRestriction: VoteRestriction,
     val messageRestriction: MessageRestriction
 ) {
@@ -12,6 +13,7 @@ data class Restriction(
 
         fun createInitialState() =
             Restriction(
+                id = 0,
                 voteRestriction = VoteRestriction.createInitialState(),
                 messageRestriction = MessageRestriction.createInitialState()
             )
@@ -23,12 +25,14 @@ data class Restriction(
 
         if (restrictionType.isVoteRestriction()) {
             return Restriction(
+                id = id,
                 voteRestriction = VoteRestriction.of(restrictionType, restrictionDay),
                 messageRestriction = messageRestriction
             )
         }
 
         return Restriction(
+            id = id,
             voteRestriction = voteRestriction,
             messageRestriction = MessageRestriction.of(restrictionType, restrictionDay)
         )
@@ -41,6 +45,7 @@ data class Restriction(
 
     fun getCurrentRestrictionBasedOnTime(date: LocalDate): Restriction {
         return Restriction(
+            id = id,
             voteRestriction = voteRestriction.getCurrentRestrictionBasedOnTime(date),
             messageRestriction = messageRestriction.getCurrentRestrictionBasedOnTime(date)
         )

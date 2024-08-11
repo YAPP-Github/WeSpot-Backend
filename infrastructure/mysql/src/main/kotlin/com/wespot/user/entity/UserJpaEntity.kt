@@ -73,8 +73,8 @@ class UserJpaEntity(
     @Enumerated(EnumType.STRING)
     val role: Role,
 
-    @Embedded
-    @field: NotNull
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "user_restriction_id", foreignKey = ForeignKey(name = "fk_users_user_restriction_id"))
     val restriction: RestrictionJpaEntity,
 
     val withdrawAt: LocalDateTime?,

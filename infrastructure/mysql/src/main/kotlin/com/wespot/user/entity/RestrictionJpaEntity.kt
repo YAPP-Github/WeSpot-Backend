@@ -1,14 +1,23 @@
 package com.wespot.user.entity
 
 import com.wespot.user.RestrictionType
-import jakarta.persistence.Embeddable
+import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDate
 
-@Embeddable
+@Entity
+@Table(name = "profile")
 class RestrictionJpaEntity(
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long,
 
     @Enumerated(EnumType.STRING)
     @field: NotNull
