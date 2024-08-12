@@ -13,6 +13,7 @@ import com.wespot.user.SocialType
 import com.wespot.user.User
 import com.wespot.user.UserConsent
 import com.wespot.user.UserIntroduction
+import com.wespot.user.Gender
 import com.wespot.user.dto.request.UpdateProfileRequest
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder

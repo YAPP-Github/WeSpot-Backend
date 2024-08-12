@@ -4,6 +4,7 @@ import com.wespot.auth.service.SecurityUtils.getLoginUser
 import com.wespot.school.School
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.User
+import com.wespot.user.UserIntroduction
 import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.*
 import com.wespot.user.port.`in`.UserUseCase
@@ -34,17 +35,19 @@ class UserService(
     @Transactional
     override fun updateProfile(profile: UpdateProfileRequest) {
         val loginUser = getLoginUser(userPort = userPort)
-        val updateIntroduction = loginUser.updateProfile(
-            introduction = profile.introduction,
+        val updatedIntroduction = profile.introduction ?: loginUser.introduction.introduction
+        val updatedProfile = loginUser.profile.update(
+            backgroundColor = profile.profile?.backgroundColor ?: loginUser.profile.backgroundColor,
+            iconUrl = profile.profile?.iconUrl ?: loginUser.profile.iconUrl
         )
 
-        val updateProfile = loginUser.profile.update(
-            backgroundColor = profile.profile.backgroundColor,
-            iconUrl = profile.profile.iconUrl
+        val updatedUser = loginUser.copy(
+            introduction = UserIntroduction.from(updatedIntroduction),
+            profile = updatedProfile
         )
 
-        profilePort.save(updateProfile)
-        userPort.save(updateIntroduction)
+        profilePort.save(updatedProfile)
+        userPort.save(updatedUser)
     }
 
     override fun backgrounds(): BackgroundListResponse {

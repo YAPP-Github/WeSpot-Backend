@@ -7,12 +7,12 @@ data class Profile(
 ) {
 
     fun update(
-        backgroundColor: String,
-        iconUrl: String
+        backgroundColor: String?,
+        iconUrl: String?
     ) = Profile(
         id = this.id,
-        backgroundColor = backgroundColor,
-        iconUrl = iconUrl
+        backgroundColor = backgroundColor ?: this.backgroundColor,
+        iconUrl = iconUrl ?: this.iconUrl
     )
 
     companion object {
