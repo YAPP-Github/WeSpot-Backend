@@ -154,6 +154,14 @@ data class Message(
         )
     }
 
+    fun receivedMessage(): Message {
+        return this.copy(
+            messageType = MessageType.RECEIVED,
+            receivedAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+    }
+
     companion object {
 
         fun sendMessage(
