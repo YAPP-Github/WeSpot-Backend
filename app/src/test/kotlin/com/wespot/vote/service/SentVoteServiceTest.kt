@@ -37,8 +37,7 @@ class SentVoteServiceTest @Autowired constructor(
     private var vote2: Vote? = null
 
     @BeforeEach
-    override fun setUp() {
-        databaseCleanup.execute()
+    fun setUp() {
         voteOptions.clear()
         users.clear()
         for (i in 0 until 10) {

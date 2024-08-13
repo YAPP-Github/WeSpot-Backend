@@ -15,11 +15,6 @@ class ServiceTest {
     @Autowired
     lateinit var databaseCleanup: DatabaseCleanup
 
-    @BeforeEach
-    fun setUp(){
-        databaseCleanup.execute()
-    }
-
     @AfterEach
     fun tearDown() {
         databaseCleanup.execute()

@@ -1,6 +1,5 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -51,8 +50,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     )
 
     @BeforeEach
-    override fun setUp() {
-        databaseCleanup.execute()
+    fun setUp() {
         voteOptions = (1..10).map {
             voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         }.map { VoteOptionMapper.mapToDomainEntity(it) }
@@ -144,6 +142,28 @@ class CreatedVoteServiceTest @Autowired constructor(
         votes[0].schoolId shouldBe savedUserDomainEntity.schoolId
         votes[0].grade shouldBe savedUserDomainEntity.grade
         votes[0].classNumber shouldBe savedUserDomainEntity.classNumber
+        votes[0].voteNumber shouldBe 0
+    }
+
+    @Test
+    fun `학급에 처음으로 가입하지 않는 경우 투표를 더 이상 생성하지 않는다`() {
+        // given
+        userJpaRepository.deleteAll()
+        val savedUserJpaEntity1 = userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
+        val savedUserJpaEntity2 = userJpaRepository.save(UserMapper.mapToJpaEntity(users[1]))
+        val savedUserDomainEntity1 = UserMapper.mapToDomainEntity(savedUserJpaEntity1)
+        val savedUserDomainEntity2 = UserMapper.mapToDomainEntity(savedUserJpaEntity2)
+
+        // when
+        createdVoteService.createVoteByUser(savedUserDomainEntity1)
+        createdVoteService.createVoteByUser(savedUserDomainEntity2)
+        val votes = voteJpaRepository.findAll()
+
+        // then
+        votes.size shouldBe 1
+        votes[0].schoolId shouldBe savedUserDomainEntity1.schoolId
+        votes[0].grade shouldBe savedUserDomainEntity1.grade
+        votes[0].classNumber shouldBe savedUserDomainEntity1.classNumber
         votes[0].voteNumber shouldBe 0
     }
 
