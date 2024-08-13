@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.entity.UserJpaEntity
@@ -39,7 +40,8 @@ class SavedVoteServiceTest @Autowired constructor(
     private var vote: Vote? = null
 
     @BeforeEach
-    fun dataSetUp() {
+    override fun setUp() {
+        databaseCleanup.execute()
         voteOptions.clear()
         users.clear()
         for (i in 0 until 8) {

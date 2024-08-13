@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -50,7 +51,8 @@ class CreatedVoteServiceTest @Autowired constructor(
     )
 
     @BeforeEach
-    fun dataSetUp() {
+    override fun setUp() {
+        databaseCleanup.execute()
         voteOptions = (1..10).map {
             voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         }.map { VoteOptionMapper.mapToDomainEntity(it) }

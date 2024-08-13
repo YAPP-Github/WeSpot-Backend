@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import
 class ServiceTest {
 
     @Autowired
-    private lateinit var databaseCleanup: DatabaseCleanup
+    lateinit var databaseCleanup: DatabaseCleanup
 
     @BeforeEach
     fun setUp(){

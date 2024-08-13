@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -36,7 +37,8 @@ class SentVoteServiceTest @Autowired constructor(
     private var vote2: Vote? = null
 
     @BeforeEach
-    fun dataSetUp() {
+    override fun setUp() {
+        databaseCleanup.execute()
         voteOptions.clear()
         users.clear()
         for (i in 0 until 10) {
