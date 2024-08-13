@@ -15,16 +15,17 @@ class IntegrationTest {
     private var port: Int? = null
 
     @Autowired
-    private var databaseCleanup: DatabaseCleanup? = null
+    private lateinit var databaseCleanup: DatabaseCleanup
 
     @BeforeEach
     fun setUp() {
         RestAssured.port = port!!
+        databaseCleanup.execute()
     }
 
     @AfterEach
     fun tearDown() {
-        databaseCleanup!!.execute()
+        databaseCleanup.execute()
     }
 
 }

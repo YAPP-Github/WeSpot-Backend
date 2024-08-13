@@ -3,6 +3,7 @@ package com.wespot.common.service
 import com.wespot.DatabaseCleanup
 import com.wespot.common.infra.TestContainer
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -13,6 +14,11 @@ class ServiceTest {
 
     @Autowired
     private lateinit var databaseCleanup: DatabaseCleanup
+
+    @BeforeEach
+    fun setUp(){
+        databaseCleanup.execute()
+    }
 
     @AfterEach
     fun tearDown() {
