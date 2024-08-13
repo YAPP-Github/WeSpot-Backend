@@ -82,6 +82,7 @@ data class User(
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
+        private const val INIT_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
 
         fun create(
             email: String,
@@ -105,7 +106,7 @@ data class User(
                 classNumber = groupNumber,
                 profile = Profile.create(
                     backgroundColor = "#FFFFFF",
-                    iconUrl = ""
+                    iconUrl = INIT_PROFILE_ICON_URL
                 ),
                 fcm = null,
                 setting = Setting(),
