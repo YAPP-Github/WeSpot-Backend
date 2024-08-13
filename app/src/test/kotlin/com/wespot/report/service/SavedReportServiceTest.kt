@@ -23,7 +23,6 @@ class SavedReportServiceTest @Autowired constructor(
     private val userJpaRepository: UserJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
     private val reportJpaRepository: ReportJpaRepository,
-    private val restrictionJpaRepository: RestrictionJpaRepository
 ) : ServiceTest() {
 
     @Test

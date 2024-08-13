@@ -50,7 +50,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     )
 
     @BeforeEach
-    fun setUp() {
+    fun dataSetUp() {
         voteOptions = (1..10).map {
             voteOptionJpaRepository.save(VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.create()))
         }.map { VoteOptionMapper.mapToDomainEntity(it) }

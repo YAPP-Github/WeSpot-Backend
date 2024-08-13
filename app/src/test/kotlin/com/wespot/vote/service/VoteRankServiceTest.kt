@@ -35,7 +35,7 @@ class VoteRankServiceTest @Autowired constructor(
     private var vote: Vote? = null
 
     @BeforeEach
-    fun setUp() {
+    fun dataSetUp() {
         voteOptions.clear()
         users.clear()
         for (i in 0 until 8) {
