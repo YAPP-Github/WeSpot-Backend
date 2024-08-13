@@ -22,7 +22,7 @@ class ReceivedVoteNotificationService {
     }
 
     private fun getGenderKeyword(gender: Gender): String {
-        if (gender.name == "female") {
+        if (gender.name == Gender.FEMALE.name) {
             return "여학생"
         }
 

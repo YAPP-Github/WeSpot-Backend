@@ -12,7 +12,7 @@ class ReceivedVoteNotificationServiceTest : BehaviorSpec({
     given("남학생이 투표를 완료했을 때") {
         val service = ReceivedVoteNotificationService()
         `when`("투표를 받은이에게") {
-            val notification = service.getNotification(100L, Gender.MALE)
+            val notification = service.getNotification(100L, Gender.FEMALE)
             then("알림이 발송된다.") {
                 notification.userId shouldBe 100L
                 notification.type shouldBe NotificationType.VOTE_RECEIVED
