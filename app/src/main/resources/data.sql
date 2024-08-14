@@ -1269,9 +1269,7 @@ VALUES
     (2, DATE_SUB(now(), INTERVAL 98 DAY), 2, 0, 6, 1),
     (2, DATE_SUB(now(), INTERVAL 99 DAY), 2, 1, 5, 1),
     (2, DATE_SUB(now(), INTERVAL 100 DAY), 2, 0, 4, 1),
-    (2, DATE_SUB(now(), INTERVAL 101 DAY), 2, 1, 3, 1),
-    (2, now(), 2, 0, 2, 1),
-    (2, DATE_ADD(now(), INTERVAL 1 DAY), 2, 0, 1, 1);
+    (2, DATE_SUB(now(), INTERVAL 101 DAY), 2, 1, 3, 1);
 
 INSERT INTO vote_option_by_date (id, vote_id, vote_option_id)
 VALUES (1, 3, 1),
