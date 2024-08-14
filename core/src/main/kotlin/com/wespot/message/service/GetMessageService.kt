@@ -29,6 +29,7 @@ class GetMessageService(
 
     companion object {
         const val MESSAGE_LIMIT = 3
+        const val BAN_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_ban_profile.png"
     }
 
     override fun getMessage(messageId: Long): MessageResponse {
@@ -163,7 +164,7 @@ class GetMessageService(
                 senderProfile = Profile(
                     id = 0,
                     backgroundColor ="#FFFFFF",
-                    iconUrl = "https://wespot.com",
+                    iconUrl = BAN_PROFILE_ICON_URL
                 ),
                 receiver = receiver,
                 school = receiverSchool,
