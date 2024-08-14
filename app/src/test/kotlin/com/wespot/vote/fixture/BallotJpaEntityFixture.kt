@@ -26,4 +26,14 @@ object BallotJpaEntityFixture {
         isReceiverRead = false
     )
 
+    fun createVoteId(id: Long) = BallotJpaEntity(
+        id = 0,
+        voteId = id,
+        voteOptionId = 1L,
+        senderId = 1L,
+        receiverId = 2L,
+        baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now()),
+        isReceiverRead = false
+    )
+
 }

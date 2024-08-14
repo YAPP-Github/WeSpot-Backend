@@ -28,7 +28,7 @@ class ReceivedVoteService(
     @Transactional(readOnly = true)
     override fun getReceivedVotes(cursorId: Long?, limit: Long): ReceivedVotesResponses {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        val votes = VoteServiceHelper.findVotesOrderByDateDesc(
+        val votes = VoteServiceHelper.findVotesReceiverIdOrderByDateDesc(
             votePort = votePort,
             user = user,
             cursorId = CursorUtils.getEffectiveCursorId(cursorId),

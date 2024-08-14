@@ -87,17 +87,43 @@ class VotePersistenceAdapter(
         return VoteMapper.mapToDomainEntity(savedVote, vote.voteOptionsByVoteDate, vote.getBallots())
     }
 
-    override fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+    override fun findAllBySchoolIdAndGradeAndClassNumberAndReceiverIdOrderByDateDesc(
         schoolId: Long,
         grade: Int,
         classNumber: Int,
+        receiverId: Long,
         cursorId: Long,
         limit: Long
     ): List<Vote> {
-        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(
+        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberAndReceiverIdOrderByDateDesc(
             schoolId,
             grade,
             classNumber,
+            receiverId,
+            cursorId,
+            limit
+        ).map {
+            VoteMapper.mapToDomainEntity(
+                it,
+                findAllByVoteId(it.date, it.id),
+                findBallotsByVote(it.id)
+            )
+        }.toList()
+    }
+
+    override fun findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int,
+        senderId: Long,
+        cursorId: Long,
+        limit: Long
+    ): List<Vote> {
+        return voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+            schoolId,
+            grade,
+            classNumber,
+            senderId,
             cursorId,
             limit
         ).map {
