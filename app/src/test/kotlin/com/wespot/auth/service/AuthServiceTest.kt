@@ -5,7 +5,10 @@ import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
-import com.wespot.auth.dto.response.*
+import com.wespot.auth.dto.response.SettingResponse
+import com.wespot.auth.dto.response.SignUpResponse
+import com.wespot.auth.dto.response.SocialResponse
+import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.fixture.AuthFixture
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
@@ -15,6 +18,7 @@ import com.wespot.user.SocialType
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
@@ -46,6 +50,7 @@ class AuthServiceTest : BehaviorSpec({
     val passwordEncoder = mockk<PasswordEncoder>()
     val refreshTokenService = mockk<RefreshTokenService>()
     val eventPublisher = mockk<ApplicationEventPublisher>()
+    val fcmPort = mockk<FCMPort>()
 
     val secretKey = "testSecretKey"
 
@@ -64,6 +69,7 @@ class AuthServiceTest : BehaviorSpec({
             passwordEncoder = passwordEncoder,
             refreshTokenService = refreshTokenService,
             eventPublisher = eventPublisher,
+            fcmPort = fcmPort,
             secretKey = secretKey
         )
     )
@@ -88,6 +94,7 @@ class AuthServiceTest : BehaviorSpec({
             email = formatSocialEmail,
             socialRefreshToken = socialResponse.socialRefreshToken,
             socialEmail = socialResponse.socialEmail,
+            fcmToken = authLoginRequest.fcmToken
         )
 
         val token = "testToken"
@@ -188,11 +195,12 @@ class AuthServiceTest : BehaviorSpec({
             ),
             name = user.name
         )
+
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
         every { authService.createUser(authData, signUpRequest) } returns user
         every { userPort.existsBySchoolIdAndGradeAndClassNumber(any(), any(), any()) } returns true
         every { userPort.save(any()) } returns user
-        every { authService.saveRelatedEntities(user, signUpRequest) } just Runs
+        every { authService.saveRelatedEntities(user, signUpRequest, authData.fcmToken) } just Runs
         every { authService.signIn(any()) } returns tokenAndUserDetailResponse
         every { eventPublisher.publishEvent(SignUpUserEvent(user)) } returns Unit
         every { eventPublisher.publishEvent(CreatedVoteEvent(user)) } returns Unit
@@ -209,7 +217,7 @@ class AuthServiceTest : BehaviorSpec({
             }
 
             then("saveRelatedEntities를 호출한다") {
-                authService.saveRelatedEntities(user, signUpRequest) shouldBe Unit
+                authService.saveRelatedEntities(user, signUpRequest, authData.fcmToken) shouldBe Unit
             }
 
             then("signIn을 호출한다") {

@@ -30,7 +30,8 @@ object AuthFixture {
         return AuthData(
             email = "test@test.com",
             socialRefreshToken = "testRefreshToken",
-            socialEmail = "test@social.com"
+            socialEmail = "test@social.com",
+            fcmToken = "fcmToken"
         )
     }
 

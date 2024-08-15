@@ -16,6 +16,7 @@ import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.ConsentType
+import com.wespot.user.FCM
 import com.wespot.user.Profile
 import com.wespot.user.Social
 import com.wespot.user.SocialType
@@ -23,6 +24,7 @@ import com.wespot.user.User
 import com.wespot.user.UserConsent
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
+import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
@@ -51,11 +53,11 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
+    private val fcmPort: FCMPort,
 
     @Value("\${jwt.secret}")
     private val secretKey: String
 ) : AuthUseCase {
-
 
     override fun socialAccess(authLoginRequest: AuthLoginRequest): Any {
         val socialResponse = fetchSocialEmail(authLoginRequest)
@@ -65,6 +67,7 @@ class AuthService(
             email = socialEmail,
             socialRefreshToken = socialResponse.socialRefreshToken,
             socialEmail = socialResponse.socialEmail,
+            fcmToken = authLoginRequest.fcmToken
         )
         val user = userPort.findByEmail(socialEmail)
             ?: return SignUpResponse(createSignUpToken(authData = authData))
@@ -102,7 +105,7 @@ class AuthService(
         eventPublisher.publishEvent(CreatedVoteEvent(savedUser))
         eventPublisher.publishEvent(SignUpUserEvent(savedUser))
 
-        saveRelatedEntities(savedUser, signUpRequest)
+        saveRelatedEntities(savedUser, signUpRequest, signUpToken.fcmToken)
 
         val signIn = signIn(createSignInRequest(savedUser))
 
@@ -146,7 +149,8 @@ class AuthService(
 
     fun saveRelatedEntities(
         user: User,
-        signUpRequest: SignUpRequest
+        signUpRequest: SignUpRequest,
+        fcmToken: String?
     ) {
         var userConsent: UserConsent? = null
         if (signUpRequest.consents.marketing) {
@@ -161,11 +165,14 @@ class AuthService(
         val profile = Profile.createInit()
         val savedProfile = profilePort.save(profile)
 
+        val fcm = FCM.from(fcmToken)
+        val savedFcm = fcmPort.save(fcm)
+
         val updatedUser = User.update(
             user = user,
             userConsent = userConsent,
             profile = savedProfile,
-            fcm = null,
+            fcm = savedFcm,
             setting = null
         )
         userPort.save(updatedUser)
