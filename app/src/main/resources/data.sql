@@ -1170,6 +1170,7 @@ VALUES
 
 INSERT INTO vote (class_number, date, grade, vote_number, id, school_id)
 VALUES
+    (2, DATE_SUB(now(), INTERVAL 1 DAY), 2, 1, 103, 1),
     (2, DATE_SUB(now(), INTERVAL 2 DAY), 2, 1, 102, 1),
     (2, DATE_SUB(now(), INTERVAL 3 DAY), 2, 0, 101, 1),
     (2, DATE_SUB(now(), INTERVAL 4 DAY), 2, 1, 100, 1),
