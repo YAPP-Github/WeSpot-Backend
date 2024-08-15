@@ -43,7 +43,7 @@ class FirebaseNotificationService : NotificationServicePort {
     }
 
     override fun sendNotification(user: User, notificationInfo: NotificationInfo) {
-        if (isValidFcmToken(user)) {
+        if (!isValidFcmToken(user)) {
             return
         }
 
