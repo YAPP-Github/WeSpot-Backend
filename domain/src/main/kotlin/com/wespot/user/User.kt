@@ -10,7 +10,7 @@ data class User(
     val password: String,
     val name: String,
     val introduction: UserIntroduction,
-    val gender: String,
+    val gender: Gender,
     val role: Role,
     val schoolId: Long,
     val grade: Int,
@@ -82,6 +82,7 @@ data class User(
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
+        private const val INIT_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
 
         fun create(
             email: String,
@@ -91,9 +92,8 @@ data class User(
             grade: Int,
             groupNumber: Int,
             social: Social,
-            gender: String
-        ) =
-            User(
+            gender: Gender
+        ) = User(
                 id = 0L,
                 email = email,
                 password = password,
@@ -105,8 +105,8 @@ data class User(
                 grade = grade,
                 classNumber = groupNumber,
                 profile = Profile.create(
-                    backgroundColor = "",
-                    iconUrl = "",
+                    backgroundColor = "#FFFFFF",
+                    iconUrl = INIT_PROFILE_ICON_URL
                 ),
                 fcm = null,
                 setting = Setting(),

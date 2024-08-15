@@ -1,6 +1,8 @@
 package com.wespot.vote.infrastructure.mysql
 
+import com.wespot.vote.BallotJpaRepository
 import com.wespot.vote.VoteJpaRepository
+import com.wespot.vote.fixture.BallotJpaEntityFixture
 import com.wespot.vote.fixture.VoteJpaEntityFixture
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -10,7 +12,8 @@ import java.time.LocalDate
 
 @DataJpaTest
 class VoteJpaRepositoryTest @Autowired constructor(
-    private val voteJpaRepository: VoteJpaRepository
+    private val voteJpaRepository: VoteJpaRepository,
+    private val ballotJpaRepository: BallotJpaRepository,
 ) {
 
     @Test
@@ -18,7 +21,15 @@ class VoteJpaRepositoryTest @Autowired constructor(
         // given
         val now = LocalDate.now()
         val vote1 =
-            voteJpaRepository.save(VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(1, 1, 1, now.minusDays(4)))
+            voteJpaRepository.save(
+                VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
+                    1,
+                    1,
+                    1,
+                    now.minusDays(4)
+                )
+            )
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote1.id))
         val vote2 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
@@ -27,7 +38,8 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(3)
             )
         )
-        voteJpaRepository.save(
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote2.id))
+        val vote = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
                 1,
@@ -35,6 +47,7 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(3)
             )
         )
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote.id))
         val vote3 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
@@ -43,7 +56,8 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(2)
             )
         )
-        voteJpaRepository.save(
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote3.id))
+        val vote6 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
                 1,
@@ -51,6 +65,7 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(3)
             )
         )
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote6.id))
         val vote4 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
@@ -59,7 +74,8 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(1)
             )
         )
-        voteJpaRepository.save(
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote4.id))
+        val vote7 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
                 1,
@@ -67,6 +83,7 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now.minusDays(3)
             )
         )
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote7.id))
         val vote5 = voteJpaRepository.save(
             VoteJpaEntityFixture.createWithSchoolIdAndGradeAndClassNumberAndDate(
                 1,
@@ -75,12 +92,27 @@ class VoteJpaRepositoryTest @Autowired constructor(
                 now
             )
         )
+        ballotJpaRepository.save(BallotJpaEntityFixture.createVoteId(vote5.id))
 
         // when
         val firstSearch =
-            voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(1, 1, 1, Long.MAX_VALUE, 3)
+            voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+                1,
+                1,
+                1,
+                1,
+                Long.MAX_VALUE,
+                3
+            )
         val secondSearch =
-            voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberOrderByDateDesc(1, 1, 1, firstSearch[2].id, 3)
+            voteJpaRepository.findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+                1,
+                1,
+                1,
+                1,
+                firstSearch[2].id,
+                3
+            )
 
         // then
         firstSearch.size shouldBe 3

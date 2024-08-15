@@ -13,6 +13,7 @@ import com.wespot.user.SocialType
 import com.wespot.user.User
 import com.wespot.user.UserConsent
 import com.wespot.user.UserIntroduction
+import com.wespot.user.Gender
 import com.wespot.user.dto.request.UpdateProfileRequest
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -29,7 +30,7 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = UserIntroduction.from("hello"),
-        gender = "male",
+        gender = Gender.MALE,
         schoolId = 1L,
         grade = 1,
         classNumber = 1,
@@ -64,7 +65,7 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = UserIntroduction.from("hello"),
-        gender = "male",
+        gender = Gender.MALE,
         schoolId = 1L,
         grade = 1,
         classNumber = 1,
@@ -98,7 +99,7 @@ object UserFixture {
         role = Role.USER,
         name = "Sender",
         introduction = UserIntroduction.from("intro"),
-        gender = "M",
+        gender = Gender.MALE,
         schoolId = 1L,
         grade = 1,
         classNumber = 1,
@@ -132,7 +133,7 @@ object UserFixture {
         role = Role.USER,
         name = "Receiver",
         introduction = UserIntroduction.from("intro"),
-        gender = "M",
+        gender = Gender.MALE,
         schoolId = 1L,
         grade = 1,
         classNumber = 1,
@@ -189,7 +190,7 @@ object UserFixture {
             password = "password",
             name = name,
             introduction = UserIntroduction.from("소개 $id"),
-            gender = "M",
+            gender = Gender.MALE,
             schoolId = schoolId,
             profile = Profile(profileId, "", ""),
             fcm = null,
@@ -227,7 +228,7 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = UserIntroduction.from("hello"),
-        gender = "male",
+        gender = Gender.MALE,
         schoolId = schoolId,
         grade = grade,
         classNumber = classNumber,
@@ -264,7 +265,7 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = UserIntroduction.from("hello"),
-        gender = "male",
+        gender = Gender.MALE,
         schoolId = schoolId,
         grade = grade,
         classNumber = classNumber,
@@ -301,7 +302,7 @@ object UserFixture {
         role = Role.USER,
         name = "TestUser",
         introduction = UserIntroduction.from("hello"),
-        gender = "male",
+        gender = Gender.MALE,
         schoolId = schoolId,
         grade = grade,
         classNumber = classNumber,

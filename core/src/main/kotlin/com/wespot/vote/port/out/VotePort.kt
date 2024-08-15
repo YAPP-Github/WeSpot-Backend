@@ -23,13 +23,22 @@ interface VotePort {
 
     fun save(vote: Vote): Vote
 
-    fun findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+    fun findAllBySchoolIdAndGradeAndClassNumberAndReceiverIdOrderByDateDesc(
         schoolId: Long,
         grade: Int,
         classNumber: Int,
+        receiverId: Long,
         cursorId: Long,
         limit: Long
     ): List<Vote>
 
+    fun findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+        schoolId: Long,
+        grade: Int,
+        classNumber: Int,
+        senderId: Long,
+        cursorId: Long,
+        limit: Long
+    ): List<Vote>
 
 }

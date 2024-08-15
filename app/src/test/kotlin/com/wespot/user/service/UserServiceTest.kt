@@ -77,13 +77,15 @@ class UserServiceTest : BehaviorSpec({
             val profileRequest = UserFixture.updateProfileRequest()
 
             every { getLoginUser(userPort) } returns user
-            every { user.updateProfile(any()) } returns user.copy(
-                introduction = UserIntroduction.from(profileRequest.introduction)
-            )
-            every { profile.update(any(), any()) } returns profile.copy(
-                backgroundColor = profileRequest.profile.backgroundColor,
-                iconUrl = profileRequest.profile.iconUrl
-            )
+            every { user.updateProfile(any()) } answers {
+                user.copy(
+                    introduction = profileRequest.introduction?.let { UserIntroduction.from(it) } ?: user.introduction,
+                    profile = profile.copy(
+                        backgroundColor = profileRequest.profile?.backgroundColor ?: user.profile.backgroundColor,
+                        iconUrl = profileRequest.profile?.iconUrl ?: user.profile.iconUrl
+                    )
+                )
+            }
             every { profilePort.save(any()) } returns profile
             every { userPort.save(any()) } returns user
 
@@ -91,9 +93,10 @@ class UserServiceTest : BehaviorSpec({
 
             then("프로필이 업데이트 되어야 한다") {
                 user.introduction.introduction shouldBe profileRequest.introduction
-                user.profile.backgroundColor shouldBe profileRequest.profile.backgroundColor
-                user.profile.iconUrl shouldBe profileRequest.profile.iconUrl
+                user.profile.backgroundColor shouldBe profileRequest.profile?.backgroundColor
+                user.profile.iconUrl shouldBe profileRequest.profile?.iconUrl
             }
         }
+
     }
 })

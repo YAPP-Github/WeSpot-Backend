@@ -146,6 +146,28 @@ class CreatedVoteServiceTest @Autowired constructor(
     }
 
     @Test
+    fun `학급에 처음으로 가입하지 않는 경우 투표를 더 이상 생성하지 않는다`() {
+        // given
+        userJpaRepository.deleteAll()
+        val savedUserJpaEntity1 = userJpaRepository.save(UserMapper.mapToJpaEntity(users[0]))
+        val savedUserJpaEntity2 = userJpaRepository.save(UserMapper.mapToJpaEntity(users[1]))
+        val savedUserDomainEntity1 = UserMapper.mapToDomainEntity(savedUserJpaEntity1)
+        val savedUserDomainEntity2 = UserMapper.mapToDomainEntity(savedUserJpaEntity2)
+
+        // when
+        createdVoteService.createVoteByUser(savedUserDomainEntity1)
+        createdVoteService.createVoteByUser(savedUserDomainEntity2)
+        val votes = voteJpaRepository.findAll()
+
+        // then
+        votes.size shouldBe 1
+        votes[0].schoolId shouldBe savedUserDomainEntity1.schoolId
+        votes[0].grade shouldBe savedUserDomainEntity1.grade
+        votes[0].classNumber shouldBe savedUserDomainEntity1.classNumber
+        votes[0].voteNumber shouldBe 0
+    }
+
+    @Test
     fun `가입하지 않은 유저가 투표 생성을 요청할 경우 예외가 발생한다`() {
         // given when
         val shouldThrow = shouldThrow<IllegalArgumentException> { createdVoteService.createVoteByUser(users[0]) }

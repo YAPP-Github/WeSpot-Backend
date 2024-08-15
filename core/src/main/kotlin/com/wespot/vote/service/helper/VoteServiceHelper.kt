@@ -42,11 +42,28 @@ object VoteServiceHelper {
             ?: throw IllegalArgumentException("ID에 해당하는 선택지가 존재하지 않습니다.")
     }
 
-    fun findVotesOrderByDateDesc(votePort: VotePort, user: User, cursorId: Long, limit: Long): List<Vote> {
-        return votePort.findAllBySchoolIdAndGradeAndClassNumberByOrderByDateDesc(
+    fun findVotesReceiverIdOrderByDateDesc(votePort: VotePort, user: User, cursorId: Long, limit: Long): List<Vote> {
+        return votePort.findAllBySchoolIdAndGradeAndClassNumberAndReceiverIdOrderByDateDesc(
             schoolId = user.schoolId,
             grade = user.grade,
             classNumber = user.classNumber,
+            receiverId = user.id,
+            cursorId = cursorId,
+            limit = limit
+        )
+    }
+
+    fun findVotesSenderIdOrderByDateDesc(
+        votePort: VotePort,
+        user: User,
+        cursorId: Long,
+        limit: Long
+    ): List<Vote> {
+        return votePort.findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
+            schoolId = user.schoolId,
+            grade = user.grade,
+            classNumber = user.classNumber,
+            senderId = user.id,
             cursorId = cursorId,
             limit = limit
         )

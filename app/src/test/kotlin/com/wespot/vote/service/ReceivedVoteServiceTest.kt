@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -103,6 +104,18 @@ class ReceivedVoteServiceTest @Autowired constructor(
                 )
             )
         )
+        ballotJpaRepository.save(
+            BallotMapper.mapToJpaEntity(
+                Ballot.of(
+                    vote2!!.id,
+                    vote2!!.voteIdentifier.date,
+                    voteOptions[1].id,
+                    users[2].id,
+                    users[0].id,
+                    now.minusDays(1)
+                )
+            )
+        )
 
         // when
         val receivedVotes1 = receivedVoteService.getReceivedVotes(null, 100)
@@ -120,7 +133,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         receivedVotes1.voteData[0].receivedVoteResults[1].voteCount shouldBe 1
         receivedVotes1.voteData[0].receivedVoteResults[1].isNew shouldBe true
         receivedVotes1.voteData[1].date shouldBe now.minusDays(1).toLocalDate().toString()
-        receivedVotes1.voteData[1].receivedVoteResults.size shouldBe 0
+        receivedVotes1.voteData[1].receivedVoteResults.size shouldBe 1
         receivedVotes1.lastCursorId shouldBe vote2!!.id
         receivedVotes2.voteData.size shouldBe 1
         receivedVotes2.voteData[0].voteId shouldBe vote1!!.id

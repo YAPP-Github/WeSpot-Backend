@@ -3,7 +3,6 @@ package com.wespot.message.service
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
-import com.wespot.message.MessageType
 import com.wespot.message.dto.response.*
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
@@ -11,7 +10,6 @@ import com.wespot.school.School
 import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.Profile
 import com.wespot.user.User
 import com.wespot.user.fixture.BlockedUserFixture
 import com.wespot.user.fixture.UserFixture
