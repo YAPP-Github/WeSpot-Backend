@@ -1,5 +1,6 @@
 package com.wespot.common
 
+import com.wespot.common.`in`.ErrorNotificationUseCase
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import java.net.URI
 
 @ControllerAdvice
-class GlobalExceptionHandler {
+class GlobalExceptionHandler(
+    private val errorNotificationUseCase: ErrorNotificationUseCase
+) {
 
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
