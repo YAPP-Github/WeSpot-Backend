@@ -91,11 +91,21 @@ class GlobalExceptionHandler(
                 "${LocalDateTime.now()}\n" +
                 "### \uD83D\uDD17 요청 URI\n" +
                 "${request.requestURI} (${request.method})\n" +
+                "### ✅ Exception Source\n" +
+                "${extractExceptionSource(exception)}\n" +
                 "### \uD83D\uDCC4 Stack Trace\n" +
                 "```\n" +
                 "${exception.stackTraceToString().substring(0, 3000)}\n" +
                 "```"
         )
+    }
+
+    private fun extractExceptionSource(exception: Exception): String {
+        val stackTrace = exception.stackTrace
+        if (stackTrace.isNotEmpty()) {
+            return stackTrace[0].toString()
+        }
+        return "Unknown Source"
     }
 
 }
