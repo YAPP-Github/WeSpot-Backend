@@ -42,8 +42,6 @@ class UserController(
 
     @GetMapping("/backgrounds")
     fun backgrounds(): ResponseEntity<BackgroundListResponse> {
-//        throw IllegalArgumentException("Warning이 터졌따잉")
-            throw Exception("Error가 터졌다잉")
         val response = userUseCase.backgrounds()
 
         return ResponseEntity.ok()
