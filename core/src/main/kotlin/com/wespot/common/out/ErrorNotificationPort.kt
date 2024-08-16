@@ -2,8 +2,8 @@ package com.wespot.common.out
 
 interface ErrorNotificationPort {
 
-    fun notifyWarning()
+    fun notifyWarning(message: String)
 
-    fun notifyError()
+    fun notifyError(message: String)
 
 }

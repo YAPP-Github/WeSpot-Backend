@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import java.net.URI
+import java.time.LocalDateTime
 
 @ControllerAdvice
 class GlobalExceptionHandler(
@@ -22,6 +23,7 @@ class GlobalExceptionHandler(
         exception: IllegalArgumentException,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        errorNotificationUseCase.notifyError(false, createExceptionNotificationMessage(request, exception))
         logger.error("요청된 정보가 잘못되었습니다.", exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
@@ -41,6 +43,7 @@ class GlobalExceptionHandler(
         exception: NoSuchElementException,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        errorNotificationUseCase.notifyError(false, createExceptionNotificationMessage(request, exception))
         logger.error("자원을 찾을 수 없습니다.", exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
@@ -60,6 +63,7 @@ class GlobalExceptionHandler(
         exception: Exception,
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
+        errorNotificationUseCase.notifyError(true, createExceptionNotificationMessage(request, exception))
         logger.error("서버에서 알 수 없는 에러가 발생했습니다.", exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
@@ -72,6 +76,17 @@ class GlobalExceptionHandler(
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(problemDetail)
+    }
+
+    private fun createExceptionNotificationMessage(request: HttpServletRequest, exception: Exception): String {
+        return "### 🕖 발생 시간\n" +
+            "${LocalDateTime.now()}\n" +
+            "### \uD83D\uDD17 요청 URI\n" +
+            "${request.requestURI} (${request.method})\n" +
+            "### \uD83D\uDCC4 Stack Trace\n" +
+            "```\n" +
+            "${exception.stackTraceToString().substring(1000)}\n" +
+            "```"
     }
 
 }
