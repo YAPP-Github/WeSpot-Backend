@@ -14,13 +14,13 @@ class NotificationScheduler(
     private val messageNotificationUseCase: MessageNotificationUseCase,
 ) {
 
-    @Scheduled(cron = "0 0 0 * * *") // 매일 00시 실행
+    @Scheduled(cron = "50 0 0 * * *") // 매일 00시 00분 50초에 실행
     fun disableVoteNotifications() {
         val today = LocalDate.now()
         disabledNotificationUseCase.disableVoteNotifications(today)
     }
 
-    @Scheduled(cron = "0 0 22 * * *") // 매일 00시 실행
+    @Scheduled(cron = "0 0 22 * * *") // 매일 22시 실행
     fun disableMessageNotifications() {
         val today = LocalDate.now()
         disabledNotificationUseCase.disableMessageNotifications(today)

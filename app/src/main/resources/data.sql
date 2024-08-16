@@ -1836,14 +1836,6 @@ VALUES (false, now(), 1, 101, 102, now(), 3, 1),
        (false, now(), 48, 10, 122, now(), 50, 6),
        (false, now(), 49, 10, 122, now(), 51, 1);
 
-select *
-from vote
-where id=102;
-
-select *
-from vote_option_by_date
-where vote_id=102;
-
 INSERT INTO ballot(is_receiver_read, created_at, id, sender_id, receiver_id, updated_at, vote_id, vote_option_id)
 VALUES (false, now(), 75, 101, 132, now(), 102, 6),
        (false, now(), 76, 102, 132, now(), 101, 1),
