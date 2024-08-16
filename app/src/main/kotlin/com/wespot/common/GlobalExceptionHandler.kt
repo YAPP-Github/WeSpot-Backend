@@ -92,7 +92,7 @@ class GlobalExceptionHandler(
                 "### \uD83D\uDD17 요청 URI\n" +
                 "${request.requestURI} (${request.method})\n" +
                 "### ✅ Exception Source\n" +
-                "${extractExceptionSource(exception)}\n" +
+                "$exception at ${extractExceptionSource(exception)}\n" +
                 "### \uD83D\uDCC4 Stack Trace\n" +
                 "```\n" +
                 "${exception.stackTraceToString().substring(0, 3000)}\n" +
