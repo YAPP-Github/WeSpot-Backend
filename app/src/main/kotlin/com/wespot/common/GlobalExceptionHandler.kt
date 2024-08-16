@@ -85,7 +85,7 @@ class GlobalExceptionHandler(
             "${request.requestURI} (${request.method})\n" +
             "### \uD83D\uDCC4 Stack Trace\n" +
             "```\n" +
-            "${exception.stackTraceToString().substring(1000)}\n" +
+            "${exception.stackTraceToString().substring(0, 3000)}\n" +
             "```"
     }
 
