@@ -9,7 +9,7 @@ class VoteScheduler(
     private val createdVoteUseCase: CreatedVoteUseCase
 ) {
 
-    @Scheduled(cron = "0 0 0 * * *") // 매일 00시 실행
+    @Scheduled(cron = "50 0 0 * * *") // 매일 00시 00분에 50초에 실행
     fun createNewVote() {
         createdVoteUseCase.createVotes()
     }

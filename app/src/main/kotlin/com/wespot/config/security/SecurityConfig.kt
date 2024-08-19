@@ -60,6 +60,8 @@ class SecurityConfig(
             }
             .authorizeHttpRequests {
                 it
+                    .requestMatchers(HttpMethod.GET, "/").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/").permitAll()
                     .requestMatchers(
                         "/health", "/",
                         "/api/v1/auth/login",
