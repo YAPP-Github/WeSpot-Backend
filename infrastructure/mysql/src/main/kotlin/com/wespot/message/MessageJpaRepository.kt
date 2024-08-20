@@ -51,6 +51,7 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         AND m.senderId = :senderId
         AND m.id < :cursorId
         AND m.isSenderDeleted = false
+        AND m.messageType = 'RECEIVED'
         ORDER BY m.sendAt DESC, m.id DESC
     """
     )
