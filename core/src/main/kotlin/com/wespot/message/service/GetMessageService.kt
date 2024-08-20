@@ -184,4 +184,15 @@ class GetMessageService(
         )
     }
 
+    override fun getUnreadMessageCount(): UnreadMessageResponse {
+        val loginUser = getLoginUser(userPort)
+        val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
+        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
+            receiverId = loginUser.id,
+            blockedMessageIds = blockedUsers.map { it.messageId }
+        ).toInt()
+
+        return UnreadMessageResponse(countUnReadMessages)
+    }
+
 }

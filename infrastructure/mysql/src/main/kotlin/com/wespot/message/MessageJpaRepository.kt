@@ -125,4 +125,23 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         @Param("sendAt") sendAt: LocalDateTime
     ): List<MessageJpaEntity>
 
+    @Query(
+        """
+        SELECT COUNT(m)
+        FROM MessageJpaEntity m
+        WHERE 1 = 1
+        AND m.receiverId = :receiverId
+        AND m.isReceiverRead = false
+        AND m.readAt IS NULL
+        AND m.messageType = 'RECEIVED'
+        AND m.isReceiverDeleted = false
+        AND m.receivedAt IS NOT NULL
+        AND m.id NOT IN :blockedMessageIds
+        AND m.senderId NOT IN :blockedMessageIds
+    """
+    )
+    fun countUnreadMessagesByReceiverId(
+        @Param("receiverId") receiverId: Long,
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>
+    ): Long
 }

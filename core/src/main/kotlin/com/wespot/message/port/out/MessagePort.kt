@@ -58,5 +58,8 @@ interface MessagePort {
 
     fun findByMessageTypeAndSendAtBefore(sendAt: LocalDateTime): List<Message>
 
-
+    fun countUnreadMessagesByReceiverId(
+        receiverId: Long,
+        blockedMessageIds: List<Long>
+    ): Long
 }
