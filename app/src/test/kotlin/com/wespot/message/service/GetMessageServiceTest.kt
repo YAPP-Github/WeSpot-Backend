@@ -294,12 +294,15 @@ class GetMessageServiceTest : BehaviorSpec({
         `when`("status() 메서드를 호출할 때") {
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { messagePort.sendMessageCount(sender.id) } returns 0
+            every { messagePort.countUnreadMessagesByReceiverId(any(), any()) } returns 0
+            every { blockedUserPort.findAllByBlockerId(sender.id) } returns emptyList()
 
             then("SendMessageStatusResponse를 반환해야 한다") {
                 val response = getMessageService.status()
                 response shouldBe SendMessageStatusResponse(
                     isSendAllowed = true,
-                    remainingMessages = 3
+                    remainingMessages = 3,
+                    unReadMessages = 0
                 )
             }
 

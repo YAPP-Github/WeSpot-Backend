@@ -116,11 +116,18 @@ class GetMessageService(
 
     override fun status(): SendMessageStatusResponse {
         val loginUser = getLoginUser(userPort)
-        val limit = MESSAGE_LIMIT - validateSendMessageLimit(loginUser, messagePort)
+        val sendMessageCount = messagePort.sendMessageCount(loginUser.id)
+        val limit = MESSAGE_LIMIT - sendMessageCount
+        val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
+        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
+            receiverId = loginUser.id,
+            blockedMessageIds = blockedUsers.map { it.messageId }
+        ).toInt()
 
         return SendMessageStatusResponse(
             isSendAllowed = limit > 0,
-            remainingMessages = limit
+            remainingMessages = limit,
+            unReadMessages = countUnReadMessages
         )
     }
 
@@ -182,17 +189,6 @@ class GetMessageService(
             messages = messages,
             hasNext = hasNext
         )
-    }
-
-    override fun getUnreadMessageCount(): UnreadMessageResponse {
-        val loginUser = getLoginUser(userPort)
-        val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
-        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
-            receiverId = loginUser.id,
-            blockedMessageIds = blockedUsers.map { it.messageId }
-        ).toInt()
-
-        return UnreadMessageResponse(countUnReadMessages)
     }
 
 }

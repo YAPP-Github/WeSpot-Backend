@@ -16,5 +16,4 @@ interface GetMessageUseCase {
 
     fun getBlockedMessages(cursorId: Long): MessageBlockedListResponse
 
-    fun getUnreadMessageCount(): UnreadMessageResponse
 }

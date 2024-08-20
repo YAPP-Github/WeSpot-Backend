@@ -62,12 +62,4 @@ class GetMessageController(
             .body(response)
     }
 
-    @GetMapping("/unread")
-    fun getUnreadMessages(): ResponseEntity<UnreadMessageResponse> {
-        val response = getMessageUseCase.getUnreadMessageCount()
-
-        return ResponseEntity.ok()
-            .body(response)
-    }
-
 }
