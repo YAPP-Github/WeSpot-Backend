@@ -72,6 +72,7 @@ class SecurityConfig(
                         "/api/v1/schools/search/**",
                         "/api/v1/schools/search",
                         "/api/v1/check-profanity",
+                        "/api/v1/auth/kakao/template",
                     ).permitAll()
                     .anyRequest().authenticated()
             }

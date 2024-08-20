@@ -8,7 +8,7 @@ import jakarta.persistence.Table
 import org.jetbrains.annotations.NotNull
 
 @Entity
-@Table(name = "profile_icon")
+@Table(name = "profile_background")
 class ProfileBackgroundJpaEntity(
 
     @Id
