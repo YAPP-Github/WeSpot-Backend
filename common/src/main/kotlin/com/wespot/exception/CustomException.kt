@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus
 class CustomException(
     val status: HttpStatus,
     override val message: String,
-    val exceptionView: ExceptionView
+    val view: ExceptionView
 ) : RuntimeException() {
 
 }
