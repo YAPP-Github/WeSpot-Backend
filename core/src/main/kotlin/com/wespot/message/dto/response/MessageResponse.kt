@@ -17,7 +17,8 @@ data class MessageResponse(
     val isRead: Boolean,
     val isBlocked: Boolean,
     val isReported: Boolean,
-    val readAt: String?
+    val readAt: String?,
+    val isAnonymous: Boolean
 ){
     companion object {
 
@@ -36,7 +37,8 @@ data class MessageResponse(
                 isRead = message.isReceiverRead,
                 isBlocked = isBlocked,
                 isReported = message.isReported,
-                readAt = message.readAt?.toString()
+                readAt = message.readAt?.toString(),
+                isAnonymous = message.isAnonymous
             )
         }
 
