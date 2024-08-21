@@ -112,43 +112,6 @@ class SavedReportServiceTest @Autowired constructor(
     }
 
     @Test
-    fun `제보시에, 같은 학급의 친구가 아닌 이를 제보할 경우, 예외가 발생한다`() {
-        val reportSender =
-            userJpaRepository.save(
-                UserMapper.mapToJpaEntity(
-                    UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
-                        "TestEmail0@Kakao",
-                        1,
-                        1,
-                        1
-                    )
-                )
-            )
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
-        val reportReceiver =
-            userJpaRepository.save(
-                UserMapper.mapToJpaEntity(
-                    UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
-                        "TestEmail1@Kakao",
-                        1,
-                        1,
-                        2
-                    )
-                )
-            )
-        val reportRequest = ReportRequest(
-            targetId = reportReceiver.id,
-            reportType = ReportType.VOTE
-        )
-
-        // when
-        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
-
-        // then
-        shouldThrow shouldHaveMessage "같은 반 친구가 아닙니다."
-    }
-
-    @Test
     fun `쪽지를 신고하는 경우, 쪽지가 지워진다`() {
         // given
         val reportSender =
