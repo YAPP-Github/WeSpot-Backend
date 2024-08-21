@@ -301,8 +301,8 @@ class GetMessageServiceTest : BehaviorSpec({
                 val response = getMessageService.status()
                 response shouldBe SendMessageStatusResponse(
                     isSendAllowed = true,
-                    remainingMessages = 3,
-                    unReadMessages = 0
+                    countRemainingMessages = 3,
+                    countUnReadMessages = 0
                 )
             }
 

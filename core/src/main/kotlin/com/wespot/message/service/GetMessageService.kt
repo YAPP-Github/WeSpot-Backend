@@ -10,7 +10,6 @@ import com.wespot.message.service.MessageFinder.findAllByBlockerId
 import com.wespot.message.service.MessageFinder.findMessageById
 import com.wespot.message.service.MessageFinder.findSchoolById
 import com.wespot.message.service.MessageFinder.findUserById
-import com.wespot.message.service.MessageSendValidator.validateSendMessageLimit
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.Profile
 import com.wespot.user.port.out.BlockedUserPort
@@ -126,8 +125,8 @@ class GetMessageService(
 
         return SendMessageStatusResponse(
             isSendAllowed = limit > 0,
-            remainingMessages = limit,
-            unReadMessages = countUnReadMessages
+            countRemainingMessages = limit,
+            countUnReadMessages = countUnReadMessages
         )
     }
 

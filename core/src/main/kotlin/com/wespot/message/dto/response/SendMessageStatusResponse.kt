@@ -2,20 +2,20 @@ package com.wespot.message.dto.response
 
 data class SendMessageStatusResponse(
     val isSendAllowed: Boolean,
-    val remainingMessages: Int,
-    val unReadMessages: Int
+    val countRemainingMessages: Int,
+    val countUnReadMessages: Int
 ){
     companion object {
 
         fun from(
             isSendAllowed: Boolean,
-            remainingMessages: Int,
-            unReadMessages: Int
+            countRemainingMessages: Int,
+            countUnReadMessages: Int
         ): SendMessageStatusResponse {
             return SendMessageStatusResponse(
                 isSendAllowed = isSendAllowed,
-                remainingMessages = remainingMessages,
-                unReadMessages = unReadMessages
+                countRemainingMessages = countRemainingMessages,
+                countUnReadMessages = countUnReadMessages
             )
         }
     }
