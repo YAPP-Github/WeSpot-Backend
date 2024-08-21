@@ -3,8 +3,11 @@ package com.wespot.auth.service.kakao
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.service.SocialAuthService
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.SocialType
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,8 +22,10 @@ class KakaoService(
     }
 
     override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): SocialResponse {
-        val kakaoId = getKakaoId(authLoginRequest.identityToken
-            ?: throw IllegalArgumentException("Kakao ID가 입력되지 않았습니다."))
+        val kakaoId = getKakaoId(
+            authLoginRequest.identityToken
+                ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "Kakao ID가 입력되지 않았습니다.")
+        )
 
         return SocialResponse(
             socialId = kakaoId,
@@ -44,7 +49,13 @@ class KakaoService(
 
     private fun getKakaoId(accessToken: String): String {
         val kakaoUserInfo = kakaoClient.getUserInfo("Bearer $accessToken")
-        require(kakaoUserInfo.id > 0) { "Kakao 로그인에 실패하였습니다. 사용자 정보를 가져오는 데 문제가 발생하였습니다." }
+        require(kakaoUserInfo.id > 0) {
+            CustomException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ExceptionView.TOAST,
+                "Kakao 로그인에 실패하였습니다. 사용자 정보를 가져오는 데 문제가 발생하였습니다."
+            )
+        }
         return kakaoUserInfo.id.toString()
     }
 }

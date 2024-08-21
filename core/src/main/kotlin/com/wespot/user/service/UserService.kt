@@ -1,6 +1,8 @@
 package com.wespot.user.service
 
 import com.wespot.auth.service.SecurityUtils.getLoginUser
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.school.School
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.User
@@ -12,6 +14,7 @@ import com.wespot.user.port.out.ProfileBackgroundPort
 import com.wespot.user.port.out.ProfileIconPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserPort
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -70,6 +73,6 @@ class UserService(
 
     private fun findSchool(user: User): School {
         return schoolPort.findById(user.schoolId)
-            ?: throw IllegalArgumentException("학교 정보를 찾을 수 없습니다.")
+            ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
     }
 }

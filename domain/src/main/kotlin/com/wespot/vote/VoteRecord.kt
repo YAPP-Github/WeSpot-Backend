@@ -1,6 +1,9 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.util.*
 
@@ -30,10 +33,10 @@ data class VoteRecord(
 
         private fun validateInvalidUser(user: User, voteMetrics: VoteMetrics) {
             if (Objects.isNull(user)) {
-                throw IllegalArgumentException("존재하지 않는 사용자에 대한 투표가 존재합니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "존재하지 않는 사용자에 대한 투표가 존재합니다.")
             }
             if (user.id != voteMetrics.userId) {
-                throw IllegalArgumentException("userId가 일치하지 않습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "userId가 일치하지 않습니다.")
             }
         }
 

@@ -1,5 +1,8 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -42,24 +45,30 @@ data class Ballot(
 
         private fun validateVote(voteId: Long) {
             if (Objects.isNull(voteId)) {
-                throw IllegalArgumentException("존재하지 않는 투표함에 투표할 수 없습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "존재하지 않는 투표함에 투표할 수 없습니다.")
             }
         }
 
         private fun validateVoteOption(voteOptionId: Long) {
             if (Objects.isNull(voteOptionId)) {
-                throw IllegalArgumentException("질문지 선택은 필수 입니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "질문지 선택은 필수 입니다.")
             }
         }
 
         private fun validateSenderAndReceiver(senderId: Long, receiverId: Long) {
             if (senderId == receiverId) {
-                throw IllegalArgumentException("본인을 투표할 수 없습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "본인을 투표할 수 없습니다.")
             }
         }
 
         private fun validateVoteDateTime(voteDate: LocalDate, voteTime: LocalDateTime) {
-            require(voteDate == voteTime.toLocalDate()) { throw IllegalArgumentException("투표한 시각이 잘못되었습니다.") }
+            require(voteDate == voteTime.toLocalDate()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "투표한 시각이 잘못되었습니다."
+                )
+            }
         }
 
     }

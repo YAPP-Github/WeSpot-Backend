@@ -1,7 +1,10 @@
 package com.wespot.report
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.RestrictionType
 import com.wespot.user.restriction.Restriction
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -36,7 +39,7 @@ class RestrictionService {
             return
         }
 
-        throw IllegalArgumentException("새로 들어온 신고의 타입과 동일한 신고들을 다루어야합니다.")
+        throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "새로 들어온 신고의 타입과 동일한 신고들을 다루어야합니다.")
     }
 
     private fun isSameReportType(
@@ -52,7 +55,7 @@ class RestrictionService {
         originRestriction: Restriction
     ): Restriction {
         if (validateDuplicateReport(previousReports, newReport)) {
-            throw IllegalArgumentException("쪽지 하나를 여러 번 신고할 수 없습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "쪽지 하나를 여러 번 신고할 수 없습니다.")
         }
         val reportsCount = previousReports.size + 1
         if (reportsCount == FIRST_MESSAGE_USAGE_RESTRICTION_COUNT) {

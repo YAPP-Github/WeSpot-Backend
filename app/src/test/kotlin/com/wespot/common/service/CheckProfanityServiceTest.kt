@@ -1,6 +1,7 @@
 package com.wespot.common.service
 
 import com.wespot.common.dto.CheckProfanityRequest
+import com.wespot.exception.CustomException
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -18,7 +19,7 @@ class CheckProfanityServiceTest @Autowired constructor(
         val checkProfanityRequest = CheckProfanityRequest(validWord)
 
         // when then
-        shouldNotThrow<IllegalArgumentException> { checkProfanityService.checkProfanity(checkProfanityRequest) }
+        shouldNotThrow<CustomException> { checkProfanityService.checkProfanity(checkProfanityRequest) }
     }
 
     @Test
@@ -29,7 +30,7 @@ class CheckProfanityServiceTest @Autowired constructor(
 
         // when
         val shouldThrow =
-            shouldThrow<IllegalArgumentException> { checkProfanityService.checkProfanity(checkProfanityRequest) }
+            shouldThrow<CustomException> { checkProfanityService.checkProfanity(checkProfanityRequest) }
 
         // then
         shouldThrow shouldHaveMessage "비속어가 포함되어 있습니다."

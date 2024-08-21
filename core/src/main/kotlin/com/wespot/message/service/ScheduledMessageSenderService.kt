@@ -1,5 +1,7 @@
 package com.wespot.message.service
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.message.Message
 import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.port.`in`.SchedulerMessageUseCase
@@ -7,6 +9,7 @@ import com.wespot.message.port.out.MessagePort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.service.UserFinder
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +21,7 @@ class ScheduledMessageSenderService(
     private val messagePort: MessagePort,
     private val userPort: UserPort,
     private val eventPublisher: ApplicationEventPublisher,
-): SchedulerMessageUseCase {
+) : SchedulerMessageUseCase {
 
     @Transactional
     override fun sendScheduledMessages() {
@@ -47,7 +50,7 @@ class ScheduledMessageSenderService(
                 )
             )
         } catch (e: Exception) {
-            throw IllegalArgumentException("메시지 발송에 실패했습니다.${message.id}")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "메시지 발송에 실패했습니다.${message.id}")
         }
     }
 }

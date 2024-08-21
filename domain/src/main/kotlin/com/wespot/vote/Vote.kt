@@ -1,7 +1,10 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -65,7 +68,7 @@ data class Vote(
                 return
             }
 
-            throw IllegalArgumentException("입력된 이전 투표가 유효하지 않습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "입력된 이전 투표가 유효하지 않습니다.")
         }
 
         private fun isYesterday(
@@ -116,7 +119,13 @@ data class Vote(
 
     private fun validateClassmate(user: User) {
         val userVoteIdentifier = VoteIdentifier.of(user, voteIdentifier.date)
-        require(voteIdentifier.isSameClass(userVoteIdentifier)) { "다른 반의 학생이(을) 투표할 수 없습니다." }
+        require(voteIdentifier.isSameClass(userVoteIdentifier)) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "다른 반의 학생이(을) 투표할 수 없습니다."
+            )
+        }
     }
 
     fun getBallots(): List<Ballot> {

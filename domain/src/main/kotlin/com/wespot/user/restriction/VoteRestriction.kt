@@ -1,6 +1,9 @@
 package com.wespot.user.restriction
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.RestrictionType
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class VoteRestriction(
@@ -25,10 +28,22 @@ data class VoteRestriction(
         }
 
         private fun validate(restrictionType: RestrictionType, restrictionDay: Long) {
-            require(restrictionType.isVoteRestriction()) { "투표로 인한 제재 타입을 입력해주세요." }
+            require(restrictionType.isVoteRestriction()) {
+                throw CustomException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ExceptionView.TOAST,
+                    "투표로 인한 제재 타입을 입력해주세요."
+                )
+            }
             require(
                 restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT && restrictionDay == PERMANENT_BAN_DAY
-            ) { "올바르지 않은 제재 타입과 제재 일 수 입니다." }
+            ) {
+                throw CustomException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ExceptionView.TOAST,
+                    "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                )
+            }
         }
 
     }

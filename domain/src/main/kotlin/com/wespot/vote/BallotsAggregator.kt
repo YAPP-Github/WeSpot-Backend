@@ -1,5 +1,10 @@
 package com.wespot.vote
 
+import com.google.common.io.ByteArrayDataInput
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
+
 class BallotsAggregator(
     val ballots: List<Ballot>
 ) {
@@ -8,7 +13,7 @@ class BallotsAggregator(
 
         fun of(voteOptionId: Long, ballots: List<Ballot>): BallotsAggregator {
             if (validateBallotsForVoteOption(ballots, voteOptionId)) {
-                throw IllegalArgumentException("서로 다른 질문지에 대한 결과가 섞였습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST,ExceptionView.TOAST,"서로 다른 질문지에 대한 결과가 섞였습니다.")
             }
             return BallotsAggregator(ballots)
         }

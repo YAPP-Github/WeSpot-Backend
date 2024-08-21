@@ -1,5 +1,6 @@
 package com.wespot.notification.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationType
 import io.kotest.assertions.throwables.shouldThrow
@@ -62,7 +63,7 @@ class NotificationTest : BehaviorSpec({
             }
         }
         `when`("쪽지용으로 생성할 때, 잘못된 타입을 입력하면") {
-            val shouldThrow1 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow1 = shouldThrow<CustomException> {
                 Notification.createMessageInitialState(
                     userId = 1,
                     type = NotificationType.VOTE,
@@ -71,7 +72,7 @@ class NotificationTest : BehaviorSpec({
                     body = "테스트"
                 )
             }
-            val shouldThrow2 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow2 = shouldThrow<CustomException> {
                 Notification.createMessageInitialState(
                     userId = 1,
                     type = NotificationType.VOTE_RESULT,
@@ -80,7 +81,7 @@ class NotificationTest : BehaviorSpec({
                     body = "테스트"
                 )
             }
-            val shouldThrow3 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow3 = shouldThrow<CustomException> {
                 Notification.createMessageInitialState(
                     userId = 1,
                     type = NotificationType.VOTE_RECEIVED,
@@ -141,7 +142,7 @@ class NotificationTest : BehaviorSpec({
         }
 
         `when`("투표용으로 생성할 때, 잘못된 타입을 입력하면") {
-            val shouldThrow1 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow1 = shouldThrow<CustomException> {
                 Notification.createVoteInitialState(
                     userId = 1,
                     type = NotificationType.MESSAGE,
@@ -150,7 +151,7 @@ class NotificationTest : BehaviorSpec({
                     body = "테스트"
                 )
             }
-            val shouldThrow2 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow2 = shouldThrow<CustomException> {
                 Notification.createVoteInitialState(
                     userId = 1,
                     type = NotificationType.MESSAGE_SENT,
@@ -159,7 +160,7 @@ class NotificationTest : BehaviorSpec({
                     body = "테스트"
                 )
             }
-            val shouldThrow3 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow3 = shouldThrow<CustomException> {
                 Notification.createVoteInitialState(
                     userId = 1,
                     type = NotificationType.MESSAGE_RECEIVED,
@@ -209,7 +210,7 @@ class NotificationTest : BehaviorSpec({
                 title = "테스트",
                 body = "테스트"
             )
-            val shouldThrow = shouldThrow<IllegalArgumentException> { notification.read(2) }
+            val shouldThrow = shouldThrow<CustomException> { notification.read(2) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "알림 수신자만 알림을 조회할 수 있습니다."
             }

@@ -1,5 +1,8 @@
 package com.wespot.message
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
 import java.time.Clock
 import java.time.LocalTime
 
@@ -23,15 +26,21 @@ object MessageTimeValidator {
 
     fun validateMessageSendTime() {
         require(isValidTimeRange()) {
-            "이미 10시가 지나서 쪽지를 예약할 수 없어요\n" +
-                "아쉽지만 내일 다시 작성해보는 건 어떨까요?"
+            throw CustomException(
+                HttpStatus.BAD_REQUEST, ExceptionView.TOAST,
+                "이미 10시가 지나서 쪽지를 예약할 수 없어요\n" +
+                    "아쉽지만 내일 다시 작성해보는 건 어떨까요?"
+            )
         }
     }
 
     fun validateMessageUpdateTime() {
         require(isValidTimeRange()) {
-            "이미 10시가 지나서 쪽지를 수정할 수 없어요\n" +
-                "아쉽지만 내일 다시 작성해보는 건 어떨까요?"
+            throw CustomException(
+                HttpStatus.BAD_REQUEST, ExceptionView.TOAST,
+                "이미 10시가 지나서 쪽지를 수정할 수 없어요\n" +
+                    "아쉽지만 내일 다시 작성해보는 건 어떨까요?"
+            )
         }
     }
 }

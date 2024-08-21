@@ -1,5 +1,6 @@
 package com.wespot.notification.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationFilterService
 import com.wespot.notification.NotificationType
@@ -98,7 +99,7 @@ class NotificationFilterTest : BehaviorSpec({
                     type = NotificationType.VOTE
                 )
             )
-            val shouldThrow = shouldThrow<IllegalArgumentException> {
+            val shouldThrow = shouldThrow<CustomException> {
                 notificationFilterService.filterNotifications(
                     users,
                     messageNotifications

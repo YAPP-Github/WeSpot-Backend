@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.vote.VoteOptionsByVoteDate
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldNotThrow
@@ -42,7 +43,7 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
                 { VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(0,LocalDate.now(), 1, voteOptions) }
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow shouldHaveMessage "선택지의 개수가 5의 배수가 아닙니다."
             }
         }
@@ -65,7 +66,7 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
                 )
             }
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow shouldHaveMessage "미래의 선택지는 정할 수 없습니다."
             }
         }
@@ -97,14 +98,14 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
             )
         )
         `when`("오늘의 선택지에 포함되어 있지 않은 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { voteOptions.validateVoteOption(6L) }
+            val shouldThrow = shouldThrow<CustomException> { voteOptions.validateVoteOption(6L) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "오늘 제공된 질문지만 선택해 투표할 수 있습니다."
             }
         }
         `when`("오늘의 선택지에 포함되어 있는 경우") {
             then("예외가 발생하지 않는다.") {
-                shouldNotThrow<IllegalArgumentException> { voteOptions.validateVoteOption(5L) }
+                shouldNotThrow<CustomException> { voteOptions.validateVoteOption(5L) }
             }
         }
     }

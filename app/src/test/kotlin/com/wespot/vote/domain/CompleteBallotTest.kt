@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.CompleteBallot
 import com.wespot.vote.fixture.BallotFixture
@@ -24,7 +25,7 @@ class CompleteBallotTest : BehaviorSpec({
         val validVoteOption = VoteOptionFixture.createWithId(1)
         val invalidVoteOption = VoteOptionFixture.createWithId(2)
         `when`("입력된 값이 투표지와 동일하지 않다면") {
-            val shouldThrow1 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow1 = shouldThrow<CustomException> {
                 CompleteBallot.of(
                     invalidVote,
                     validVoteOption,
@@ -33,7 +34,7 @@ class CompleteBallotTest : BehaviorSpec({
                     ballot
                 )
             }
-            val shouldThrow2 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow2 = shouldThrow<CustomException> {
                 CompleteBallot.of(
                     validVote,
                     invalidVoteOption,
@@ -42,7 +43,7 @@ class CompleteBallotTest : BehaviorSpec({
                     ballot
                 )
             }
-            val shouldThrow3 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow3 = shouldThrow<CustomException> {
                 CompleteBallot.of(
                     validVote,
                     validVoteOption,
@@ -51,7 +52,7 @@ class CompleteBallotTest : BehaviorSpec({
                     ballot
                 )
             }
-            val shouldThrow4 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow4 = shouldThrow<CustomException> {
                 CompleteBallot.of(
                     validVote,
                     validVoteOption,

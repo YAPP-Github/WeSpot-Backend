@@ -1,5 +1,6 @@
 package com.wespot.message.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.fixture.MessageFixture
@@ -45,7 +46,7 @@ class MessageTest : BehaviorSpec({
             }
         }
         `when`("수신하지 않은 자가 메시지를 신고한 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { message.reported(3) }
+            val shouldThrow = shouldThrow<CustomException> { message.reported(3) }
 
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "수신자만이 메시지를 신고할 수 있습니다."
@@ -59,7 +60,7 @@ class MessageTest : BehaviorSpec({
         val badWordsContent = "ㅂㅁㄴ이;라ㅓ 싮ㅂㅅㅂㅅㅂㅅㅂ시ㅂ 메시지"
         val emptyContent = ""
         `when`("욕설이 포함되어 있는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> {
+            val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     badWordsContent,
                     1,
@@ -73,7 +74,7 @@ class MessageTest : BehaviorSpec({
             }
         }
         `when`("아무런 내용이 없는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> {
+            val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     emptyContent,
                     1,

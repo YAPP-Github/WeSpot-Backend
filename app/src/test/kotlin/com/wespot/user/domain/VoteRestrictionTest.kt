@@ -1,5 +1,6 @@
 package com.wespot.user.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.RestrictionType
 import com.wespot.user.restriction.VoteRestriction
 import io.kotest.assertions.throwables.shouldThrow
@@ -19,7 +20,7 @@ class VoteRestrictionTest : BehaviorSpec({
             }
         }
         `when`("제재 타입과 일 수를 정확하지 않게 입력하면") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> {
+            val shouldThrow = shouldThrow<CustomException> {
                 VoteRestriction.of(
                     RestrictionType.PERMANENT_BAN_VOTE_REPORT,
                     Long.MAX_VALUE - 1
@@ -40,13 +41,13 @@ class VoteRestrictionTest : BehaviorSpec({
             }
         }
         `when`("투표 타입이 아닌 제재를 입력하면") {
-            val shouldThrow1 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow1 = shouldThrow<CustomException> {
                 VoteRestriction.of(
                     RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                     30
                 )
             }
-            val shouldThrow2 = shouldThrow<IllegalArgumentException> {
+            val shouldThrow2 = shouldThrow<CustomException> {
                 VoteRestriction.of(
                     RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
                     Long.MAX_VALUE

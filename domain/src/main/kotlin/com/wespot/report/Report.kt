@@ -1,6 +1,10 @@
 package com.wespot.report
 
+import com.google.common.io.ByteArrayDataInput
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 data class Report(
@@ -33,7 +37,7 @@ data class Report(
 
         private fun validate(sender: User, receiver: User) {
             if (sender.id == receiver.id) {
-                throw IllegalArgumentException("본인이 본인을 신고할 수 없습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "본인이 본인을 신고할 수 없습니다.")
             }
         }
 

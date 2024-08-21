@@ -2,6 +2,7 @@ package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
+import com.wespot.exception.CustomException
 import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
@@ -91,7 +92,7 @@ class SavedVoteServiceTest @Autowired constructor(
         val throwingCallable = { voteService.saveVote(requests) }
 
         // then
-        val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+        val shouldThrow = shouldThrow<CustomException>(throwingCallable)
         shouldThrow shouldHaveMessage "투표하고자 하는 회원이 존재하지 않습니다."
     }
 
@@ -133,7 +134,7 @@ class SavedVoteServiceTest @Autowired constructor(
         val throwingCallable = { voteService.saveVote(requests) }
 
         // then
-        val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+        val shouldThrow = shouldThrow<CustomException>(throwingCallable)
         shouldThrow shouldHaveMessage "투표는 한번에 최대 5명에게 할 수 있습니다."
     }
 
@@ -155,7 +156,7 @@ class SavedVoteServiceTest @Autowired constructor(
         val throwingCallable = { voteService.saveVote(requests) }
 
         // then
-        val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+        val shouldThrow = shouldThrow<CustomException>(throwingCallable)
         shouldThrow shouldHaveMessage "오늘 제공된 질문지만 선택해 투표할 수 있습니다."
     }
 

@@ -1,6 +1,7 @@
 package com.wespot.report.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.exception.CustomException
 import com.wespot.message.MessageJpaRepository
 import com.wespot.message.MessageMapper
 import com.wespot.message.fixture.MessageFixture
@@ -37,7 +38,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "해당 계정이 존재하지 않습니다."
@@ -55,7 +56,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "신고하고자 하는 사용자가 존재하지 않습니다."
@@ -73,7 +74,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "신고하고자 하는 쪽지가 존재하지 않습니다."
@@ -104,7 +105,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "본인이 받은 쪽지가 아닙니다."
@@ -141,7 +142,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "같은 반 친구가 아닙니다."

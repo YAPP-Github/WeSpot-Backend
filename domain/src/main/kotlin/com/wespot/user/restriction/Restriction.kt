@@ -1,6 +1,9 @@
 package com.wespot.user.restriction
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.RestrictionType
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class Restriction(
@@ -39,7 +42,13 @@ data class Restriction(
     }
 
     private fun validate(restrictionType: RestrictionType) {
-        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) { "RestrictionType.NONE을 추가할 수 없습니다." }
+        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) {
+            throw CustomException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ExceptionView.TOAST,
+                "RestrictionType.NONE을 추가할 수 없습니다."
+            )
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package com.wespot.user.service
 
 import com.wespot.auth.service.SecurityUtils
+import com.wespot.exception.CustomException
 import com.wespot.message.Message
 import com.wespot.message.MessageType
 import com.wespot.message.fixture.MessageFixture
@@ -66,7 +67,7 @@ class BlockedUserServiceTest : BehaviorSpec({
             every { blockedUserPort.existsByBlockerIdAndBlockedIdAndMessageId(receiver.id, sender.id, message.id) } returns true
 
             then("예외를 발생시켜야 한다") {
-                val exception = shouldThrow<IllegalStateException> {
+                val exception = shouldThrow<CustomException> {
                     blockedUserService.blockedUser(message.id)
                 }
                 exception.message shouldBe "이미 차단된 사용자입니다."
@@ -94,7 +95,7 @@ class BlockedUserServiceTest : BehaviorSpec({
             every { MessageFinder.findMessageById(sentMessage.id, messagePort) } returns sentMessage
 
             then("예외를 발생시켜야 한다") {
-                val exception = shouldThrow<IllegalArgumentException> {
+                val exception = shouldThrow<CustomException> {
                     blockedUserService.blockedUser(sentMessage.id)
                 }
                 exception.message shouldBe "받은 메시지만 차단이 가능합니다."

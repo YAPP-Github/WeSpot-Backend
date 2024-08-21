@@ -1,5 +1,6 @@
 package com.wespot.notification.domain.vote
 
+import com.wespot.exception.CustomException
 import com.wespot.notification.NotificationType
 import com.wespot.notification.vote.SignUpVoteNotificationService
 import com.wespot.user.fixture.UserFixture
@@ -39,7 +40,7 @@ class SignUpVoteNotificationServiceTest : BehaviorSpec({
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(1, 1, 1, 1),
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(2, 1, 1, 2),
             )
-            val shouldThrow = shouldThrow<IllegalArgumentException> { service.getNotifications(users[0], users) }
+            val shouldThrow = shouldThrow<CustomException> { service.getNotifications(users[0], users) }
             then("예외가 발생한다.") {
                 shouldThrow.message shouldBe "다른 학급의 사용자가 포함되어 있습니다."
             }

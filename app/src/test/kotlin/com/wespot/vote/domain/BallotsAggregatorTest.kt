@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.vote.BallotsAggregator
 import com.wespot.vote.fixture.BallotFixture
 import io.kotest.assertions.throwables.shouldThrow
@@ -13,7 +14,7 @@ class BallotsAggregatorTest : BehaviorSpec({
     given("투표지 집계기를 생성할 때") {
         `when`("서로 다른 선택지에 대한 결과가 섞여 있으면") {
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     BallotsAggregator.of(
                         1L,
                         listOf(BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 2L, 1L, 2L))

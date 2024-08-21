@@ -1,6 +1,9 @@
 package com.wespot.user.restriction
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.RestrictionType
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class MessageRestriction(
@@ -32,12 +35,24 @@ data class MessageRestriction(
         }
 
         private fun validate(restrictionType: RestrictionType, restrictionDay: Long) {
-            require(restrictionType.isMessageRestriction()) { "쪽지로 인한 제재 타입을 입력해주세요." }
+            require(restrictionType.isMessageRestriction()) {
+                throw CustomException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ExceptionView.TOAST,
+                    "쪽지로 인한 제재 타입을 입력해주세요."
+                )
+            }
             require(
                 (restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT && restrictionDay == PERMANENT_BAN_DAY)
                     || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == FIRST_MESSAGE_USAGE_RESTRICTION_DAY)
                     || (restrictionType == RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT && restrictionDay == SECOND_MESSAGE_USAGE_RESTRICTION_DAY)
-            ) { "올바르지 않은 제재 타입과 제재 일 수 입니다." }
+            ) {
+                throw CustomException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ExceptionView.TOAST,
+                    "올바르지 않은 제재 타입과 제재 일 수 입니다."
+                )
+            }
         }
 
     }

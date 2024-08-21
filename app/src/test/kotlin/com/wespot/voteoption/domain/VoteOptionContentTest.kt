@@ -1,5 +1,6 @@
 package com.wespot.voteoption.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.voteoption.VoteOptionContent
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -11,7 +12,7 @@ class VoteOptionContentTest : BehaviorSpec({
     given("선택지에") {
         val badWordsContent = "ㅂㅁㄴ이;라ㅓ 싮ㅂㅅㅂㅅㅂㅅㅂ시ㅂ 선택지"
         `when`("욕설이 포함되어 있는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { VoteOptionContent.from(badWordsContent) }
+            val shouldThrow = shouldThrow<CustomException> { VoteOptionContent.from(badWordsContent) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "선택지의 내용에 비속어가 포함되어 있습니다."
             }

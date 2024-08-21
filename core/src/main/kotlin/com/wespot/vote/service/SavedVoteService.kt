@@ -1,5 +1,7 @@
 package com.wespot.vote.service
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
@@ -13,6 +15,7 @@ import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -75,7 +78,7 @@ class SavedVoteService(
 
     private fun validateRequestsSize(requestsSize: Int) {
         if (5 < requestsSize) {
-            throw IllegalArgumentException("투표는 한번에 최대 5명에게 할 수 있습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표는 한번에 최대 5명에게 할 수 있습니다.")
         }
     }
 
@@ -88,7 +91,7 @@ class SavedVoteService(
         if (foundUserIds.size == userIds.size) {
             return
         }
-        throw IllegalArgumentException("투표하고자 하는 회원이 존재하지 않습니다.")
+        throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표하고자 하는 회원이 존재하지 않습니다.")
     }
 
 }

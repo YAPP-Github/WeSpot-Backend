@@ -1,7 +1,10 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,7 +25,11 @@ class ReceivedVoteCalculateService {
             .withIndex()
             .filter { it.value.userId == user.id }
             .map { (index, voteMetrics) -> VoteRecord.ofWithRate(user, index + 1, voteMetrics) }
-            .firstOrNull() ?: throw IllegalArgumentException("해당 유저는 해당 질문지에 대한 투표를 받은 기록이 없습니다.")
+            .firstOrNull() ?: throw CustomException(
+            HttpStatus.BAD_REQUEST,
+            ExceptionView.TOAST,
+            "해당 유저는 해당 질문지에 대한 투표를 받은 기록이 없습니다."
+        )
         ballotsByVoteOption.forEach { it.receiverRead() }
 
         return voteRecord

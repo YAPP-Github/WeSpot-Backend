@@ -2,6 +2,7 @@ package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
+import com.wespot.exception.CustomException
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -189,7 +190,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> {
+        val shouldThrow = shouldThrow<CustomException> {
             receivedVoteService.getReceivedVote(
                 voteOptions[8].id,
                 now.toLocalDate()

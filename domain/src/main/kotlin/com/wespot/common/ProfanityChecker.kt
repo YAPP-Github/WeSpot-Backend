@@ -1,5 +1,9 @@
 package com.wespot.common
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
+
 object ProfanityChecker {
 
     private val replaceCharacters = listOf(
@@ -53,7 +57,13 @@ object ProfanityChecker {
     )
 
     fun validateContent(content: String) {
-        require(!checkProfanity(content)) { "비속어가 포함되어 있습니다." }
+        require(!checkProfanity(content)) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "비속어가 포함되어 있습니다."
+            )
+        }
     }
 
     fun checkProfanity(content: String): Boolean {

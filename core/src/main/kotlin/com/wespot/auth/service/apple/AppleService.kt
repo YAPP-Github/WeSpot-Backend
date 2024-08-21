@@ -5,11 +5,15 @@ import com.wespot.auth.dto.response.SocialResponse
 import com.wespot.auth.dto.apple.AppleRevokeRequest
 import com.wespot.auth.dto.apple.AppleTokenResult
 import com.wespot.auth.service.SocialAuthService
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.SocialType
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import java.net.http.HttpRequest
 
 @Service
 class AppleService(
@@ -28,10 +32,14 @@ class AppleService(
     }
 
     override fun fetchAuthToken(authLoginRequest: AuthLoginRequest): SocialResponse {
-        val appleId = getAppleId(authLoginRequest.identityToken
-            ?: throw IllegalArgumentException("Apple ID token이 없습니다."))
-        val appleTokenResult = generateAuthToken(authLoginRequest.authorizationCode
-            ?: throw IllegalArgumentException("Authorization code가 없습니다."))
+        val appleId = getAppleId(
+            authLoginRequest.identityToken
+                ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "Apple ID token이 없습니다.")
+        )
+        val appleTokenResult = generateAuthToken(
+            authLoginRequest.authorizationCode
+                ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "Authorization code가 없습니다.")
+        )
 
         return SocialResponse(
             socialId = appleId,
@@ -74,12 +82,22 @@ class AppleService(
             AppleRevokeRequest(
                 clientId = appleAud,
                 clientSecret = appleCreateClientSecret.createClientSecret(),
-                token = socialRefreshToken ?: throw IllegalArgumentException("Refresh token is null"),
+                token = socialRefreshToken ?: throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "Refresh token is null"
+                ),
                 tokenTypeHint = TOKEN_TYPE_HINT
             )
         )
 
-        require(response.status() == 200) { "Failed to revoke the token. Status: ${response.status()}" }
+        require(response.status() == 200) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "Failed to revoke the token. Status: ${response.status()}"
+            )
+        }
         return true
     }
 }

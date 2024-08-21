@@ -1,5 +1,6 @@
 package com.wespot.message.service
 
+import com.wespot.exception.CustomException
 import com.wespot.message.MessageTimeValidator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -34,7 +35,7 @@ class MessageTimeValidatorTest : BehaviorSpec({
                 MessageTimeValidator.setClock(fixedClock)
 
                 // Act & Assert
-                val exception = shouldThrow<IllegalArgumentException> {
+                val exception = shouldThrow<CustomException> {
                     MessageTimeValidator.validateMessageSendTime()
                 }
                 exception shouldHaveMessage "이미 10시가 지나서 쪽지를 예약할 수 없어요\n아쉽지만 내일 다시 작성해보는 건 어떨까요?"
@@ -48,7 +49,7 @@ class MessageTimeValidatorTest : BehaviorSpec({
                 MessageTimeValidator.setClock(fixedClock)
 
                 // Act & Assert
-                val exception = shouldThrow<IllegalArgumentException> {
+                val exception = shouldThrow<CustomException> {
                     MessageTimeValidator.validateMessageSendTime()
                 }
                 exception shouldHaveMessage "이미 10시가 지나서 쪽지를 예약할 수 없어요\n아쉽지만 내일 다시 작성해보는 건 어떨까요?"

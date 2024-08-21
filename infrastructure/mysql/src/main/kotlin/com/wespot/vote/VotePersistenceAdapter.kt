@@ -1,10 +1,13 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
 import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -65,7 +68,7 @@ class VotePersistenceAdapter(
     private fun getVoteOption(voteOptionId: Long): VoteOption {
         return voteOptionJpaRepository.findByIdOrNull(voteOptionId)
             ?.let { VoteOptionMapper.mapToDomainEntity(it) }
-            ?: throw IllegalArgumentException("해당하는 ID의 질문지가 존재하지 않습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST,"해당하는 ID의 질문지가 존재하지 않습니다.")
     }
 
     private fun findBallotsByVote(voteId: Long): List<Ballot> =

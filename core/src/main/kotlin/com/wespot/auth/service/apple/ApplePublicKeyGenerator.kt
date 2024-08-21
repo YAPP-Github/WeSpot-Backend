@@ -1,6 +1,9 @@
 package com.wespot.auth.service.apple
 
 import com.wespot.auth.dto.apple.ApplePublicKeysResult
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.math.BigInteger
 import java.security.KeyFactory
@@ -35,7 +38,11 @@ class ApplePublicKeyGenerator {
             val keyFactory = KeyFactory.getInstance("RSA")
             keyFactory.generatePublic(publicKeySpec)
         } catch (exception: Exception) {
-            throw IllegalArgumentException("Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다.", exception)
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다.",
+            )
         }
     }
 }
