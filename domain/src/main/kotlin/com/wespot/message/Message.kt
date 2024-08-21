@@ -164,6 +164,8 @@ data class Message(
 
     companion object {
 
+
+
         fun sendMessage(
             content: String,
             receiverId: Long,
@@ -198,5 +200,41 @@ data class Message(
             return message
         }
 
+
+        fun createWelcomeMessage(
+            senderId: Long,
+            receiverId: Long,
+            receiverName: String
+        ): Message {
+            return Message(
+                id = 0L,
+                content = MessageContent.from("안녕하세요 ${receiverName}님!\n" +
+                    "위스팟 행성에 오신 것을 정말 환영해요~\n" +
+                    "이곳에선 이름님의 소중한 마음들을 솔직하게 표현할 수 있답니다!\n" +
+                    "\n" +
+                    "익명 쪽지함은 매일 저녁 5시에 열려 밤 10시에 닫히고 하루에 최대 세 통의 쪽지를 보낼 수 있어요!\n" +
+                    "\n" +
+                    "제가 큐피트가 되어 ${receiverName}님의 소중한 마음들을 전달해 드릴테니 제가 필요하실 땐 언제든지 쪽지함을 찾아와 주세요!\n" +
+                    "\n" +
+                    "위스팟에서 설레는 시간을 보내시길 바라며.."),
+                senderId = senderId,
+                senderName = "당신의 큐피트 에버",
+                receiverId = receiverId,
+                isReceiverRead = false,
+                isAnonymous = true,
+                messageType = MessageType.RECEIVED,
+                readAt = null,
+                isSend = false,
+                sendAt = LocalDateTime.now(),
+                receivedAt = LocalDateTime.now(),
+                isReported = false,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+                isSenderDeleted = false,
+                senderDeletedAt = null,
+                isReceiverDeleted = false,
+                receiverDeletedAt = null
+            )
+        }
     }
 }

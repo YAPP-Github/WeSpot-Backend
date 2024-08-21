@@ -25,6 +25,10 @@ class MessagePersistenceAdapter(
             .map { MessageMapper.mapToDomainEntity(it) }
     }
 
+    override fun countUnreadMessagesByReceiverId(receiverId: Long, blockedMessageIds: List<Long>): Long {
+        return messageJpaRepository.countUnreadMessagesByReceiverId(receiverId, blockedMessageIds)
+    }
+
     override fun save(message: Message): Message {
         return messageJpaRepository.save(MessageMapper.mapToJpaEntity(message))
             .let { MessageMapper.mapToDomainEntity(it) }

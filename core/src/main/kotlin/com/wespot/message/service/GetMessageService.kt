@@ -10,7 +10,6 @@ import com.wespot.message.service.MessageFinder.findAllByBlockerId
 import com.wespot.message.service.MessageFinder.findMessageById
 import com.wespot.message.service.MessageFinder.findSchoolById
 import com.wespot.message.service.MessageFinder.findUserById
-import com.wespot.message.service.MessageSendValidator.validateSendMessageLimit
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.Profile
 import com.wespot.user.port.out.BlockedUserPort
@@ -116,11 +115,18 @@ class GetMessageService(
 
     override fun status(): SendMessageStatusResponse {
         val loginUser = getLoginUser(userPort)
-        val limit = MESSAGE_LIMIT - validateSendMessageLimit(loginUser, messagePort)
+        val sendMessageCount = messagePort.sendMessageCount(loginUser.id)
+        val limit = MESSAGE_LIMIT - sendMessageCount
+        val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
+        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
+            receiverId = loginUser.id,
+            blockedMessageIds = blockedUsers.map { it.messageId }
+        ).toInt()
 
         return SendMessageStatusResponse(
             isSendAllowed = limit > 0,
-            remainingMessages = limit
+            countRemainingMessages = limit,
+            countUnReadMessages = countUnReadMessages
         )
     }
 

@@ -17,6 +17,7 @@ import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.SocialType
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
+import com.wespot.user.event.WelcomeMessageEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
@@ -204,6 +205,7 @@ class AuthServiceTest : BehaviorSpec({
         every { authService.signIn(any()) } returns tokenAndUserDetailResponse
         every { eventPublisher.publishEvent(SignUpUserEvent(user)) } returns Unit
         every { eventPublisher.publishEvent(CreatedVoteEvent(user)) } returns Unit
+        every { eventPublisher.publishEvent(WelcomeMessageEvent(user)) } returns Unit
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)

@@ -62,5 +62,4 @@ class GetMessageController(
             .body(response)
     }
 
-
 }

@@ -24,6 +24,7 @@ import com.wespot.user.User
 import com.wespot.user.UserConsent
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
+import com.wespot.user.event.WelcomeMessageEvent
 import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
@@ -104,6 +105,7 @@ class AuthService(
         val savedUser = userPort.save(user)
         eventPublisher.publishEvent(CreatedVoteEvent(savedUser))
         eventPublisher.publishEvent(SignUpUserEvent(savedUser))
+        eventPublisher.publishEvent(WelcomeMessageEvent(savedUser))
 
         saveRelatedEntities(savedUser, signUpRequest, signUpToken.fcmToken)
 
