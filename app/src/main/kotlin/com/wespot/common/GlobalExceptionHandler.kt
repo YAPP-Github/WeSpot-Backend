@@ -1,5 +1,6 @@
 package com.wespot.common
 
+import com.wespot.ReasonPhraseUtil
 import com.wespot.common.`in`.ErrorNotificationUseCase
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionResponse
@@ -38,22 +39,12 @@ class GlobalExceptionHandler(
             exception.status,
             exception.message
         ).apply {
-            type = createErrorTypeInProblemDetail(exception.status)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(exception.status)
             instance = URI.create(request.requestURI)
         }
 
         return ResponseEntity.status(exception.status)
             .body(ExceptionResponse(exception.view, problemDetail))
-    }
-
-    private fun createErrorTypeInProblemDetail(httpStatus: HttpStatus): URI {
-        return URI.create("/errors/${getReasonPhraseWithHyphen(httpStatus.reasonPhrase)}")
-    }
-
-    private fun getReasonPhraseWithHyphen(reasonPhrase: String): String {
-        val hyphen = "-"
-        return reasonPhrase.lowercase()
-            .replace(" ", hyphen)
     }
 
     @ExceptionHandler(Exception::class)
@@ -68,7 +59,7 @@ class GlobalExceptionHandler(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "서버에서 알 수 없는 에러가 발생했습니다."
         ).apply {
-            type = createErrorTypeInProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR)
             instance = URI.create(request.requestURI)
         }
 
@@ -88,7 +79,7 @@ class GlobalExceptionHandler(
             HttpStatus.BAD_REQUEST,
             exception.message
         ).apply {
-            type = createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
             instance = URI.create(request.requestURI)
         }
 
@@ -108,7 +99,7 @@ class GlobalExceptionHandler(
             HttpStatus.BAD_REQUEST,
             exception.message
         ).apply {
-            type = createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
             instance = URI.create(request.getDescription(false))
         }
 
