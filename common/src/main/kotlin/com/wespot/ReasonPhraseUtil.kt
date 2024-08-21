@@ -5,8 +5,8 @@ import java.net.URI
 
 object ReasonPhraseUtil {
 
-    fun createErrorTypeInProblemDetail(httpStatus: HttpStatus): URI {
-        return URI.create("/errors/${getReasonPhraseWithHyphen(httpStatus.reasonPhrase)}")
+    fun createErrorTypeInProblemDetail(prefixUrl: String, httpStatus: HttpStatus): URI {
+        return URI.create("${prefixUrl}/${getReasonPhraseWithHyphen(httpStatus.reasonPhrase)}")
     }
 
     private fun getReasonPhraseWithHyphen(reasonPhrase: String): String {

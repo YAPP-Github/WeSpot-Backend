@@ -39,7 +39,7 @@ class GlobalExceptionHandler(
             exception.status,
             exception.message
         ).apply {
-            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(exception.status)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", exception.status)
             instance = URI.create(request.requestURI)
         }
 
@@ -53,13 +53,14 @@ class GlobalExceptionHandler(
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
         notifyException(true, request, exception)
-        logger.error("서버에서 알 수 없는 에러가 발생했습니다.", exception)
+        val internalErrorMessage = "서버에서 알 수 없는 에러가 발생했습니다."
+        logger.error(internalErrorMessage, exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "서버에서 알 수 없는 에러가 발생했습니다."
+            internalErrorMessage
         ).apply {
-            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.INTERNAL_SERVER_ERROR)
             instance = URI.create(request.requestURI)
         }
 
@@ -79,7 +80,7 @@ class GlobalExceptionHandler(
             HttpStatus.BAD_REQUEST,
             exception.message
         ).apply {
-            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.BAD_REQUEST)
             instance = URI.create(request.requestURI)
         }
 
@@ -99,7 +100,7 @@ class GlobalExceptionHandler(
             HttpStatus.BAD_REQUEST,
             exception.message
         ).apply {
-            type = ReasonPhraseUtil.createErrorTypeInProblemDetail(HttpStatus.BAD_REQUEST)
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.BAD_REQUEST)
             instance = URI.create(request.getDescription(false))
         }
 
