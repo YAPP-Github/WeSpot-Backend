@@ -175,7 +175,7 @@ class AuthService(
             fcm = savedFcm,
             setting = null
         )
-        val save = userPort.save(updatedUser)
+        userPort.save(updatedUser)
     }
 
     override fun reIssueToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
