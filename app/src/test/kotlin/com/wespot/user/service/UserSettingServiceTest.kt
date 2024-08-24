@@ -7,7 +7,6 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
 class UserSettingServiceTest @Autowired constructor(
     private val userSettingService: UserSettingService,

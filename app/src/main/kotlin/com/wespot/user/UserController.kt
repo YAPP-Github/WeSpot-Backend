@@ -4,8 +4,10 @@ import com.wespot.user.dto.request.ModifiedSettingRequest
 import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.BackgroundListResponse
 import com.wespot.user.dto.response.CharacterListResponse
+import com.wespot.user.dto.response.CheckedRestrictionResponse
 import com.wespot.user.dto.response.UserResponse
 import com.wespot.user.dto.response.UserSettingResponse
+import com.wespot.user.port.`in`.CheckedUserRestrictionUseCase
 import com.wespot.user.port.`in`.UserSettingUseCase
 import com.wespot.user.port.`in`.UserUseCase
 import org.springframework.http.ResponseEntity
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/users")
 class UserController(
     private val userUseCase: UserUseCase,
-    private val userSettingUseCase: UserSettingUseCase
+    private val userSettingUseCase: UserSettingUseCase,
+    private val checkedUserRestrictionUseCase: CheckedUserRestrictionUseCase
 ) {
 
     @GetMapping("/me")
@@ -71,6 +74,13 @@ class UserController(
 
         return ResponseEntity.noContent()
             .build()
+    }
+
+    @GetMapping("/restrictions/me")
+    fun checkMyRestriction(): ResponseEntity<CheckedRestrictionResponse> {
+        val response = checkedUserRestrictionUseCase.getUserRestriction()
+
+        return ResponseEntity.ok(response)
     }
 
 }
