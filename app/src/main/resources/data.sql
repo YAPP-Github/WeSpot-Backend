@@ -282,11 +282,11 @@ VALUES
 
 -- ProfileBackground 데이터 삽입
 INSERT INTO wespot.profile_background (id, background_color, name) VALUES (1, '#A9A0FF', 'Lavender');
-INSERT INTO wespot.profile_background (id, background_color, name) VALUES (2, '#91BAF4', 'Light Blue');
+INSERT INTO wespot.profile_background (id, background_color, name) VALUES (2, '#95C1FF', 'Light Blue');
 INSERT INTO wespot.profile_background (id, background_color, name) VALUES (3, '#A9E599', 'Light Green');
 INSERT INTO wespot.profile_background (id, background_color, name) VALUES (4, '#FFE16F', 'Yellow');
-INSERT INTO wespot.profile_background (id, background_color, name) VALUES (5, '#FD9263', 'Orange');
-INSERT INTO wespot.profile_background (id, background_color, name) VALUES (6, '#FFAEAE', 'Pink');
+INSERT INTO wespot.profile_background (id, background_color, name) VALUES (5, '#FFC892', 'Orange');
+INSERT INTO wespot.profile_background (id, background_color, name) VALUES (6, '#FFADCA', 'Pink');
 INSERT INTO wespot.profile_background (id, background_color, name) VALUES (7, '#FFDBC8', 'Peach');
 INSERT INTO wespot.profile_background (id, background_color, name) VALUES (8, '#BABEC4', 'Gray');
 
@@ -319,6 +319,6 @@ VALUES
 -- Users 데이터 삽입
 INSERT INTO `users` (`class_number`, `grade`, `is_enable_marketing_notification`, `is_enable_message_notification`, `is_enable_vote_notification`, `social_type`, `created_at`, `fcm_id`, `id`, `profile_id`, `school_id`, `updated_at`, `user_consent_id`, `withdraw_at`, `email`, `gender`, `introduction`, `name`, `password`, `social_email`, `social_id`, `social_refresh_token`, `role`, `restriction_id`)
 VALUES
-    (0, 0, 1, 1, 1, 1, now(), 1, 1, 1, 1, now(), 1, null, 'wespot.official.app@gmail.com', 'MALE', '어드민', '에버', '$2b$12$SSww5cmxbB9f0.prEkWVAOceuyLmE.v0Twi0qBsD5eKNyXtywPZoe', 'social_email1', 'social_id1', 'social_refresh_token1', 'ADMIN', 1);
+    (0, 0, 1, 1, 1, 1, now(), 1, 1, 1, 1, now(), 1, null, 'wespot.official.app@gmail.com', 'MALE', '어드민', '에버', '$2b$12$Gufr2kHShHONeCZE1QVOmeRtRHm57t/Z8jR8YtTO/xrF6ptWj9Z3O', 'social_email1', 'social_id1', 'social_refresh_token1', 'ADMIN', 1);
 
 COMMIT;
