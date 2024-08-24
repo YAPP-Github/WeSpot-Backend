@@ -1,5 +1,7 @@
 package com.wespot.user.service
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.school.School
 import com.wespot.school.SchoolType
 import com.wespot.school.port.out.SchoolPort
@@ -12,6 +14,7 @@ import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -77,9 +80,9 @@ class SearchUserService(
 
     private fun fetchCursorData(cursorId: Long): CursorSearchData {
         val cursorUser = userPort.findById(cursorId)
-            ?: throw IllegalArgumentException("사용자 정보를 찾을 수 없습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "사용자 정보를 찾을 수 없습니다.")
         val school = cursorUser.schoolId.let { schoolPort.findById(it) }
-            ?: throw IllegalArgumentException("학교 정보를 찾을 수 없습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
 
         val cursorSchoolTypeOrder = when (school.schoolType) {
             SchoolType.MIDDLE -> 1
@@ -108,7 +111,7 @@ class SearchUserService(
 
     private fun findSchool(user: User): School {
         return schoolPort.findById(user.schoolId)
-            ?: throw IllegalArgumentException("학교 정보를 찾을 수 없습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
     }
 
 }

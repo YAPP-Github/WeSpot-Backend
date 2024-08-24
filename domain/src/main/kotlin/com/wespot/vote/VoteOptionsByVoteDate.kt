@@ -1,6 +1,9 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.voteoption.VoteOption
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class VoteOptionsByVoteDate(
@@ -33,11 +36,23 @@ data class VoteOptionsByVoteDate(
         }
 
         private fun validateDate(date: LocalDate) {
-            require(LocalDate.now() >= date) { throw IllegalArgumentException("미래의 선택지는 정할 수 없습니다.") }
+            require(LocalDate.now() >= date) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "미래의 선택지는 정할 수 없습니다."
+                )
+            }
         }
 
         private fun validateVoteOptionsSize(allVoteOptionsSize: Int) {
-            require(allVoteOptionsSize >= 5) { throw IllegalArgumentException("선택지는 최소 5개 이상이어야 합니다.") }
+            require(allVoteOptionsSize >= 5) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "선택지는 최소 5개 이상이어야 합니다."
+                )
+            }
         }
 
         private fun validateVoteOptionsSizeMultipleOf5(
@@ -45,7 +60,7 @@ data class VoteOptionsByVoteDate(
             voteOptionIndex: Int
         ) {
             require(allVoteOptionsSize >= voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
-                throw IllegalArgumentException("선택지의 개수가 5의 배수가 아닙니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "선택지의 개수가 5의 배수가 아닙니다.")
             }
         }
 
@@ -55,7 +70,7 @@ data class VoteOptionsByVoteDate(
         voteOptionId: Long
     ) {
         require(voteOptionsByVoteDate.find { it.isSameVoteOption(voteOptionId) } != null) {
-            throw IllegalArgumentException("오늘 제공된 질문지만 선택해 투표할 수 있습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "오늘 제공된 질문지만 선택해 투표할 수 있습니다.")
         }
     }
 

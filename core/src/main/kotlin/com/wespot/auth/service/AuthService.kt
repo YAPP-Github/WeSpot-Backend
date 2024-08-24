@@ -14,6 +14,8 @@ import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.ConsentType
 import com.wespot.user.FCM
@@ -30,7 +32,9 @@ import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.propertyeditors.CustomMapEditor
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -129,7 +133,7 @@ class AuthService(
         signUpRequest: SignUpRequest
     ): User {
         val school = (schoolPort.findById(signUpRequest.schoolId)
-            ?: throw NoSuchElementException("해당 학교가 존재하지 않습니다."))
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 학교가 존재하지 않습니다."))
 
         val social = Social.create(
             email = signUpToken.email,
@@ -197,7 +201,7 @@ class AuthService(
     override fun revoke() {
         val loginUserId = getLoginUserId()
         val revokeUser = userPort.findById(loginUserId)
-            ?: throw NoSuchElementException("해당 계정이 존재하지 않습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 계정이 존재하지 않습니다.")
 
         socialAuthServiceFactory.getService(revokeUser.social.socialType)
             .revoke(revokeUser.social.socialId, revokeUser.social.socialRefreshToken)
@@ -214,7 +218,7 @@ class AuthService(
 
     fun getUserByEmail(email: String): User {
         return userPort.findByEmail(email)
-            ?: throw NoSuchElementException("유저를 찾을 수 없습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "유저를 찾을 수 없습니다.")
     }
 
     private fun authenticateUser(signInRequest: SignInRequest) =
@@ -238,7 +242,11 @@ class AuthService(
     }
 
     fun checkSignUpToken(token: String): AuthData {
-        return authDataPort.getAuthData(token) ?: throw NoSuchElementException("회원가입 토큰이 만료되었습니다.")
+        return authDataPort.getAuthData(token) ?: throw CustomException(
+            HttpStatus.FORBIDDEN,
+            ExceptionView.TOAST,
+            "회원가입 토큰이 만료되었습니다."
+        )
     }
 
     fun getLoginUserId(): Long {

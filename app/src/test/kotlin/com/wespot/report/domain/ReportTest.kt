@@ -1,5 +1,6 @@
 package com.wespot.report.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.report.Report
 import com.wespot.report.ReportType
 import com.wespot.user.fixture.UserFixture
@@ -16,7 +17,7 @@ class ReportTest : BehaviorSpec({
 
         `when`("송신자와 수신자가 동일하면 ") {
             val shouldThrow =
-                shouldThrow<IllegalArgumentException> { Report.of(ReportType.MESSAGE, 1L, sender, receiver) }
+                shouldThrow<CustomException> { Report.of(ReportType.MESSAGE, 1L, sender, receiver) }
 
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "본인이 본인을 신고할 수 없습니다."

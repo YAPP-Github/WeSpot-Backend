@@ -1,5 +1,8 @@
 package com.wespot.notification
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -49,7 +52,7 @@ data class Notification(
                 type == NotificationType.VOTE
                     || type == NotificationType.VOTE_RESULT
                     || type == NotificationType.VOTE_RECEIVED
-            ) { "투표 관련 알림이 아닙니다." }
+            ) { throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표 관련 알림이 아닙니다.") }
         }
 
         fun createMessageInitialState(
@@ -81,13 +84,19 @@ data class Notification(
                 type == NotificationType.MESSAGE
                     || type == NotificationType.MESSAGE_SENT
                     || type == NotificationType.MESSAGE_RECEIVED
-            ) { "쪽지 관련 알림이 아닙니다." }
+            ) { throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "쪽지 관련 알림이 아닙니다.") }
         }
 
     }
 
     fun read(readerId: Long) {
-        require(readerId == userId) { "알림 수신자만 알림을 조회할 수 있습니다." }
+        require(readerId == userId) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "알림 수신자만 알림을 조회할 수 있습니다."
+            )
+        }
         this.isRead = true
         this.readAt = LocalDateTime.now()
     }

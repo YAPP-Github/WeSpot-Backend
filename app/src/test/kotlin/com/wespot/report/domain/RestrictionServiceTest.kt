@@ -1,5 +1,6 @@
 package com.wespot.report.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.report.Report
 import com.wespot.report.ReportType
 import com.wespot.report.RestrictionService
@@ -134,7 +135,7 @@ class RestrictionServiceTest : BehaviorSpec({
                 ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.VOTE, 10, 1, 2)
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     restrictionService.calculateRestrictionByReports(
                         originRestriction,
                         report,
@@ -151,7 +152,7 @@ class RestrictionServiceTest : BehaviorSpec({
                 ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.MESSAGE, 1, 1, 2)
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     restrictionService.calculateRestrictionByReports(
                         originRestriction,
                         report,
@@ -167,7 +168,7 @@ class RestrictionServiceTest : BehaviorSpec({
             val report = ReportFixture.createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(ReportType.VOTE, 1, 1, 2)
 
             then("예외가 발생하지 않는다.") {
-                shouldNotThrow<IllegalArgumentException> {
+                shouldNotThrow<CustomException> {
                     restrictionService.calculateRestrictionByReports(
                         originRestriction,
                         report,

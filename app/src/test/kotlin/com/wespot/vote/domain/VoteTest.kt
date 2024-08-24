@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.RankCalculateService
@@ -49,7 +50,7 @@ class VoteTest() : BehaviorSpec({
             val throwingCallable = { Vote.of(voteIdentifier, voteOptions, Vote.of(voteIdentifier, voteOptions, vote)) }
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow shouldHaveMessage "선택지의 개수가 5의 배수가 아닙니다."
             }
         }
@@ -66,7 +67,7 @@ class VoteTest() : BehaviorSpec({
             }
 
             then("예외를 발생시킨다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow shouldHaveMessage "선택지는 최소 5개 이상이어야 합니다."
             }
         }
@@ -85,7 +86,7 @@ class VoteTest() : BehaviorSpec({
             vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     vote.addBallot(
                         1L,
                         users[0],
@@ -106,7 +107,7 @@ class VoteTest() : BehaviorSpec({
             vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
             then("정상적으로 투표가 진행된다.") {
-                shouldNotThrow<IllegalArgumentException> {
+                shouldNotThrow<CustomException> {
                     vote.addBallot(
                         1L,
                         users[1],
@@ -125,7 +126,7 @@ class VoteTest() : BehaviorSpec({
             )
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     vote.addBallot(
                         6L,
                         users[0],
@@ -401,7 +402,7 @@ class VoteTest() : BehaviorSpec({
             }
 
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> {
+                val shouldThrow = shouldThrow<CustomException> {
                     vote.getUserReceivedVote(
                         voteOptions[5],
                         users[0],
@@ -552,7 +553,7 @@ class VoteTest() : BehaviorSpec({
             val previousVote = Vote.of(firstUserVoteIdentifier, voteOptions, null)
             val secondUserVoteIdentifier = VoteIdentifier.of(secondUser, now)
             val shouldThrow =
-                shouldThrow<IllegalArgumentException> { Vote.of(secondUserVoteIdentifier, voteOptions, previousVote) }
+                shouldThrow<CustomException> { Vote.of(secondUserVoteIdentifier, voteOptions, previousVote) }
 
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "입력된 이전 투표가 유효하지 않습니다."
@@ -567,7 +568,7 @@ class VoteTest() : BehaviorSpec({
             val previousVote = Vote.of(firstUserVoteIdentifier, voteOptions, null)
             val secondUserVoteIdentifier = VoteIdentifier.of(secondUser, now)
             val shouldThrow =
-                shouldThrow<IllegalArgumentException> { Vote.of(secondUserVoteIdentifier, voteOptions, previousVote) }
+                shouldThrow<CustomException> { Vote.of(secondUserVoteIdentifier, voteOptions, previousVote) }
 
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "입력된 이전 투표가 유효하지 않습니다."
@@ -613,12 +614,12 @@ class VoteTest() : BehaviorSpec({
             val voteOptions = createVoteOptionByCount(5)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val shouldThrow1 =
-                shouldThrow<IllegalArgumentException> { vote.findUsersForVote(classmates, otherClassmateUser) }
+                shouldThrow<CustomException> { vote.findUsersForVote(classmates, otherClassmateUser) }
 
             val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
             classmates.add(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2))
             val shouldThrow2 =
-                shouldThrow<IllegalArgumentException> { vote.findUsersForVote(classmates, user) }
+                shouldThrow<CustomException> { vote.findUsersForVote(classmates, user) }
 
             then("예외가 발생한다.") {
                 shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
@@ -635,9 +636,9 @@ class VoteTest() : BehaviorSpec({
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val otherClassmate = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
             val shouldThrow1 =
-                shouldThrow<IllegalArgumentException> { vote.addBallot(1, user, otherClassmate, LocalDateTime.now()) }
+                shouldThrow<CustomException> { vote.addBallot(1, user, otherClassmate, LocalDateTime.now()) }
             val shouldThrow2 =
-                shouldThrow<IllegalArgumentException> { vote.addBallot(1, otherClassmate, user, LocalDateTime.now()) }
+                shouldThrow<CustomException> { vote.addBallot(1, otherClassmate, user, LocalDateTime.now()) }
             then("예외가 발생한다.") {
                 shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
                 shouldThrow2 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."

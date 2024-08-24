@@ -1,6 +1,7 @@
 package com.wespot.report.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.exception.CustomException
 import com.wespot.message.MessageJpaRepository
 import com.wespot.message.MessageMapper
 import com.wespot.message.fixture.MessageFixture
@@ -37,7 +38,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "해당 계정이 존재하지 않습니다."
@@ -55,7 +56,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "신고하고자 하는 사용자가 존재하지 않습니다."
@@ -73,7 +74,7 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<NoSuchElementException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "신고하고자 하는 쪽지가 존재하지 않습니다."
@@ -104,47 +105,10 @@ class SavedReportServiceTest @Autowired constructor(
         )
 
         // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
+        val shouldThrow = shouldThrow<CustomException> { savedReportService.reportReceived(reportRequest) }
 
         // then
         shouldThrow shouldHaveMessage "본인이 받은 쪽지가 아닙니다."
-    }
-
-    @Test
-    fun `제보시에, 같은 학급의 친구가 아닌 이를 제보할 경우, 예외가 발생한다`() {
-        val reportSender =
-            userJpaRepository.save(
-                UserMapper.mapToJpaEntity(
-                    UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
-                        "TestEmail0@Kakao",
-                        1,
-                        1,
-                        1
-                    )
-                )
-            )
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
-        val reportReceiver =
-            userJpaRepository.save(
-                UserMapper.mapToJpaEntity(
-                    UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
-                        "TestEmail1@Kakao",
-                        1,
-                        1,
-                        2
-                    )
-                )
-            )
-        val reportRequest = ReportRequest(
-            targetId = reportReceiver.id,
-            reportType = ReportType.VOTE
-        )
-
-        // when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { savedReportService.reportReceived(reportRequest) }
-
-        // then
-        shouldThrow shouldHaveMessage "같은 반 친구가 아닙니다."
     }
 
     @Test

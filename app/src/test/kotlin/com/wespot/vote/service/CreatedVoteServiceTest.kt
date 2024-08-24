@@ -1,6 +1,7 @@
 package com.wespot.vote.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.exception.CustomException
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.repository.UserJpaRepository
@@ -21,6 +22,7 @@ import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.CustomAutowireConfigurer
 import java.time.LocalDate
 
 class CreatedVoteServiceTest @Autowired constructor(
@@ -170,7 +172,7 @@ class CreatedVoteServiceTest @Autowired constructor(
     @Test
     fun `가입하지 않은 유저가 투표 생성을 요청할 경우 예외가 발생한다`() {
         // given when
-        val shouldThrow = shouldThrow<IllegalArgumentException> { createdVoteService.createVoteByUser(users[0]) }
+        val shouldThrow = shouldThrow<CustomException> { createdVoteService.createVoteByUser(users[0]) }
 
         // then
         shouldThrow shouldHaveMessage "ID에 해당하는 사용자가 존재하지 않습니다."

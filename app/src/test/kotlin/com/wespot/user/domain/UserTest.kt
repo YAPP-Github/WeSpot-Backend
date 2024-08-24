@@ -1,5 +1,6 @@
 package com.wespot.user.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.RestrictionFixture
 import com.wespot.user.fixture.UserFixture
@@ -110,7 +111,7 @@ class UserTest : BehaviorSpec({
         val badWordsIntroduction = "ㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅂㅂㅂㅂㅂ"
         `when`("욕설이 포함되어 있는 경우") {
             val createUser = UserFixture.createWithId(1)
-            val shouldThrow = shouldThrow<IllegalArgumentException> { createUser.updateProfile(badWordsIntroduction) }
+            val shouldThrow = shouldThrow<CustomException> { createUser.updateProfile(badWordsIntroduction) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "소개에 비속어가 포함되어 있습니다."
             }

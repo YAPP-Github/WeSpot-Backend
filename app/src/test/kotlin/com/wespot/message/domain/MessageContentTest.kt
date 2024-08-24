@@ -1,5 +1,6 @@
 package com.wespot.message.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.message.MessageContent
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -13,13 +14,13 @@ class MessageContentTest : BehaviorSpec({
         val emptyContent = ""
         val validContent = "헬로우"
         `when`("욕설이 포함되어 있는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { MessageContent.from(badWordsContent) }
+            val shouldThrow = shouldThrow<CustomException> { MessageContent.from(badWordsContent) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "메시지의 내용에 비속어가 포함되어 있습니다."
             }
         }
         `when`("아무런 내용이 없는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { MessageContent.from(emptyContent) }
+            val shouldThrow = shouldThrow<CustomException> { MessageContent.from(emptyContent) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "메시지의 내용은 필수로 존재해야합니다."
             }

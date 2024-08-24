@@ -1,5 +1,9 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
+
 data class Rate(
     val value: Int
 ) {
@@ -15,7 +19,7 @@ data class Rate(
             if (0 < value) {
                 return
             }
-            throw IllegalArgumentException("등수는 0 이하일 수 없습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "등수는 0 이하일 수 없습니다.")
         }
 
         fun createMeaningLessRate(): Rate {

@@ -3,8 +3,12 @@ package com.wespot.config
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.wespot.config.security.CustomUrlFilter
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import jakarta.annotation.PostConstruct
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 
 @Configuration
 class FirebaseConfig {
@@ -21,7 +25,7 @@ class FirebaseConfig {
                 FirebaseApp.initializeApp(options)
             }
         } catch (e: Exception) {
-            throw IllegalArgumentException("Firebase APP 연결에 실패했습니다.", e)
+            throw CustomException(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionView.DIALOG, "Firebase APP 연결에 실패했습니다.")
         }
     }
 

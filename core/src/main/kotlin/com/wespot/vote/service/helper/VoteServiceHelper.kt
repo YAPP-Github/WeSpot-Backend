@@ -1,12 +1,15 @@
 package com.wespot.vote.service.helper
 
 import com.wespot.auth.service.SecurityUtils
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
 import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.voteoption.VoteOption
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 object VoteServiceHelper {
@@ -17,7 +20,7 @@ object VoteServiceHelper {
 
     fun findUser(userPort: UserPort, userId: Long): User {
         return userPort.findById(userId)
-            ?: throw IllegalArgumentException("ID에 해당하는 사용자가 존재하지 않습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "ID에 해당하는 사용자가 존재하지 않습니다.")
     }
 
     fun findClassmatesByUser(userPort: UserPort, user: User): List<User> {
@@ -34,12 +37,12 @@ object VoteServiceHelper {
             grade = user.grade,
             classNumber = user.classNumber,
             date = date
-        ) ?: throw IllegalArgumentException("해당 투표가 존재하지 않습니다.")
+        ) ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 투표가 존재하지 않습니다.")
     }
 
     fun findVoteOptionById(voteOptionPort: VoteOptionPort, optionId: Long): VoteOption {
         return voteOptionPort.findById(optionId)
-            ?: throw IllegalArgumentException("ID에 해당하는 선택지가 존재하지 않습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "ID에 해당하는 선택지가 존재하지 않습니다.")
     }
 
     fun findVotesReceiverIdOrderByDateDesc(votePort: VotePort, user: User, cursorId: Long, limit: Long): List<Vote> {

@@ -13,6 +13,8 @@ import com.wespot.auth.fixture.AuthFixture
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.SocialType
 import com.wespot.user.event.CreatedVoteEvent
@@ -32,6 +34,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -168,10 +171,14 @@ class AuthServiceTest : BehaviorSpec({
         }
 
         `when`("잘못된 socialType으로 loginAccess를 호출할 때") {
-            every { authService.fetchSocialEmail(authLoginRequest) } throws NoSuchElementException("잘못된 socialType 입니다")
+            every { authService.fetchSocialEmail(authLoginRequest) } throws CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "잘못된 socialType 입니다"
+            )
 
-            then("NoSuchElementException이 발생해야 한다") {
-                shouldThrow<NoSuchElementException> {
+            then("CustomException 400이 발생해야 한다") {
+                shouldThrow<CustomException> {
                     authService.socialAccess(authLoginRequest)
                 }
             }
@@ -237,10 +244,14 @@ class AuthServiceTest : BehaviorSpec({
         }
 
         `when`("잘못된 signUpToken으로 signUp을 호출할 때") {
-            every { authService.checkSignUpToken(signUpRequest.signUpToken) } throws NoSuchElementException("잘못된 signUpToken 입니다")
+            every { authService.checkSignUpToken(signUpRequest.signUpToken) } throws CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "잘못된 signUpToken 입니다"
+            )
 
-            then("NoSuchElementException이 발생해야 한다") {
-                shouldThrow<NoSuchElementException> {
+            then("CustomException 400이 발생해야 한다") {
+                shouldThrow<CustomException> {
                     authService.signUp(signUpRequest)
                 }
             }
@@ -336,12 +347,14 @@ class AuthServiceTest : BehaviorSpec({
         }
 
         `when`("잘못된 refreshToken으로 reIssueToken을 호출할 때") {
-            every { authenticationService.getAuthentication(refreshTokenRequest.refreshToken) } throws NoSuchElementException(
+            every { authenticationService.getAuthentication(refreshTokenRequest.refreshToken) } throws CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
                 "잘못된 refreshToken 입니다"
             )
 
-            then("NoSuchElementException이 발생해야 한다") {
-                shouldThrow<NoSuchElementException> {
+            then("CustomException이 Bad Request가 발생해야 한다") {
+                shouldThrow<CustomException> {
                     authService.reIssueToken(refreshTokenRequest)
                 }
             }
@@ -389,8 +402,8 @@ class AuthServiceTest : BehaviorSpec({
         `when`("잘못된 사용자 ID로 revoke를 호출할 때") {
             every { userPort.findById(user.id) } returns null
 
-            then("NoSuchElementException이 발생해야 한다") {
-                shouldThrow<NoSuchElementException> {
+            then("CustomException Not Found가 발생해야 한다") {
+                shouldThrow<CustomException> {
                     authService.revoke()
                 }
             }

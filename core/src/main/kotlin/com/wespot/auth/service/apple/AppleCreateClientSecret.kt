@@ -1,11 +1,14 @@
 package com.wespot.auth.service.apple
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
 import org.bouncycastle.openssl.PEMParser
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.security.PrivateKey
@@ -51,7 +54,7 @@ class AppleCreateClientSecret(
             val objects = pemParser.readObject() as PrivateKeyInfo
             converter.getPrivateKey(objects)
         } catch (e: Exception) {
-            throw IllegalArgumentException ("Apple private key 생성 실패: ${e.message}")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "Apple private key 생성 실패: ${e.message}")
         }
     }
 }

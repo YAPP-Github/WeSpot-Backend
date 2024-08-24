@@ -1,5 +1,8 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import org.springframework.http.HttpStatus
 import java.util.*
 
 data class Ballots(
@@ -31,7 +34,7 @@ data class Ballots(
             ballot: Ballot
         ) {
             if (ballots.contains(ballot.receiverId)) {
-                throw IllegalArgumentException("하루에 한 명의 회원에게 한 개의 투표만 할 수 있습니다.")
+                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 한 명의 회원에게 한 개의 투표만 할 수 있습니다.")
             }
         }
 
@@ -48,13 +51,13 @@ data class Ballots(
 
     private fun validateNull(ballot: Ballot) {
         if (Objects.isNull(ballot)) {
-            throw IllegalArgumentException("빈 투표지를 제출할 수 없습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "빈 투표지를 제출할 수 없습니다.")
         }
     }
 
     private fun validateDuplicateVote(ballot: Ballot) {
         if (isVoteSameClassmate(ballot)) {
-            throw IllegalArgumentException("하루에 한 명의 회원에게 한 개의 투표만 할 수 있습니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 한 명의 회원에게 한 개의 투표만 할 수 있습니다.")
         }
     }
 

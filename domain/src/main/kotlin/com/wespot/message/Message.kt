@@ -1,8 +1,11 @@
 package com.wespot.message
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageTimeValidator.validateMessageSendTime
 import com.wespot.message.MessageTimeValidator.validateMessageUpdateTime
 import com.wespot.user.User
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 data class Message(
@@ -34,7 +37,13 @@ data class Message(
         senderName: String
     ): Message {
         validateMessageOwner(modifier)
-        require(senderId != receiverId) { "본인이 메시지를 보낼 수 없습니다." }
+        require(senderId != receiverId) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "본인이 메시지를 보낼 수 없습니다."
+            )
+        }
         validateMessageUpdateTime()
         val message = Message(
             id = id,
@@ -91,39 +100,111 @@ data class Message(
     }
 
     fun validateMessageOwner(loginUser: User) {
-        require(messageType == MessageType.SENT) { "보낸 메시지만 수정이 가능합니다." }
-        require(senderId == loginUser.id) { "메시지 작성자만 수정할 수 있습니다." }
+        require(messageType == MessageType.SENT) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "보낸 메시지만 수정이 가능합니다."
+            )
+        }
+        require(senderId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "메시지 작성자만 수정할 수 있습니다."
+            )
+        }
     }
 
     fun validateMessageReceiver() {
-        require(receiverId != senderId) { "본인이 메시지를 보낼 수 없습니다." }
+        require(receiverId != senderId) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "본인이 메시지를 보낼 수 없습니다."
+            )
+        }
     }
 
     fun validateSentMessage(loginUser: User) {
-        require(receiverId == loginUser.id) { "본인이 받은 메시지만 읽을 수 있습니다." }
-        require(messageType == MessageType.RECEIVED) { "받은 메시지만 읽을 수 있습니다." }
+        require(receiverId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "본인이 받은 메시지만 읽을 수 있습니다."
+            )
+        }
+        require(messageType == MessageType.RECEIVED) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "받은 메시지만 읽을 수 있습니다."
+            )
+        }
     }
 
     fun validateDeleteSendMessage(loginUser: User) {
-        require(senderId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
+        require(senderId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "메시지를 삭제할 권한이 없습니다."
+            )
+        }
     }
 
     fun validateDeleteReceivedMessage(loginUser: User) {
-        require(receiverId == loginUser.id) { "메시지를 삭제할 권한이 없습니다." }
+        require(receiverId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "메시지를 삭제할 권한이 없습니다."
+            )
+        }
     }
 
     private fun validateReportMessage(reportSenderId: Long) {
-        require(receiverId == reportSenderId) { "수신자만이 메시지를 신고할 수 있습니다." }
+        require(receiverId == reportSenderId) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "수신자만이 메시지를 신고할 수 있습니다."
+            )
+        }
     }
 
     fun validateReadMessage(loginUser: User) {
-        require(senderId == loginUser.id || receiverId == loginUser.id) { "메시지를 읽을 수 있는 권한이 없습니다." }
+        require(senderId == loginUser.id || receiverId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.FORBIDDEN,
+                ExceptionView.TOAST,
+                "메시지를 읽을 수 있는 권한이 없습니다."
+            )
+        }
     }
 
     fun validateReceivedMessage(loginUser: User) {
-        require(messageType == MessageType.RECEIVED) { "받은 메시지만 차단이 가능합니다." }
-        require(senderId != loginUser.id) { "받은 메시지만 차단이 가능합니다" }
-        require(receiverId == loginUser.id) { "받은 메시지만 차단이 가능합니다" }
+        require(messageType == MessageType.RECEIVED) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "받은 메시지만 차단이 가능합니다."
+            )
+        }
+        require(senderId != loginUser.id) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "받은 메시지만 차단이 가능합니다"
+            )
+        }
+        require(receiverId == loginUser.id) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "받은 메시지만 차단이 가능합니다"
+            )
+        }
     }
 
     fun reported(senderId: Long): Message {

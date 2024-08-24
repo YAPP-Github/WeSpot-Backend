@@ -1,7 +1,10 @@
 package com.wespot.notification.service
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.notification.Notification
 import com.wespot.notification.port.out.NotificationPort
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 object NotificationFinder {
@@ -12,7 +15,7 @@ object NotificationFinder {
 
     fun findById(notificationPort: NotificationPort, id: Long): Notification {
         return notificationPort.findById(id)
-            ?: throw IllegalArgumentException("ID에 해당하는 알림이 없습니다.")
+            ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "ID에 해당하는 알림이 없습니다.")
     }
 
     fun findAllByUserIdOrderByCreatedAtDesc(

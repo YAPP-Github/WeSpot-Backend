@@ -1,7 +1,10 @@
 package com.wespot.vote
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.voteoption.VoteOption
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 data class CompleteBallot(
@@ -43,10 +46,34 @@ data class CompleteBallot(
             sender: User,
             receiver: User
         ) {
-            require(ballot.voteId == vote.id) { "입력된 투표가 잘못되었습니다." }
-            require(ballot.voteOptionId == voteOption.id) { "입력된 선택지가 잘못되었습니다." }
-            require(ballot.senderId == sender.id) { "입력된 송신자가 잘못되었습니다." }
-            require(ballot.receiverId == receiver.id) { "입력된 수신자가 잘못되었습니다." }
+            require(ballot.voteId == vote.id) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "입력된 투표가 잘못되었습니다."
+                )
+            }
+            require(ballot.voteOptionId == voteOption.id) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "입력된 선택지가 잘못되었습니다."
+                )
+            }
+            require(ballot.senderId == sender.id) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "입력된 송신자가 잘못되었습니다."
+                )
+            }
+            require(ballot.receiverId == receiver.id) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "입력된 수신자가 잘못되었습니다."
+                )
+            }
         }
     }
 }

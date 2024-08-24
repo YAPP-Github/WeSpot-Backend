@@ -1,5 +1,6 @@
 package com.wespot.user.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.RestrictionType
 import com.wespot.user.restriction.Restriction
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,40 +28,40 @@ class RestrictionTest : BehaviorSpec({
             then("예외가 발생한다.") {
                 val initialRestriction = Restriction.createInitialState()
                 val shouldThrow =
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<CustomException> {
                         initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             29L
                         )
                     }
                 val shouldThrow1 =
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<CustomException> {
                         initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             31L
                         )
                     }
                 val shouldThrow2 =
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<CustomException> {
                         initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             89L
                         )
                     }
                 val shouldThrow3 =
-                    shouldThrow<IllegalArgumentException> {
+                    shouldThrow<CustomException> {
                         initialRestriction.addRestrict(
                             RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                             91L
                         )
                     }
-                val shouldThrow4 = shouldThrow<IllegalArgumentException> {
+                val shouldThrow4 = shouldThrow<CustomException> {
                     initialRestriction.addRestrict(
                         RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
                         Long.MAX_VALUE - 1L
                     )
                 }
-                val shouldThrow5 = shouldThrow<IllegalArgumentException> {
+                val shouldThrow5 = shouldThrow<CustomException> {
                     initialRestriction.addRestrict(
                         RestrictionType.PERMANENT_BAN_VOTE_REPORT,
                         Long.MAX_VALUE - 1L
@@ -100,7 +101,7 @@ class RestrictionTest : BehaviorSpec({
         val initialRestriction = Restriction.createInitialState()
         `when`("None을 추가하면") {
             val shouldThrow =
-                shouldThrow<IllegalArgumentException> { initialRestriction.addRestrict(RestrictionType.NONE, 0) }
+                shouldThrow<CustomException> { initialRestriction.addRestrict(RestrictionType.NONE, 0) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "RestrictionType.NONE을 추가할 수 없습니다."
             }

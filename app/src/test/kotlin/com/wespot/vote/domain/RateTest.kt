@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.vote.Rate
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -12,7 +13,7 @@ class RateTest : BehaviorSpec({
         val validRate = 1
         `when`("0 이하의 등수가 입력되면") {
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> { Rate.from(0) }
+                val shouldThrow = shouldThrow<CustomException> { Rate.from(0) }
                 shouldThrow shouldHaveMessage "등수는 0 이하일 수 없습니다."
             }
         }

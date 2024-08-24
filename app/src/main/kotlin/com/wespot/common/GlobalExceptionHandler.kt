@@ -1,15 +1,23 @@
 package com.wespot.common
 
+import com.wespot.ReasonPhraseUtil
 import com.wespot.common.`in`.ErrorNotificationUseCase
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionResponse
+import com.wespot.exception.ExceptionView
+import feign.FeignException
 import jakarta.servlet.http.HttpServletRequest
-import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
-import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.context.request.WebRequest
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.net.URI
 import java.time.LocalDateTime
 
@@ -17,88 +25,26 @@ import java.time.LocalDateTime
 class GlobalExceptionHandler(
     private val errorNotificationUseCase: ErrorNotificationUseCase,
     private val environment: Environment
-) {
+) : ResponseEntityExceptionHandler() {
 
-    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(
-        exception: IllegalArgumentException,
+    @ExceptionHandler(CustomException::class)
+    fun handleCustomException(
+        exception: CustomException,
         request: HttpServletRequest
-    ): ResponseEntity<ProblemDetail> {
+    ): ResponseEntity<ExceptionResponse> {
         notifyException(false, request, exception)
-        logger.error("요청된 정보가 잘못되었습니다.", exception)
+        logger.warn("예외가 발생했습니다.", exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.BAD_REQUEST,
+            exception.status,
             exception.message
         ).apply {
-            type = URI.create("/errors/illegal-argument")
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", exception.status)
             instance = URI.create(request.requestURI)
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(problemDetail)
-    }
-
-    @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(
-        exception: IllegalStateException,
-        request: HttpServletRequest
-    ): ResponseEntity<ProblemDetail> {
-        notifyException(false, request, exception)
-        logger.error("잘못된 상태입니다", exception)
-
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.CONFLICT,
-            exception.message
-        ).apply {
-            type = URI.create("/errors/conflict")
-            instance = URI.create(request.requestURI)
-        }
-
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(problemDetail)
-    }
-
-    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupported(
-        exception: HttpRequestMethodNotSupportedException,
-        request: HttpServletRequest
-    ): ResponseEntity<ProblemDetail> {
-        notifyException(false, request, exception)
-        logger.error("지원하지 않는 HTTP 메소드입니다.", exception)
-
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.BAD_REQUEST,
-            exception.message
-        ).apply {
-            type = URI.create("/errors/method-not-supported")
-            instance = URI.create(request.requestURI)
-        }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(problemDetail)
-    }
-
-    @ExceptionHandler(NoSuchElementException::class)
-    fun handleNoSuchElementException(
-        exception: NoSuchElementException,
-        request: HttpServletRequest
-    ): ResponseEntity<ProblemDetail> {
-        notifyException(false, request, exception)
-        logger.error("자원을 찾을 수 없습니다.", exception)
-
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.NOT_FOUND,
-            exception.message
-        ).apply {
-            type = URI.create("/errors/no-such-element")
-            instance = URI.create(request.requestURI)
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(problemDetail)
+        return ResponseEntity.status(exception.status)
+            .body(ExceptionResponse(exception.view, problemDetail))
     }
 
     @ExceptionHandler(Exception::class)
@@ -107,18 +53,59 @@ class GlobalExceptionHandler(
         request: HttpServletRequest
     ): ResponseEntity<ProblemDetail> {
         notifyException(true, request, exception)
-        logger.error("서버에서 알 수 없는 에러가 발생했습니다.", exception)
+        val internalErrorMessage = "서버에서 알 수 없는 에러가 발생했습니다."
+        logger.error(internalErrorMessage, exception)
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "서버에서 알 수 없는 에러가 발생했습니다."
+            internalErrorMessage
         ).apply {
-            type = URI.create("/errors/internal-server-error")
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.INTERNAL_SERVER_ERROR)
             instance = URI.create(request.requestURI)
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(problemDetail)
+    }
+
+    @ExceptionHandler(FeignException::class)
+    fun handleFeignException(
+        exception: FeignException,
+        request: HttpServletRequest
+    ): ResponseEntity<ExceptionResponse> {
+        notifyException(false, request, exception)
+        logger.warn("외부 API 호출 중 예외가 발생했습니다.", exception)
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST,
+            exception.message
+        ).apply {
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.BAD_REQUEST)
+            instance = URI.create(request.requestURI)
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ExceptionResponse(ExceptionView.TOAST, problemDetail))
+    }
+
+    override fun handleMethodArgumentNotValid(
+        exception: MethodArgumentNotValidException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        logger.warn("잘못된 요청입니다.", exception)
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST,
+            exception.message
+        ).apply {
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.BAD_REQUEST)
+            instance = URI.create(request.getDescription(false))
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ExceptionResponse(ExceptionView.TOAST, problemDetail))
     }
 
     private fun notifyException(isError: Boolean, request: HttpServletRequest, exception: Exception) {
@@ -136,7 +123,6 @@ class GlobalExceptionHandler(
 
         val fullStackTrace = exception.stackTraceToString().take(3000)
 
-        // 예외 발생 알림을 디스코드에 전송
         errorNotificationUseCase.notifyError(
             isError,
             "### 🕖 발생 시간\n" +
@@ -168,7 +154,6 @@ class GlobalExceptionHandler(
             ```        """.trimIndent()
         )
     }
-
 
     private fun extractExceptionSource(exception: Exception): String {
         val stackTrace = exception.stackTrace

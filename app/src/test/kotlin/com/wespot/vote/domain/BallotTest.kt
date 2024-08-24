@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.vote.Ballot
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -38,7 +39,7 @@ class BallotTest() : BehaviorSpec({
             val throwingCallable =
                 { Ballot.of(voteId, LocalDate.now(), voteOptionId, senderId, receiverId, LocalDateTime.now()) }
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow.message shouldBe "본인을 투표할 수 없습니다."
             }
         }
@@ -61,7 +62,7 @@ class BallotTest() : BehaviorSpec({
                 )
             }
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException>(throwingCallable)
+                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
                 shouldThrow.message shouldBe "투표한 시각이 잘못되었습니다."
             }
         }

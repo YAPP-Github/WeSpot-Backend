@@ -1,5 +1,6 @@
 package com.wespot.user.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.UserIntroduction
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -12,7 +13,7 @@ class UserIntroductionTest : BehaviorSpec({
         val badWordsIntroduction = "ㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅂㅂㅂㅂㅂ"
         val validIntroduction = "헬로우"
         `when`("욕설이 포함되어 있는 경우") {
-            val shouldThrow = shouldThrow<IllegalArgumentException> { UserIntroduction.from(badWordsIntroduction) }
+            val shouldThrow = shouldThrow<CustomException> { UserIntroduction.from(badWordsIntroduction) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "소개에 비속어가 포함되어 있습니다."
             }

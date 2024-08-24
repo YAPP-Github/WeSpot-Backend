@@ -1,5 +1,6 @@
 package com.wespot.vote.domain
 
+import com.wespot.exception.CustomException
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.VoteMetrics
 import com.wespot.vote.VoteRecord
@@ -26,7 +27,7 @@ class VoteRecordTest : BehaviorSpec({
         `when`("VoteRecord를 생성할 때, VoteMetrics내의 userId와 입력된 userId가 일치하지 않으면") {
             val invalidUser = UserFixture.createWithId(2L)
             then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<IllegalArgumentException> { VoteRecord.of(invalidUser, voteMetrics) }
+                val shouldThrow = shouldThrow<CustomException> { VoteRecord.of(invalidUser, voteMetrics) }
                 shouldThrow shouldHaveMessage "userId가 일치하지 않습니다."
             }
         }
@@ -34,7 +35,7 @@ class VoteRecordTest : BehaviorSpec({
         `when`("VoteRecord를 생성할 때, 등수가 0 이하이면") {
             then("예외가 발생한다.") {
                 val shouldThrow =
-                    shouldThrow<IllegalArgumentException> { VoteRecord.ofWithRate(user, 0, voteMetrics) }
+                    shouldThrow<CustomException> { VoteRecord.ofWithRate(user, 0, voteMetrics) }
                 shouldThrow shouldHaveMessage "등수는 0 이하일 수 없습니다."
             }
         }

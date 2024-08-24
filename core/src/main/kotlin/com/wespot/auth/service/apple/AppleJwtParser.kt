@@ -2,6 +2,10 @@ package com.wespot.auth.service.apple
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import io.grpc.netty.shaded.io.netty.handler.codec.http2.Http2StreamChannelBootstrap
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -18,7 +22,11 @@ class AppleJwtParser(private val objectMapper: ObjectMapper) {
             val decodedHeader = String(Base64.getUrlDecoder().decode(encodedHeader))
             objectMapper.readValue(decodedHeader, object : TypeReference<Map<String, String>>() {})
         } catch (e: Exception) {
-            throw IllegalArgumentException("Apple OAuth Identity Token 형식이 올바르지 않습니다.")
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "Apple OAuth Identity Token 형식이 올바르지 않습니다."
+            )
         }
     }
 }
