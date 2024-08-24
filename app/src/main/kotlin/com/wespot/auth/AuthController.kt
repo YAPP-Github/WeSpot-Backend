@@ -1,11 +1,13 @@
 package com.wespot.auth
 
+import com.wespot.auth.dto.request.AdminLoginRequest
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignUpRequest
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.service.AuthService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
-    private val authService: AuthService
+    private val authUseCase: AuthUseCase
 ) {
 
     @PostMapping("/login")
     fun signIn(
         @RequestBody request: AuthLoginRequest
     ): Any {
-        val response = authService.socialAccess(request)
+        val response = authUseCase.socialAccess(request)
 
         return if (response is SignUpResponse) {
             ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -39,7 +41,7 @@ class AuthController(
     fun signUp(
         @RequestBody request: SignUpRequest
     ): ResponseEntity<TokenAndUserDetailResponse> {
-        val signUp = authService.signUp(request)
+        val signUp = authUseCase.signUp(request)
 
         return ResponseEntity.ok()
             .body(signUp)
@@ -49,7 +51,7 @@ class AuthController(
     fun reissue(
         @RequestBody request: RefreshTokenRequest
     ): ResponseEntity<TokenResponse> {
-        val response = authService.reIssueToken(request)
+        val response = authUseCase.reIssueToken(request)
 
         return ResponseEntity.ok()
             .body(response)
@@ -57,9 +59,19 @@ class AuthController(
 
     @PostMapping("/revoke")
     fun revoke(): ResponseEntity<Unit> {
-        authService.revoke()
+        authUseCase.revoke()
 
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/admin/login")
+    fun adminLogin(
+        @RequestBody request: AdminLoginRequest
+    ): ResponseEntity<TokenResponse> {
+        val response = authUseCase.adminLogin(request)
+
+        return ResponseEntity.ok()
+            .body(response)
     }
 
 }

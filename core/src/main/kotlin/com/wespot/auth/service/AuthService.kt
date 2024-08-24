@@ -1,10 +1,7 @@
 package com.wespot.auth.service
 
 import com.wespot.auth.dto.AuthData
-import com.wespot.auth.dto.request.AuthLoginRequest
-import com.wespot.auth.dto.request.RefreshTokenRequest
-import com.wespot.auth.dto.request.SignInRequest
-import com.wespot.auth.dto.request.SignUpRequest
+import com.wespot.auth.dto.request.*
 import com.wespot.auth.dto.response.SettingResponse
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
@@ -12,27 +9,22 @@ import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
+import com.wespot.auth.port.out.PersonalInfoPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.ConsentType
-import com.wespot.user.FCM
-import com.wespot.user.Profile
-import com.wespot.user.Social
-import com.wespot.user.SocialType
-import com.wespot.user.User
-import com.wespot.user.UserConsent
+import com.wespot.user.*
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.event.WelcomeMessageEvent
-import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
+import com.wespot.user.port.out.RestrictionPort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
+import com.wespot.user.port.out.FCMPort
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.beans.propertyeditors.CustomMapEditor
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
@@ -57,8 +49,10 @@ class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenService: RefreshTokenService,
+    private val restrictionPort: RestrictionPort,
     private val eventPublisher: ApplicationEventPublisher,
     private val fcmPort: FCMPort,
+    private val personalInfoPort: PersonalInfoPort,
 
     @Value("\${jwt.secret}")
     private val secretKey: String
@@ -85,6 +79,7 @@ class AuthService(
         val authentication = authenticateUser(signInRequest)
         val generateToken = jwtTokenProvider.generateToken(authentication)
         val user = getUserByEmail(authentication.name)
+        checkWithdrawalStatus(user)
 
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
 
@@ -97,9 +92,11 @@ class AuthService(
                 isVoteNotification = false, // TODO : userConsent에 저장되어 있는 값으로 변경
                 isMarketingNotification = user.userConsent.consentValue ?: false
             ),
-            name = user.name
+            name = user.name,
+            isProfileChanged = true
         )
     }
+
 
 
     override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
@@ -124,7 +121,8 @@ class AuthService(
                 isVoteNotification = false,
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
-            name = signIn.name
+            name = signIn.name,
+            isProfileChanged = false
         )
     }
 
@@ -181,6 +179,11 @@ class AuthService(
             fcm = savedFcm,
             setting = null
         )
+        updatedUser.changeSettings(
+            isEnableVoteNotification = false,
+            isEnableMessageNotification = false,
+            isEnableMarketingNotification = signUpRequest.consents.marketing
+        )
         userPort.save(updatedUser)
     }
 
@@ -199,22 +202,54 @@ class AuthService(
     }
 
     override fun revoke() {
-        val loginUserId = getLoginUserId()
-        val revokeUser = userPort.findById(loginUserId)
-            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 계정이 존재하지 않습니다.")
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+        val withdrawUser = loginUser.withdraw()
+        userPort.save(withdrawUser)
+    }
 
-        socialAuthServiceFactory.getService(revokeUser.social.socialType)
-            .revoke(revokeUser.social.socialId, revokeUser.social.socialRefreshToken)
+    override fun adminLogin(adminLoginRequest: AdminLoginRequest): TokenResponse {
 
-        refreshTokenPort.deleteByUserId(loginUserId)
-        userPort.save(revokeUser.withdraw())
+        val authentication = authenticationManager.authenticate(adminLoginRequest.toAuthentication())
+        val generateToken = jwtTokenProvider.generateToken(authentication = authentication)
+        val user = getUserByEmail(authentication.name)
+        checkAdmin(user)
+
+        refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
+
+        return TokenResponse(
+            accessToken = generateToken.accessToken,
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
+        )
+    }
+
+    private fun checkAdmin(adminUser: User) {
+        if (adminUser.role != Role.ADMIN) {
+            throw CustomException(HttpStatus.FORBIDDEN, ExceptionView.TOAST, "관리자만 접근 가능합니다.")
+        }
     }
 
     fun fetchSocialEmail(authLoginRequest: AuthLoginRequest): SocialResponse {
-        return socialAuthServiceFactory.getService(authLoginRequest.socialType)
+        val fetchAuthToken = socialAuthServiceFactory.getService(authLoginRequest.socialType)
             .fetchAuthToken(authLoginRequest)
-    }
 
+        val personalInfo = personalInfoPort.findBySocialId(fetchAuthToken.socialId)
+
+        personalInfo?.let {
+            restrictionPort.findById(it.restriction)?.let { restriction ->
+                val isPermBanMessage = restriction.messageRestriction.restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
+                val isPermBanVote = restriction.voteRestriction.restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT
+
+                require(!(isPermBanMessage || isPermBanVote)) { "영구 제한된 계정입니다." }
+            }
+        }
+
+        return SocialResponse(
+            socialId = fetchAuthToken.socialId,
+            socialEmail = fetchAuthToken.socialEmail,
+            socialRefreshToken = fetchAuthToken.socialRefreshToken
+        )
+    }
 
     fun getUserByEmail(email: String): User {
         return userPort.findByEmail(email)
@@ -251,6 +286,13 @@ class AuthService(
 
     fun getLoginUserId(): Long {
         return SecurityUtils.getLoginUserId(userPort)
+    }
+
+    fun checkWithdrawalStatus(user: User) {
+        if (user.withdrawalStatus == WithdrawalStatus.ACTIVE || user.withdrawalCompleteAt?.isAfter(LocalDateTime.now()) == true) {
+            val cancelWithdraw = user.cancelWithdraw()
+            userPort.save(cancelWithdraw)
+        }
     }
 
 }

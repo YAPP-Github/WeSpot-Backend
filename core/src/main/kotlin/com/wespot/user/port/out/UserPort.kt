@@ -1,7 +1,9 @@
 package com.wespot.user.port.out
 
 import com.wespot.user.User
+import com.wespot.user.WithdrawalStatus
 import org.springframework.data.domain.Pageable
+import java.time.LocalDateTime
 
 interface UserPort {
 
@@ -49,4 +51,9 @@ interface UserPort {
         grade: Int,
         classNumber: Int
     ): Long
+
+    fun findAllByWithdrawalRequestAtBeforeAndWithdrawalStatus(
+        withdrawalRequestAt: LocalDateTime,
+        withdrawalStatus: WithdrawalStatus
+    ): List<User>
 }

@@ -25,6 +25,9 @@ import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
+import com.wespot.user.port.out.RestrictionPort
+import com.wespot.auth.port.out.PersonalInfoPort
+
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -55,6 +58,8 @@ class AuthServiceTest : BehaviorSpec({
     val refreshTokenService = mockk<RefreshTokenService>()
     val eventPublisher = mockk<ApplicationEventPublisher>()
     val fcmPort = mockk<FCMPort>()
+    val restrictionPort = mockk<RestrictionPort>()
+    val personalInfoPort = mockk<PersonalInfoPort>()
 
     val secretKey = "testSecretKey"
 
@@ -74,7 +79,9 @@ class AuthServiceTest : BehaviorSpec({
             refreshTokenService = refreshTokenService,
             eventPublisher = eventPublisher,
             fcmPort = fcmPort,
-            secretKey = secretKey
+            secretKey = secretKey,
+            restrictionPort = restrictionPort,
+            personalInfoPort = personalInfoPort
         )
     )
 
@@ -152,7 +159,8 @@ class AuthServiceTest : BehaviorSpec({
                     isVoteNotification = false,
                     isMarketingNotification = user.userConsent.consentValue ?: false
                 ),
-                name = user.name
+                name = user.name,
+                isProfileChanged = false
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
@@ -201,7 +209,8 @@ class AuthServiceTest : BehaviorSpec({
                 isVoteNotification = false,
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
-            name = user.name
+            name = user.name,
+            isProfileChanged = false
         )
 
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
@@ -373,6 +382,8 @@ class AuthServiceTest : BehaviorSpec({
         } returns true
         every { refreshTokenPort.deleteByUserId(user.id) } just Runs
         every { userPort.save(any()) } returns user
+        UserFixture.setSecurityContextUser(user)
+        every { userPort.findByEmail(user.email) } returns user
 
         `when`("사용자가 revoke를 호출할 때") {
             authService.revoke()
@@ -390,17 +401,13 @@ class AuthServiceTest : BehaviorSpec({
                     .revoke(user.social.socialId, user.social.socialRefreshToken) shouldBe true
             }
 
-            then("refreshToken을 삭제한다") {
-                refreshTokenPort.deleteByUserId(user.id) shouldBe Unit
-            }
-
             then("사용자를 withdraw 상태로 저장한다") {
                 userPort.save(user.withdraw()) shouldBe user
             }
         }
 
         `when`("잘못된 사용자 ID로 revoke를 호출할 때") {
-            every { userPort.findById(user.id) } returns null
+            every { userPort.findByEmail(any()) } returns null
 
             then("CustomException Not Found가 발생해야 한다") {
                 shouldThrow<CustomException> {

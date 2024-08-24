@@ -23,6 +23,7 @@ class CustomUrlFilter(
     private val validUrlPatterns = listOf(
         "/health",
         "/",
+        "/api/v1/auth/admin/login",
         "/api/v1/auth/kakao/template",
         "/api/v1/auth/reissue",
         "/api/v1/auth/login",

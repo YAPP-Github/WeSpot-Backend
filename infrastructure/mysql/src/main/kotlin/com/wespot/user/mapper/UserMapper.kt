@@ -27,7 +27,10 @@ object UserMapper {
             restriction = RestrictionMapper.mapToDomainEntity(userJpaEntity.restriction),
             createdAt = userJpaEntity.baseEntity.createdAt,
             updatedAt = userJpaEntity.baseEntity.updatedAt,
-            withdrawAt = userJpaEntity.withdrawAt,
+            withdrawalStatus = userJpaEntity.withdrawalStatus,
+            withdrawalRequestAt = userJpaEntity.withdrawalRequestAt,
+            withdrawalCancelAt = userJpaEntity.withdrawalCancelAt,
+            withdrawalCompleteAt = userJpaEntity.withdrawalCompleteAt,
         )
 
 
@@ -49,7 +52,10 @@ object UserMapper {
             social = SocialMapper.mapToJpaEntity(user.social),
             userConsent = UserConsentMapper.mapToJpaEntity(user.userConsent),
             restriction = RestrictionMapper.mapToJpaEntity(user.restriction),
-            withdrawAt = user.withdrawAt,
+            withdrawalStatus = user.withdrawalStatus,
+            withdrawalRequestAt = user.withdrawalRequestAt,
+            withdrawalCancelAt = user.withdrawalCancelAt,
+            withdrawalCompleteAt = user.withdrawalCompleteAt,
             baseEntity = BaseEntity(
                 createdAt = user.createdAt,
                 updatedAt = user.updatedAt,

@@ -81,7 +81,7 @@ class UserTest : BehaviorSpec({
         `when`("탈퇴를") {
             val withdrawUser = user.withdraw()
             then("정상적으로 진행한다.") {
-                withdrawUser.name shouldBe "탈퇴한 유저입니다."
+                withdrawUser.withdrawalRequestAt shouldNotBe null
             }
         }
     }

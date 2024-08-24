@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -86,6 +87,26 @@ class GlobalExceptionHandler(
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ExceptionResponse.of(ExceptionView.TOAST, problemDetail))
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentialsException(
+        exception: BadCredentialsException,
+        request: HttpServletRequest
+    ): ResponseEntity<ProblemDetail> {
+        notifyException(false, request, exception)
+        logger.warn("잘못된 자격 증명입니다.", exception)
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNAUTHORIZED,
+            exception.message
+        ).apply {
+            type = ReasonPhraseUtil.createErrorTypeInProblemDetail("/error", HttpStatus.UNAUTHORIZED)
+            instance = URI.create(request.requestURI)
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(problemDetail)
     }
 
     override fun handleMethodArgumentNotValid(

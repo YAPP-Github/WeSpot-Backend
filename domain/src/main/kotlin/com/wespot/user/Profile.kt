@@ -17,6 +17,8 @@ data class Profile(
 
     companion object {
 
+        const val INIT_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
+
         fun create(
             backgroundColor: String,
             iconUrl: String
@@ -31,7 +33,7 @@ data class Profile(
             Profile(
                 id = 0,
                 backgroundColor = "",
-                iconUrl = ""
+                iconUrl = INIT_PROFILE_ICON_URL
             )
 
     }

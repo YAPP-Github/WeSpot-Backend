@@ -1,5 +1,6 @@
 package com.wespot.auth.port.`in`
 
+import com.wespot.auth.dto.request.AdminLoginRequest
 import com.wespot.auth.dto.request.AuthLoginRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignUpRequest
@@ -15,5 +16,7 @@ interface AuthUseCase {
     fun reIssueToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse
 
     fun revoke()
+
+    fun adminLogin(adminLoginRequest: AdminLoginRequest): TokenResponse
 
 }
