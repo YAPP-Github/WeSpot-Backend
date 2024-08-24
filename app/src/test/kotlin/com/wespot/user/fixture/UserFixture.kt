@@ -11,6 +11,10 @@ import com.wespot.user.User
 import com.wespot.user.UserConsent
 import com.wespot.user.UserIntroduction
 import com.wespot.user.Gender
+import com.wespot.user.Profile
+import com.wespot.user.FCM
+import com.wespot.user.WithdrawalStatus
+import com.wespot.user.ConsentType
 import com.wespot.user.RestrictionType
 import com.wespot.user.dto.request.UpdateProfileRequest
 import org.springframework.security.authentication.TestingAuthenticationToken
@@ -383,7 +387,10 @@ object UserFixture {
             restriction = restriction,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
-            withdrawAt = LocalDateTime.now()
+            withdrawalStatus = WithdrawalStatus.NONE,
+            withdrawalRequestAt = null,
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null
         )
     }
 
