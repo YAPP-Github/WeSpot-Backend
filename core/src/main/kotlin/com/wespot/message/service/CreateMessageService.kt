@@ -15,11 +15,10 @@ class CreateMessageService(
     @Transactional
     override fun welcomeMessage(loginUser: User) {
         val welcomeMessage = Message.createWelcomeMessage(
-            senderId = loginUser.id,
             receiverId = loginUser.id,
             receiverName = loginUser.name
         )
-        val save = messagePort.save(welcomeMessage)
+        messagePort.save(welcomeMessage)
     }
 
 }

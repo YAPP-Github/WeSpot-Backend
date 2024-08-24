@@ -31,6 +31,15 @@ data class MessageContent(
                 )
             }
         }
+
+        fun createWelcomeMessage(receiverName: String): MessageContent {
+            return MessageContent("안녕하세요 ${receiverName}님 \n" +
+                "위스팟에 오신 것을 정말 환영해요!\n" +
+                "\n" +
+                "제가 큐피트가 되어 000님의 소중한 마음들을 전달해 드릴테니 언제든 익명 쪽지함을 찾아와 주세요!\n" +
+                "\n" +
+                "설레는 시간을 보내시길 바라며..")
+        }
     }
 
 }
