@@ -6,6 +6,7 @@ import com.wespot.auth.dto.response.KakaoTemplateResponse
 import com.wespot.auth.fixture.KakaoTemplateFixture.createKakaoTemplate
 import com.wespot.auth.port.out.KakaoTemplatePort
 import com.wespot.auth.service.kakao.KakaoTemplateService
+import com.wespot.exception.CustomException
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,8 +40,8 @@ class KakaoTemplateServiceTest : BehaviorSpec({
 
             every { kakaoTemplatePort.getKakaoTemplate(type) } returns null
 
-            then("NoSuchElementException이 발생해야 한다") {
-                shouldThrow<NoSuchElementException> {
+            then("CustomException이 발생해야 한다") {
+                shouldThrow<CustomException> {
                     kakaoTemplateService.getKakaoTemplate(type)
                 }.message shouldBe "해당 타입에는 카카오 템플릿이 존재하지 않습니다."
             }
