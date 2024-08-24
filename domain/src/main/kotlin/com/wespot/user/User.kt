@@ -236,11 +236,13 @@ data class User(
     }
 
     fun changeSettings(
-        isEnableVoteNotification: Boolean,
-        isEnableMessageNotification: Boolean,
-        isEnableMarketingNotification: Boolean
+        isEnableVoteNotification: Boolean?,
+        isEnableMessageNotification: Boolean?,
+        isEnableMarketingNotification: Boolean?
     ) {
-        this.setting = Setting(isEnableVoteNotification, isEnableMessageNotification, isEnableMarketingNotification)
+        isEnableVoteNotification?.let { this.setting = this.setting.copy(isEnableVoteNotification = it) }
+        isEnableMessageNotification?.let { this.setting = this.setting.copy(isEnableMessageNotification = it) }
+        isEnableMarketingNotification?.let { this.setting = this.setting.copy(isEnableMarketingNotification = it) }
     }
 
     fun isEnableVoteNotification() = setting.isEnableVoteNotification

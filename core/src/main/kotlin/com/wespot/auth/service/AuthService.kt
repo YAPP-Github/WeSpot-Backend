@@ -179,6 +179,11 @@ class AuthService(
             fcm = savedFcm,
             setting = null
         )
+        updatedUser.changeSettings(
+            isEnableVoteNotification = false,
+            isEnableMessageNotification = false,
+            isEnableMarketingNotification = signUpRequest.consents.marketing
+        )
         userPort.save(updatedUser)
     }
 
