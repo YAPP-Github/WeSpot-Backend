@@ -1,11 +1,9 @@
 package com.wespot.auth.fixture
 
 import com.wespot.auth.dto.AuthData
-import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.auth.dto.request.SignUpRequest
 import com.wespot.auth.dto.request.ConsentsRequest
 import com.wespot.auth.dto.response.TokenResponse
-import com.wespot.user.ConsentType
 import com.wespot.user.Gender
 import com.wespot.user.User
 import com.wespot.user.fixture.UserFixture

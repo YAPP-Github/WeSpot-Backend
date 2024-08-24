@@ -112,7 +112,9 @@ data class User(
       }
 
 
-    fun completeWithdraw() = User(
+    fun completeWithdraw(
+        profile: Profile
+    ) = User(
         id = id,
         email = "",
         password = "",
@@ -123,11 +125,7 @@ data class User(
         schoolId = schoolId,
         grade = grade,
         classNumber = classNumber,
-        profile = Profile(
-            id = profile.id,
-            backgroundColor = "",
-            iconUrl = INIT_PROFILE_ICON_URL
-        ),
+        profile = profile,
         fcm = fcm,
         setting = setting,
         social = Social(
@@ -160,7 +158,7 @@ data class User(
             grade: Int,
             groupNumber: Int,
             social: Social,
-            gender: Gender
+            gender: Gender,
         ) = User(
                 id = 0L,
                 email = email,
@@ -172,10 +170,7 @@ data class User(
                 schoolId = schoolId,
                 grade = grade,
                 classNumber = groupNumber,
-                profile = Profile.create(
-                    backgroundColor = "#FFFFFF",
-                    iconUrl = INIT_PROFILE_ICON_URL
-                ),
+                profile = Profile.createInit(),
                 fcm = null,
                 setting = Setting(),
                 social = social,

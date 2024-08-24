@@ -2,18 +2,8 @@ package com.wespot.user.fixture
 
 import com.wespot.auth.PrincipalDetails
 import com.wespot.auth.dto.request.ProfileRequest
-import com.wespot.user.ConsentType
-import com.wespot.user.FCM
-import com.wespot.user.Profile
+import com.wespot.user.*
 import com.wespot.user.restriction.Restriction
-import com.wespot.user.Role
-import com.wespot.user.Setting
-import com.wespot.user.Social
-import com.wespot.user.SocialType
-import com.wespot.user.User
-import com.wespot.user.UserConsent
-import com.wespot.user.UserIntroduction
-import com.wespot.user.Gender
 import com.wespot.user.dto.request.UpdateProfileRequest
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -52,7 +42,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     fun createWithIdAndEmail(
@@ -87,7 +80,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     fun createSender(
@@ -121,7 +117,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = null
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     fun createReceiver(
@@ -155,7 +154,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = null
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     // SecurityContextHolder를 사용하여 테스트를 위한 User를 설정
@@ -211,7 +213,10 @@ object UserFixture {
             ),
             role = Role.USER,
             restriction = Restriction.createInitialState(),
-            withdrawAt = null,
+            withdrawalStatus = WithdrawalStatus.NONE,
+            withdrawalRequestAt = null,
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -250,7 +255,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     fun createWithIdAndSchoolIdAndGradeAndClassNumber(
@@ -287,7 +295,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
     fun createWithEmailAndSchoolIdAndGradeAndClassNumber(
@@ -324,7 +335,10 @@ object UserFixture {
         restriction = Restriction.createInitialState(),
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
-        withdrawAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.NONE,
+        withdrawalRequestAt = null,
+        withdrawalCancelAt = null,
+        withdrawalCompleteAt = null
     )
 
 }

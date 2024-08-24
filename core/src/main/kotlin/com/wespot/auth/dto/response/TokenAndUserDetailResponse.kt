@@ -5,5 +5,6 @@ data class TokenAndUserDetailResponse(
     val refreshToken: String,
     val refreshTokenExpiredAt: String,
     val setting: SettingResponse,
-    val name: String
+    val name: String,
+    val isProfileChanged: Boolean
 )

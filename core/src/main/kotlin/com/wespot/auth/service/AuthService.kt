@@ -85,6 +85,7 @@ class AuthService(
         checkWithdrawalStatus(user)
 
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
+        val isProfileChanged = profileChanged(user)
 
         return TokenAndUserDetailResponse(
             accessToken = generateToken.accessToken,
@@ -95,10 +96,15 @@ class AuthService(
                 isVoteNotification = false, // TODO : userConsent에 저장되어 있는 값으로 변경
                 isMarketingNotification = user.userConsent.consentValue ?: false
             ),
-            name = user.name
+            name = user.name,
+            isProfileChanged = isProfileChanged
         )
     }
 
+    private fun profileChanged(user: User): Boolean {
+        // 정책 변경되면 수정하도록
+        return true
+    }
 
     override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
@@ -122,7 +128,8 @@ class AuthService(
                 isVoteNotification = false,
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
-            name = signIn.name
+            name = signIn.name,
+            isProfileChanged = false
         )
     }
 

@@ -3,6 +3,8 @@ package com.wespot.message.service
 import com.wespot.auth.PersonalInfo
 import com.wespot.auth.port.out.PersonalInfoPort
 import com.wespot.message.port.`in`.SchedulerUserWithdrawalUseCase
+import com.wespot.user.Profile
+import com.wespot.user.User
 import com.wespot.user.WithdrawalStatus
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Service
@@ -24,7 +26,8 @@ class ScheduledUserWithdrawalService(
         )
         usersToWithdraw.forEach { user ->
             personalInfoPort.save(PersonalInfo.create(user))
-            userPort.save(user.completeWithdraw())
+            val createInit = Profile.createInit()
+            userPort.save(user.completeWithdraw(createInit))
         }
     }
 
