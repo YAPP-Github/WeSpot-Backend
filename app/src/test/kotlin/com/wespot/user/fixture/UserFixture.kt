@@ -2,8 +2,16 @@ package com.wespot.user.fixture
 
 import com.wespot.auth.PrincipalDetails
 import com.wespot.auth.dto.request.ProfileRequest
-import com.wespot.user.*
 import com.wespot.user.restriction.Restriction
+import com.wespot.user.Role
+import com.wespot.user.Setting
+import com.wespot.user.Social
+import com.wespot.user.SocialType
+import com.wespot.user.User
+import com.wespot.user.UserConsent
+import com.wespot.user.UserIntroduction
+import com.wespot.user.Gender
+import com.wespot.user.RestrictionType
 import com.wespot.user.dto.request.UpdateProfileRequest
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -262,7 +270,7 @@ object UserFixture {
     )
 
     fun createWithIdAndSchoolIdAndGradeAndClassNumber(
-        id:Long,
+        id: Long,
         schoolId: Long,
         grade: Int,
         classNumber: Int
@@ -340,5 +348,43 @@ object UserFixture {
         withdrawalCancelAt = null,
         withdrawalCompleteAt = null
     )
+
+    fun createUserWithRestrictionTypeAndRestrictDay(restrictions: List<Pair<RestrictionType, Long>>): User {
+        var restriction = Restriction.createInitialState()
+        for (eachRestriction in restrictions) {
+            restriction = restriction.addRestrict(eachRestriction.first, eachRestriction.second)
+        }
+        return User(
+            id = 0,
+            email = "TestEmail@Kakako",
+            password = "TestPassword",
+            role = Role.USER,
+            name = "TestUser",
+            introduction = UserIntroduction.from("hello"),
+            gender = Gender.MALE,
+            schoolId = 1L,
+            grade = 1,
+            classNumber = 1,
+            setting = Setting(),
+            profile = Profile(0, "black", "image.png"),
+            fcm = FCM(0, "token", LocalDateTime.now()),
+            social = Social(
+                socialType = SocialType.KAKAO,
+                socialId = "1123123",
+                socialEmail = null,
+                socialRefreshToken = "refreshToken"
+            ),
+            userConsent = UserConsent(
+                id = 0,
+                consentType = ConsentType.MARKETING,
+                consentValue = true,
+                consentedAt = LocalDateTime.now()
+            ),
+            restriction = restriction,
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+            withdrawAt = LocalDateTime.now()
+        )
+    }
 
 }

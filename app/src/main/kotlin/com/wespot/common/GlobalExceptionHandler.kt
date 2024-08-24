@@ -45,14 +45,14 @@ class GlobalExceptionHandler(
         }
 
         return ResponseEntity.status(exception.status)
-            .body(ExceptionResponse(exception.view, problemDetail))
+            .body(ExceptionResponse.of(exception.view, problemDetail))
     }
 
     @ExceptionHandler(Exception::class)
     fun handleException(
         exception: Exception,
         request: HttpServletRequest
-    ): ResponseEntity<ProblemDetail> {
+    ): ResponseEntity<ExceptionResponse> {
         notifyException(true, request, exception)
         val internalErrorMessage = "서버에서 알 수 없는 에러가 발생했습니다."
         logger.error(internalErrorMessage, exception)
@@ -66,7 +66,7 @@ class GlobalExceptionHandler(
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(problemDetail)
+            .body(ExceptionResponse.of(ExceptionView.DIALOG, problemDetail))
     }
 
     @ExceptionHandler(FeignException::class)
@@ -86,7 +86,7 @@ class GlobalExceptionHandler(
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse(ExceptionView.TOAST, problemDetail))
+            .body(ExceptionResponse.of(ExceptionView.TOAST, problemDetail))
     }
 
     @ExceptionHandler(BadCredentialsException::class)
@@ -126,7 +126,7 @@ class GlobalExceptionHandler(
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse(ExceptionView.TOAST, problemDetail))
+            .body(ExceptionResponse.of(ExceptionView.TOAST, problemDetail))
     }
 
     private fun notifyException(isError: Boolean, request: HttpServletRequest, exception: Exception) {
