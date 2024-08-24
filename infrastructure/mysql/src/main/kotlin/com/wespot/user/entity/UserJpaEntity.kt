@@ -4,6 +4,7 @@ import com.wespot.common.BaseEntity
 import com.wespot.user.Gender
 import com.wespot.user.RestrictionType
 import com.wespot.user.Role
+import com.wespot.user.WithdrawalStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -81,7 +82,14 @@ class UserJpaEntity(
     @field: NotNull
     val restriction: RestrictionJpaEntity,
 
-    val withdrawAt: LocalDateTime?,
+    @Enumerated(EnumType.STRING)
+    val withdrawalStatus: WithdrawalStatus,
+
+    val withdrawalRequestAt: LocalDateTime?,
+
+    val withdrawalCancelAt: LocalDateTime?,
+
+    val withdrawalCompleteAt: LocalDateTime?,
 
     @Embedded
     val baseEntity: BaseEntity,

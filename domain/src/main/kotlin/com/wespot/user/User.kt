@@ -23,7 +23,10 @@ data class User(
     var restriction: Restriction,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val withdrawAt: LocalDateTime?,
+    val withdrawalStatus: WithdrawalStatus,
+    val withdrawalRequestAt: LocalDateTime?,
+    val withdrawalCancelAt: LocalDateTime?,
+    val withdrawalCompleteAt: LocalDateTime?
 ) {
 
     fun updateProfile(
@@ -48,36 +51,101 @@ data class User(
             restriction = restriction,
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
-            withdrawAt = withdrawAt,
+            withdrawalStatus = withdrawalStatus,
+            withdrawalRequestAt = withdrawalRequestAt,
+            withdrawalCancelAt = withdrawalCancelAt,
+            withdrawalCompleteAt = withdrawalCompleteAt
         )
 
     fun withdraw() =
         User(
             id = id,
-            email = "",
-            password = "",
-            name = WITHDRAW_USER_NAME,
-            introduction = UserIntroduction.emptyUserIntroduction(),
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
             gender = gender,
-            role = Role.GUEST,
+            role = role,
             schoolId = schoolId,
             grade = grade,
             classNumber = classNumber,
             profile = profile,
             fcm = fcm,
             setting = setting,
-            social = Social(
-                socialEmail = "",
-                socialId = "",
-                socialType = social.socialType,
-                socialRefreshToken = ""
-            ),
+            social = social,
             userConsent = userConsent,
             createdAt = createdAt,
             restriction = restriction,
             updatedAt = LocalDateTime.now(),
-            withdrawAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.ACTIVE,
+            withdrawalRequestAt = LocalDateTime.now(),
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null
         )
+
+      fun cancelWithdraw() : User{
+          isWithdrawActive()
+          return User(
+              id = id,
+              email = email,
+              password = password,
+              name = name,
+              introduction = introduction,
+              gender = gender,
+              role = role,
+              schoolId = schoolId,
+              grade = grade,
+              classNumber = classNumber,
+              profile = profile,
+              fcm = fcm,
+              setting = setting,
+              social = social,
+              userConsent = userConsent,
+              createdAt = createdAt,
+              restriction = restriction,
+              updatedAt = LocalDateTime.now(),
+              withdrawalStatus = WithdrawalStatus.CANCELED,
+              withdrawalRequestAt = withdrawalRequestAt,
+              withdrawalCancelAt = LocalDateTime.now(),
+              withdrawalCompleteAt = null
+          )
+      }
+
+
+    fun completeWithdraw() = User(
+        id = id,
+        email = "",
+        password = "",
+        name = WITHDRAW_USER_NAME,
+        introduction = UserIntroduction.emptyUserIntroduction(),
+        gender = gender,
+        role = Role.GUEST,
+        schoolId = schoolId,
+        grade = grade,
+        classNumber = classNumber,
+        profile = Profile(
+            id = profile.id,
+            backgroundColor = "",
+            iconUrl = INIT_PROFILE_ICON_URL
+        ),
+        fcm = fcm,
+        setting = setting,
+        social = Social(
+            socialEmail = "",
+            socialId = "",
+            socialType = social.socialType,
+            socialRefreshToken = ""
+        ),
+        userConsent = userConsent,
+        createdAt = createdAt,
+        restriction = restriction,
+        updatedAt = LocalDateTime.now(),
+        withdrawalStatus = WithdrawalStatus.WITHDRAWN,
+        withdrawalRequestAt = withdrawalRequestAt,
+        withdrawalCancelAt = withdrawalCancelAt,
+        withdrawalCompleteAt = LocalDateTime.now()
+    )
+
 
     companion object {
 
@@ -119,7 +187,10 @@ data class User(
                 restriction = Restriction.createInitialState(),
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
-                withdrawAt = null
+                withdrawalStatus = WithdrawalStatus.NONE,
+                withdrawalRequestAt = null,
+                withdrawalCancelAt = null,
+                withdrawalCompleteAt = null
             )
 
         fun update(
@@ -148,9 +219,19 @@ data class User(
                 restriction = user.restriction,
                 createdAt = user.createdAt,
                 updatedAt = LocalDateTime.now(),
-                withdrawAt = user.withdrawAt
+                withdrawalStatus = user.withdrawalStatus,
+                withdrawalRequestAt = user.withdrawalRequestAt,
+                withdrawalCancelAt = user.withdrawalCancelAt,
+                withdrawalCompleteAt = user.withdrawalCompleteAt
             )
 
+    }
+
+
+    private fun isWithdrawActive() {
+        if (withdrawalStatus != WithdrawalStatus.ACTIVE) {
+            throw IllegalStateException("탈퇴가 진행 중이 아닙니다.")
+        }
     }
 
     fun restrict(

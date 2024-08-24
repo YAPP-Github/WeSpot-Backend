@@ -1,6 +1,7 @@
 package com.wespot.user.adapter
 
 import com.wespot.user.User
+import com.wespot.user.WithdrawalStatus
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.repository.UserJpaRepository
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Transactional(readOnly = true)
 @Repository
@@ -67,6 +69,18 @@ class UserPersistenceAdapter(
 
     override fun countBySchoolIdAndGradeAndClassNumber(schoolId: Long, grade: Int, classNumber: Int): Long {
         return userJpaRepository.countBySchoolIdAndGradeAndClassNumber(schoolId, grade, classNumber)
+    }
+
+    override fun findAllByWithdrawalRequestAtBeforeAndWithdrawalStatus(
+        withdrawalRequestAt: LocalDateTime,
+        withdrawalStatus: WithdrawalStatus
+    ): List<User> {
+        return userJpaRepository.findAllByWithdrawalRequestAtBeforeAndWithdrawalStatus(
+            withdrawalRequestAt,
+            withdrawalStatus
+        ).stream()
+            .map { userJpaEntity -> UserMapper.mapToDomainEntity(userJpaEntity) }
+            .toList()
     }
 
     override fun findById(userId: Long): User? {
