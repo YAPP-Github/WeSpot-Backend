@@ -18,8 +18,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         classNumber: Int
     ): List<UserJpaEntity>
 
-    @Query("SELECT u.id FROM UserJpaEntity u WHERE u.id IN :ids")
-    fun findIdsByIdIn(@Param("ids") ids: List<Long>): List<Long>
+    fun findByIdIn(ids: List<Long>): List<UserJpaEntity>
 
     fun existsBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
@@ -48,6 +47,9 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
                     END = :cursorSchoolTypeOrder AND u.id > :cursorId)
             )
         )
+        AND u.withdrawalStatus != 'WITHDRAWN'
+        AND u.restriction.messageRestrictionType = 'NONE'
+        AND u.restriction.voteRestrictionType = 'NONE'
         ORDER BY u.name ASC, s.name ASC,
         CASE
             WHEN s.schoolType = 'MIDDLE' THEN 1
@@ -86,6 +88,9 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
                 END = :cursorSchoolTypeOrder AND u.id > :cursorId)
             )
           )
+          AND u.withdrawalStatus != 'WITHDRAWN'
+          AND u.restriction.messageRestrictionType = 'NONE'
+          AND u.restriction.voteRestrictionType = 'NONE'
         """
     )
     fun countUsersAfterCursor(

@@ -1,7 +1,7 @@
 package com.wespot.vote
 
 import com.wespot.vote.dto.request.VoteRequests
-import com.wespot.vote.dto.response.SaveVoteResponse
+import com.wespot.vote.dto.response.SavedVoteResponse
 import com.wespot.vote.dto.response.VoteItems
 import com.wespot.vote.dto.response.received.ReceivedVoteResponse
 import com.wespot.vote.dto.response.received.ReceivedVotesResponses
@@ -41,8 +41,8 @@ class VoteController(
     @PostMapping
     fun createVote(
         @RequestBody requests: VoteRequests
-    ): ResponseEntity<SaveVoteResponse> {
-        val savedId: SaveVoteResponse = savedVoteUseCase.saveVote(requests)
+    ): ResponseEntity<SavedVoteResponse> {
+        val savedId: SavedVoteResponse = savedVoteUseCase.saveVote(requests)
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(savedId)
     }

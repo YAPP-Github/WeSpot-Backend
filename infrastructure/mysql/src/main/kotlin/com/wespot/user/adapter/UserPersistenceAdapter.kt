@@ -102,8 +102,9 @@ class UserPersistenceAdapter(
             .toList()
     }
 
-    override fun findIdsByIdIn(ids: List<Long>): List<Long> {
-        return userJpaRepository.findIdsByIdIn(ids)
+    override fun findByIdIn(ids: List<Long>): List<User> {
+        return userJpaRepository.findByIdIn(ids)
+            .map { UserMapper.mapToDomainEntity(it) }
     }
 
     override fun findAll(): List<User> {

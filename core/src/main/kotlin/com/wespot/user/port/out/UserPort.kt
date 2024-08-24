@@ -21,7 +21,7 @@ interface UserPort {
         classNumber: Int
     ): List<User>
 
-    fun findIdsByIdIn(ids: List<Long>): List<Long>
+    fun findByIdIn(ids: List<Long>): List<User>
 
     fun findByEmail(userEmail: String): User?
 

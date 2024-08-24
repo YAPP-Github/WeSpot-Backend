@@ -3,7 +3,9 @@ package com.wespot.vote
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import com.wespot.vote.event.ReceivedVoteEvent
 import com.wespot.voteoption.VoteOption
+import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,7 +17,7 @@ data class Vote(
     val voteNumber: Int,
     val voteOptionsByVoteDate: VoteOptionsByVoteDate,
     val ballots: Ballots,
-) {
+) : AbstractAggregateRoot<Vote>() {
 
     companion object {
         private const val NUMBER_OF_VOTE_USERS = 5
@@ -89,6 +91,7 @@ data class Vote(
 
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
+            .filter { it.withdrawalStatus != WithdrawalStatus.WITHDRAW || it.isKeepRestrict() }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
@@ -104,7 +107,9 @@ data class Vote(
     ) {
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
         validateClassmate(sender)
-        validateClassmate(receiver)
+        validateReceiver(receiver)
+        registerEvent(ReceivedVoteEvent(receiver))
+
         ballots.add(
             Ballot.of(
                 voteId = this.id,
@@ -124,6 +129,24 @@ data class Vote(
                 HttpStatus.BAD_REQUEST,
                 ExceptionView.TOAST,
                 "다른 반의 학생이(을) 투표할 수 없습니다."
+            )
+        }
+    }
+
+    private fun validateReceiver(receiver: User) {
+        validateClassmate(receiver)
+        if (receiver.withdrawalStatus == WithdrawalStatus.WITHDRAW) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "탈퇴한 학생에게 투표할 수 없습니다."
+            )
+        }
+        if (receiver.isKeepRestrict()) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "이용제한을 받은 학생에게 투표할 수 없습니다."
             )
         }
     }
