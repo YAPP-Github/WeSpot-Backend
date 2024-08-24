@@ -269,4 +269,8 @@ data class User(
         return withdrawalStatus == WithdrawalStatus.WITHDRAW
     }
 
+    fun isRegulation(): Boolean {
+        return isWithDraw() || isKeepRestrict()
+    }
+
 }

@@ -91,7 +91,7 @@ data class Vote(
 
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
-            .filter { it.isWithDraw() || it.isKeepRestrict() }
+            .filter { it.isRegulation() }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
@@ -108,7 +108,6 @@ data class Vote(
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
         validateClassmate(sender)
         validateReceiver(receiver)
-        registerEvent(ReceivedVoteEvent(receiver))
 
         ballots.add(
             Ballot.of(
@@ -120,6 +119,8 @@ data class Vote(
                 voteTime = voteTime
             )
         )
+
+        registerEvent(ReceivedVoteEvent(receiver))
     }
 
     private fun validateClassmate(user: User) {
