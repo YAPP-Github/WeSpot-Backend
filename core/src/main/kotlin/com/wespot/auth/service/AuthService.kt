@@ -1,10 +1,7 @@
 package com.wespot.auth.service
 
 import com.wespot.auth.dto.AuthData
-import com.wespot.auth.dto.request.AuthLoginRequest
-import com.wespot.auth.dto.request.RefreshTokenRequest
-import com.wespot.auth.dto.request.SignInRequest
-import com.wespot.auth.dto.request.SignUpRequest
+import com.wespot.auth.dto.request.*
 import com.wespot.auth.dto.response.SettingResponse
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
@@ -85,7 +82,6 @@ class AuthService(
         checkWithdrawalStatus(user)
 
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
-        val isProfileChanged = profileChanged(user)
 
         return TokenAndUserDetailResponse(
             accessToken = generateToken.accessToken,
@@ -97,14 +93,11 @@ class AuthService(
                 isMarketingNotification = user.userConsent.consentValue ?: false
             ),
             name = user.name,
-            isProfileChanged = isProfileChanged
+            isProfileChanged = true
         )
     }
 
-    private fun profileChanged(user: User): Boolean {
-        // 정책 변경되면 수정하도록
-        return true
-    }
+
 
     override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
@@ -207,6 +200,28 @@ class AuthService(
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
         val withdrawUser = loginUser.withdraw()
         userPort.save(withdrawUser)
+    }
+
+    override fun adminLogin(adminLoginRequest: AdminLoginRequest): TokenResponse {
+
+        val authentication = authenticationManager.authenticate(adminLoginRequest.toAuthentication())
+        val generateToken = jwtTokenProvider.generateToken(authentication = authentication)
+        val user = getUserByEmail(authentication.name)
+        checkAdmin(user)
+
+        refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
+
+        return TokenResponse(
+            accessToken = generateToken.accessToken,
+            refreshToken = generateToken.refreshToken,
+            refreshTokenExpiredAt = generateToken.refreshTokenExpiredAt
+        )
+    }
+
+    private fun checkAdmin(adminUser: User) {
+        if (adminUser.role != Role.ADMIN) {
+            throw CustomException(HttpStatus.FORBIDDEN, ExceptionView.TOAST, "관리자만 접근 가능합니다.")
+        }
     }
 
     fun fetchSocialEmail(authLoginRequest: AuthLoginRequest): SocialResponse {
