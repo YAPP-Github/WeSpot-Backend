@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.net.URI
+import kotlin.math.exp
 
 class ReasonPhraseUtilTest {
 
