@@ -85,7 +85,7 @@ data class Vote(
 
 
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
-        validateClassmate(user)
+        validateUser(user)
         classmates.forEach { validateClassmate(it) }
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
 
@@ -106,8 +106,8 @@ data class Vote(
         voteTime: LocalDateTime
     ) {
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
-        validateClassmate(sender)
-        validateReceiver(receiver)
+        validateUser(sender)
+        validateUser(receiver)
 
         ballots.add(
             Ballot.of(
@@ -123,31 +123,31 @@ data class Vote(
         registerEvent(ReceivedVoteEvent(receiver))
     }
 
+    private fun validateUser(user: User) {
+        validateClassmate(user)
+        if (user.isWithDraw()) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+            )
+        }
+        if (user.isKeepRestrict()) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            )
+        }
+    }
+
     private fun validateClassmate(user: User) {
         val userVoteIdentifier = VoteIdentifier.of(user, voteIdentifier.date)
         require(voteIdentifier.isSameClass(userVoteIdentifier)) {
             throw CustomException(
                 HttpStatus.BAD_REQUEST,
                 ExceptionView.TOAST,
-                "다른 반의 학생이(을) 투표할 수 없습니다."
-            )
-        }
-    }
-
-    private fun validateReceiver(receiver: User) {
-        validateClassmate(receiver)
-        if (receiver.isWithDraw()) {
-            throw CustomException(
-                HttpStatus.BAD_REQUEST,
-                ExceptionView.TOAST,
-                "탈퇴한 학생에게 투표할 수 없습니다."
-            )
-        }
-        if (receiver.isKeepRestrict()) {
-            throw CustomException(
-                HttpStatus.BAD_REQUEST,
-                ExceptionView.TOAST,
-                "이용제한을 받은 학생에게 투표할 수 없습니다."
+                "다른 반 학생과 상호작용 할 수 없습니다."
             )
         }
     }

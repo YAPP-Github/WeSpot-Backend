@@ -39,8 +39,8 @@ class SendMessageService(
 
         val sendMessage = Message.sendMessage(
             content = sendMessageRequest.content,
-            receiverId = receiver.id,
-            senderId = loginUser.id,
+            receiver = receiver,
+            sender = loginUser,
             senderName = sendMessageRequest.senderName,
             isAnonymous = sendMessageRequest.isAnonymous
         )

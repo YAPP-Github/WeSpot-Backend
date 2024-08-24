@@ -14,4 +14,5 @@ class MessageScheduler(
     fun scheduleMessageUpdate() {
         schedulerMessageUseCase.sendScheduledMessages()
     }
+
 }

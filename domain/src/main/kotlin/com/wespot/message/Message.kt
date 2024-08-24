@@ -36,6 +36,7 @@ data class Message(
         receiverId: Long,
         senderName: String
     ): Message {
+        validateRegulationUser(modifier)
         validateMessageOwner(modifier)
         require(senderId != receiverId) {
             throw CustomException(
@@ -250,19 +251,21 @@ data class Message(
 
         fun sendMessage(
             content: String,
-            receiverId: Long,
-            senderId: Long,
+            receiver: User,
+            sender: User,
             senderName: String,
             isAnonymous: Boolean
         ): Message {
+            validateRegulationUser(sender)
+            validateRegulationUser(receiver)
             validateMessageSendTime()
             val message = Message(
                 id = 0L,
                 content = MessageContent.from(content),
-                senderId = senderId,
+                senderId = sender.id,
                 senderName = senderName,
                 messageType = MessageType.SENT,
-                receiverId = receiverId,
+                receiverId = receiver.id,
                 isAnonymous = isAnonymous,
                 isReceiverRead = false,
                 readAt = null,
@@ -309,5 +312,23 @@ data class Message(
                 receiverDeletedAt = null
             )
         }
+
+        private fun validateRegulationUser(user: User) {
+            if (user.isWithDraw()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+                )
+            }
+            if (user.isKeepRestrict()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                )
+            }
+        }
+
     }
 }

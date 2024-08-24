@@ -30,7 +30,6 @@ class SavedVoteService(
     @Transactional(readOnly = true)
     override fun getVoteOptions(): VoteItems {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        validateLoginUserRegulation(user)
         val classmates = VoteServiceHelper.findClassmatesByUser(userPort, user)
         val today = LocalDate.now()
 
@@ -43,18 +42,11 @@ class SavedVoteService(
         )
     }
 
-    private fun validateLoginUserRegulation(user: User) {
-        if (user.isRegulation()) {
-            throw CustomException(HttpStatus.FORBIDDEN, ExceptionView.TOAST, "규제를 당한 유저는 해당 서비스를 사용할 수 없습니다.")
-        }
-    }
-
     @Transactional
     override fun saveVote(
         requests: VoteRequests
     ): SavedVoteResponse {
         val user = VoteServiceHelper.findLoginUser(userPort)
-        validateLoginUserRegulation(user)
         val receivers = getVotedUsers(requests.votes)
         val voteTime = LocalDateTime.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
