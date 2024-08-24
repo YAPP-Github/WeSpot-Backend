@@ -15,6 +15,7 @@ class CheckedUserRestrictionService(
     @Transactional(readOnly = true)
     override fun getUserRestriction(): CheckedRestrictionResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort)
+
         return CheckedRestrictionResponse.from(loginUser)
     }
 

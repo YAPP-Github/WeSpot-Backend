@@ -12,6 +12,7 @@ data class CheckedRestrictionResponse(
 ) {
 
     companion object {
+
         fun from(user: User): CheckedRestrictionResponse {
             return CheckedRestrictionResponse(
                 user.restriction.messageRestriction.restrictionType,
@@ -20,6 +21,7 @@ data class CheckedRestrictionResponse(
                 user.restriction.voteRestriction.releaseDate
             )
         }
+
     }
 
 }
