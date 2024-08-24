@@ -1,5 +1,6 @@
 package com.wespot.user.service
 
+import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.school.School
@@ -27,6 +28,7 @@ class SearchUserService(
         keyword: String,
         cursorId: Long
     ): UserListResponse {
+        validateLoginUserRegulation()
         val pageable = PageRequest.of(0, 10, Sort.by("id"))
 
         if (cursorId == 0L) {
@@ -52,6 +54,13 @@ class SearchUserService(
         )
 
         return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)
+    }
+
+    private fun validateLoginUserRegulation() {
+        val loginUser = SecurityUtils.getLoginUser(userPort)
+        if (loginUser.isRegulation()) {
+            throw CustomException(HttpStatus.FORBIDDEN, ExceptionView.TOAST, "규제를 당한 유저는 해당 서비스를 사용할 수 없습니다.")
+        }
     }
 
     private fun fetchFirstPage(
