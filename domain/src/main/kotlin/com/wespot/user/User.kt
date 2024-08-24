@@ -265,4 +265,8 @@ data class User(
         return restriction.isKeepRestriction()
     }
 
+    fun isWithDraw(): Boolean {
+        return withdrawalStatus == WithdrawalStatus.WITHDRAW
+    }
+
 }

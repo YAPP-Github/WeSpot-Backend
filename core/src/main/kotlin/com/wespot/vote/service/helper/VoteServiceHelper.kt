@@ -72,8 +72,4 @@ object VoteServiceHelper {
         )
     }
 
-    fun findUsersByIds(userPort: UserPort, ids: List<Long>): List<User> {
-        return userPort.findByIdIn(ids)
-    }
-
 }

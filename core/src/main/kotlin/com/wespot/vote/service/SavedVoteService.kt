@@ -9,7 +9,6 @@ import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
 import com.wespot.vote.dto.response.SavedVoteResponse
 import com.wespot.vote.dto.response.VoteItems
-import com.wespot.vote.event.ReceivedVoteEvent
 import com.wespot.vote.event.RegisteredVoteEvent
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
@@ -52,11 +51,9 @@ class SavedVoteService(
         val voteTime = LocalDateTime.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
         requests.votes
-            .stream()
             .forEach { request ->
-                addBallot(
-                    request,
-                    vote,
+                vote.addBallot(
+                    request.voteOptionId,
                     user,
                     receivers.find { it.id == request.userId }
                         ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.DIALOG, "투표 대상을 찾을 수 없습니다."),
@@ -65,21 +62,6 @@ class SavedVoteService(
         eventPublisher.publishEvent(RegisteredVoteEvent(user, vote))
 
         return SavedVoteResponse(votePort.save(vote).id)
-    }
-
-    private fun addBallot(
-        request: VoteRequest,
-        vote: Vote,
-        user: User,
-        receiver: User,
-        voteTime: LocalDateTime
-    ) {
-        vote.addBallot(
-            voteOptionId = request.voteOptionId,
-            sender = user,
-            receiver = receiver,
-            voteTime = voteTime
-        )
     }
 
     private fun getVotedUsers(requests: List<VoteRequest>): List<User> {

@@ -91,7 +91,7 @@ data class Vote(
 
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
-            .filter { it.withdrawalStatus != WithdrawalStatus.WITHDRAW || it.isKeepRestrict() }
+            .filter { it.isWithDraw() || it.isKeepRestrict() }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
@@ -135,7 +135,7 @@ data class Vote(
 
     private fun validateReceiver(receiver: User) {
         validateClassmate(receiver)
-        if (receiver.withdrawalStatus == WithdrawalStatus.WITHDRAW) {
+        if (receiver.isWithDraw()) {
             throw CustomException(
                 HttpStatus.BAD_REQUEST,
                 ExceptionView.TOAST,

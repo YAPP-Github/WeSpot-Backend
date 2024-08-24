@@ -12,6 +12,18 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
 
     fun findByEmail(email: String): UserJpaEntity?
 
+    @Query(
+        """
+        SELECT u
+        FROM UserJpaEntity u
+        WHERE u.schoolId = :schoolId
+        AND u.grade = :grade
+        AND u.classNumber = :classNumber
+        AND u.withdrawalStatus != 'WITHDRAWN'
+        AND u.restriction.messageRestrictionType = 'NONE'
+        AND u.restriction.voteRestrictionType = 'NONE'
+        """
+    )
     fun findAllBySchoolIdAndGradeAndClassNumber(
         schoolId: Long,
         grade: Int,
