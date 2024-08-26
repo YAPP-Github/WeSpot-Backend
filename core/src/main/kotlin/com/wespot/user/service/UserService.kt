@@ -40,8 +40,8 @@ class UserService(
         val loginUser = getLoginUser(userPort = userPort)
         val updatedIntroduction = profile.introduction ?: loginUser.introduction.introduction
         val updatedProfile = loginUser.profile.update(
-            backgroundColor = profile.profile?.backgroundColor ?: loginUser.profile.backgroundColor,
-            iconUrl = profile.profile?.iconUrl ?: loginUser.profile.iconUrl
+            backgroundColor = profile.backgroundColor ?: loginUser.profile.backgroundColor,
+            iconUrl = profile.iconUrl ?: loginUser.profile.iconUrl
         )
 
         val updatedUser = loginUser.copy(

@@ -81,8 +81,8 @@ class UserServiceTest : BehaviorSpec({
                 user.copy(
                     introduction = profileRequest.introduction?.let { UserIntroduction.from(it) } ?: user.introduction,
                     profile = profile.copy(
-                        backgroundColor = profileRequest.profile?.backgroundColor ?: user.profile.backgroundColor,
-                        iconUrl = profileRequest.profile?.iconUrl ?: user.profile.iconUrl
+                        backgroundColor = profileRequest.backgroundColor ?: user.profile.backgroundColor,
+                        iconUrl = profileRequest.iconUrl ?: user.profile.iconUrl
                     )
                 )
             }
@@ -93,8 +93,8 @@ class UserServiceTest : BehaviorSpec({
 
             then("프로필이 업데이트 되어야 한다") {
                 user.introduction.introduction shouldBe profileRequest.introduction
-                user.profile.backgroundColor shouldBe profileRequest.profile?.backgroundColor
-                user.profile.iconUrl shouldBe profileRequest.profile?.iconUrl
+                user.profile.backgroundColor shouldBe profileRequest.backgroundColor
+                user.profile.iconUrl shouldBe profileRequest.iconUrl
             }
         }
 

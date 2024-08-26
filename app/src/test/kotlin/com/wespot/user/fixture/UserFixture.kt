@@ -185,10 +185,8 @@ object UserFixture {
         profile: Profile = Profile(0, "black", "image.png"),
     ) = UpdateProfileRequest(
         introduction = introduction,
-        profile = ProfileRequest(
-            backgroundColor = profile.backgroundColor,
-            iconUrl = profile.iconUrl
-        )
+        backgroundColor = profile.backgroundColor,
+        iconUrl = profile.iconUrl
     )
 
     fun createUser(
