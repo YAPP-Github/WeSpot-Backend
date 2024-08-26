@@ -1,6 +1,5 @@
 package com.wespot.vote.service
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.exception.CustomException
 import com.wespot.notification.port.out.NotificationPort
