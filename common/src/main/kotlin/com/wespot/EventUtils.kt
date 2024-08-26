@@ -1,11 +1,13 @@
 package com.wespot
 
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.stereotype.Component
 
-class EventUtils(applicationEventPublisher: ApplicationEventPublisher) {
+@Component
+class EventUtils private constructor(applicationEventPublisher: ApplicationEventPublisher) {
 
     init {
-        EventUtils.applicationEventPublisher = applicationEventPublisher
+        Companion.applicationEventPublisher = applicationEventPublisher
     }
 
     companion object {
