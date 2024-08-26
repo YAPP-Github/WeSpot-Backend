@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
@@ -13,7 +14,6 @@ import com.wespot.vote.event.RegisteredVoteEvent
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,7 +24,6 @@ import java.time.LocalDateTime
 class SavedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
-    private val eventPublisher: ApplicationEventPublisher,
 ) : SavedVoteUseCase {
 
     @Transactional(readOnly = true)
@@ -59,7 +58,7 @@ class SavedVoteService(
                         ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.DIALOG, "투표 대상을 찾을 수 없습니다."),
                     voteTime)
             }
-        eventPublisher.publishEvent(RegisteredVoteEvent(user, vote))
+        EventUtils.publish(RegisteredVoteEvent(user, vote))
 
         return SavedVoteResponse(votePort.save(vote).id)
     }

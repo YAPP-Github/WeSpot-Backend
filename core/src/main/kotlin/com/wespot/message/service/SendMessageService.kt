@@ -1,5 +1,6 @@
 package com.wespot.message.service
 
+import com.wespot.EventUtils
 import com.wespot.auth.service.SecurityUtils.getLoginUser
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator.validateMessageSendTime
@@ -14,7 +15,6 @@ import com.wespot.message.service.MessageSendValidator.validateSendMessageLimit
 import com.wespot.message.service.MessageSendValidator.validateUserBlockStatus
 import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,7 +24,6 @@ class SendMessageService(
     private val messagePort: MessagePort,
     private val userPort: UserPort,
     private val blockedUserPort: BlockedUserPort,
-    private val eventPublisher: ApplicationEventPublisher
 ) : SendMessageUseCase {
 
     override fun send(sendMessageRequest: SendMessageRequest): SendMessageResponse {
@@ -46,7 +45,7 @@ class SendMessageService(
         )
 
         val saveMessage = messagePort.save(sendMessage)
-        eventPublisher.publishEvent(
+        EventUtils.publish(
             MessageLimitEvent(
                 senderId = loginUser.id,
                 messagePort.sendMessageCount(loginUser.id)

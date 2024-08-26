@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.EventUtils
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
@@ -10,7 +11,6 @@ import com.wespot.vote.port.out.VoteOptionPort
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
 import com.wespot.voteoption.VoteOption
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -20,14 +20,13 @@ class CreatedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
     private val voteOptionPort: VoteOptionPort,
-    private val eventPublisher: ApplicationEventPublisher
 ) : CreatedVoteUseCase {
 
     @Transactional
     override fun createVotes() {
         val today = LocalDate.now()
         val allVoteOptions = voteOptionPort.findAll()
-        eventPublisher.publishEvent(EndVoteEvent())
+        EventUtils.publish(EndVoteEvent())
 
         userPort.findAll()
             .map { VoteIdentifier.of(it, today) }

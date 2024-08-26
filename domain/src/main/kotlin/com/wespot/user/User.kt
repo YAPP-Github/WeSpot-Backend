@@ -1,6 +1,9 @@
 package com.wespot.user
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.restriction.Restriction
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -223,10 +226,9 @@ data class User(
 
     }
 
-
     private fun isWithdrawActive() {
         if (withdrawalStatus != WithdrawalStatus.ACTIVE) {
-            throw IllegalStateException("탈퇴가 진행 중이 아닙니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "탈퇴가 진행 중이 아닙니다.")
         }
     }
 
