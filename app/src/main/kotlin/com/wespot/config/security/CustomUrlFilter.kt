@@ -32,6 +32,7 @@ class CustomUrlFilter(
         "/api/v1/check-profanity",
         "/api/v1/schools/search",
         "/api/v1/users/me",
+        "/api/v1/users/restrictions/me",
         "/api/v1/users/backgrounds",
         "/api/v1/users/characters",
         "/api/v1/users/search",
