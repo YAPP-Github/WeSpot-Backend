@@ -40,8 +40,8 @@ class NotificationEventListenerTest @Autowired constructor(
         val message = messagePort.save(
             Message.sendMessage(
                 content = "content",
-                receiverId = receiver.id,
-                senderId = sender.id,
+                receiver = receiver,
+                sender = sender,
                 senderName = sender.name,
                 isAnonymous = false
             )

@@ -83,33 +83,33 @@ data class User(
             withdrawalCompleteAt = null
         )
 
-      fun cancelWithdraw() : User{
-          isWithdrawActive()
-          return User(
-              id = id,
-              email = email,
-              password = password,
-              name = name,
-              introduction = introduction,
-              gender = gender,
-              role = role,
-              schoolId = schoolId,
-              grade = grade,
-              classNumber = classNumber,
-              profile = profile,
-              fcm = fcm,
-              setting = setting,
-              social = social,
-              userConsent = userConsent,
-              createdAt = createdAt,
-              restriction = restriction,
-              updatedAt = LocalDateTime.now(),
-              withdrawalStatus = WithdrawalStatus.CANCELED,
-              withdrawalRequestAt = withdrawalRequestAt,
-              withdrawalCancelAt = LocalDateTime.now(),
-              withdrawalCompleteAt = null
-          )
-      }
+    fun cancelWithdraw(): User {
+        isWithdrawActive()
+        return User(
+            id = id,
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
+            gender = gender,
+            role = role,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = classNumber,
+            profile = profile,
+            fcm = fcm,
+            setting = setting,
+            social = social,
+            userConsent = userConsent,
+            createdAt = createdAt,
+            restriction = restriction,
+            updatedAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.CANCELED,
+            withdrawalRequestAt = withdrawalRequestAt,
+            withdrawalCancelAt = LocalDateTime.now(),
+            withdrawalCompleteAt = null
+        )
+    }
 
 
     fun completeWithdraw(
@@ -161,33 +161,33 @@ data class User(
             social: Social,
             gender: Gender,
         ) = User(
-                id = 0L,
-                email = email,
-                password = password,
-                name = name,
-                introduction = UserIntroduction.emptyUserIntroduction(),
-                gender = gender,
-                role = Role.USER,
-                schoolId = schoolId,
-                grade = grade,
-                classNumber = groupNumber,
-                profile = Profile.createInit(),
-                fcm = null,
-                setting = Setting(),
-                social = social,
-                userConsent = UserConsent.create(
-                    consentType = ConsentType.MARKETING,
-                    consentedAt = LocalDateTime.now(),
-                    consentValue = false
-                ),
-                restriction = Restriction.createInitialState(),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
-                withdrawalStatus = WithdrawalStatus.NONE,
-                withdrawalRequestAt = null,
-                withdrawalCancelAt = null,
-                withdrawalCompleteAt = null
-            )
+            id = 0L,
+            email = email,
+            password = password,
+            name = name,
+            introduction = UserIntroduction.emptyUserIntroduction(),
+            gender = gender,
+            role = Role.USER,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = groupNumber,
+            profile = Profile.createInit(),
+            fcm = null,
+            setting = Setting(),
+            social = social,
+            userConsent = UserConsent.create(
+                consentType = ConsentType.MARKETING,
+                consentedAt = LocalDateTime.now(),
+                consentValue = false
+            ),
+            restriction = Restriction.createInitialState(),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.NONE,
+            withdrawalRequestAt = null,
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null
+        )
 
         fun update(
             user: User,
@@ -266,7 +266,7 @@ data class User(
     }
 
     fun isWithDraw(): Boolean {
-        return withdrawalStatus == WithdrawalStatus.WITHDRAW
+        return withdrawalStatus == WithdrawalStatus.WITHDRAWN
     }
 
     fun isRegulation(): Boolean {

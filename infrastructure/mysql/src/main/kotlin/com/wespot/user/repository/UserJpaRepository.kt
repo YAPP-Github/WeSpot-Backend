@@ -43,6 +43,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         SELECT u FROM UserJpaEntity u
         LEFT JOIN SchoolJpaEntity s ON u.schoolId = s.id
         WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
+        AND u.id <> :loginUserId
         AND (
             :cursorId IS NULL OR (
                 (:cursorName IS NULL OR u.name > :cursorName) OR
@@ -75,14 +76,15 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("cursorSchoolName") cursorSchoolName: String?,
         @Param("cursorSchoolTypeOrder") cursorSchoolTypeOrder: Int?,
         @Param("cursorId") cursorId: Long?,
+        @Param("loginUserId") loginUserId: Long,
         pageable: Pageable
     ): List<UserJpaEntity>
-
     @Query(
         """
         SELECT COUNT(u)
         FROM UserJpaEntity u
         LEFT JOIN SchoolJpaEntity s ON u.schoolId = s.id
+        AND u.id <> :loginUserId
         WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
           AND (
             :cursorId IS NULL OR (
@@ -100,9 +102,9 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
                 END = :cursorSchoolTypeOrder AND u.id > :cursorId)
             )
           )
-          AND u.withdrawalStatus != 'WITHDRAWN'
-          AND u.restriction.messageRestrictionType = 'NONE'
-          AND u.restriction.voteRestrictionType = 'NONE'
+            AND u.withdrawalStatus != 'WITHDRAWN'
+            AND u.restriction.messageRestrictionType = 'NONE'
+            AND u.restriction.voteRestrictionType = 'NONE'
         """
     )
     fun countUsersAfterCursor(
@@ -110,7 +112,8 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("cursorName") cursorName: String?,
         @Param("cursorSchoolName") cursorSchoolName: String?,
         @Param("cursorSchoolTypeOrder") cursorSchoolTypeOrder: Int?,
-        @Param("cursorId") cursorId: Long?
+        @Param("cursorId") cursorId: Long?,
+        @Param("loginUserId") loginUserId: Long,
     ): Long
 
     fun countBySchoolIdAndGradeAndClassNumber(

@@ -28,11 +28,12 @@ class SearchUserService(
         keyword: String,
         cursorId: Long
     ): UserListResponse {
-        validateLoginUserRegulation()
+        val loginUser = SecurityUtils.getLoginUser(userPort)
+        validateLoginUserRegulation(loginUser)
         val pageable = PageRequest.of(0, 10, Sort.by("id"))
 
         if (cursorId == 0L) {
-            return fetchFirstPage(keyword = keyword, pageable = pageable)
+            return fetchFirstPage(keyword = keyword, pageable = pageable, loginUserId = loginUser.id)
         }
 
         val cursorData = fetchCursorData(cursorId)
@@ -42,7 +43,8 @@ class SearchUserService(
             cursorSchoolName = cursorData.cursorSchoolName,
             cursorSchoolTypeOrder = cursorData.cursorSchoolTypeOrder,
             cursorId = cursorId,
-            pageable = pageable
+            pageable = pageable,
+            loginUserId = loginUser.id
         )
 
         val totalCount = userPort.countUsersAfterCursor(
@@ -50,14 +52,14 @@ class SearchUserService(
             cursorName = cursorData.cursorName,
             cursorSchoolName = cursorData.cursorSchoolName,
             cursorSchoolTypeOrder = cursorData.cursorSchoolTypeOrder,
-            cursorId = cursorId
+            cursorId = cursorId,
+            loginUserId = loginUser.id
         )
 
         return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)
     }
 
-    private fun validateLoginUserRegulation() {
-        val loginUser = SecurityUtils.getLoginUser(userPort)
+    private fun validateLoginUserRegulation(loginUser: User) {
         if (loginUser.isRegulation()) {
             throw CustomException(HttpStatus.FORBIDDEN, ExceptionView.TOAST, "규제를 당한 유저는 해당 서비스를 사용할 수 없습니다.")
         }
@@ -65,7 +67,8 @@ class SearchUserService(
 
     private fun fetchFirstPage(
         keyword: String,
-        pageable: Pageable
+        pageable: Pageable,
+        loginUserId: Long,
     ): UserListResponse {
         val users = userPort.searchUsers(
             name = keyword,
@@ -73,7 +76,8 @@ class SearchUserService(
             cursorSchoolName = null,
             cursorSchoolTypeOrder = null,
             cursorId = null,
-            pageable = pageable
+            pageable = pageable,
+            loginUserId = loginUserId
         )
 
         val totalCount = userPort.countUsersAfterCursor(
@@ -81,7 +85,8 @@ class SearchUserService(
             cursorName = null,
             cursorSchoolName = null,
             cursorSchoolTypeOrder = null,
-            cursorId = null
+            cursorId = null,
+            loginUserId = loginUserId
         )
 
         return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)

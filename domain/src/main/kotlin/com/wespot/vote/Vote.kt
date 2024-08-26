@@ -1,5 +1,6 @@
 package com.wespot.vote
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
@@ -91,7 +92,7 @@ data class Vote(
 
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
-            .filter { it.isRegulation() }
+            .filter { !it.isRegulation() }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
@@ -120,7 +121,7 @@ data class Vote(
             )
         )
 
-        registerEvent(ReceivedVoteEvent(receiver))
+        EventUtils.publish(ReceivedVoteEvent(receiver))
     }
 
     private fun validateUser(user: User) {

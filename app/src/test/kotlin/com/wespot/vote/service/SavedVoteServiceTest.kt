@@ -93,7 +93,7 @@ class SavedVoteServiceTest @Autowired constructor(
 
         // then
         val shouldThrow = shouldThrow<CustomException>(throwingCallable)
-        shouldThrow shouldHaveMessage "투표하고자 하는 회원이 존재하지 않습니다."
+        shouldThrow shouldHaveMessage "투표 대상을 찾을 수 없습니다."
     }
 
     @Test

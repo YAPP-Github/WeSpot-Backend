@@ -4,6 +4,7 @@ import com.wespot.exception.CustomException
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.fixture.MessageFixture
+import com.wespot.user.fixture.UserFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -63,8 +64,8 @@ class MessageTest : BehaviorSpec({
             val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     badWordsContent,
-                    1,
-                    2,
+                    UserFixture.createWithId(1),
+                    UserFixture.createWithId(2),
                     "senderName",
                     false
                 )
@@ -77,8 +78,8 @@ class MessageTest : BehaviorSpec({
             val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     emptyContent,
-                    1,
-                    2,
+                    UserFixture.createWithId(1),
+                    UserFixture.createWithId(2),
                     "senderName",
                     false
                 )

@@ -622,8 +622,8 @@ class VoteTest() : BehaviorSpec({
                 shouldThrow<CustomException> { vote.findUsersForVote(classmates, user) }
 
             then("예외가 발생한다.") {
-                shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
-                shouldThrow2 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+                shouldThrow1 shouldHaveMessage "다른 반 학생과 상호작용 할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "다른 반 학생과 상호작용 할 수 없습니다."
             }
         }
     }
@@ -640,8 +640,8 @@ class VoteTest() : BehaviorSpec({
             val shouldThrow2 =
                 shouldThrow<CustomException> { vote.addBallot(1, otherClassmate, user, LocalDateTime.now()) }
             then("예외가 발생한다.") {
-                shouldThrow1 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
-                shouldThrow2 shouldHaveMessage "다른 반의 학생이(을) 투표할 수 없습니다."
+                shouldThrow1 shouldHaveMessage "다른 반 학생과 상호작용 할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "다른 반 학생과 상호작용 할 수 없습니다."
             }
         }
     }

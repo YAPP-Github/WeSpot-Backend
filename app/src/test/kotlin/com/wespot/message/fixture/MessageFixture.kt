@@ -3,6 +3,7 @@ package com.wespot.message.fixture
 import com.wespot.message.Message
 import com.wespot.message.MessageContent
 import com.wespot.message.MessageType
+import com.wespot.user.fixture.UserFixture
 import java.time.LocalDateTime
 
 
@@ -89,8 +90,8 @@ object MessageFixture {
     ): Message {
         return Message.sendMessage(
             content = content,
-            receiverId = receiverId,
-            senderId = senderId,
+            receiver = UserFixture.createWithId(receiverId),
+            sender = UserFixture.createWithId(senderId),
             senderName = senderName,
             isAnonymous = false,
         )
