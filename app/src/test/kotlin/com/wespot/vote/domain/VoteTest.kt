@@ -1,7 +1,9 @@
 package com.wespot.vote.domain
 
 import com.wespot.exception.CustomException
+import com.wespot.user.RestrictionType
 import com.wespot.user.User
+import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.vote.RankCalculateService
 import com.wespot.vote.ReceivedVoteCalculateService
@@ -14,6 +16,7 @@ import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -98,6 +101,68 @@ class VoteTest() : BehaviorSpec({
             }
         }
 
+        `when`("투표를 진행할 때, 송신자가 탈퇴 및 이용제재를 당한 상태라면") {
+            val vote = Vote.of(voteIdentifier, voteOptions, null)
+            val restrictionUser =
+                UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                    1,
+                    listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                )
+            val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+            val shouldThrow1 = shouldThrow<CustomException> {
+                vote.addBallot(
+                    1,
+                    restrictionUser,
+                    UserFixture.createWithId(3),
+                    LocalDateTime.now()
+                )
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                vote.addBallot(
+                    1,
+                    withDrawUser,
+                    UserFixture.createWithId(3),
+                    LocalDateTime.now()
+                )
+            }
+
+            then("정상적으로 투표가 진행된다.") {
+                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+
+        `when`("투표를 진행할 때, 수신자가 탈퇴 및 이용제재를 당한 상태라면") {
+            val vote = Vote.of(voteIdentifier, voteOptions, null)
+            val restrictionUser =
+                UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                    1,
+                    listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                )
+            val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+            val shouldThrow1 = shouldThrow<CustomException> {
+                vote.addBallot(
+                    1,
+                    UserFixture.createWithId(3),
+                    restrictionUser,
+                    LocalDateTime.now()
+                )
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                vote.addBallot(
+                    1,
+                    UserFixture.createWithId(3),
+                    withDrawUser,
+                    LocalDateTime.now()
+                )
+            }
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+
+
         `when`("중복되지 않은 투표를 하는 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val users = listOf(
@@ -168,6 +233,25 @@ class VoteTest() : BehaviorSpec({
                 voteUsers.size shouldBe 5
                 userCounts.size shouldBe 5
                 doesNotContainsMe shouldBe true
+            }
+        }
+
+        `when`("투표할 친구를 찾는 과정에서 탈퇴 및 제재를 당한 유저가 있다면") {
+            val users = createUserByCount(3).toMutableList()
+            users.add(UserFixture.createWithId(4).withdraw().completeWithdraw(ProfileFixture.createWithId(1)))
+            users.add(
+                UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                    5,
+                    listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                )
+            )
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val me = users[0]
+            val voteUsers = vote.findUsersForVote(users, me)
+            then("제외시킨다.") {
+                voteUsers.size shouldBe 2
+                voteUsers.find { it.id == 2L } shouldBe null
+                voteUsers.find { it.id == 3L } shouldBe null
             }
         }
 
