@@ -392,6 +392,51 @@ object UserFixture {
         )
     }
 
+    fun createUserWithNameAndEmailAndRestrictionTypeAndRestrictDay(
+        name: String,
+        email: String,
+        restrictions: List<Pair<RestrictionType, Long>>
+    ): User {
+        var restriction = Restriction.createInitialState()
+        for (eachRestriction in restrictions) {
+            restriction = restriction.addRestrict(eachRestriction.first, eachRestriction.second)
+        }
+        return User(
+            id = 0,
+            email = email,
+            password = "TestPassword",
+            role = Role.USER,
+            name = name,
+            introduction = UserIntroduction.from("hello"),
+            gender = Gender.MALE,
+            schoolId = 1L,
+            grade = 1,
+            classNumber = 1,
+            setting = Setting(),
+            profile = Profile(0, "black", "image.png"),
+            fcm = FCM(0, "token", LocalDateTime.now()),
+            social = Social(
+                socialType = SocialType.KAKAO,
+                socialId = "1123123",
+                socialEmail = null,
+                socialRefreshToken = "refreshToken"
+            ),
+            userConsent = UserConsent(
+                id = 0,
+                consentType = ConsentType.MARKETING,
+                consentValue = true,
+                consentedAt = LocalDateTime.now()
+            ),
+            restriction = restriction,
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.NONE,
+            withdrawalRequestAt = null,
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null
+        )
+    }
+
     fun createUserWithIdAndRestrictionTypeAndRestrictDay(
         id: Long,
         restrictions: List<Pair<RestrictionType, Long>>

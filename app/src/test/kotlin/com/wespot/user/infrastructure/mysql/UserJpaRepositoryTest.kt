@@ -1,0 +1,81 @@
+package com.wespot.user.infrastructure.mysql
+
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.SchoolMapper
+import com.wespot.school.fixture.SchoolFixture
+import com.wespot.user.RestrictionType
+import com.wespot.user.fixture.ProfileFixture
+import com.wespot.user.fixture.UserFixture
+import com.wespot.user.port.out.UserPort
+import com.wespot.user.repository.UserJpaRepository
+import io.kotest.matchers.shouldBe
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.data.domain.PageRequest
+import kotlin.test.Test
+
+@DataJpaTest
+class UserJpaRepositoryTest @Autowired constructor(
+    private val userPort: UserPort,
+    private val userJpaRepository: UserJpaRepository,
+    private val schoolJpaRepository: SchoolJpaRepository
+) {
+
+    @Test
+    fun `친구를 검색할 때, 탈퇴 및 이용제재에 걸려있는 친구와 본인은 조회하지 않는다`() {
+        // given
+        val school = SchoolFixture.createWithId(0)
+        val savedSchool = schoolJpaRepository.save(SchoolMapper.mapToJpaEntity(school))
+        val user1 = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello@kakao",
+                "hello",
+                savedSchool.id,
+                1
+            )
+        )
+        UserFixture.setSecurityContextUser(user1)
+        val user2 = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello4@kakao",
+                "hello4",
+                savedSchool.id,
+                1
+            )
+        )
+        val restrictionUser = userPort.save(
+            UserFixture.createUserWithNameAndEmailAndRestrictionTypeAndRestrictDay(
+                "hell",
+                "hello1@kakao",
+                listOf(Pair(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30))
+            )
+        )
+        val withDrawUser = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello1@kakao",
+                "helloo",
+                savedSchool.id,
+                1
+            ).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        )
+
+        // when
+        val searchUsers = userJpaRepository.searchUsers(
+            "he",
+            "hello",
+            "Test School",
+            2,
+            0,
+            1,
+            PageRequest.of(0, 10),
+        )
+
+        // then
+        searchUsers.size shouldBe 1
+        searchUsers[0].id shouldBe user2.id
+    }
+
+}
