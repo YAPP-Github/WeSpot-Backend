@@ -84,7 +84,6 @@ data class Vote(
         }
     }
 
-
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
         validateUser(user)
         classmates.forEach { validateClassmate(it) }
