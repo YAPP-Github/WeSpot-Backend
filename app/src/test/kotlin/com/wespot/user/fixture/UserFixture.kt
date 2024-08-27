@@ -391,10 +391,11 @@ object UserFixture {
         )
     }
 
-    fun createUserWithNameAndEmailAndRestrictionTypeAndRestrictDay(
+    fun createUserWithNameAndEmailAndRestrictionTypeAndRestrictDayAndSchoolId(
         name: String,
         email: String,
-        restrictions: List<Pair<RestrictionType, Long>>
+        restrictions: List<Pair<RestrictionType, Long>>,
+        schoolId: Long,
     ): User {
         var restriction = Restriction.createInitialState()
         for (eachRestriction in restrictions) {
@@ -408,7 +409,7 @@ object UserFixture {
             name = name,
             introduction = UserIntroduction.from("hello"),
             gender = Gender.MALE,
-            schoolId = 1L,
+            schoolId = schoolId,
             grade = 1,
             classNumber = 1,
             setting = Setting(),
