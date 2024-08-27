@@ -17,7 +17,7 @@ enum class RestrictionPriority(
             )
         }), // 가장 우선순위가 높은 쪽지로 인한 영구제재
     SECOND_PRIORITY_RESTRICTION(
-        { loginUser -> loginUser.restriction.messageRestriction.restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT },
+        { loginUser -> loginUser.restriction.voteRestriction.restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT },
         { loginUser ->
             Pair(RestrictionType.PERMANENT_BAN_VOTE_REPORT, loginUser.restriction.voteRestriction.releaseDate)
         }), // 두 번째로 우선순위가 높은 투표로 인한 영구제재
@@ -29,7 +29,7 @@ enum class RestrictionPriority(
     LAST_PRIORITY_RESTRICTION(
         { _ -> true },
         { _ ->
-            Pair(RestrictionType.NONE, LocalDate.now())
+            Pair(RestrictionType.NONE, LocalDate.of(9999, 12, 31))
         }); // 제재를 당하고 있지 않은 상태
 
     companion object {
