@@ -219,17 +219,17 @@ class MessageTest : BehaviorSpec({
         val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
         val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
         val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
-        `when`("수신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+        `when`("송신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
             val shouldThrow1 = shouldThrow<CustomException> {
-                restrictionUserMessage.sendMessageSoftDelete(withDrawUser)
+                restrictionUserMessage.sendMessageSoftDelete(restrictionUser)
             }
             val shouldThrow2 = shouldThrow<CustomException> {
-                withDrawUserMessage.sendMessageSoftDelete(restrictionUser)
+                withDrawUserMessage.sendMessageSoftDelete(withDrawUser)
             }
 
             then("예외가 발생한다.") {
-                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
-                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow1 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
             }
         }
     }

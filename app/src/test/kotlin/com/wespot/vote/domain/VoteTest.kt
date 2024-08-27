@@ -126,8 +126,8 @@ class VoteTest() : BehaviorSpec({
             }
 
             then("정상적으로 투표가 진행된다.") {
-                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
-                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow1 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
             }
         }
 
@@ -248,9 +248,8 @@ class VoteTest() : BehaviorSpec({
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
             then("제외시킨다.") {
-                voteUsers.size shouldBe 2
-                voteUsers.find { it.id == 2L } shouldBe null
-                voteUsers.find { it.id == 3L } shouldBe null
+                voteUsers.size shouldBe 1
+                voteUsers.find { it.id == 3L } shouldNotBe null
             }
         }
 

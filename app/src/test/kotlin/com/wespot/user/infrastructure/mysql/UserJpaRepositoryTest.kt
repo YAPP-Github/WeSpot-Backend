@@ -1,5 +1,6 @@
 package com.wespot.user.infrastructure.mysql
 
+import com.wespot.common.service.ServiceTest
 import com.wespot.school.SchoolJpaRepository
 import com.wespot.school.SchoolMapper
 import com.wespot.school.fixture.SchoolFixture
@@ -10,16 +11,14 @@ import com.wespot.user.port.out.UserPort
 import com.wespot.user.repository.UserJpaRepository
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.domain.PageRequest
 import kotlin.test.Test
 
-@DataJpaTest
 class UserJpaRepositoryTest @Autowired constructor(
     private val userPort: UserPort,
     private val userJpaRepository: UserJpaRepository,
     private val schoolJpaRepository: SchoolJpaRepository
-) {
+) : ServiceTest() {
 
     @Test
     fun `친구를 검색할 때, 탈퇴 및 이용제재에 걸려있는 친구와 본인은 조회하지 않는다`() {
@@ -32,17 +31,16 @@ class UserJpaRepositoryTest @Autowired constructor(
                 "hello@kakao",
                 "hello",
                 savedSchool.id,
-                1
+                0
             )
         )
-        UserFixture.setSecurityContextUser(user1)
         val user2 = userPort.save(
             UserFixture.createUser(
                 0,
                 "hello4@kakao",
                 "hello4",
                 savedSchool.id,
-                1
+                0
             )
         )
         val restrictionUser = userPort.save(
@@ -55,11 +53,11 @@ class UserJpaRepositoryTest @Autowired constructor(
         val withDrawUser = userPort.save(
             UserFixture.createUser(
                 0,
-                "hello1@kakao",
+                "hello2@kakao",
                 "helloo",
                 savedSchool.id,
-                1
-            ).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+                0
+            ).withdraw().completeWithdraw(ProfileFixture.createWithId(0))
         )
 
         // when
@@ -69,7 +67,7 @@ class UserJpaRepositoryTest @Autowired constructor(
             "Test School",
             2,
             0,
-            1,
+            user1.id,
             PageRequest.of(0, 10),
         )
 
@@ -89,7 +87,7 @@ class UserJpaRepositoryTest @Autowired constructor(
                 "hello@kakao",
                 "hello",
                 savedSchool.id,
-                1
+                0
             )
         )
         UserFixture.setSecurityContextUser(user1)
@@ -99,7 +97,7 @@ class UserJpaRepositoryTest @Autowired constructor(
                 "hello4@kakao",
                 "hello4",
                 savedSchool.id,
-                1
+                0
             )
         )
         val restrictionUser = userPort.save(
@@ -115,8 +113,8 @@ class UserJpaRepositoryTest @Autowired constructor(
                 "hello1@kakao",
                 "helloo",
                 savedSchool.id,
-                1
-            ).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+                0
+            ).withdraw().completeWithdraw(ProfileFixture.createWithId(0))
         )
 
         // when
