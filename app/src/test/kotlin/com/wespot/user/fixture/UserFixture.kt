@@ -1,7 +1,6 @@
 package com.wespot.user.fixture
 
 import com.wespot.auth.PrincipalDetails
-import com.wespot.auth.dto.request.ProfileRequest
 import com.wespot.user.restriction.Restriction
 import com.wespot.user.Role
 import com.wespot.user.Setting

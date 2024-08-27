@@ -78,4 +78,58 @@ class UserJpaRepositoryTest @Autowired constructor(
         searchUsers[0].id shouldBe user2.id
     }
 
+    @Test
+    fun `탈퇴 및 이용제재가 아닌 유저만 반 친구로 조회한다`() {
+        // given
+        val school = SchoolFixture.createWithId(0)
+        val savedSchool = schoolJpaRepository.save(SchoolMapper.mapToJpaEntity(school))
+        val user1 = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello@kakao",
+                "hello",
+                savedSchool.id,
+                1
+            )
+        )
+        UserFixture.setSecurityContextUser(user1)
+        val user2 = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello4@kakao",
+                "hello4",
+                savedSchool.id,
+                1
+            )
+        )
+        val restrictionUser = userPort.save(
+            UserFixture.createUserWithNameAndEmailAndRestrictionTypeAndRestrictDay(
+                "hell",
+                "hello1@kakao",
+                listOf(Pair(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30))
+            )
+        )
+        val withDrawUser = userPort.save(
+            UserFixture.createUser(
+                0,
+                "hello1@kakao",
+                "helloo",
+                savedSchool.id,
+                1
+            ).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        )
+
+        // when
+        val classmateWithoutRegulationUser = userJpaRepository.findAllBySchoolIdAndGradeAndClassNumber(
+            savedSchool.id,
+            1,
+            1
+        )
+
+        // then
+        classmateWithoutRegulationUser.size shouldBe 2
+        classmateWithoutRegulationUser[0].id shouldBe user1.id
+        classmateWithoutRegulationUser[1].id shouldBe user2.id
+    }
+
 }
