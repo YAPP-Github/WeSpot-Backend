@@ -4,6 +4,8 @@ import com.wespot.exception.CustomException
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.fixture.MessageFixture
+import com.wespot.user.RestrictionType
+import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.fixture.UserFixture
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -89,6 +91,147 @@ class MessageTest : BehaviorSpec({
             }
         }
         unmockkStatic(LocalDateTime::class)
+    }
+
+    given("쪽지를 수정할 때") {
+        val restrictionUser =
+            UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                1,
+                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+            )
+        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
+        val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
+        `when`("수정하는 자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+            val shouldThrow1 = shouldThrow<CustomException> {
+                restrictionUserMessage.updateMessage(
+                    "Hello1",
+                    restrictionUser,
+                    withDrawUser.id,
+                    restrictionUser.name
+                )
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                withDrawUserMessage.updateMessage(
+                    "Hello2",
+                    withDrawUser,
+                    restrictionUser.id,
+                    withDrawUser.name
+                )
+            }
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+    }
+
+    given("쪽지를 보낼 때") {
+        val restrictionUser =
+            UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                1,
+                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+            )
+        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        `when`("송신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+            val shouldThrow1 = shouldThrow<CustomException> {
+                Message.sendMessage(
+                    "hello",
+                    UserFixture.createWithId(3),
+                    withDrawUser,
+                    withDrawUser.name,
+                    false,
+                )
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                Message.sendMessage(
+                    "hello",
+                    UserFixture.createWithId(3),
+                    restrictionUser,
+                    restrictionUser.name,
+                    false
+                )
+            }
+
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+
+        `when`("수신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+            val shouldThrow1 = shouldThrow<CustomException> {
+                Message.sendMessage(
+                    "hello",
+                    withDrawUser,
+                    UserFixture.createWithId(3),
+                    "senderName",
+                    false,
+                )
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                Message.sendMessage(
+                    "hello",
+                    restrictionUser,
+                    UserFixture.createWithId(3),
+                    "senderName",
+                    false
+                )
+            }
+
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+    }
+
+    given("받은 쪽지를 삭제할 때") {
+        val restrictionUser =
+            UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                1,
+                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+            )
+        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
+        val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
+        `when`("수신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+            val shouldThrow1 = shouldThrow<CustomException> {
+                withDrawUserMessage.receivedMessageSoftDelete(restrictionUser)
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                restrictionUserMessage.receivedMessageSoftDelete(withDrawUser)
+            }
+
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
+    }
+
+    given("보낸 쪽지를 삭제할 때") {
+        val restrictionUser =
+            UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
+                1,
+                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+            )
+        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
+        val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
+        `when`("수신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
+            val shouldThrow1 = shouldThrow<CustomException> {
+                restrictionUserMessage.sendMessageSoftDelete(withDrawUser)
+            }
+            val shouldThrow2 = shouldThrow<CustomException> {
+                withDrawUserMessage.sendMessageSoftDelete(restrictionUser)
+            }
+
+            then("예외가 발생한다.") {
+                shouldThrow1 shouldHaveMessage "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+                shouldThrow2 shouldHaveMessage "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            }
+        }
     }
 
 })

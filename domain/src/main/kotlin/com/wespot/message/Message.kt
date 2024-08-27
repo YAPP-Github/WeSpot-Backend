@@ -220,6 +220,7 @@ data class Message(
 
     fun sendMessageSoftDelete(loginUser: User): Message {
         validateDeleteSendMessage(loginUser)
+        validateRegulationUser(loginUser)
         return this.copy(
             isSenderDeleted = true,
             senderDeletedAt = LocalDateTime.now(),
@@ -229,6 +230,7 @@ data class Message(
 
     fun receivedMessageSoftDelete(loginUser: User): Message {
         validateDeleteReceivedMessage(loginUser)
+        validateRegulationUser(loginUser)
         return this.copy(
             isReceiverDeleted = true,
             receiverDeletedAt = LocalDateTime.now(),
