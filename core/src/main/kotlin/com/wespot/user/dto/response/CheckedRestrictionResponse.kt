@@ -5,13 +5,13 @@ import java.time.LocalDate
 
 data class CheckedRestrictionResponse(
     val restrictionType: RestrictionType,
-    val releaseDate: LocalDate,
+    val releaseDate: String,
 ) {
     companion object {
         fun from(userRestriction: Pair<RestrictionType, LocalDate>): CheckedRestrictionResponse {
             return CheckedRestrictionResponse(
                 restrictionType = userRestriction.first,
-                releaseDate = userRestriction.second
+                releaseDate = userRestriction.second.toString()
             )
         }
     }

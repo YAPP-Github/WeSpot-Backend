@@ -45,10 +45,12 @@ class InquiryNotificationServiceTest @Autowired constructor(
         // then
         responses1.notifications.size shouldBe 1
         responses1.notifications[0].id shouldBe savedNotification.id
+        responses1.notifications[0].userId shouldBe user.id
         responses1.lastCursorId shouldBe savedNotification.id
         responses1.hasNext shouldBe true
         responses2.notifications.size shouldBe 1
         responses2.notifications[0].id shouldBe notifications[0].id
+        responses2.notifications[0].userId shouldBe user.id
         responses2.lastCursorId shouldBe notifications[0].id
         responses2.hasNext shouldBe false
     }
@@ -83,7 +85,9 @@ class InquiryNotificationServiceTest @Autowired constructor(
         // then
         actual.size shouldBe 2
         actual[0].isNew shouldBe false
+        actual[0].userId shouldBe user.id
         actual[1].isNew shouldBe true
+        actual[1].userId shouldBe user.id
     }
 
 

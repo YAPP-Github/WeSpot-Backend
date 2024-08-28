@@ -26,7 +26,7 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
 
         // then
         response.restrictionType shouldBe RestrictionType.NONE
-        response.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+        response.releaseDate shouldBe LocalDate.of(9999, 12, 31).toString()
     }
 
     @Test
@@ -53,7 +53,7 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
 
         // then
         response.restrictionType shouldBe RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
-        response.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+        response.releaseDate shouldBe LocalDate.of(9999, 12, 31).toString()
     }
 
     @Test
@@ -80,7 +80,7 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
 
         // then
         response.restrictionType shouldBe RestrictionType.PERMANENT_BAN_VOTE_REPORT
-        response.releaseDate shouldBe LocalDate.of(9999, 12, 31)
+        response.releaseDate shouldBe LocalDate.of(9999, 12, 31).toString()
     }
 
     @Test
@@ -104,7 +104,7 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
 
         // then
         response.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
-        response.releaseDate shouldBe now.plusDays(30)
+        response.releaseDate shouldBe now.plusDays(30).toString()
     }
 
     @Test
@@ -128,7 +128,7 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
 
         // then
         response.restrictionType shouldBe RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT
-        response.releaseDate shouldBe now.plusDays(90)
+        response.releaseDate shouldBe now.plusDays(90).toString()
     }
 
 }
