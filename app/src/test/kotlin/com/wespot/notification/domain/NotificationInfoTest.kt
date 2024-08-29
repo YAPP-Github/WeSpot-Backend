@@ -32,7 +32,7 @@ class NotificationInfoTest : BehaviorSpec({
             val data = notificationInfo.getData()
             then("반환받는다.") {
                 data["targetId"] shouldBe "0"
-                data["date"] shouldBe now.toString()
+                data["userId"] shouldBe "0"
                 data["type"] shouldBe "VOTE"
             }
         }
@@ -53,7 +53,7 @@ class NotificationInfoTest : BehaviorSpec({
             val notificationInfo = NotificationInfo.createInitialState(notification)
             then("생성한다.") {
                 notificationInfo.targetId shouldBe 0
-                notificationInfo.date shouldBe now
+                notificationInfo.userId shouldBe 0
                 notificationInfo.type shouldBe NotificationType.VOTE
                 notificationInfo.title shouldBe "title"
                 notificationInfo.body shouldBe "body"
@@ -72,7 +72,7 @@ class NotificationInfoTest : BehaviorSpec({
             val notificationInfo = NotificationInfo.createInitialState(notification)
             then("생성한다.") {
                 notificationInfo.targetId shouldBe 1
-                notificationInfo.date shouldBe now
+                notificationInfo.userId shouldBe 0
                 notificationInfo.type shouldBe NotificationType.MESSAGE
                 notificationInfo.title shouldBe "title"
                 notificationInfo.body shouldBe "body"

@@ -28,7 +28,7 @@ class FirebaseNotificationService : NotificationServicePort {
             .putAllData(notificationInfo.getData())
             .build()
 
-        pushNotification { FirebaseMessaging.getInstance().sendMulticast(multicastMessage) }
+        pushNotification { FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage) }
     }
 
     private fun isValidFcmToken(it: User) =
