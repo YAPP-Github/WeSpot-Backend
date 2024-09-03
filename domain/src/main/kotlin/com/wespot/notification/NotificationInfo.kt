@@ -7,7 +7,7 @@ data class NotificationInfo(
     val title: String,
     val body: String,
     val targetId: Long,
-    val date: LocalDate,
+    val userId: Long,
     val type: NotificationType,
 ) {
 
@@ -19,7 +19,7 @@ data class NotificationInfo(
             title = notification.title,
             body = notification.body,
             targetId = notification.targetId,
-            date = notification.date,
+            userId = notification.userId,
             type = notification.type
         )
 
@@ -36,7 +36,7 @@ data class NotificationInfo(
     fun getData(): Map<String, String> {
         val data = mutableMapOf<String, String>()
         data["targetId"] = targetId.toString()
-        data["date"] = date.toString()
+        data["userId"] = userId.toString()
         data["type"] = type.name
 
         return data
