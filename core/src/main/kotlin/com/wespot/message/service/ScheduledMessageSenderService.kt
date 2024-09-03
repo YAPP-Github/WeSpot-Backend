@@ -1,5 +1,6 @@
 package com.wespot.message.service
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.Message
@@ -8,7 +9,6 @@ import com.wespot.message.port.`in`.SchedulerMessageUseCase
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.service.UserFinder
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
@@ -20,7 +20,6 @@ import java.time.LocalDateTime
 class ScheduledMessageSenderService(
     private val messagePort: MessagePort,
     private val userPort: UserPort,
-    private val eventPublisher: ApplicationEventPublisher,
 ) : SchedulerMessageUseCase {
 
     @Transactional
@@ -43,7 +42,7 @@ class ScheduledMessageSenderService(
                 id = receivedMessage.receiverId,
                 userPort = userPort
             )
-            eventPublisher.publishEvent(
+            EventUtils.publish(
                 ReceivedMessageEvent(
                     receiver = receiver,
                     messageId = receivedMessage.id

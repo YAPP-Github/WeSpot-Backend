@@ -1,5 +1,6 @@
 package com.wespot.auth.service
 
+import com.wespot.EventUtils
 import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.*
 import com.wespot.auth.dto.response.SettingResponse
@@ -25,7 +26,6 @@ import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.port.out.FCMPort
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -50,7 +50,6 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenService: RefreshTokenService,
     private val restrictionPort: RestrictionPort,
-    private val eventPublisher: ApplicationEventPublisher,
     private val fcmPort: FCMPort,
     private val personalInfoPort: PersonalInfoPort,
 
@@ -98,15 +97,14 @@ class AuthService(
     }
 
 
-
     override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
 
         val user = createUser(signUpToken, signUpRequest)
         val savedUser = userPort.save(user)
-        eventPublisher.publishEvent(CreatedVoteEvent(savedUser))
-        eventPublisher.publishEvent(SignUpUserEvent(savedUser))
-        eventPublisher.publishEvent(WelcomeMessageEvent(savedUser))
+        EventUtils.publish(CreatedVoteEvent(savedUser))
+        EventUtils.publish(SignUpUserEvent(savedUser))
+        EventUtils.publish(WelcomeMessageEvent(savedUser))
 
         saveRelatedEntities(savedUser, signUpRequest, signUpToken.fcmToken)
 
@@ -237,8 +235,10 @@ class AuthService(
 
         personalInfo?.let {
             restrictionPort.findById(it.restriction)?.let { restriction ->
-                val isPermBanMessage = restriction.messageRestriction.restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
-                val isPermBanVote = restriction.voteRestriction.restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT
+                val isPermBanMessage =
+                    restriction.messageRestriction.restrictionType == RestrictionType.PERMANENT_BAN_MESSAGE_REPORT
+                val isPermBanVote =
+                    restriction.voteRestriction.restrictionType == RestrictionType.PERMANENT_BAN_VOTE_REPORT
 
                 require(!(isPermBanMessage || isPermBanVote)) { "영구 제한된 계정입니다." }
             }

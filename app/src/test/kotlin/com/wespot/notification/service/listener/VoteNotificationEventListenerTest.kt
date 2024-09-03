@@ -18,7 +18,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.test.Test
@@ -65,14 +64,14 @@ class VoteNotificationEventListenerTest @Autowired constructor(
         val notifications = notificationPort.findAll()
 
         // then
-        notifications.size shouldBe 5
-        notifications[0].userId shouldBe users[1].id
-        notifications[1].userId shouldBe users[2].id
-        notifications[2].userId shouldBe users[3].id
-        notifications[3].userId shouldBe users[4].id
-        notifications[0].type shouldBe NotificationType.VOTE_RESULT
-        notifications[0].targetId shouldBe 0
-        notifications[0].date shouldBe LocalDate.now()
+        notifications.size shouldBe 10
+        notifications[5].userId shouldBe users[1].id
+        notifications[6].userId shouldBe users[2].id
+        notifications[7].userId shouldBe users[3].id
+        notifications[8].userId shouldBe users[4].id
+        notifications[5].type shouldBe NotificationType.VOTE_RESULT
+        notifications[5].targetId shouldBe 0
+        notifications[5].date shouldBe LocalDate.now()
     }
 
     @Test

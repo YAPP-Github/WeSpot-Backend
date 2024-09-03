@@ -21,7 +21,7 @@ interface UserPort {
         classNumber: Int
     ): List<User>
 
-    fun findIdsByIdIn(ids: List<Long>): List<Long>
+    fun findByIdIn(ids: List<Long>): List<User>
 
     fun findByEmail(userEmail: String): User?
 
@@ -33,7 +33,8 @@ interface UserPort {
         cursorSchoolName: String?,
         cursorSchoolTypeOrder: Int?,
         cursorId: Long?,
-        pageable: Pageable
+        pageable: Pageable,
+        loginUserId: Long,
     ): List<User>
 
     fun findAll(): List<User>
@@ -43,7 +44,8 @@ interface UserPort {
         cursorName: String?,
         cursorSchoolName: String?,
         cursorSchoolTypeOrder: Int?,
-        cursorId: Long?
+        cursorId: Long?,
+        loginUserId: Long,
     ): Long
 
     fun countBySchoolIdAndGradeAndClassNumber(

@@ -38,8 +38,8 @@ class RealSendMessageServiceTest @Autowired constructor(
         val message = messagePort.save(
             Message.sendMessage(
                 content = "content",
-                receiverId = receiver.id,
-                senderId = sender.id,
+                receiver = receiver,
+                sender = sender,
                 senderName = "senderName",
                 isAnonymous = false
             )

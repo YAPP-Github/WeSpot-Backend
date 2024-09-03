@@ -4,7 +4,6 @@ import com.wespot.common.service.ServiceTest
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.event.ReceivedMessageEvent
-import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
@@ -40,8 +39,8 @@ class NotificationEventListenerTest @Autowired constructor(
         val message = messagePort.save(
             Message.sendMessage(
                 content = "content",
-                receiverId = receiver.id,
-                senderId = sender.id,
+                receiver = receiver,
+                sender = sender,
                 senderName = sender.name,
                 isAnonymous = false
             )

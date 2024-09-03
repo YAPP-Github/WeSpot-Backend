@@ -1,9 +1,12 @@
 package com.wespot.vote
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import com.wespot.vote.event.ReceivedVoteEvent
 import com.wespot.voteoption.VoteOption
+import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,7 +18,7 @@ data class Vote(
     val voteNumber: Int,
     val voteOptionsByVoteDate: VoteOptionsByVoteDate,
     val ballots: Ballots,
-) {
+) : AbstractAggregateRoot<Vote>() {
 
     companion object {
         private const val NUMBER_OF_VOTE_USERS = 5
@@ -81,14 +84,14 @@ data class Vote(
         }
     }
 
-
     fun findUsersForVote(classmates: List<User>, user: User): List<User> {
-        validateClassmate(user)
+        validateUser(user)
         classmates.forEach { validateClassmate(it) }
         val alreadyVotedByUser: List<Long> = ballots.findUserIdsVotedByUser(user.id)
 
         return classmates.stream()
             .filter { !alreadyVotedByUser.contains(it.id) && isNotMe(it, user) }
+            .filter { !it.isRegulation() }
             .toList()
             .shuffled()
             .take(NUMBER_OF_VOTE_USERS)
@@ -103,8 +106,9 @@ data class Vote(
         voteTime: LocalDateTime
     ) {
         voteOptionsByVoteDate.validateVoteOption(voteOptionId)
-        validateClassmate(sender)
-        validateClassmate(receiver)
+        validateUser(sender)
+        validateUser(receiver)
+
         ballots.add(
             Ballot.of(
                 voteId = this.id,
@@ -115,6 +119,26 @@ data class Vote(
                 voteTime = voteTime
             )
         )
+
+        EventUtils.publish(ReceivedVoteEvent(receiver))
+    }
+
+    private fun validateUser(user: User) {
+        validateClassmate(user)
+        if (user.isWithDraw()) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "탈퇴한 학생은 해당 서비스를 이용할 수 없습니다."
+            )
+        }
+        if (user.isKeepRestrict()) {
+            throw CustomException(
+                HttpStatus.BAD_REQUEST,
+                ExceptionView.TOAST,
+                "이용제한을 당한 학생은 해당 서비스를 이용할 수 없습니다."
+            )
+        }
     }
 
     private fun validateClassmate(user: User) {
@@ -123,7 +147,7 @@ data class Vote(
             throw CustomException(
                 HttpStatus.BAD_REQUEST,
                 ExceptionView.TOAST,
-                "다른 반의 학생이(을) 투표할 수 없습니다."
+                "다른 반 학생과 상호작용 할 수 없습니다."
             )
         }
     }

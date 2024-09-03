@@ -1,5 +1,6 @@
 package com.wespot.vote.service
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
@@ -7,14 +8,12 @@ import com.wespot.user.port.out.UserPort
 import com.wespot.vote.Vote
 import com.wespot.vote.dto.request.VoteRequest
 import com.wespot.vote.dto.request.VoteRequests
-import com.wespot.vote.dto.response.SaveVoteResponse
+import com.wespot.vote.dto.response.SavedVoteResponse
 import com.wespot.vote.dto.response.VoteItems
-import com.wespot.vote.event.ReceivedVoteEvent
 import com.wespot.vote.event.RegisteredVoteEvent
 import com.wespot.vote.port.`in`.SavedVoteUseCase
 import com.wespot.vote.port.out.VotePort
 import com.wespot.vote.service.helper.VoteServiceHelper
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -25,7 +24,6 @@ import java.time.LocalDateTime
 class SavedVoteService(
     private val votePort: VotePort,
     private val userPort: UserPort,
-    private val eventPublisher: ApplicationEventPublisher,
 ) : SavedVoteUseCase {
 
     @Transactional(readOnly = true)
@@ -46,52 +44,38 @@ class SavedVoteService(
     @Transactional
     override fun saveVote(
         requests: VoteRequests
-    ): SaveVoteResponse {
-        validateRequestsSize(requests.votes.size)
-        validateUserIdsInRequests(requests.votes)
+    ): SavedVoteResponse {
         val user = VoteServiceHelper.findLoginUser(userPort)
+        val receivers = getVotedUsers(requests.votes)
         val voteTime = LocalDateTime.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
         requests.votes
-            .stream()
-            .forEach { request -> addBallot(request, vote, user, voteTime) }
-        eventPublisher.publishEvent(RegisteredVoteEvent(user, vote))
+            .forEach { request ->
+                vote.addBallot(
+                    request.voteOptionId,
+                    user,
+                    receivers.find { it.id == request.userId }
+                        ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.DIALOG, "투표 대상을 찾을 수 없습니다."),
+                    voteTime)
+            }
+        EventUtils.publish(RegisteredVoteEvent(user, vote))
 
-        return SaveVoteResponse(votePort.save(vote).id)
+        return SavedVoteResponse(votePort.save(vote).id)
     }
 
-    private fun addBallot(
-        request: VoteRequest,
-        vote: Vote,
-        user: User,
-        voteTime: LocalDateTime
-    ) {
-        val receiver = VoteServiceHelper.findUser(userPort, request.userId)
-        eventPublisher.publishEvent(ReceivedVoteEvent(receiver))
-        vote.addBallot(
-            voteOptionId = request.voteOptionId,
-            sender = user,
-            receiver = receiver,
-            voteTime = voteTime
-        )
+    private fun getVotedUsers(requests: List<VoteRequest>): List<User> {
+        validateRequestsSize(requests.size)
+        val userIds: List<Long> = requests.stream()
+            .map { it.userId }
+            .toList()
+
+        return userPort.findByIdIn(userIds)
     }
 
     private fun validateRequestsSize(requestsSize: Int) {
         if (5 < requestsSize) {
             throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표는 한번에 최대 5명에게 할 수 있습니다.")
         }
-    }
-
-    private fun validateUserIdsInRequests(requests: List<VoteRequest>) {
-        val userIds: List<Long> = requests.stream()
-            .map { it.userId }
-            .toList()
-        val foundUserIds = userPort.findIdsByIdIn(userIds)
-
-        if (foundUserIds.size == userIds.size) {
-            return
-        }
-        throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표하고자 하는 회원이 존재하지 않습니다.")
     }
 
 }

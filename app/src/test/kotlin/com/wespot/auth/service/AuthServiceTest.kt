@@ -17,9 +17,6 @@ import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.SocialType
-import com.wespot.user.event.CreatedVoteEvent
-import com.wespot.user.event.SignUpUserEvent
-import com.wespot.user.event.WelcomeMessageEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
@@ -36,7 +33,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
@@ -56,7 +52,6 @@ class AuthServiceTest : BehaviorSpec({
     val authenticationManager = mockk<AuthenticationManager>()
     val passwordEncoder = mockk<PasswordEncoder>()
     val refreshTokenService = mockk<RefreshTokenService>()
-    val eventPublisher = mockk<ApplicationEventPublisher>()
     val fcmPort = mockk<FCMPort>()
     val restrictionPort = mockk<RestrictionPort>()
     val personalInfoPort = mockk<PersonalInfoPort>()
@@ -77,7 +72,6 @@ class AuthServiceTest : BehaviorSpec({
             authenticationManager = authenticationManager,
             passwordEncoder = passwordEncoder,
             refreshTokenService = refreshTokenService,
-            eventPublisher = eventPublisher,
             fcmPort = fcmPort,
             secretKey = secretKey,
             restrictionPort = restrictionPort,
@@ -219,9 +213,6 @@ class AuthServiceTest : BehaviorSpec({
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest, authData.fcmToken) } just Runs
         every { authService.signIn(any()) } returns tokenAndUserDetailResponse
-        every { eventPublisher.publishEvent(SignUpUserEvent(user)) } returns Unit
-        every { eventPublisher.publishEvent(CreatedVoteEvent(user)) } returns Unit
-        every { eventPublisher.publishEvent(WelcomeMessageEvent(user)) } returns Unit
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)

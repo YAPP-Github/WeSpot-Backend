@@ -1,6 +1,9 @@
 package com.wespot.user
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.restriction.Restriction
+import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -83,33 +86,33 @@ data class User(
             withdrawalCompleteAt = null
         )
 
-      fun cancelWithdraw() : User{
-          isWithdrawActive()
-          return User(
-              id = id,
-              email = email,
-              password = password,
-              name = name,
-              introduction = introduction,
-              gender = gender,
-              role = role,
-              schoolId = schoolId,
-              grade = grade,
-              classNumber = classNumber,
-              profile = profile,
-              fcm = fcm,
-              setting = setting,
-              social = social,
-              userConsent = userConsent,
-              createdAt = createdAt,
-              restriction = restriction,
-              updatedAt = LocalDateTime.now(),
-              withdrawalStatus = WithdrawalStatus.CANCELED,
-              withdrawalRequestAt = withdrawalRequestAt,
-              withdrawalCancelAt = LocalDateTime.now(),
-              withdrawalCompleteAt = null
-          )
-      }
+    fun cancelWithdraw(): User {
+        isWithdrawActive()
+        return User(
+            id = id,
+            email = email,
+            password = password,
+            name = name,
+            introduction = introduction,
+            gender = gender,
+            role = role,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = classNumber,
+            profile = profile,
+            fcm = fcm,
+            setting = setting,
+            social = social,
+            userConsent = userConsent,
+            createdAt = createdAt,
+            restriction = restriction,
+            updatedAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.CANCELED,
+            withdrawalRequestAt = withdrawalRequestAt,
+            withdrawalCancelAt = LocalDateTime.now(),
+            withdrawalCompleteAt = null
+        )
+    }
 
 
     fun completeWithdraw(
@@ -148,7 +151,8 @@ data class User(
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
-        private const val INIT_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
+        private const val INIT_PROFILE_ICON_URL =
+            "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
 
         fun create(
             email: String,
@@ -160,33 +164,33 @@ data class User(
             social: Social,
             gender: Gender,
         ) = User(
-                id = 0L,
-                email = email,
-                password = password,
-                name = name,
-                introduction = UserIntroduction.emptyUserIntroduction(),
-                gender = gender,
-                role = Role.USER,
-                schoolId = schoolId,
-                grade = grade,
-                classNumber = groupNumber,
-                profile = Profile.createInit(),
-                fcm = null,
-                setting = Setting(),
-                social = social,
-                userConsent = UserConsent.create(
-                    consentType = ConsentType.MARKETING,
-                    consentedAt = LocalDateTime.now(),
-                    consentValue = false
-                ),
-                restriction = Restriction.createInitialState(),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
-                withdrawalStatus = WithdrawalStatus.NONE,
-                withdrawalRequestAt = null,
-                withdrawalCancelAt = null,
-                withdrawalCompleteAt = null
-            )
+            id = 0L,
+            email = email,
+            password = password,
+            name = name,
+            introduction = UserIntroduction.emptyUserIntroduction(),
+            gender = gender,
+            role = Role.USER,
+            schoolId = schoolId,
+            grade = grade,
+            classNumber = groupNumber,
+            profile = Profile.createInit(),
+            fcm = null,
+            setting = Setting(),
+            social = social,
+            userConsent = UserConsent.create(
+                consentType = ConsentType.MARKETING,
+                consentedAt = LocalDateTime.now(),
+                consentValue = false
+            ),
+            restriction = Restriction.createInitialState(),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+            withdrawalStatus = WithdrawalStatus.NONE,
+            withdrawalRequestAt = null,
+            withdrawalCancelAt = null,
+            withdrawalCompleteAt = null
+        )
 
         fun update(
             user: User,
@@ -222,10 +226,9 @@ data class User(
 
     }
 
-
     private fun isWithdrawActive() {
         if (withdrawalStatus != WithdrawalStatus.ACTIVE) {
-            throw IllegalStateException("탈퇴가 진행 중이 아닙니다.")
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "탈퇴가 진행 중이 아닙니다.")
         }
     }
 
@@ -259,5 +262,17 @@ data class User(
     ) = this.schoolId == otherUser.schoolId
         && this.grade == otherUser.grade
         && this.classNumber == otherUser.classNumber
+
+    fun isKeepRestrict(): Boolean {
+        return restriction.isKeepRestriction()
+    }
+
+    fun isWithDraw(): Boolean {
+        return withdrawalStatus == WithdrawalStatus.WITHDRAWN
+    }
+
+    fun isRegulation(): Boolean {
+        return isWithDraw() || isKeepRestrict()
+    }
 
 }

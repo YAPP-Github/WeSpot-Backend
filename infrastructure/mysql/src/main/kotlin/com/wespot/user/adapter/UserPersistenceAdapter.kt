@@ -37,7 +37,8 @@ class UserPersistenceAdapter(
         cursorSchoolName: String?,
         cursorSchoolTypeOrder: Int?,
         cursorId: Long?,
-        pageable: Pageable
+        pageable: Pageable,
+        loginUserId: Long,
     ): List<User> {
         return userJpaRepository.searchUsers(
             name = name,
@@ -45,7 +46,8 @@ class UserPersistenceAdapter(
             cursorSchoolName = cursorSchoolName,
             cursorSchoolTypeOrder = cursorSchoolTypeOrder,
             cursorId = cursorId,
-            pageable = pageable
+            pageable = pageable,
+            loginUserId = loginUserId
         ).stream()
             .map { userJpaEntity -> UserMapper.mapToDomainEntity(userJpaEntity) }
             .toList()
@@ -56,14 +58,16 @@ class UserPersistenceAdapter(
         cursorName: String?,
         cursorSchoolName: String?,
         cursorSchoolTypeOrder: Int?,
-        cursorId: Long?
+        cursorId: Long?,
+        loginUserId: Long,
     ): Long {
         return userJpaRepository.countUsersAfterCursor(
             name = name,
             cursorName = cursorName,
             cursorSchoolName = cursorSchoolName,
             cursorSchoolTypeOrder = cursorSchoolTypeOrder,
-            cursorId = cursorId
+            cursorId = cursorId,
+            loginUserId = loginUserId
         )
     }
 
@@ -102,8 +106,9 @@ class UserPersistenceAdapter(
             .toList()
     }
 
-    override fun findIdsByIdIn(ids: List<Long>): List<Long> {
-        return userJpaRepository.findIdsByIdIn(ids)
+    override fun findByIdIn(ids: List<Long>): List<User> {
+        return userJpaRepository.findByIdIn(ids)
+            .map { UserMapper.mapToDomainEntity(it) }
     }
 
     override fun findAll(): List<User> {

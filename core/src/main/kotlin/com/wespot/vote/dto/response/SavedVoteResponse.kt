@@ -1,5 +1,5 @@
 package com.wespot.vote.dto.response
 
-data class SaveVoteResponse(
+data class SavedVoteResponse(
     val id: Long
 )

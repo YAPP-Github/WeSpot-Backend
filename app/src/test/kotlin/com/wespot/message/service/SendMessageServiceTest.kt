@@ -5,8 +5,6 @@ import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.dto.request.SendMessageRequest
 import com.wespot.message.dto.response.SendMessageResponse
-import com.wespot.message.event.MessageLimitEvent
-import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.User
@@ -19,7 +17,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -29,12 +26,10 @@ class SendMessageServiceTest : BehaviorSpec({
     val messagePort = mockk<MessagePort>()
     val userPort = mockk<UserPort>()
     val blockedUserPort = mockk<BlockedUserPort>()
-    val eventPublisher = mockk<ApplicationEventPublisher>()
     val sendMessageService = SendMessageService(
         messagePort = messagePort,
         userPort = userPort,
         blockedUserPort = blockedUserPort,
-        eventPublisher = eventPublisher
     )
 
     lateinit var sender: User
@@ -75,8 +70,6 @@ class SendMessageServiceTest : BehaviorSpec({
             every { messagePort.save(any()) } returns message
             every { messagePort.sendMessageCount(sender.id) } returns 0
             every { messagePort.hasSentMessageToday(sender.id, receiver.id) } returns false
-            every { eventPublisher.publishEvent(MessageLimitEvent(sender.id, 0)) } returns Unit
-            every { eventPublisher.publishEvent(ReceivedMessageEvent(receiver, 0)) } returns Unit
             every { blockedUserPort.existsByBlockerIdAndBlockedId(1, 2) } returns false
             every { blockedUserPort.existsByBlockerIdAndBlockedId(2, 1) } returns false
 
