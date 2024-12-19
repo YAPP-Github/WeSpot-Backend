@@ -13,6 +13,7 @@ object ReportJpaEntityFixture {
         targetId = 1,
         senderId = 1,
         receiverId = 1,
-        baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now())
+        baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now()),
+        content = ""
     )
 }

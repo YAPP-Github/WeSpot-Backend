@@ -3,6 +3,7 @@ package com.wespot.auth.service
 import com.wespot.DateTimeUtil.getExpirationLocalDateTime
 import com.wespot.auth.dto.AuthData
 import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.request.ExtraSignInRequest
 import com.wespot.auth.dto.request.RefreshTokenRequest
 import com.wespot.auth.dto.request.SignInRequest
 import com.wespot.auth.dto.response.SettingResponse
@@ -24,6 +25,7 @@ import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.port.out.RestrictionPort
 import com.wespot.auth.port.out.PersonalInfoPort
+import com.wespot.user.port.out.UserVersionPort
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -55,6 +57,7 @@ class AuthServiceTest : BehaviorSpec({
     val fcmPort = mockk<FCMPort>()
     val restrictionPort = mockk<RestrictionPort>()
     val personalInfoPort = mockk<PersonalInfoPort>()
+    val userVersionPort = mockk<UserVersionPort>()
 
     val secretKey = "testSecretKey"
 
@@ -75,7 +78,9 @@ class AuthServiceTest : BehaviorSpec({
             fcmPort = fcmPort,
             secretKey = secretKey,
             restrictionPort = restrictionPort,
-            personalInfoPort = personalInfoPort
+            personalInfoPort = personalInfoPort,
+            cloudFrontUrl = "cloud-front-url",
+            userVersionPort = userVersionPort
         )
     )
 
@@ -85,7 +90,9 @@ class AuthServiceTest : BehaviorSpec({
             socialType = SocialType.KAKAO,
             authorizationCode = "authorizationCode",
             identityToken = "testIdentityToken",
-            fcmToken = "testFcmToken"
+            fcmToken = "testFcmToken",
+            androidVersionName = "",
+            iosVersionName = "",
         )
         val socialResponse = SocialResponse(
             socialId = "testSocialId",
@@ -158,7 +165,7 @@ class AuthServiceTest : BehaviorSpec({
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
-            every { authService.signIn(any()) } returns tokenResponse
+            every { authService.signIn(any(), any()) } returns tokenResponse
 
             val socialAccess = authService.socialAccess(authLoginRequest)
 
@@ -212,7 +219,7 @@ class AuthServiceTest : BehaviorSpec({
         every { userPort.existsBySchoolIdAndGradeAndClassNumber(any(), any(), any()) } returns true
         every { userPort.save(any()) } returns user
         every { authService.saveRelatedEntities(user, signUpRequest, authData.fcmToken) } just Runs
-        every { authService.signIn(any()) } returns tokenAndUserDetailResponse
+        every { authService.signIn(any(), any()) } returns tokenAndUserDetailResponse
 
         `when`("사용자가 signUp을 호출할 때") {
             val response = authService.signUp(signUpRequest)
@@ -234,7 +241,10 @@ class AuthServiceTest : BehaviorSpec({
                     email = authData.email,
                     password = "${authData.email}$secretKey"
                 )
-                authService.signIn(signInRequest) shouldBe tokenAndUserDetailResponse
+                authService.signIn(
+                    signInRequest,
+                    ExtraSignInRequest(null, null, null)
+                ) shouldBe tokenAndUserDetailResponse
             }
 
             then("TokenResponse를 반환한다") {
@@ -278,7 +288,7 @@ class AuthServiceTest : BehaviorSpec({
         every { refreshTokenService.saveOrUpdateRefreshToken(any(), any()) } just Runs
 
         `when`("사용자가 signIn을 호출할 때") {
-            val response = authService.signIn(signInRequest)
+            val response = authService.signIn(signInRequest, ExtraSignInRequest(null, null, null))
 
             then("사용자 인증을 시도한다") {
                 authenticationManager.authenticate(signInRequest.toAuthentication()) shouldBe authentication

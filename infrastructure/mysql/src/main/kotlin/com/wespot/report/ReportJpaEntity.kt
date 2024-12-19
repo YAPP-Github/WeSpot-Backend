@@ -28,6 +28,9 @@ class ReportJpaEntity(
     val targetId: Long,
 
     @field:NotNull
+    val content: String,
+
+    @field:NotNull
     val senderId: Long,
 
     @field:NotNull

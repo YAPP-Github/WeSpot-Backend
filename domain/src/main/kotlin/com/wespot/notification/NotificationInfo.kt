@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 data class NotificationInfo(
     val title: String,
+    val date: LocalDate,
     val body: String,
     val targetId: Long,
     val userId: Long,
@@ -20,6 +21,7 @@ data class NotificationInfo(
             body = notification.body,
             targetId = notification.targetId,
             userId = notification.userId,
+            date = notification.date,
             type = notification.type
         )
 
@@ -37,6 +39,7 @@ data class NotificationInfo(
         val data = mutableMapOf<String, String>()
         data["targetId"] = targetId.toString()
         data["userId"] = userId.toString()
+        data["date"] = date.toString()
         data["type"] = type.name
 
         return data

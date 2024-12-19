@@ -24,7 +24,6 @@ class ModifyMessageService(
         messageId: Long,
         updateMessageRequest: UpdateMessageRequest
     ): UpdateMessageResponse {
-
         val loginUser = getLoginUser(userPort = userPort)
         val receiverUser = findUserById(id = updateMessageRequest.receiverId, userPort = userPort)
         val message = findMessageById(id = messageId, messagePort = messagePort)
@@ -33,7 +32,8 @@ class ModifyMessageService(
             content = updateMessageRequest.content,
             modifier = loginUser,
             receiverId = receiverUser.id,
-            senderName = updateMessageRequest.senderName
+            senderName = updateMessageRequest.senderName,
+            isAnonymous = updateMessageRequest.isAnonymous
         )
 
         val saveMessage = messagePort.save(updateMessage)

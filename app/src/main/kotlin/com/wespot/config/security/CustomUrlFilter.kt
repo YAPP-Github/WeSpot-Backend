@@ -48,6 +48,7 @@ class CustomUrlFilter(
         "/api/v1/reports/**",
         "/api/v1/notifications/**",
         "/api/v1/schools/search/**",
+        "/**"
     )
 
     override fun doFilterInternal(
@@ -61,7 +62,6 @@ class CustomUrlFilter(
             return
         }
         filterChain.doFilter(request, response)
-
     }
 
     private fun isValidUrl(request: HttpServletRequest): Boolean {

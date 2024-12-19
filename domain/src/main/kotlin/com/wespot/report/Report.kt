@@ -1,6 +1,5 @@
 package com.wespot.report
 
-import com.google.common.io.ByteArrayDataInput
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
@@ -13,6 +12,7 @@ data class Report(
     val targetId: Long,
     val senderId: Long,
     val receiverId: Long,
+    val content: String,
     val createdAt: LocalDateTime
 ) {
 
@@ -22,6 +22,7 @@ data class Report(
             reportType: ReportType,
             targetId: Long,
             sender: User,
+            content: String?,
             receiver: User
         ): Report {
             validate(sender, receiver)
@@ -31,6 +32,7 @@ data class Report(
                 targetId = targetId,
                 senderId = sender.id,
                 receiverId = receiver.id,
+                content = content ?: "",
                 createdAt = LocalDateTime.now()
             )
         }

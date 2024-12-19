@@ -1,5 +1,12 @@
 package com.wespot.user
 
+import com.wespot.EventUtils
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
+import com.wespot.image.Image
+import com.wespot.image.event.CreatedImageWhenSignUpEvent
+import org.springframework.http.HttpStatus
+
 data class Profile(
     val id: Long,
     val backgroundColor: String,
@@ -15,9 +22,18 @@ data class Profile(
         iconUrl = iconUrl ?: this.iconUrl
     )
 
-    companion object {
+    fun updateIconToImage(url: String): Profile {
+        require(url.isNotBlank()) {
+            throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "url은 필수로 존재해야합니다.")
+        }
+        return Profile(
+            id = this.id,
+            backgroundColor = "",
+            iconUrl = url
+        )
+    }
 
-        const val INIT_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
+    companion object {
 
         fun create(
             backgroundColor: String,
@@ -29,12 +45,30 @@ data class Profile(
                 iconUrl = iconUrl
             )
 
-        fun createInit() =
-            Profile(
+        fun createInit(profileUrl: String?): Profile {
+            return Profile(
                 id = 0,
                 backgroundColor = "",
-                iconUrl = INIT_PROFILE_ICON_URL
+                iconUrl = profileUrl ?: Image.INIT_PROFILE_ICON_URL
             )
+        }
+
+        fun createWithImage(image: Image): Profile {
+            if (image.url == "") {
+                return Profile(
+                    id = 0,
+                    backgroundColor = "",
+                    iconUrl = Image.INIT_PROFILE_ICON_URL
+                )
+            }
+
+            EventUtils.publish(CreatedImageWhenSignUpEvent(image))
+            return Profile(
+                id = 0,
+                backgroundColor = "",
+                iconUrl = image.url
+            )
+        }
 
     }
 }

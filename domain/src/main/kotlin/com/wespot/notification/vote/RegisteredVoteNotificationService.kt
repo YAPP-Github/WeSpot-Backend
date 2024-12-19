@@ -12,16 +12,18 @@ import java.time.LocalDate
 class RegisteredVoteNotificationService {
 
     fun getNotifications(
+        numberOfSenderBeforeVote: Int,
         sender: User,
-        users: List<User>,
+        getUsers: () -> List<User>,
         vote: Vote
-    ): List<Notification> {
+    ): Pair<List<Notification>, List<User>> {
         val numberOfSender = vote.getNumberOfSender()
-        ClassmateValidator.validateContainNonClassmateUser(users)
-        if (isNotNotificationTrigger(numberOfSender)) {
-            return emptyList()
+        if (numberOfSenderBeforeVote == numberOfSender || isNotNotificationTrigger(numberOfSender)) {
+            return Pair(emptyList(), emptyList())
         }
-        return users.filter { it.id != sender.id }
+        val users = getUsers.invoke()
+        ClassmateValidator.validateContainNonClassmateUser(users)
+        val notifications = users.filter { it.id != sender.id }
             .map {
                 Notification.createVoteInitialState(
                     it.id,
@@ -31,6 +33,7 @@ class RegisteredVoteNotificationService {
                     "실시간 1등은 누구일까요? 눌러서 바로 확인해 보세요"
                 )
             }
+        return Pair(notifications, users)
     }
 
     private fun isNotNotificationTrigger(numberOfSender: Int) =

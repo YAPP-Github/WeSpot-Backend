@@ -2,7 +2,12 @@ package com.wespot.auth.service
 
 import com.wespot.EventUtils
 import com.wespot.auth.dto.AuthData
-import com.wespot.auth.dto.request.*
+import com.wespot.auth.dto.request.AdminLoginRequest
+import com.wespot.auth.dto.request.AuthLoginRequest
+import com.wespot.auth.dto.request.ExtraSignInRequest
+import com.wespot.auth.dto.request.RefreshTokenRequest
+import com.wespot.auth.dto.request.SignInRequest
+import com.wespot.auth.dto.request.SignUpRequest
 import com.wespot.auth.dto.response.SettingResponse
 import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.SocialResponse
@@ -15,16 +20,28 @@ import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.image.Image
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.*
+import com.wespot.user.ConsentType
+import com.wespot.user.FCM
+import com.wespot.user.Profile
+import com.wespot.user.RestrictionType
+import com.wespot.user.Role
+import com.wespot.user.Social
+import com.wespot.user.SocialType
+import com.wespot.user.User
+import com.wespot.user.UserConsent
+import com.wespot.user.UserVersion
+import com.wespot.user.WithdrawalStatus
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.event.WelcomeMessageEvent
+import com.wespot.user.port.out.FCMPort
 import com.wespot.user.port.out.ProfilePort
 import com.wespot.user.port.out.RestrictionPort
 import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
-import com.wespot.user.port.out.FCMPort
+import com.wespot.user.port.out.UserVersionPort
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
@@ -37,8 +54,11 @@ import java.util.*
 @Service
 @Transactional
 class AuthService(
+    private val userVersionPort: UserVersionPort,
     private val userPort: UserPort,
     private val refreshTokenPort: RefreshTokenPort,
+    @Value("\${aws.cloud-front.url}")
+    private val cloudFrontUrl: String,
     private val userConsentPort: UserConsentPort,
     private val profilePort: ProfilePort,
     private val schoolPort: SchoolPort,
@@ -70,17 +90,28 @@ class AuthService(
         val user = userPort.findByEmail(socialEmail)
             ?: return SignUpResponse(createSignUpToken(authData = authData))
 
-        return signIn(createSignInRequest(user))
+        return signIn(
+            createSignInRequest(user),
+            ExtraSignInRequest(
+                fcmToken = authLoginRequest.fcmToken,
+                androidVersionName = authLoginRequest.androidVersionName,
+                iosVersionName = authLoginRequest.iosVersionName
+            )
+        )
     }
 
-
-    fun signIn(signInRequest: SignInRequest): TokenAndUserDetailResponse {
+    fun signIn(signInRequest: SignInRequest, extraSignInRequest: ExtraSignInRequest): TokenAndUserDetailResponse {
         val authentication = authenticateUser(signInRequest)
         val generateToken = jwtTokenProvider.generateToken(authentication)
         val user = getUserByEmail(authentication.name)
         checkWithdrawalStatus(user)
 
+        val fcm = user.fcm ?: FCM.emptyFCM()
+        val updatedFCM = fcm.update(extraSignInRequest.fcmToken)
+        fcmPort.save(updatedFCM)
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
+        val userVersion = userVersionPort.findByUserId(user.id) ?: UserVersion.createInitialState(user.id)
+        saveUserVersion(userVersion, extraSignInRequest)
 
         return TokenAndUserDetailResponse(
             accessToken = generateToken.accessToken,
@@ -96,6 +127,17 @@ class AuthService(
         )
     }
 
+    private fun saveUserVersion(
+        userVersion: UserVersion,
+        extraSignInRequest: ExtraSignInRequest
+    ): UserVersion {
+        val updatedUserVersion = userVersion.updateWithLogin(
+            androidVersionName = extraSignInRequest.androidVersionName,
+            iosVersionName = extraSignInRequest.iosVersionName
+        )
+        return userVersionPort.save(updatedUserVersion)
+    }
+
 
     override fun signUp(signUpRequest: SignUpRequest): TokenAndUserDetailResponse {
         val signUpToken = checkSignUpToken(signUpRequest.signUpToken)
@@ -108,7 +150,14 @@ class AuthService(
 
         saveRelatedEntities(savedUser, signUpRequest, signUpToken.fcmToken)
 
-        val signIn = signIn(createSignInRequest(savedUser))
+        val signIn = signIn(
+            createSignInRequest(savedUser),
+            ExtraSignInRequest(
+                fcmToken = signUpToken.fcmToken,
+                androidVersionName = signUpRequest.androidVersionNameWhenSignUp,
+                iosVersionName = signUpRequest.iosVersionNameWhenSignUp
+            )
+        )
 
         return TokenAndUserDetailResponse(
             accessToken = signIn.accessToken,
@@ -145,6 +194,7 @@ class AuthService(
             grade = signUpRequest.grade,
             groupNumber = signUpRequest.classNumber,
             social = social,
+            introduction = signUpRequest.introduction,
             gender = signUpRequest.gender
         )
     }
@@ -164,8 +214,15 @@ class AuthService(
             userConsent = userConsentPort.save(marketingConsent)
         }
 
-        val profile = Profile.createInit()
+        val image = Image.ofWithSignUp(signUpRequest.profileUrl, cloudFrontUrl)
+        val profile = Profile.createWithImage(image)
         val savedProfile = profilePort.save(profile)
+        val userVersion = UserVersion.createWithSignUp(
+            user.id,
+            signUpRequest.androidVersionNameWhenSignUp,
+            signUpRequest.iosVersionNameWhenSignUp
+        )
+        userVersionPort.save(userVersion)
 
         val fcm = FCM.from(fcmToken)
         val savedFcm = fcmPort.save(fcm)
@@ -261,7 +318,7 @@ class AuthService(
 
     private fun createSignInRequest(user: User) = SignInRequest(
         email = user.email,
-        password = "${user.email}$secretKey"
+        password = "${user.email}$secretKey",
     )
 
     fun formatSocialEmail(socialId: String, socialType: SocialType): String {

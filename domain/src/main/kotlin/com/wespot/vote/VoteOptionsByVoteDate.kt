@@ -3,6 +3,7 @@ package com.wespot.vote
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.voteoption.VoteOption
+import io.swagger.v3.oas.annotations.media.DependentRequired
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
@@ -23,10 +24,7 @@ data class VoteOptionsByVoteDate(
         ): VoteOptionsByVoteDate {
             validateDate(date)
             validateVoteOptionsSize(allVoteOptions.size)
-            val voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
-            validateVoteOptionsSizeMultipleOf5(allVoteOptions.size, voteOptionIndex)
-            val voteOptionsByVoteDate =
-                allVoteOptions.subList(voteOptionIndex, voteOptionIndex + NUMBER_OF_VOTE_OPTIONS)
+            val voteOptionsByVoteDate = createVoteOptionsByDate(voteNumber, allVoteOptions)
 
             return VoteOptionsByVoteDate(
                 voteDate = date,
@@ -55,13 +53,18 @@ data class VoteOptionsByVoteDate(
             }
         }
 
-        private fun validateVoteOptionsSizeMultipleOf5(
-            allVoteOptionsSize: Int,
-            voteOptionIndex: Int
-        ) {
-            require(allVoteOptionsSize >= voteOptionIndex + NUMBER_OF_VOTE_OPTIONS) {
-                throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "선택지의 개수가 5의 배수가 아닙니다.")
+        private fun createVoteOptionsByDate(
+            voteNumber: Int,
+            allVoteOptions: List<VoteOption>
+        ): MutableList<VoteOption> {
+            var voteOptionIndex: Int = (voteNumber * NUMBER_OF_VOTE_OPTIONS) % allVoteOptions.size
+            val voteOptionsByVoteDate = mutableListOf<VoteOption>()
+
+            while (voteOptionsByVoteDate.size < NUMBER_OF_VOTE_OPTIONS) {
+                voteOptionsByVoteDate.add(allVoteOptions[voteOptionIndex])
+                voteOptionIndex = (voteOptionIndex + 1) % allVoteOptions.size
             }
+            return voteOptionsByVoteDate
         }
 
     }

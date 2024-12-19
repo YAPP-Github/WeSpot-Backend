@@ -9,10 +9,10 @@ interface VoteNotificationUseCase {
 
     fun signUpUser(user: User)
 
-    fun registerVote(sender: User, vote: Vote)
+    fun registerVote(numberOfSenderBeforeVote: Int, sender: User, vote: Vote)
 
     fun endVote()
 
-    fun receiveVote(receiver: User)
+    fun receiveVote(sender: User, receiver: User)
 
 }

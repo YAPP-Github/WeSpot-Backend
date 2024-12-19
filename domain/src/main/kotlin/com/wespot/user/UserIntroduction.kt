@@ -20,6 +20,13 @@ data class UserIntroduction(
             return UserIntroduction(introduction)
         }
 
+        fun fromNullable(introduction: String?): UserIntroduction {
+            val notNullIntroduction = introduction ?: ""
+            validateUserIntroduction(notNullIntroduction)
+
+            return UserIntroduction(notNullIntroduction)
+        }
+
         private fun validateUserIntroduction(content: String) {
             require(!ProfanityChecker.checkProfanity(content)) {
                 throw CustomException(

@@ -10,6 +10,18 @@ data class VoteOption(
 ) {
 
     companion object {
+
+        fun createInitialState(
+            content: String
+        ): VoteOption {
+            return VoteOption(
+                id = 0L,
+                content = VoteOptionContent.from(content),
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now()
+            )
+        }
+
         fun of(
             id: Long,
             content: String,
@@ -23,6 +35,18 @@ data class VoteOption(
                 updatedAt = updatedAt
             )
         }
+
+    }
+
+    fun update(
+        content: String,
+    ): VoteOption {
+        return VoteOption(
+            id = id,
+            content = VoteOptionContent.from(content),
+            createdAt = createdAt,
+            updatedAt = updatedAt
+        )
     }
 
 }

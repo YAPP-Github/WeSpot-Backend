@@ -10,6 +10,7 @@ object ReportMapper {
         targetId = reportJpaEntity.targetId,
         senderId = reportJpaEntity.senderId,
         receiverId = reportJpaEntity.receiverId,
+        content = reportJpaEntity.content,
         createdAt = reportJpaEntity.baseEntity.createdAt
     )
 
@@ -19,6 +20,7 @@ object ReportMapper {
         targetId = report.targetId,
         senderId = report.senderId,
         receiverId = report.receiverId,
+        content = report.content,
         baseEntity = BaseEntity(report.createdAt, report.createdAt)
     )
 

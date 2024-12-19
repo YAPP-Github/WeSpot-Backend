@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":infrastructure:redis"))
     implementation(project(":infrastructure:fcm"))
     implementation(project(":infrastructure:discord"))
+    implementation(project(":infrastructure:s3"))
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     testImplementation("io.jsonwebtoken:jjwt-api:0.11.2")

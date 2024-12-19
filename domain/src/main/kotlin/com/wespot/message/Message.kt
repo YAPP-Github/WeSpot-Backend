@@ -34,7 +34,8 @@ data class Message(
         content: String,
         modifier: User,
         receiverId: Long,
-        senderName: String
+        senderName: String,
+        isAnonymous: Boolean
     ): Message {
         validateRegulationUser(modifier)
         validateMessageOwner(modifier)
@@ -50,7 +51,7 @@ data class Message(
             id = id,
             content = MessageContent.from(content),
             senderId = senderId,
-            senderName = senderName,
+            senderName = filterSenderNameByIsAnonymous(modifier, senderName, isAnonymous),
             messageType = MessageType.SENT,
             receiverId = receiverId,
             isAnonymous = isAnonymous,
@@ -70,6 +71,24 @@ data class Message(
         message.validateMessageReceiver()
 
         return message
+    }
+
+    private fun filterSenderNameByIsAnonymous(modifier: User, senderName: String, isAnonymous: Boolean): String {
+        if (!isAnonymous) {
+            validateSenderNameWhenIsNotAnonymous(modifier, senderName)
+        }
+        return senderName
+    }
+
+    private fun validateSenderNameWhenIsNotAnonymous(modifier: User, senderName: String) {
+        if (senderName.contains(modifier.name)) {
+            return
+        }
+        throw CustomException(
+            HttpStatus.BAD_REQUEST,
+            ExceptionView.TOAST,
+            "본인의 이름이 포함되지 않은 이름을 비익명으로 사용할 수 없습니다."
+        )
     }
 
     fun readMessage(

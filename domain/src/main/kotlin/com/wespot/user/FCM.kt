@@ -22,6 +22,24 @@ data class FCM(
                 createdAt = LocalDateTime.now(),
             )
         }
+
+        fun emptyFCM(): FCM {
+            return FCM(
+                id = 0,
+                fcmToken = null,
+                createdAt = null,
+            )
+        }
+    }
+
+    fun update(fcmToken: String?): FCM {
+        fcmToken ?: return this
+
+        return FCM(
+            id = id,
+            fcmToken = fcmToken,
+            createdAt = createdAt,
+        )
     }
 
 }

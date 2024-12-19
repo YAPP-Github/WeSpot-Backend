@@ -10,7 +10,4 @@ object UserFinder {
     fun findUserById(id: Long, userPort: UserPort) = userPort.findById(id)
         ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "유저를 찾을 수 없습니다.")
 
-    fun findBlockedUserById(id: Long, userPort: UserPort) = userPort.findById(id)
-        ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "차단된 유저를 찾을 수 없습니다.")
-
 }

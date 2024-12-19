@@ -20,12 +20,16 @@ class VoteNotificationEventListener(
 
     @EventListener
     fun registerVote(registerVoteEvent: RegisteredVoteEvent) {
-        voteNotificationUseCase.registerVote(registerVoteEvent.sender, registerVoteEvent.vote)
+        voteNotificationUseCase.registerVote(
+            registerVoteEvent.numberOfSenderBeforeVote,
+            registerVoteEvent.sender,
+            registerVoteEvent.vote
+        )
     }
 
     @EventListener
     fun receiveVote(receivedVoteEvent: ReceivedVoteEvent) {
-        voteNotificationUseCase.receiveVote(receivedVoteEvent.receiver)
+        voteNotificationUseCase.receiveVote(receivedVoteEvent.sender, receivedVoteEvent.receiver)
     }
 
     @EventListener

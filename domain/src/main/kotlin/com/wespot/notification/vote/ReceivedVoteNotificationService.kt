@@ -9,8 +9,8 @@ import java.time.LocalDate
 @Component
 class ReceivedVoteNotificationService {
 
-    fun getNotification(userId: Long, gender: Gender): Notification {
-        val genderKeyword = getGenderKeyword(gender)
+    fun getNotification(userId: Long, senderGender: Gender): Notification {
+        val genderKeyword = getGenderKeyword(senderGender)
 
         return Notification.createVoteInitialState(
             userId = userId,
@@ -22,7 +22,7 @@ class ReceivedVoteNotificationService {
     }
 
     private fun getGenderKeyword(gender: Gender): String {
-        if (gender.name == Gender.FEMALE.name) {
+        if (gender == Gender.FEMALE) {
             return "여학생"
         }
 

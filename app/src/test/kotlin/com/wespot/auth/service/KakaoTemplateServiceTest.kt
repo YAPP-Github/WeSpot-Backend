@@ -7,6 +7,7 @@ import com.wespot.auth.fixture.KakaoTemplateFixture.createKakaoTemplate
 import com.wespot.auth.port.out.KakaoTemplatePort
 import com.wespot.auth.service.kakao.KakaoTemplateService
 import com.wespot.exception.CustomException
+import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
@@ -17,7 +18,8 @@ import io.mockk.mockk
 class KakaoTemplateServiceTest : BehaviorSpec({
 
     val kakaoTemplatePort = mockk<KakaoTemplatePort>()
-    val kakaoTemplateService = KakaoTemplateService(kakaoTemplatePort)
+    val userPort = mockk<UserPort>()
+    val kakaoTemplateService = KakaoTemplateService(kakaoTemplatePort, userPort)
 
     given("KakaoTemplateService") {
 

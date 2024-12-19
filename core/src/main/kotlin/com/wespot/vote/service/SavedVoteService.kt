@@ -49,6 +49,7 @@ class SavedVoteService(
         val receivers = getVotedUsers(requests.votes)
         val voteTime = LocalDateTime.now()
         val vote: Vote = VoteServiceHelper.findVoteByUser(votePort, user, voteTime.toLocalDate())
+        val numberOfSenderBeforeVote = vote.getNumberOfSender()
         requests.votes
             .forEach { request ->
                 vote.addBallot(
@@ -58,7 +59,7 @@ class SavedVoteService(
                         ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.DIALOG, "투표 대상을 찾을 수 없습니다."),
                     voteTime)
             }
-        EventUtils.publish(RegisteredVoteEvent(user, vote))
+        EventUtils.publish(RegisteredVoteEvent(numberOfSenderBeforeVote, user, vote))
 
         return SavedVoteResponse(votePort.save(vote).id)
     }

@@ -9,8 +9,7 @@ class MessageScheduler(
     private val schedulerMessageUseCase: SchedulerMessageUseCase
 ) {
 
-    // 오후 10시에 스케줄러 실행
-    @Scheduled(cron = "0 0 22 * * ?")
+    @Scheduled(cron = "10 0 22 * * ?")
     fun scheduleMessageUpdate() {
         schedulerMessageUseCase.sendScheduledMessages()
     }

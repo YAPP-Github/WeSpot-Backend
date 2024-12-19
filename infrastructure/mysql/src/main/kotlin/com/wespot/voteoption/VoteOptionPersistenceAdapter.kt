@@ -28,4 +28,11 @@ class VoteOptionPersistenceAdapter(
             .toList()
     }
 
+    override fun saveAll(voteOptions: List<VoteOption>): List<VoteOption> {
+        val voteOptionJpaEntities = voteOptions.map { VoteOptionMapper.mapToJpaEntity(it) }
+
+        return voteOptionJpaRepository.saveAll(voteOptionJpaEntities)
+            .map { voteOptionJpaEntity -> VoteOptionMapper.mapToDomainEntity(voteOptionJpaEntity) }
+    }
+
 }

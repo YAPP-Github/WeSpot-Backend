@@ -17,6 +17,7 @@ interface MessagePort {
     fun findAllMessagesByTypeAndReceiverAfterCursor(
         receiverId: Long,
         cursorId: Long,
+        blockedUserIds: List<Long>,
         blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<Message>

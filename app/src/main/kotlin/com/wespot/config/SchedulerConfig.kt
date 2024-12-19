@@ -12,7 +12,7 @@ class SchedulerConfig {
     @Bean
     fun taskScheduler(): ThreadPoolTaskScheduler {
         val scheduler = ThreadPoolTaskScheduler()
-        scheduler.poolSize = 5 // TODO : scheduler Thread Pool Size를 5로 설정했어요.
+        scheduler.poolSize = 5
         scheduler.setThreadNamePrefix("scheduled-task-")
         return scheduler
     }

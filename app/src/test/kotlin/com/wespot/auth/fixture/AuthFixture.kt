@@ -20,7 +20,11 @@ object AuthFixture {
             ),
             schoolId = 1L,
             grade = 1,
-            classNumber = 1
+            classNumber = 1,
+            introduction = "Introduction",
+            profileUrl = "profileUrl",
+            androidVersionNameWhenSignUp = "",
+            iosVersionNameWhenSignUp = "",
         )
     }
 

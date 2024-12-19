@@ -8,7 +8,6 @@ import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.port.`in`.AuthUseCase
-import com.wespot.auth.service.AuthService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

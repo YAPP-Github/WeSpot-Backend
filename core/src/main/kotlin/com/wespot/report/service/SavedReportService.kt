@@ -32,7 +32,13 @@ class SavedReportService(
     override fun reportReceived(reportRequest: ReportRequest): ReportResponse {
         val loginUser = findLoginUser()
         val targetUser = findTargetUserByReportRequest(loginUser, reportRequest.targetId, reportRequest.reportType)
-        val report = Report.of(reportRequest.reportType, reportRequest.targetId, loginUser, targetUser)
+        val report = Report.of(
+            reportRequest.reportType,
+            reportRequest.targetId,
+            loginUser,
+            reportRequest.content,
+            targetUser
+        )
         val reports = findAllUserReportByReportType(targetUser, reportRequest.reportType)
         val savedReport = executeReport(report = report, receiver = targetUser, reports = reports)
 

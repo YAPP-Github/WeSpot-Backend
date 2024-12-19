@@ -12,6 +12,7 @@ import com.wespot.message.service.MessageFinder.findSchoolById
 import com.wespot.message.service.MessageFinder.findUserById
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.Profile
+import com.wespot.user.User
 import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
@@ -28,7 +29,8 @@ class GetMessageService(
 
     companion object {
         const val MESSAGE_LIMIT = 3
-        const val BAN_PROFILE_ICON_URL = "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_ban_profile.png"
+        const val BAN_PROFILE_ICON_URL =
+            "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_ban_profile.png"
     }
 
     override fun getMessage(messageId: Long): MessageResponse {
@@ -50,22 +52,22 @@ class GetMessageService(
 
     override fun getReceivedMessages(cursorId: Long): MessageListResponse {
         val cursorValue = getEffectiveCursorId(cursorId)
-        val loginUser = getLoginUser(userPort)
-        val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
-        val blockedMessageIds= blockedUsers.map { it.messageId }
-        val receiver = findUserById(loginUser.id, userPort)
+        val receiver: User = getLoginUser(userPort)
+        val blockedUsers = findAllByBlockerId(receiver.id, blockedUserPort)
+        val blockedMessageIds = blockedUsers.map { it.messageId }
         val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
 
         val messages = messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
-            receiverId = loginUser.id,
+            receiverId = receiver.id,
             cursorId = cursorValue,
+            blockedUserIds = blockedUsers.map { it.id },
             blockedMessageIds = blockedMessageIds,
             pageable = pageRequest
         )
 
         val hasNext = messagePort.countReceivedMessagesAfterCursor(
-            receiverId = loginUser.id,
+            receiverId = receiver.id,
             cursorId = cursorValue,
             blockedMessageIds = blockedMessageIds
         ) > 10
@@ -75,8 +77,9 @@ class GetMessageService(
                 MessageResponse.from(
                     message = message,
                     receiver = receiver,
-                    school =  receiverSchool,
-                    isBlocked = blockedMessageIds.contains(message.id))
+                    school = receiverSchool,
+                    isBlocked = blockedMessageIds.contains(message.id)
+                )
             },
             hasNext = hasNext
         )
@@ -132,6 +135,7 @@ class GetMessageService(
 
     override fun getScheduledMessages(): MessageSimpleListResponse {
         val loginUser = getLoginUser(userPort)
+
         val messages = messagePort.findAllScheduledMessages(
             messageType = MessageType.SENT,
             senderId = loginUser.id
@@ -169,7 +173,7 @@ class GetMessageService(
                 message = message,
                 senderProfile = Profile(
                     id = 0,
-                    backgroundColor ="#FFFFFF",
+                    backgroundColor = "#FFFFFF",
                     iconUrl = BAN_PROFILE_ICON_URL
                 ),
                 receiver = receiver,
@@ -179,9 +183,9 @@ class GetMessageService(
         }
 
         val hasNext = blockedUserPort.countBlockedUsersAfterCursor(
-                blockerId = loginUser.id,
-                cursorId = cursorValue,
-                pageable = pageRequest
+            blockerId = loginUser.id,
+            cursorId = cursorValue,
+            pageable = pageRequest
         ) > 10
 
         return MessageBlockedListResponse.from(

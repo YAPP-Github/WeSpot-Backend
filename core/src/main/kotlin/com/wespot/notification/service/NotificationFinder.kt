@@ -27,8 +27,8 @@ object NotificationFinder {
         return notificationPort.findAllByUserIdOrderByCreatedAtDesc(userId, cursorId, limit)
     }
 
-    fun findAllFromDateYesterday(notificationPort: NotificationPort, today: LocalDate): List<Notification> {
-        return notificationPort.findAllFromDateYesterday(today)
+    fun findAllYesterdayFromDate(notificationPort: NotificationPort, date: LocalDate): List<Notification> {
+        return notificationPort.findAllFromDateYesterday(date)
     }
 
     fun findAllFromDate(notificationPort: NotificationPort, today: LocalDate): List<Notification> {

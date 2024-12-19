@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 class ScheduledUserWithdrawalService(
     private val userPort: UserPort,
     private val personalInfoPort: PersonalInfoPort
-): SchedulerUserWithdrawalUseCase {
+) : SchedulerUserWithdrawalUseCase {
 
     override fun completeUserWithdrawals() {
 
@@ -26,7 +26,7 @@ class ScheduledUserWithdrawalService(
         )
         usersToWithdraw.forEach { user ->
             personalInfoPort.save(PersonalInfo.create(user))
-            val createInit = Profile.createInit()
+            val createInit = Profile.createInit(null)
             userPort.save(user.completeWithdraw(createInit))
         }
     }

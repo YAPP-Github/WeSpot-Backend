@@ -216,7 +216,7 @@ class NotificationTest : BehaviorSpec({
             }
         }
         `when`("투표용으로 생성한 뒤") {
-            every { LocalDateTime.now() } returns nowTime.minusDays(1)
+            every { LocalDate.now() } returns now.minusDays(1)
             val notification = Notification.createVoteInitialState(
                 userId = 1,
                 type = NotificationType.VOTE,

@@ -1,6 +1,5 @@
 package com.wespot.notification
 
-import com.google.common.io.ByteArrayDataInput
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
@@ -40,11 +39,7 @@ class NotificationFilterService {
         user: User,
         notificationType: NotificationType
     ): Boolean {
-        if (notificationType.isVote()) {
-            return user.isEnableVoteNotification()
-        }
-
-        return user.isEnableMessageNotification()
+        return notificationType.isNotificationAllow.test(user)
     }
 
     fun filterNotification(

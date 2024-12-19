@@ -19,7 +19,7 @@ class GetMessageController(
             .body(status)
     }
 
-    @GetMapping("")
+    @GetMapping
     fun getMessages(
         @RequestParam(required = false, defaultValue = "0") cursorId: Long,
         @RequestParam type: MessageType
@@ -42,7 +42,6 @@ class GetMessageController(
         return ResponseEntity.ok()
             .body(response)
     }
-
 
     @GetMapping("/scheduled")
     fun getScheduledMessages(): ResponseEntity<MessageSimpleListResponse> {

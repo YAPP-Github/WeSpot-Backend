@@ -12,7 +12,8 @@ object ReportFixture {
         targetId = 1,
         senderId = 1,
         receiverId = 2,
-        createdAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now(),
+        content = ""
     )
 
     fun createWithReportTypeAndSenderIdAndReceiverId(reportType: ReportType, senderId: Long, receiverId: Long) = Report(
@@ -21,7 +22,8 @@ object ReportFixture {
         targetId = 1,
         senderId = senderId,
         receiverId = receiverId,
-        createdAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now(),
+        content = ""
     )
 
     fun createWithReportTypeAndTargetIdAndSenderIdAndReceiverId(
@@ -35,7 +37,8 @@ object ReportFixture {
         targetId = targetId,
         senderId = senderId,
         receiverId = receiverId,
-        createdAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now(),
+        content = ""
     )
 
 }

@@ -29,7 +29,7 @@ data class User(
     val withdrawalStatus: WithdrawalStatus,
     val withdrawalRequestAt: LocalDateTime?,
     val withdrawalCancelAt: LocalDateTime?,
-    val withdrawalCompleteAt: LocalDateTime?
+    val withdrawalCompleteAt: LocalDateTime?,
 ) {
 
     fun updateProfile(
@@ -57,7 +57,7 @@ data class User(
             withdrawalStatus = withdrawalStatus,
             withdrawalRequestAt = withdrawalRequestAt,
             withdrawalCancelAt = withdrawalCancelAt,
-            withdrawalCompleteAt = withdrawalCompleteAt
+            withdrawalCompleteAt = withdrawalCompleteAt,
         )
 
     fun withdraw() =
@@ -83,7 +83,7 @@ data class User(
             withdrawalStatus = WithdrawalStatus.ACTIVE,
             withdrawalRequestAt = LocalDateTime.now(),
             withdrawalCancelAt = null,
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
         )
 
     fun cancelWithdraw(): User {
@@ -110,7 +110,7 @@ data class User(
             withdrawalStatus = WithdrawalStatus.CANCELED,
             withdrawalRequestAt = withdrawalRequestAt,
             withdrawalCancelAt = LocalDateTime.now(),
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
         )
     }
 
@@ -144,15 +144,13 @@ data class User(
         withdrawalStatus = WithdrawalStatus.WITHDRAWN,
         withdrawalRequestAt = withdrawalRequestAt,
         withdrawalCancelAt = withdrawalCancelAt,
-        withdrawalCompleteAt = LocalDateTime.now()
+        withdrawalCompleteAt = LocalDateTime.now(),
     )
 
 
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
-        private const val INIT_PROFILE_ICON_URL =
-            "https://wespot-test-data.s3.ap-northeast-2.amazonaws.com/wespot_init_profile.png"
 
         fun create(
             email: String,
@@ -163,18 +161,19 @@ data class User(
             groupNumber: Int,
             social: Social,
             gender: Gender,
+            introduction: String?,
         ) = User(
             id = 0L,
             email = email,
             password = password,
             name = name,
-            introduction = UserIntroduction.emptyUserIntroduction(),
+            introduction = UserIntroduction.fromNullable(introduction),
             gender = gender,
             role = Role.USER,
             schoolId = schoolId,
             grade = grade,
             classNumber = groupNumber,
-            profile = Profile.createInit(),
+            profile = Profile.createInit(null),
             fcm = null,
             setting = Setting(),
             social = social,
@@ -189,7 +188,7 @@ data class User(
             withdrawalStatus = WithdrawalStatus.NONE,
             withdrawalRequestAt = null,
             withdrawalCancelAt = null,
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
         )
 
         fun update(

@@ -60,7 +60,7 @@ class VoteNotificationEventListenerTest @Autowired constructor(
 
         // when
         every { sendService.sendMulticastNotification(any(), any()) } returns Unit
-        voteNotificationEventListener.registerVote(RegisteredVoteEvent(users[0], vote))
+        voteNotificationEventListener.registerVote(RegisteredVoteEvent(0, users[0], vote))
         val notifications = notificationPort.findAll()
 
         // then
@@ -78,11 +78,12 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     fun `투표를 받은 이에게 알림이 발송된다`() {
         // given
         val receiver = userPort.save(UserFixture.createWithId(0))
+        val sender = userPort.save(UserFixture.createWithIdAndEmail(0, "hello@Kakao"));
         val sendService = mockk<FirebaseNotificationService>()
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit
-        voteNotificationEventListener.receiveVote(ReceivedVoteEvent(receiver))
+        voteNotificationEventListener.receiveVote(ReceivedVoteEvent(sender, receiver))
         val notifications = notificationPort.findAll()
 
         // then

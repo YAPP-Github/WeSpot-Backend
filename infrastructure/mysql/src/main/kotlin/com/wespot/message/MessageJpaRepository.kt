@@ -1,5 +1,6 @@
 package com.wespot.message
 
+import com.google.firebase.auth.UserIdentifier
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -9,7 +10,13 @@ import java.time.LocalDateTime
 
 interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
 
-    @Query("SELECT COUNT(m) FROM MessageJpaEntity m WHERE m.senderId = :senderId AND DATE(m.baseEntity.createdAt) = :date")
+    @Query(
+        """
+        SELECT COUNT(m)
+        FROM MessageJpaEntity m
+        WHERE m.senderId = :senderId AND DATE(m.baseEntity.createdAt) = :date
+        """
+    )
     fun countMessagesBySenderIdAndDate(
         @Param("senderId") senderId: Long,
         @Param("date") date: LocalDate
@@ -33,13 +40,13 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
     AND m.isReceiverDeleted = false
     AND m.receivedAt IS NOT NULL
     AND m.id NOT IN :blockedMessageIds
-    AND m.senderId NOT IN :blockedMessageIds
-    ORDER BY m.receivedAt DESC, m.id DESC
+    AND m.senderId NOT IN :blockedUserIds
     """
     )
     fun findAllByMessageTypeAndReceiverIdAfterCursor(
         @Param("receiverId") receiverId: Long,
         @Param("cursorId") cursorId: Long,
+        @Param("blockedUserIds") blockedUserIds: List<Long>,
         @Param("blockedMessageIds") blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<MessageJpaEntity>

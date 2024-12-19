@@ -21,7 +21,7 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
 
         `when`("5명 미만이거나 5명이 아니고 (5 + 3의 배수)가 아닌 경우") {
             val voteOptions = (1..5).map { VoteOptionFixture.createWithId(it.toLong()) }
-            val users = (0..10).map { UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(it.toLong(), 1, 1, 1) }
+            val users = (0..13).map { UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(it.toLong(), 1, 1, 1) }
             val voteIdentifier = VoteIdentifier.of(users[1], LocalDate.now())
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             vote.addBallot(1, users[1], users[2], LocalDate.now().atStartOfDay())
@@ -29,7 +29,7 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
             vote.addBallot(1, users[3], users[4], LocalDate.now().atStartOfDay())
             vote.addBallot(1, users[4], users[1], LocalDate.now().atStartOfDay())
             vote.addBallot(1, users[4], users[5], LocalDate.now().atStartOfDay())
-            val notifications1 = service.getNotifications(users[1], users, vote)
+            val (notifications1, _) = service.getNotifications(0, users[1], { users }, vote)
 
             then("알림이 발생하지 않는다.") {
                 notifications1.size shouldBe 0
@@ -38,7 +38,7 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
             vote.addBallot(1, users[5], users[7], LocalDateTime.now())
             vote.addBallot(1, users[6], users[8], LocalDateTime.now())
             vote.addBallot(1, users[6], users[9], LocalDateTime.now())
-            val notifications2 = service.getNotifications(users[1], users, vote)
+            val (notifications2, _) = service.getNotifications(4, users[1], { users }, vote)
 
             then("알림이 발생하지 않는다.") {
                 notifications2.size shouldBe 0
@@ -47,12 +47,19 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
             vote.addBallot(1, users[7], users[4], LocalDateTime.now())
             vote.addBallot(1, users[8], users[3], LocalDateTime.now())
             vote.addBallot(1, users[9], users[2], LocalDateTime.now())
-            val notifications3 = service.getNotifications(users[1], users, vote)
+            val (notifications3, _) = service.getNotifications(6, users[1], { users }, vote)
             then("알림이 발생하지 않는다.") {
                 notifications3.size shouldBe 0
             }
+
+            vote.addBallot(1, users[10], users[4], LocalDateTime.now())
+            vote.addBallot(1, users[11], users[3], LocalDateTime.now())
+            val (notifications4, _) = service.getNotifications(11, users[1], { users }, vote)
+            then("만일, 이미 투표한자가 투표를 진행한다면, 알림이 발생하지 않는다.") {
+                notifications4.size shouldBe 0
+            }
         }
-        `when`("5명이거나, (5 + 3의 배수)가 아닌 경우") {
+        `when`("5명이거나, (5 + 3의 배수)인 경우") {
             val voteOptions = (1..5).map { VoteOptionFixture.createWithId(it.toLong()) }
             val users = (0..10).map { UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(it.toLong(), 1, 1, 1) }
             val voteIdentifier = VoteIdentifier.of(users[1], LocalDate.now())
@@ -63,7 +70,7 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
             vote.addBallot(1, users[4], users[1], LocalDateTime.now())
             vote.addBallot(1, users[4], users[5], LocalDateTime.now())
             vote.addBallot(1, users[5], users[6], LocalDateTime.now())
-            val notifications1 = service.getNotifications(users[1], users, vote)
+            val (notifications1, _) = service.getNotifications(0, users[1], { users }, vote)
 
             then("알림이 발생한다.") {
                 val userSet = notifications1.map { it.userId }.toSet()
@@ -112,12 +119,21 @@ class RegisteredVoteNotificationServiceTest : BehaviorSpec({
             val users = listOf(
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(1, 1, 1, 1),
                 UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(2, 1, 1, 2),
+                UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(3, 1, 1, 1),
+                UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(4, 1, 1, 1),
+                UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(5, 1, 1, 1),
+                UserFixture.createWithIdAndSchoolIdAndGradeAndClassNumber(6, 1, 1, 1),
             )
             val vote = Vote.of(VoteIdentifier.of(users[0], LocalDate.now()), voteOptions, null)
+            vote.addBallot(1, users[0], users[2], LocalDateTime.now())
+            vote.addBallot(1, users[2], users[0], LocalDateTime.now())
+            vote.addBallot(1, users[3], users[2], LocalDateTime.now())
+            vote.addBallot(1, users[4], users[3], LocalDateTime.now())
+            vote.addBallot(1, users[5], users[4], LocalDateTime.now())
 
             then("예외가 발생한다.") {
                 val shouldThrow =
-                    shouldThrow<CustomException> { service.getNotifications(users[0], users, vote) }
+                    shouldThrow<CustomException> { service.getNotifications(0, users[0], { users }, vote) }
                 shouldThrow shouldHaveMessage "다른 학급의 사용자가 포함되어 있습니다."
             }
         }

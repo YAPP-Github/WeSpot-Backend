@@ -49,12 +49,14 @@ class MessagePersistenceAdapter(
     override fun findAllMessagesByTypeAndReceiverAfterCursor(
         receiverId: Long,
         cursorId: Long,
+        blockedUserIds: List<Long>,
         blockedMessageIds: List<Long>,
         pageable: Pageable
     ): List<Message> {
         return messageJpaRepository.findAllByMessageTypeAndReceiverIdAfterCursor(
             receiverId = receiverId,
             cursorId = cursorId,
+            blockedUserIds = blockedUserIds,
             blockedMessageIds = blockedMessageIds,
             pageable = pageable
         ).map { MessageMapper.mapToDomainEntity(it) }

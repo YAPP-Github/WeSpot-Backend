@@ -18,7 +18,7 @@ data class Vote(
     val voteNumber: Int,
     val voteOptionsByVoteDate: VoteOptionsByVoteDate,
     val ballots: Ballots,
-) : AbstractAggregateRoot<Vote>() {
+) {
 
     companion object {
         private const val NUMBER_OF_VOTE_USERS = 5
@@ -120,7 +120,7 @@ data class Vote(
             )
         )
 
-        EventUtils.publish(ReceivedVoteEvent(receiver))
+        EventUtils.publish(ReceivedVoteEvent(sender, receiver))
     }
 
     private fun validateUser(user: User) {

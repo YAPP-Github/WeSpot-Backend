@@ -8,6 +8,10 @@ data class SignUpRequest(
     val schoolId: Long,
     val grade: Int,
     val classNumber: Int,
+    val introduction: String?,
     val consents: ConsentsRequest,
     val signUpToken: String,
+    val profileUrl: String?,
+    val androidVersionNameWhenSignUp: String?,
+    val iosVersionNameWhenSignUp: String?
 )

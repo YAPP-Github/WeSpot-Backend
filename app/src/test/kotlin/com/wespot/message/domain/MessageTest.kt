@@ -108,7 +108,8 @@ class MessageTest : BehaviorSpec({
                     "Hello1",
                     restrictionUser,
                     withDrawUser.id,
-                    restrictionUser.name
+                    restrictionUser.name,
+                    false
                 )
             }
             val shouldThrow2 = shouldThrow<CustomException> {
@@ -116,7 +117,8 @@ class MessageTest : BehaviorSpec({
                     "Hello2",
                     withDrawUser,
                     restrictionUser.id,
-                    withDrawUser.name
+                    withDrawUser.name,
+                    false
                 )
             }
             then("예외가 발생한다.") {

@@ -74,6 +74,12 @@ class SecurityConfig(
                         "/api/v1/check-profanity",
                         "/api/v1/auth/kakao/template",
                         "/api/v1/auth/admin/login",
+                        "/admin/**",
+                        "/swagger-ui/index.html",
+                        "/wespot/**",
+                        "/v3/api-docs/**",
+                        "/api/v1/image/sign-up",
+                        "/api/v1/image/presigned-url",
                     ).permitAll()
                     .anyRequest().authenticated()
             }
@@ -86,7 +92,6 @@ class SecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-
         val configuration = CorsConfiguration().apply {
             allowCredentials = true
             allowedOrigins = listOf(
@@ -106,6 +111,6 @@ class SecurityConfig(
         source.registerCorsConfiguration("/**", configuration)
 
         return source
-
     }
+
 }

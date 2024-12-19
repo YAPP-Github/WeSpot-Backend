@@ -24,8 +24,8 @@ class ScheduledMessageSenderService(
 
     @Transactional
     override fun sendScheduledMessages() {
-        val yesterday: LocalDateTime = LocalDate.now().atStartOfDay().minusDays(1)
-        val sentMessages = messagePort.findByMessageTypeAndSendAtBefore(yesterday)
+        val now: LocalDateTime = LocalDateTime.now()
+        val sentMessages = messagePort.findByMessageTypeAndSendAtBefore(now)
 
         sentMessages.forEach { message ->
             processMessage(message)
@@ -42,6 +42,7 @@ class ScheduledMessageSenderService(
                 id = receivedMessage.receiverId,
                 userPort = userPort
             )
+
             EventUtils.publish(
                 ReceivedMessageEvent(
                     receiver = receiver,

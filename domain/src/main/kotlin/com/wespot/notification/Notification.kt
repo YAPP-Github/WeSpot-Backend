@@ -23,6 +23,23 @@ data class Notification(
 
     companion object {
 
+        private val CAN_DISABLED_NOTIFICATION_VOTE_TYPE = mapOf(
+            Pair(
+                NotificationType.VOTE,
+                { notification: Notification, enabledDate: LocalDate -> notification.date != enabledDate }),
+            Pair(
+                NotificationType.VOTE_RESULT,
+                { notification: Notification, enabledDate: LocalDate ->
+                    notification.date != enabledDate &&
+                        notification.date != enabledDate.minusDays(1)
+                }
+            ),
+        )
+
+        private val CAN_DISABLED_NOTIFICATION_MESSAGE_TYPE = mapOf(
+            Pair(NotificationType.MESSAGE, { _: Notification, _: LocalDate -> true })
+        )
+
         fun createVoteInitialState(
             userId: Long,
             type: NotificationType,
@@ -87,6 +104,40 @@ data class Notification(
             ) { throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "쪽지 관련 알림이 아닙니다.") }
         }
 
+        fun createEventInitialState(
+            userId: Long,
+            type: NotificationType,
+            title: String,
+            body: String,
+        ): Notification {
+            validateEventType(type)
+
+            return Notification(
+                id = 0L,
+                userId = userId,
+                type = type,
+                date = LocalDate.now(),
+                targetId = 0,
+                title = title,
+                body = body,
+                isRead = false,
+                readAt = LocalDateTime.now(),
+                isEnabled = true,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now()
+            )
+        }
+
+        private fun validateEventType(type: NotificationType) {
+            require(!type.isVote() && !type.isMessage()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "이벤트 관련 알림이 아닙니다."
+                )
+            }
+        }
+
     }
 
     fun read(readerId: Long) {
@@ -102,24 +153,41 @@ data class Notification(
     }
 
     fun disableVoteNotification(enabledDate: LocalDate) {
-        if (NotificationType.VOTE != type || createdAt.toLocalDate() == enabledDate) {
+        if (isCanNotDisabledVoteType(enabledDate)) {
             return
         }
         isEnabled = false
+        isRead = true
+    }
+
+    private fun isCanNotDisabledVoteType(enabledDate: LocalDate): Boolean {
+        if (!CAN_DISABLED_NOTIFICATION_VOTE_TYPE.containsKey(type)) {
+            return true
+        }
+        CAN_DISABLED_NOTIFICATION_VOTE_TYPE.getValue(type).let { return !it(this, enabledDate) }
     }
 
     fun disableMessageNotification() {
-        if (!isMessageHomeNotification()) return
+        if (isCanNotDisabledMessageType()) {
+            return
+        }
         isEnabled = false
+        isRead = true
+    }
+
+    private fun isCanNotDisabledMessageType(): Boolean {
+        if (!CAN_DISABLED_NOTIFICATION_MESSAGE_TYPE.containsKey(type)) {
+            return true
+        }
+        val ignoredDate = LocalDate.now()
+        CAN_DISABLED_NOTIFICATION_MESSAGE_TYPE.getValue(type).let { return !it(this, ignoredDate) }
     }
 
     fun enableMessageNotification() {
-        if (!isMessageHomeNotification()) return
+        if (isCanNotDisabledMessageType()) {
+            return
+        }
         isEnabled = true
-    }
-
-    private fun isMessageHomeNotification(): Boolean {
-        return NotificationType.MESSAGE == type
     }
 
 }

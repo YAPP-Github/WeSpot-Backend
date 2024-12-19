@@ -14,8 +14,7 @@ class NotificationHelper(
 ) {
 
     fun sendNotifications(users: List<User>, notifications: List<Notification>) {
-        val filteredNotifications =
-            notificationFilterService.filterNotifications(users, notifications)
+        val filteredNotifications = notificationFilterService.filterNotifications(users, notifications)
 
         if (filteredNotifications.isEmpty()) {
             return

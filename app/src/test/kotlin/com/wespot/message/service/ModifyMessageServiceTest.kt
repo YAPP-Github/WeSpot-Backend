@@ -59,7 +59,8 @@ class ModifyMessageServiceTest : BehaviorSpec({
             val updateMessageRequest = UpdateMessageRequest(
                 content = "Updated message",
                 receiverId = receiver.id,
-                senderName = sender.name
+                senderName = sender.name,
+                isAnonymous = false
             )
 
             every { userPort.findById(receiver.id) } returns receiver

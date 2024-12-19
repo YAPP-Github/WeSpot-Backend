@@ -3,7 +3,6 @@ package com.wespot.config
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
-import com.wespot.config.security.CustomUrlFilter
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import jakarta.annotation.PostConstruct

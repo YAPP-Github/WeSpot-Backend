@@ -34,7 +34,8 @@ class SavedReportServiceTest @Autowired constructor(
         val savedMessage = messageJpaRepository.save(MessageMapper.mapToJpaEntity(MessageFixture.createWithId(0L)))
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            reportType = ReportType.MESSAGE
+            reportType = ReportType.MESSAGE,
+            content = ""
         )
 
         // when
@@ -52,7 +53,8 @@ class SavedReportServiceTest @Autowired constructor(
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(userJpaEntity))
         val reportRequest = ReportRequest(
             targetId = 100L,
-            reportType = ReportType.VOTE
+            reportType = ReportType.VOTE,
+            content = ""
         )
 
         // when
@@ -70,7 +72,8 @@ class SavedReportServiceTest @Autowired constructor(
         UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
         val reportRequest = ReportRequest(
             targetId = 1L,
-            reportType = ReportType.MESSAGE
+            reportType = ReportType.MESSAGE,
+            content = ""
         )
 
         // when
@@ -101,7 +104,8 @@ class SavedReportServiceTest @Autowired constructor(
         )
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            reportType = ReportType.MESSAGE
+            reportType = ReportType.MESSAGE,
+            content = ""
         )
 
         // when
@@ -130,7 +134,8 @@ class SavedReportServiceTest @Autowired constructor(
         )
         val reportRequest = ReportRequest(
             targetId = savedMessage.id,
-            reportType = ReportType.MESSAGE
+            reportType = ReportType.MESSAGE,
+            content = ""
         )
 
         // when
@@ -172,7 +177,8 @@ class SavedReportServiceTest @Autowired constructor(
             )
         val reportRequest = ReportRequest(
             targetId = reportReceiver.id,
-            reportType = ReportType.VOTE
+            reportType = ReportType.VOTE,
+            content = ""
         )
 
         // when

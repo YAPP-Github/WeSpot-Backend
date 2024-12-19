@@ -10,4 +10,6 @@ interface VoteOptionPort {
 
     fun findAll(): List<VoteOption>
 
+    fun saveAll(voteOptions: List<VoteOption>): List<VoteOption>
+
 }
