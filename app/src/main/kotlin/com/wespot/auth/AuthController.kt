@@ -8,18 +8,18 @@ import com.wespot.auth.dto.response.SignUpResponse
 import com.wespot.auth.dto.response.TokenAndUserDetailResponse
 import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.port.`in`.AuthUseCase
+import com.wespot.auth.port.`in`.LogoutUsecase
+import com.wespot.auth.swagger.AuthSwagger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
-    private val authUseCase: AuthUseCase
-) {
+    private val authUseCase: AuthUseCase,
+    private val logoutUsecase: LogoutUsecase
+) : AuthSwagger {
 
     @PostMapping("/login")
     fun signIn(
@@ -71,6 +71,14 @@ class AuthController(
 
         return ResponseEntity.ok()
             .body(response)
+    }
+
+    @PatchMapping("/logout")
+    override fun logout(): ResponseEntity<Unit> {
+        logoutUsecase.logout()
+
+        return ResponseEntity.noContent()
+            .build()
     }
 
 }

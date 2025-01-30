@@ -1,34 +1,39 @@
-package com.wespot.notification.vote
+package com.wespot.notification.event
 
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationType
+import com.wespot.notification.PublishNotificationType
 import com.wespot.user.User
 import com.wespot.user.UserVersion
 import org.springframework.stereotype.Component
 
 @Component
-class ProfileUpdateNotificationService {
+class EventPublishNotificationService {
 
     fun getNotifications(
         users: List<User>,
         userVersions: List<UserVersion>,
-        notificationType: NotificationType,
         androidLatestVersion: String,
         iosLatestVersion: String,
+        publishNotificationType: PublishNotificationType,
         title: String,
         body: String,
     ): List<Notification> {
-        val userGroup = users.associateBy { it.id }
-        return userVersions.filter { it.isPossibleToSendUpdateNotification(androidLatestVersion, iosLatestVersion) }
-            .filter { userGroup[it.userId] != null }
+        val userVersionGroup = userVersions.associateBy { it.userId }
+
+        return users.stream()
             .map {
                 Notification.createEventInitialState(
-                    it.userId,
-                    NotificationType.PROFILE_UPDATE,
+                    it.id,
+                    publishNotificationType.getNotificationTypeByUserVersion(
+                        userVersionGroup[it.id],
+                        androidLatestVersion,
+                        iosLatestVersion
+                    ),
                     title,
                     body
                 )
-            }
+            }.toList()
     }
 
 }

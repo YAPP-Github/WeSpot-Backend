@@ -1,15 +1,16 @@
 package com.wespot.admin
 
-import com.wespot.admin.dto.CreatedVoteOptionRequest
-import com.wespot.admin.dto.UpdateVoteOptionRequest
-import com.wespot.admin.dto.VoteOptionResponses
+import com.wespot.admin.dto.*
 import com.wespot.admin.port.`in`.AdminVoteOptionUseCase
+import com.wespot.admin.port.`in`.FirebaseUseCase
 import com.wespot.admin.swagger.AdminSwagger
 import com.wespot.notification.dto.NotificationPublishingRequest
+import com.wespot.notification.dto.PublishNotificationTypeResponse
 import com.wespot.notification.port.`in`.PublishNotificationUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/admin")
 class AdminController(
     private val adminVoteOptionUseCase: AdminVoteOptionUseCase,
-    private val publishNotificationUseCase: PublishNotificationUseCase
+    private val publishNotificationUseCase: PublishNotificationUseCase,
+    private val firebaseUseCase: FirebaseUseCase,
 ) : AdminSwagger {
 
     @GetMapping("/vote-options")
@@ -61,6 +63,13 @@ class AdminController(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/push-notification/publish")
+    override fun getNotificationPublishingScreen(): ResponseEntity<List<PublishNotificationTypeResponse>> {
+        val response = publishNotificationUseCase.viewAllOfPossibleToPublishTypes()
+
+        return ResponseEntity.ok(response)
+    }
+
     @PostMapping("/push-notification/publish")
     override fun publishNotification(
         @RequestBody notificationPublishingRequest: NotificationPublishingRequest
@@ -71,20 +80,34 @@ class AdminController(
             .build()
     }
 
-    @GetMapping("") // Notific
-    override fun getRemoteConfigsVariable(): ResponseEntity<List<RemoteConfigVariableResponse>> {
+    @GetMapping("/remote-config")
+    override fun getRemoteConfigsVariables(): ResponseEntity<List<RemoteConfigVariableResponse>> {
+        val response = firebaseUseCase.findAllVariableInRemoteConfig()
 
-        publishNotificationUseCase.publishProfileUpdate(notificationPublishingRequest)
+        return ResponseEntity.ok(response)
+    }
+
+    @PutMapping("/remote-config")
+    override fun setRemoteConfigVariables(@RequestBody request: ModifiedRemoteConfigVariableRequest): ResponseEntity<Unit> {
+        firebaseUseCase.modifyRemoteConfigVariables(request)
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .build()
+    }
+
+    @PostMapping("/remote-config")
+    override fun addRemoteConfigVariables(@RequestBody request: SavedRemoteConfigVariableRequest): ResponseEntity<Unit> {
+        firebaseUseCase.addRemoteConfigVariables(request)
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .build()
     }
 
-    @PutMapping("") // Notific
-    override fun getNotification(): ResponseEntity<Unit> {
-        publishNotificationUseCase.publishProfileUpdate(notificationPublishingRequest)
+    @DeleteMapping("/remote-config/{key}")
+    override fun deleteRemoteConfigVariables(@PathVariable key: String): ResponseEntity<Unit> {
+        firebaseUseCase.remoteRemoteConfigVariables(key)
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.noContent()
             .build()
     }
 

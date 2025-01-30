@@ -1,7 +1,7 @@
 package com.wespot.auth.service
 
 
-import com.wespot.auth.JwtTokenInfo.EMAIL_CLAIM
+import com.wespot.auth.JwtTokenInfo
 import com.wespot.auth.PrincipalDetails
 import com.wespot.auth.port.`in`.AuthenticationUseCase
 import com.wespot.auth.service.jwt.JwtTokenValidator
@@ -19,7 +19,7 @@ class AuthenticationService(
 
     override fun getAuthentication(token: String): Authentication {
         val claims: Claims = jwtTokenValidator.verifyToken(token)
-        val email: String = claims[EMAIL_CLAIM] as String
+        val email: String = claims[JwtTokenInfo.EMAIL_CLAIM] as String
         val principalDetails = principalDetailService.loadUserByUsername(email) as PrincipalDetails
 
         return UsernamePasswordAuthenticationToken(

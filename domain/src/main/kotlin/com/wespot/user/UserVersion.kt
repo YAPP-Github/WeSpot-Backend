@@ -2,6 +2,7 @@ package com.wespot.user
 
 import com.wespot.notification.LatestVersionType
 import java.time.LocalDateTime
+import java.util.*
 
 data class UserVersion(
 
@@ -39,10 +40,15 @@ data class UserVersion(
         }
 
         fun createWithSignUp(
+            userGetter: (Long) -> UserVersion?,
             userId: Long,
             androidVersionNameWhenSignUp: String?,
             iosVersionNameWhenSignUp: String?
         ): UserVersion {
+            val user = userGetter(userId)
+            if (!Objects.isNull(user)) {
+                return user!!.updateWithLogin(androidVersionNameWhenSignUp, iosVersionNameWhenSignUp)
+            }
             return UserVersion(
                 id = 0,
                 userId = userId,
@@ -71,11 +77,7 @@ data class UserVersion(
         )
     }
 
-    fun isPossibleToSendUpdateNotification(androidLatestVersion: String, iosLatestVersion: String): Boolean {
-        if (isSignUpWhenLatestVersion()) {
-            return false
-        }
-
+    fun hasLatestVersion(androidLatestVersion: String, iosLatestVersion: String): Boolean {
         return androidVersionName == androidLatestVersion || iosVersionName == iosLatestVersion
     }
 

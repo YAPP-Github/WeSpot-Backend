@@ -13,7 +13,9 @@ enum class NotificationType(
     MESSAGE({ it.isEnableMessageNotification() }), // 쪽지 보내러 가기
     MESSAGE_RECEIVED({ it.isEnableMessageNotification() }), // 받은 쪽지 확인
     MESSAGE_SENT({ it.isEnableMessageNotification() }), // 보낸 쪽지 확인
+
     PROFILE_UPDATE({ it.isEnableMarketingNotification() }), // 프로필 업데이트 이벤트
+    UPDATE_REQUIRED({ it.isEnableMarketingNotification() }), // 업데이트를 아직 안한 유저
     ;
 
     fun isVote(): Boolean {

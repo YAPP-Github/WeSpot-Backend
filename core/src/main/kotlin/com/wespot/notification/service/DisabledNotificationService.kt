@@ -16,8 +16,6 @@ class DisabledNotificationService(
     @Transactional
     override fun disableVoteNotifications(today: LocalDate) {
         val notifications = NotificationFinder.findAllYesterdayFromDate(notificationPort, today)
-        val disabledNotificationsAtTwoDaysAgo =
-            NotificationFinder.findAllYesterdayFromDate(notificationPort, today.minusDays(1))
         notifications.forEach { it.disableVoteNotification(today) }
         notifications.forEach { it.disableVoteNotification(today.minusDays(1)) }
         notificationPort.saveAll(notifications)

@@ -42,4 +42,12 @@ data class FCM(
         )
     }
 
+    fun clearFcmToken(): FCM {
+        return FCM(
+            id = id,
+            fcmToken = null,
+            createdAt = createdAt
+        )
+    }
+
 }

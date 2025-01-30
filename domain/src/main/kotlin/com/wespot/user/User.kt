@@ -274,4 +274,17 @@ data class User(
         return isWithDraw() || isKeepRestrict()
     }
 
+    fun updateIntroduction(introduction: String?): User {
+        return copy(introduction = UserIntroduction.fromNullable(introduction))
+    }
+
+    fun logout(
+        saveFcm: (fcm: FCM) -> FCM
+    ) {
+        fcm?.let {
+            val noContentFcm = fcm.clearFcmToken()
+            saveFcm(noContentFcm)
+        }
+    }
+
 }

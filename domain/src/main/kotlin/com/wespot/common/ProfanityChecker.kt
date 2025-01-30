@@ -67,8 +67,15 @@ object ProfanityChecker {
     }
 
     fun checkProfanity(content: String): Boolean {
-        val contentAfterRemoveProfanityMasking = removeProfanityMasking(content)
+        if (checkEachProfanity(content)) {
+            return true
+        }
 
+        val contentAfterRemoveProfanityMasking = removeProfanityMasking(content)
+        return checkEachProfanity(contentAfterRemoveProfanityMasking)
+    }
+
+    private fun checkEachProfanity(contentAfterRemoveProfanityMasking: String): Boolean {
         return BadWords.badWords
             .stream()
             .anyMatch(contentAfterRemoveProfanityMasking::contains)

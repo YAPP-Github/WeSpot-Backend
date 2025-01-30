@@ -1,7 +1,6 @@
 package com.wespot.image.service.listener
 
 import com.wespot.image.event.CreatedImageWhenSignUpEvent
-import com.wespot.image.event.UpdateProfileImageEvent
 import com.wespot.image.out.ImagePort
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component

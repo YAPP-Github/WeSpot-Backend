@@ -2,17 +2,8 @@ package com.wespot.auth.service
 
 import com.wespot.EventUtils
 import com.wespot.auth.dto.AuthData
-import com.wespot.auth.dto.request.AdminLoginRequest
-import com.wespot.auth.dto.request.AuthLoginRequest
-import com.wespot.auth.dto.request.ExtraSignInRequest
-import com.wespot.auth.dto.request.RefreshTokenRequest
-import com.wespot.auth.dto.request.SignInRequest
-import com.wespot.auth.dto.request.SignUpRequest
-import com.wespot.auth.dto.response.SettingResponse
-import com.wespot.auth.dto.response.SignUpResponse
-import com.wespot.auth.dto.response.SocialResponse
-import com.wespot.auth.dto.response.TokenAndUserDetailResponse
-import com.wespot.auth.dto.response.TokenResponse
+import com.wespot.auth.dto.request.*
+import com.wespot.auth.dto.response.*
 import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.PersonalInfoPort
@@ -22,26 +13,11 @@ import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.image.Image
 import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.ConsentType
-import com.wespot.user.FCM
-import com.wespot.user.Profile
-import com.wespot.user.RestrictionType
-import com.wespot.user.Role
-import com.wespot.user.Social
-import com.wespot.user.SocialType
-import com.wespot.user.User
-import com.wespot.user.UserConsent
-import com.wespot.user.UserVersion
-import com.wespot.user.WithdrawalStatus
+import com.wespot.user.*
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.event.WelcomeMessageEvent
-import com.wespot.user.port.out.FCMPort
-import com.wespot.user.port.out.ProfilePort
-import com.wespot.user.port.out.RestrictionPort
-import com.wespot.user.port.out.UserConsentPort
-import com.wespot.user.port.out.UserPort
-import com.wespot.user.port.out.UserVersionPort
+import com.wespot.user.port.out.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
@@ -218,6 +194,7 @@ class AuthService(
         val profile = Profile.createWithImage(image)
         val savedProfile = profilePort.save(profile)
         val userVersion = UserVersion.createWithSignUp(
+            { userId -> userVersionPort.findByUserId(userId) },
             user.id,
             signUpRequest.androidVersionNameWhenSignUp,
             signUpRequest.iosVersionNameWhenSignUp
@@ -263,7 +240,6 @@ class AuthService(
     }
 
     override fun adminLogin(adminLoginRequest: AdminLoginRequest): TokenResponse {
-
         val authentication = authenticationManager.authenticate(adminLoginRequest.toAuthentication())
         val generateToken = jwtTokenProvider.generateToken(authentication = authentication)
         val user = getUserByEmail(authentication.name)

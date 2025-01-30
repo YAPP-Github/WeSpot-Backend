@@ -2,6 +2,7 @@ package com.wespot.image
 
 import com.wespot.image.dto.ImageResponse
 import com.wespot.image.dto.PresignedResponse
+import com.wespot.image.dto.ProfileUpdateRequest
 import com.wespot.image.`in`.ImageUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,9 +25,8 @@ class ImageController(
     }
 
     @PostMapping("/update-profile")
-    fun saveImageProfile(url: String?): ResponseEntity<ImageResponse> {
-        val response = imageUseCase.saveWithUpdateProfile(url)
-
+    fun saveImageProfile(request: ProfileUpdateRequest): ResponseEntity<ImageResponse> {
+        val response = imageUseCase.saveWithUpdateProfile(request)
         return ResponseEntity.ok(response)
     }
 

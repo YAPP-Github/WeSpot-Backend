@@ -31,8 +31,10 @@ class FirebaseNotificationService : NotificationServicePort {
         pushNotification { FirebaseMessaging.getInstance().sendEachForMulticast(multicastMessage) }
     }
 
-    private fun isValidFcmToken(it: User) =
-        it.fcm != null && it.fcm!!.fcmToken != null && it.fcm!!.fcmToken!!.isNotBlank()
+    private fun isValidFcmToken(user: User) =
+        user.fcm != null
+            && user.fcm!!.fcmToken != null
+            && user.fcm!!.fcmToken!!.isNotBlank()
 
     private fun pushNotification(messageSend: () -> Unit) {
         try {

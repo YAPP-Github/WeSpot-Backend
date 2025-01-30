@@ -44,7 +44,7 @@ class UserVersionTest {
         )
 
         // when
-        val actual = userVersion.isPossibleToSendUpdateNotification("1.3.0", "1.3.0")
+        val actual = userVersion.hasLatestVersion("1.3.0", "1.3.0")
 
         // then
         actual shouldBe expected

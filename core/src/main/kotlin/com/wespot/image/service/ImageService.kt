@@ -3,6 +3,7 @@ package com.wespot.image.service
 import com.wespot.image.Image
 import com.wespot.image.dto.ImageResponse
 import com.wespot.image.dto.PresignedResponse
+import com.wespot.image.dto.ProfileUpdateRequest
 import com.wespot.image.`in`.ImageUseCase
 import com.wespot.image.out.ImagePort
 import com.wespot.image.out.S3Port
@@ -30,8 +31,12 @@ class ImageService(
     }
 
     @Transactional
-    override fun saveWithUpdateProfile(url: String?): ImageResponse {
-        val savedImage = Image.ofWithUpdateProfile(url, cloudFrontUrl) { image -> imagePort.save(image) }
+    override fun saveWithUpdateProfile(request: ProfileUpdateRequest): ImageResponse {
+        val savedImage = Image.ofWithUpdateProfile(
+            request.introduction,
+            request.url,
+            cloudFrontUrl
+        ) { image -> imagePort.save(image) }
 
         return ImageResponse.of(savedImage.id, savedImage)
     }

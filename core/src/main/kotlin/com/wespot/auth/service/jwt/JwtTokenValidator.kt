@@ -1,6 +1,7 @@
 package com.wespot.auth.service.jwt
 
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
@@ -12,7 +13,7 @@ import java.security.Key
 class JwtTokenValidator(
     @Value("\${jwt.secret}")
     private val secretKey: String,
-){
+) {
     private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     fun verifyToken(token: String): Claims {
@@ -22,6 +23,8 @@ class JwtTokenValidator(
                 .build()
                 .parseClaimsJws(token)
                 .body
+        } catch (e: ExpiredJwtException) {
+            throw BadCredentialsException("accessToken의 만료 시간이 지났습니다.", e)
         } catch (e: Exception) {
             throw BadCredentialsException("accessToken의 정보가 올바르지 않습니다.", e)
         }

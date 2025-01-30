@@ -14,7 +14,7 @@ extra["springCloudVersion"] = "2023.0.2"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -93,7 +93,6 @@ subprojects {
 
     }
 
-
     dependencyManagement {
         imports {
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
@@ -104,7 +103,7 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs += "-Xjsr305=strict"
-            jvmTarget = "17"
+            jvmTarget = "21"
         }
     }
 

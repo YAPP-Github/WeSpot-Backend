@@ -21,9 +21,14 @@ class UserEventListener(
     fun signUpNewUser(event: UpdateProfileImageEvent) {
         val loginUser = SecurityUtils.getLoginUser(userPort)
         val profile = loginUser.profile
+
         imagePort.deleteByUrl(profile.iconUrl)
         s3Port.delete(profile.iconUrl)
         profilePort.save(profile.updateIconToImage(event.image.url))
+
+        loginUser.updateIntroduction(event.introduction)
+
+        userPort.save(loginUser)
     }
 
 }

@@ -79,7 +79,7 @@ class SecurityConfig(
                         "/wespot/**",
                         "/v3/api-docs/**",
                         "/api/v1/image/sign-up",
-                        "/api/v1/image/presigned-url",
+                        "/api/v1/image/presigned-url"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

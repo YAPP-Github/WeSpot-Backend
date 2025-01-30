@@ -34,6 +34,13 @@ class JwtAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
+    private fun extractToken(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader(JwtTokenInfo.AUTHORIZATION_HEADER)
+        return if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JwtTokenInfo.BEARER_TYPE)) {
+            bearerToken.substring(JwtTokenInfo.BEARER_TYPE.length).trim()
+        } else null
+    }
+
     private fun authenticateUserByToken(token: String) {
         try {
             val authentication = authenticationUseCase.getAuthentication(token)
@@ -41,12 +48,5 @@ class JwtAuthenticationFilter(
         } catch (e: BadCredentialsException) {
             SecurityContextHolder.clearContext()
         }
-    }
-
-    private fun extractToken(request: HttpServletRequest): String? {
-        val bearerToken = request.getHeader(JwtTokenInfo.AUTHORIZATION_HEADER)
-        return if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JwtTokenInfo.BEARER_TYPE)) {
-            bearerToken.substring(JwtTokenInfo.BEARER_TYPE.length).trim()
-        } else null
     }
 }

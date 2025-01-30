@@ -4,8 +4,7 @@ import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.image.event.UpdateProfileImageEvent
-import com.wespot.user.Profile
-import jdk.jfr.Event
+import com.wespot.user.UserIntroduction
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.util.*
@@ -30,13 +29,18 @@ data class Image(
             return createImage(url, cloudFrontUrl)
         }
 
-        fun ofWithUpdateProfile(url: String?, cloudFrontUrl: String, savedImage: (Image) -> Image): Image {
+        fun ofWithUpdateProfile(
+            introduction: String?,
+            url: String?,
+            cloudFrontUrl: String,
+            savedImage: (Image) -> Image
+        ): Image {
             if (Objects.isNull(url)) {
-                EventUtils.publish(UpdateProfileImageEvent(BASIC_IMAGE))
+                EventUtils.publish(UpdateProfileImageEvent(introduction, BASIC_IMAGE))
                 return BASIC_IMAGE
             }
             val image = createImage(url!!, cloudFrontUrl)
-            EventUtils.publish(UpdateProfileImageEvent(image))
+            EventUtils.publish(UpdateProfileImageEvent(introduction, image))
             return savedImage(image)
         }
 
