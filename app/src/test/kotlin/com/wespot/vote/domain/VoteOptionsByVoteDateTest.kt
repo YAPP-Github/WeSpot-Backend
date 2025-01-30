@@ -39,12 +39,15 @@ class VoteOptionsByVoteDateTest : BehaviorSpec({
         }
 
         `when`("오늘의 질문지를 뽑아낼 때, 범위를 벗어나는 경우") {
-            val throwingCallable =
-                { VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(0,LocalDate.now(), 1, voteOptions) }
+            val actual =
+                VoteOptionsByVoteDate.createInitialVoteOptionsByVoteDate(0, LocalDate.now(), 1, voteOptions)
 
-            then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
-                shouldThrow shouldHaveMessage "선택지의 개수가 5의 배수가 아닙니다."
+            then("첫번쨰 질문으로 넘어간다.") {
+                actual.voteOptionsByVoteDate[0].voteOption.id shouldBe 6
+                actual.voteOptionsByVoteDate[1].voteOption.id shouldBe 7
+                actual.voteOptionsByVoteDate[2].voteOption.id shouldBe 8
+                actual.voteOptionsByVoteDate[3].voteOption.id shouldBe 9
+                actual.voteOptionsByVoteDate[4].voteOption.id shouldBe 1
             }
         }
     }

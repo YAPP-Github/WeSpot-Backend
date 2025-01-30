@@ -49,11 +49,16 @@ class VoteTest() : BehaviorSpec({
                     LocalDate.now().minusDays(1)
                 )
             val vote = Vote.of(yesterdayVoteIdentifier, voteOptions, null)
-            val throwingCallable = { Vote.of(voteIdentifier, voteOptions, Vote.of(voteIdentifier, voteOptions, vote)) }
+            val actual = Vote.of(voteIdentifier, voteOptions, vote)
+                .voteOptionsByVoteDate
+                .voteOptionsByVoteDate
 
-            then("예외가 발생한다.") {
-                val shouldThrow = shouldThrow<CustomException>(throwingCallable)
-                shouldThrow shouldHaveMessage "선택지의 개수가 5의 배수가 아닙니다."
+            then("첫번쨰 질문으로 돌아가 질문을 뽑아낸다.") {
+                actual[0].voteOption.id shouldBe 6
+                actual[1].voteOption.id shouldBe 7
+                actual[2].voteOption.id shouldBe 8
+                actual[3].voteOption.id shouldBe 9
+                actual[4].voteOption.id shouldBe 1
             }
         }
     }
