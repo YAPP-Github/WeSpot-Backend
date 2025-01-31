@@ -1,9 +1,6 @@
 package com.wespot.common.dto
 
-import com.wespot.common.view.ButtonComponent
-import com.wespot.common.view.ImageComponent
-import com.wespot.common.view.TitleComponent
-import com.wespot.common.view.UpdatedModalComponent
+import com.wespot.common.view.*
 
 data class UpdatedModalComponentResponse(
     val id: Long,
@@ -11,17 +8,17 @@ data class UpdatedModalComponentResponse(
     val data: List<Any>
 ) {
 
-    data class TitleComponentResponse(
+    data class TextComponentResponse(
         val type: String,
         val text: String,
     ) {
 
         companion object {
 
-            fun from(titleComponent: TitleComponent): TitleComponentResponse {
-                return TitleComponentResponse(
-                    titleComponent.type,
-                    titleComponent.text
+            fun from(textComponent: TextComponent): TextComponentResponse {
+                return TextComponentResponse(
+                    textComponent.type,
+                    textComponent.text
                 )
             }
 
@@ -87,7 +84,7 @@ data class UpdatedModalComponentResponse(
                 id = 1,
                 name = updatedModalComponent.type,
                 data = listOf(
-                    TitleComponentResponse.from(updatedModalComponent.titleComponent),
+                    TextComponentResponse.from(updatedModalComponent.textComponent),
                     ImageComponentResponse.from(updatedModalComponent.imageComponent),
                     ButtonComponentResponse.from(updatedModalComponent.skipButtonComponent),
                     ButtonComponentWithLinkResponse.from(updatedModalComponent.moveToUpdatedFeatureViewButtonComponent)

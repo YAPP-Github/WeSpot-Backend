@@ -1,9 +1,8 @@
-package com.wespot.message.dto.response.view
+package com.wespot.common.dto.view
 
 import com.wespot.common.view.*
-import com.wespot.message.view.*
 
-data class MessageOnBoardingResponse(
+data class OnBoardingResponse(
     val id: Long,
     val name: String,
     val data: List<MessageOnBoardingPageResponse>
@@ -129,8 +128,8 @@ data class MessageOnBoardingResponse(
     }
 
     companion object {
-        fun from(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): MessageOnBoardingResponse {
-            return MessageOnBoardingResponse(
+        fun from(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+            return OnBoardingResponse(
                 id = 1,
                 name = onBoardingBottomSheetComponent.name,
                 data = listOf(

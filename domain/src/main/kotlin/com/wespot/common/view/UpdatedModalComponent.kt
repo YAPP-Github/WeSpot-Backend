@@ -5,7 +5,7 @@ import com.wespot.notification.NotificationType
 
 data class UpdatedModalComponent(
     val type: String,
-    val titleComponent: TitleComponent,
+    val textComponent: TextComponent,
     val imageComponent: ImageComponent,
     val skipButtonComponent: ButtonComponent,
     val moveToUpdatedFeatureViewButtonComponent: ButtonComponent
@@ -21,7 +21,7 @@ data class UpdatedModalComponent(
 
             return UpdatedModalComponent(
                 type = TYPE,
-                titleComponent = TitleComponent.from(notificationTypeToUpdateFeatureContent.titleText),
+                textComponent = TextComponent.from(notificationTypeToUpdateFeatureContent.textComponentText),
                 imageComponent = ImageComponent.fromSameSizeAsParentComponent(notificationTypeToUpdateFeatureContent.imageUrl),
                 skipButtonComponent = ButtonComponent.from(notificationTypeToUpdateFeatureContent.skipButtonText),
                 moveToUpdatedFeatureViewButtonComponent = ButtonComponent.ofWithDeepLink(
