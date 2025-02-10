@@ -1,6 +1,7 @@
 package com.wespot.common.view
 
 data class ButtonListComponent(
+    val type: String,
     val buttons: List<InnerButtonComponent>
 ) {
 
@@ -9,7 +10,7 @@ data class ButtonListComponent(
         const val TYPE = "buttonListComponent"
 
         fun from(buttons: List<InnerButtonComponent>): ButtonListComponent {
-            return ButtonListComponent(buttons)
+            return ButtonListComponent(TYPE, buttons)
         }
 
     }

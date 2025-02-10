@@ -3,8 +3,8 @@ package com.wespot.common.view
 data class DescriptionImageComponent(
     val type: String,
     val url: String,
-    val width: String,
-    val height: String
+    val width: Int,
+    val height: Int
 ) {
 
     companion object {
@@ -12,7 +12,7 @@ data class DescriptionImageComponent(
         const val TYPE = "descriptionImageComponent"
 
         fun of(url: String, width: Int, height: Int): DescriptionImageComponent {
-            return DescriptionImageComponent(TYPE, url, width.toString(), height.toString())
+            return DescriptionImageComponent(TYPE, url, width, height)
         }
 
     }

@@ -37,11 +37,11 @@ enum class NotificationTypeToUpdateFeatureContent(
         "새로운 기능",
         "이제 원하는 사진으로 프로필을 설정할 수 있어요",
         "나만의 특별한 프로필로 친구들에게 나를 소개해 보세요",
-        "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
+        "https://dw2d2daekmyur.cloudfront.net/IMAGE_UPDATE_UPPER.png",
         220, 268,
         "이렇게 활용돼요",
         "나만의 개성을 담은 특별한 프로필은 반 친구들 사이에서 나를 더 잘 표현해 줄 거에요",
-        "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
+        "https://dw2d2daekmyur.cloudfront.net/IMAGE_UPDATE_LOWER.png",
         220, 324,
         listOf(
             listOf("다음에 하기", "0xFFF7F7F8", "0xFF5A5C63", "0xFF48494C", OnClickActionType.NONE, DeepLink.NONE),
