@@ -26,28 +26,31 @@ data class ViewedOnBoardingSheet(
         }
     }
 
-    fun isFirstView(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
+    fun isAlreadyViewed(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
         if (name == IS_MESSAGE_VIEW) {
-            return inCaseMessage(commited)
+            return isAlreadyViewedInCaseMessage(commited)
         }
 
-        return inCaseVote(commited)
+        return isAlreadyViewedInCaseVote(commited)
     }
 
-    private fun ViewedOnBoardingSheet.inCaseMessage(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
-        if (!isViewedMessageOnBoardingSheet) {
-            isViewedMessageOnBoardingSheet = true
-            commited.call(this)
+    private fun isAlreadyViewedInCaseMessage(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
+        if (isViewedMessageOnBoardingSheet) {
+            return true
         }
-        return isViewedMessageOnBoardingSheet
+
+        isViewedMessageOnBoardingSheet = true
+        commited.call(this)
+        return false
     }
 
-    private fun ViewedOnBoardingSheet.inCaseVote(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
-        if (!isViewedVoteOnBoardingSheet) {
-            isViewedVoteOnBoardingSheet = true
-            commited.call(this)
+    private fun isAlreadyViewedInCaseVote(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
+        if (isViewedVoteOnBoardingSheet) {
+            return true
         }
-        return isViewedVoteOnBoardingSheet
+        isViewedVoteOnBoardingSheet = true
+        commited.call(this)
+        return false
     }
 
 }
