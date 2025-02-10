@@ -22,4 +22,11 @@ class OnBoardingController(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/viewed")
+    override fun isViewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Boolean> {
+        val response = onBoardingUseCase.isViewedOnBoardingSheetBy(category)
+
+        return ResponseEntity.ok(response)
+    }
+
 }

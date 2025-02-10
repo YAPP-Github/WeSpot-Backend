@@ -7,6 +7,8 @@ interface OnBoardingUseCase {
 
     fun getOnBoardingComponents(category: OnBoardingComponentRequest): OnBoardingResponse
 
+    fun isViewedOnBoardingSheetBy(category: OnBoardingComponentRequest): Boolean
+
 }
 
 

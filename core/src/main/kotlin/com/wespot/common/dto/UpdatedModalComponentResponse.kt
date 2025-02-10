@@ -1,6 +1,10 @@
 package com.wespot.common.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.wespot.common.link.DeepLink
 import com.wespot.common.view.*
+import com.wespot.common.view.update.UpdatedModalComponent
 
 data class UpdatedModalComponentResponse(
     val id: Long,
@@ -8,24 +12,50 @@ data class UpdatedModalComponentResponse(
     val data: List<Any>
 ) {
 
-    data class TextComponentResponse(
+    data class TopBarComponentResponse(
         val type: String,
-        val text: String,
+        val text: String
     ) {
 
         companion object {
 
-            fun from(textComponent: TextComponent): TextComponentResponse {
-                return TextComponentResponse(
-                    textComponent.type,
-                    textComponent.text
-                )
+            fun from(topBarComponent: TopBarComponent): TopBarComponentResponse {
+                return TopBarComponentResponse(topBarComponent.type, topBarComponent.text)
             }
 
         }
 
     }
 
+    data class TitleComponentResponse(
+        val type: String,
+        val text: String
+    ) {
+
+        companion object {
+
+            fun from(titleComponent: TitleComponent): TitleComponentResponse {
+                return TitleComponentResponse(titleComponent.type, titleComponent.text)
+            }
+
+        }
+
+    }
+
+    data class SubTitleComponentResponse(
+        val type: String,
+        val text: String
+    ) {
+
+        companion object {
+
+            fun from(subTitleComponent: SubTitleComponent): SubTitleComponentResponse {
+                return SubTitleComponentResponse(subTitleComponent.type, subTitleComponent.text)
+            }
+
+        }
+
+    }
 
     data class ImageComponentResponse(
         val type: String,
@@ -35,6 +65,7 @@ data class UpdatedModalComponentResponse(
     ) {
 
         companion object {
+
             fun from(imageComponent: ImageComponent): ImageComponentResponse {
                 return ImageComponentResponse(
                     imageComponent.type,
@@ -43,37 +74,121 @@ data class UpdatedModalComponentResponse(
                     imageComponent.height
                 )
             }
+
         }
 
     }
 
-    data class ButtonComponentResponse(
+    data class ChipComponentResponse(
         val type: String,
         val text: String
     ) {
 
         companion object {
-            fun from(buttonComponent: ButtonComponent): ButtonComponentResponse {
-                return ButtonComponentResponse(buttonComponent.type, buttonComponent.text)
+
+            fun from(chipComponent: ChipComponent): ChipComponentResponse {
+                return ChipComponentResponse(chipComponent.type, chipComponent.text)
             }
+
         }
 
     }
 
-    data class ButtonComponentWithLinkResponse(
+    data class DescriptionComponentResponse(
         val type: String,
-        val text: String,
-        val link: String
+        val text: String
     ) {
 
         companion object {
-            fun from(buttonComponent: ButtonComponent): ButtonComponentWithLinkResponse {
-                return ButtonComponentWithLinkResponse(
-                    buttonComponent.type,
-                    buttonComponent.text,
-                    buttonComponent.link
+
+            fun from(descriptionComponent: DescriptionComponent): DescriptionComponentResponse {
+                return DescriptionComponentResponse(descriptionComponent.type, descriptionComponent.text)
+            }
+
+        }
+
+    }
+
+    data class DescriptionImageComponentResponse(
+        val type: String,
+        val url: String,
+        val width: Int,
+        val height: Int
+    ) {
+
+        companion object {
+
+            fun from(descriptionImageComponent: DescriptionImageComponent): DescriptionImageComponentResponse {
+                return DescriptionImageComponentResponse(
+                    descriptionImageComponent.type,
+                    descriptionImageComponent.url,
+                    descriptionImageComponent.width,
+                    descriptionImageComponent.height
                 )
             }
+
+        }
+
+    }
+
+    data class ButtonListComponentResponse(
+        val type: String,
+        val buttonList: List<InnerButtonComponentResponse>
+    ) {
+
+        companion object {
+
+            fun from(buttonListComponent: ButtonListComponent): ButtonListComponentResponse {
+                return ButtonListComponentResponse(
+                    type = buttonListComponent.type,
+                    buttonList = buttonListComponent.buttons
+                        .stream()
+                        .map { InnerButtonComponentResponse.from(it) }
+                        .toList()
+                )
+            }
+
+        }
+
+        data class InnerButtonComponentResponse(
+            val text: String,
+            val textColor: String,
+            val buttonColor: String,
+            val pressColor: String,
+            val onClickAction: OnClickActionResponse,
+        ) {
+
+            companion object {
+
+                fun from(innerButtonComponent: InnerButtonComponent): InnerButtonComponentResponse {
+                    return InnerButtonComponentResponse(
+                        innerButtonComponent.text,
+                        innerButtonComponent.textColor,
+                        innerButtonComponent.buttonColor,
+                        innerButtonComponent.pressColor,
+                        OnClickActionResponse.from(innerButtonComponent)
+                    )
+                }
+
+            }
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            data class OnClickActionResponse(
+                val type: String?,
+                val deepLink: String?
+            ) {
+
+                companion object {
+                    fun from(innerButtonComponent: InnerButtonComponent): OnClickActionResponse {
+                        return OnClickActionResponse(
+                            if (innerButtonComponent.onClickAction.type == OnClickActionType.NONE.type) null else innerButtonComponent.onClickAction.type,
+                            if (innerButtonComponent.onClickAction.deepLink == DeepLink.NONE) null else innerButtonComponent.onClickAction.deepLink.deepLinkURL
+                        )
+                    }
+                }
+
+            }
+
         }
 
     }
@@ -84,10 +199,14 @@ data class UpdatedModalComponentResponse(
                 id = 1,
                 name = updatedModalComponent.type,
                 data = listOf(
-                    TextComponentResponse.from(updatedModalComponent.textComponent),
+                    TopBarComponentResponse.from(updatedModalComponent.topBarComponent),
+                    TitleComponentResponse.from(updatedModalComponent.titleComponent),
+                    SubTitleComponentResponse.from(updatedModalComponent.subTitleComponent),
                     ImageComponentResponse.from(updatedModalComponent.imageComponent),
-                    ButtonComponentResponse.from(updatedModalComponent.skipButtonComponent),
-                    ButtonComponentWithLinkResponse.from(updatedModalComponent.moveToUpdatedFeatureViewButtonComponent)
+                    ChipComponentResponse.from(updatedModalComponent.chipComponent),
+                    DescriptionComponentResponse.from(updatedModalComponent.descriptionComponent),
+                    DescriptionImageComponentResponse.from(updatedModalComponent.descriptionImageComponent),
+                    ButtonListComponentResponse.from(updatedModalComponent.buttonListComponent),
                 )
             )
         }
