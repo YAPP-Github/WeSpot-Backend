@@ -12,6 +12,18 @@ data class ViewedOnBoardingSheet(
     companion object {
         private const val IS_MESSAGE_VIEW = "MESSAGE"
         private const val IS_VOTE_VIEW = "VOTE"
+
+        fun createInitialState(
+            userId: Long,
+            existsViewedOnBoardingSheet: ViewedOnBoardingSheet?
+        ): ViewedOnBoardingSheet {
+            return existsViewedOnBoardingSheet ?: ViewedOnBoardingSheet(
+                id = 0,
+                userId = userId,
+                isViewedMessageOnBoardingSheet = false,
+                isViewedVoteOnBoardingSheet = false
+            )
+        }
     }
 
     fun isFirstView(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {

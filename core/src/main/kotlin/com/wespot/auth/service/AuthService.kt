@@ -14,6 +14,7 @@ import com.wespot.exception.ExceptionView
 import com.wespot.image.Image
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.*
+import com.wespot.user.event.CreatedViewedOnBoardingSheetEvent
 import com.wespot.user.event.CreatedVoteEvent
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.event.WelcomeMessageEvent
@@ -65,6 +66,7 @@ class AuthService(
         )
         val user = userPort.findByEmail(socialEmail)
             ?: return SignUpResponse(createSignUpToken(authData = authData))
+        EventUtils.publish(CreatedViewedOnBoardingSheetEvent(user.id))
 
         return signIn(
             createSignInRequest(user),
