@@ -1,6 +1,7 @@
 package com.wespot.common.dto
 
 import com.wespot.common.view.*
+import com.wespot.common.view.update.UpdatedModalComponent
 
 data class UpdatedModalComponentResponse(
     val id: Long,
