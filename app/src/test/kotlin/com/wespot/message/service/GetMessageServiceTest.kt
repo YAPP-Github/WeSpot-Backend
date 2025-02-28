@@ -18,6 +18,7 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
+import org.mockito.BDDMockito
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import java.time.Clock
@@ -89,11 +90,12 @@ class GetMessageServiceTest : BehaviorSpec({
 
             then("올바른 메시지를 반환해야 한다") {
                 val response = getMessageService.getMessage(messageId)
-                response shouldBe MessageResponse.from(
+                response shouldBe MessageResponse.of(
                     message = messages[0],
                     receiver = receiver,
                     school = school,
-                    isBlocked = false
+                    isBlocked = false,
+                    sender = sender
                 )
             }
 
@@ -132,11 +134,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 10
                 result.hasNext shouldBe true
                 result shouldBe MessageListResponse.from(messages.take(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = sender
                     )
                 }, hasNext = true)
             }
@@ -171,11 +174,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 1
                 result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = sender
                     )
                 }, hasNext = false)
             }
@@ -191,6 +195,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(sender.id) } returns sender
             every { schoolPort.findById(receiver.schoolId) } returns school
+            every { userPort.findByIdIn(listOf(sender.id, blockedSender.id)) } returns listOf(sender, blockedSender)
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
@@ -214,14 +219,19 @@ class GetMessageServiceTest : BehaviorSpec({
             then("첫 10개의 수신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 10
                 result.hasNext shouldBe true
-                result shouldBe MessageListResponse.from(messages.take(10).map { message ->
-                    MessageResponse.from(
-                        message = message,
-                        receiver = receiver,
-                        school = school,
-                        isBlocked = false
+
+                MessageListResponse.from(result.messages.take(6), result.hasNext) shouldBe
+                    MessageListResponse.from(
+                        messages.take(6).map { message ->
+                            MessageResponse.of(
+                                message = message,
+                                receiver = receiver,
+                                school = school,
+                                isBlocked = false,
+                                sender = sender
+                            )
+                        }, hasNext = true
                     )
-                }, hasNext = true)
             }
         }
 
@@ -236,6 +246,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(sender.id) } returns sender
             every { schoolPort.findById(receiver.schoolId) } returns school
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
+            every { userPort.findByIdIn(listOf(blockedSender.id)) } returns listOf(blockedSender)
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
@@ -259,11 +270,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 1
                 result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = blockedSender
                     )
                 }, hasNext = false)
             }
@@ -276,8 +288,10 @@ class GetMessageServiceTest : BehaviorSpec({
             val blockedUserIds = listOf(blockedSender.id)
 
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { userPort.findById(sender.id) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
+            every { userPort.findByIdIn(listOf(sender.id)) } returns listOf(sender)
             every { schoolPort.findById(receiver.schoolId) } returns school
             every { messagePort.countReceivedMessagesAfterCursor(any(), any(), any()) } returns 5
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(

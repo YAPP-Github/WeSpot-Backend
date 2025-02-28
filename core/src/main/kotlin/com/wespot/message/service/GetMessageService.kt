@@ -40,14 +40,16 @@ class GetMessageService(
         val message = findMessageById(messageId, messagePort)
         message.validateReadMessage(loginUser)
         val receiver = findUserById(message.receiverId, userPort)
+        val sender = findUserById(message.senderId, userPort)
         val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
         val isBlocked = blockedUsers.any { it.messageId == messageId }
 
-        return MessageResponse.from(
+        return MessageResponse.of(
             message = message,
             receiver = receiver,
             school = receiverSchool,
-            isBlocked = isBlocked
+            isBlocked = isBlocked,
+            sender = sender
         )
     }
 
@@ -73,13 +75,19 @@ class GetMessageService(
             blockedMessageIds = blockedMessageIds
         ) > 10
 
+        val senderIds = messages.map { it.senderId }
+            .distinct()
+        val senders = userPort.findByIdIn(senderIds)
+            .associateBy { it.id }
+
         return MessageListResponse.from(
             messages = messages.map { message ->
-                MessageResponse.from(
+                MessageResponse.of(
                     message = message,
                     receiver = receiver,
                     school = receiverSchool,
-                    isBlocked = blockedMessageIds.contains(message.id)
+                    isBlocked = blockedMessageIds.contains(message.id),
+                    sender = senders[message.senderId]!!
                 )
             },
             hasNext = hasNext
@@ -106,11 +114,12 @@ class GetMessageService(
             messages = messages.map { message ->
                 val receiver = findUserById(message.receiverId, userPort)
                 val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
-                MessageResponse.from(
+                MessageResponse.of(
                     message = message,
                     receiver = receiver,
                     school = receiverSchool,
-                    isBlocked = false
+                    isBlocked = false,
+                    sender = loginUser
                 )
             },
             hasNext = hasNext
@@ -149,11 +158,12 @@ class GetMessageService(
         return MessageSimpleListResponse.from(messages = messages.map { message ->
             val receiver = findUserById(message.receiverId, userPort)
             val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
-            MessageResponse.from(
+            MessageResponse.of(
                 message = message,
                 receiver = receiver,
                 school = receiverSchool,
-                isBlocked = false
+                isBlocked = false,
+                sender = loginUser
             )
         })
     }
