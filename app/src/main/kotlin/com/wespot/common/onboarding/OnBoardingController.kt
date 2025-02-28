@@ -6,6 +6,7 @@ import com.wespot.common.`in`.OnBoardingUseCase
 import com.wespot.message.swagger.OnBoardingSwagger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -22,11 +23,11 @@ class OnBoardingController(
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/viewed")
-    override fun isViewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Boolean> {
-        val response = onBoardingUseCase.isViewedOnBoardingSheetBy(category)
+    @PutMapping("/viewed")
+    override fun viewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Unit> {
+        onBoardingUseCase.viewOnBoardingSheetBy(category)
 
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok().build()
     }
 
 }

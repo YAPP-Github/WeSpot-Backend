@@ -26,31 +26,16 @@ data class ViewedOnBoardingSheet(
         }
     }
 
-    fun isAlreadyViewed(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
+    fun view(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>) {
         if (name == IS_MESSAGE_VIEW) {
-            return isAlreadyViewedInCaseMessage(commited)
+            isViewedMessageOnBoardingSheet = true
         }
 
-        return isAlreadyViewedInCaseVote(commited)
-    }
-
-    private fun isAlreadyViewedInCaseMessage(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
-        if (isViewedMessageOnBoardingSheet) {
-            return true
+        if (name == IS_VOTE_VIEW) {
+            isViewedVoteOnBoardingSheet = true
         }
 
-        isViewedMessageOnBoardingSheet = true
         commited.call(this)
-        return false
-    }
-
-    private fun isAlreadyViewedInCaseVote(commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>): Boolean {
-        if (isViewedVoteOnBoardingSheet) {
-            return true
-        }
-        isViewedVoteOnBoardingSheet = true
-        commited.call(this)
-        return false
     }
 
 }

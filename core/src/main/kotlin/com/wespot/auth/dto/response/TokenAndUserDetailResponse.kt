@@ -6,5 +6,7 @@ data class TokenAndUserDetailResponse(
     val refreshTokenExpiredAt: String,
     val setting: SettingResponse,
     val name: String,
-    val isProfileChanged: Boolean
+    val isProfileChanged: Boolean,
+    val isViewedMessageOnBoardingSheet: Boolean,
+    val isViewedVoteOnBoardingSheet: Boolean,
 )

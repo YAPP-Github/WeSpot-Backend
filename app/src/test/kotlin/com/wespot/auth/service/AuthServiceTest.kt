@@ -25,6 +25,8 @@ import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.port.out.RestrictionPort
 import com.wespot.auth.port.out.PersonalInfoPort
+import com.wespot.common.ViewedOnBoardingSheet
+import com.wespot.common.out.ViewedOnBoardingSheetPort
 import com.wespot.user.port.out.UserVersionPort
 
 import io.kotest.assertions.throwables.shouldThrow
@@ -58,6 +60,7 @@ class AuthServiceTest : BehaviorSpec({
     val restrictionPort = mockk<RestrictionPort>()
     val personalInfoPort = mockk<PersonalInfoPort>()
     val userVersionPort = mockk<UserVersionPort>()
+    val viewedOnBoardingSheetPort = mockk<ViewedOnBoardingSheetPort>()
 
     val secretKey = "testSecretKey"
 
@@ -80,7 +83,8 @@ class AuthServiceTest : BehaviorSpec({
             restrictionPort = restrictionPort,
             personalInfoPort = personalInfoPort,
             cloudFrontUrl = "cloud-front-url",
-            userVersionPort = userVersionPort
+            userVersionPort = userVersionPort,
+            viewedOnBoardingSheetPort = viewedOnBoardingSheetPort
         )
     )
 
@@ -161,7 +165,9 @@ class AuthServiceTest : BehaviorSpec({
                     isMarketingNotification = user.userConsent.consentValue ?: false
                 ),
                 name = user.name,
-                isProfileChanged = false
+                isProfileChanged = false,
+                isViewedMessageOnBoardingSheet = false,
+                isViewedVoteOnBoardingSheet = false
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
@@ -211,7 +217,9 @@ class AuthServiceTest : BehaviorSpec({
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
             name = user.name,
-            isProfileChanged = false
+            isProfileChanged = false,
+            isViewedMessageOnBoardingSheet = false,
+            isViewedVoteOnBoardingSheet = false
         )
 
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
