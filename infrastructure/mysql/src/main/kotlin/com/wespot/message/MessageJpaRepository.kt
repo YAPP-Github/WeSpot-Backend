@@ -152,5 +152,4 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         @Param("messageOpenTime") messageOpenTime: LocalDateTime
     ): Long
 
-    fun send(send: Boolean): MutableList<MessageJpaEntity>
 }
