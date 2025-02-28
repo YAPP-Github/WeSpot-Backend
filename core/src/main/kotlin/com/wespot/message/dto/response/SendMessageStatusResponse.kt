@@ -7,7 +7,7 @@ data class SendMessageStatusResponse(
 ) {
     companion object {
 
-        fun from(
+        fun of(
             isSendAllowed: Boolean,
             countRemainingMessages: Int,
             countUnReadMessages: Int

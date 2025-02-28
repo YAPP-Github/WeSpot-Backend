@@ -18,6 +18,7 @@ import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class GetMessageService(
@@ -121,9 +122,13 @@ class GetMessageService(
         val sendMessageCount = messagePort.sendMessageCount(loginUser.id)
         val limit = MESSAGE_LIMIT - sendMessageCount
         val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
-        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
+        val now = LocalDateTime.now()
+        val tomorrow = now.plusDays(1)
+        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverIdAndBetweenSendTimeAndMessageOpenTime(
             receiverId = loginUser.id,
-            blockedMessageIds = blockedUsers.map { it.messageId }
+            blockedMessageIds = blockedUsers.map { it.messageId },
+            sendTime = LocalDateTime.of(now.year, now.month, now.dayOfMonth, 22, 0, 0),
+            messageOpenTime = LocalDateTime.of(tomorrow.year, tomorrow.month, tomorrow.dayOfMonth, 17, 0, 0)
         ).toInt()
 
         return SendMessageStatusResponse(

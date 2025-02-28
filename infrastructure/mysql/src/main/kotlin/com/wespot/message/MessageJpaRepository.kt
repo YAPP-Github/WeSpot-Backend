@@ -1,6 +1,5 @@
 package com.wespot.message
 
-import com.google.firebase.auth.UserIdentifier
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -137,18 +136,21 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         SELECT COUNT(m)
         FROM MessageJpaEntity m
         WHERE 1 = 1
-        AND m.receiverId = :receiverId
-        AND m.isReceiverRead = false
-        AND m.readAt IS NULL
-        AND m.messageType = 'RECEIVED'
-        AND m.isReceiverDeleted = false
-        AND m.receivedAt IS NOT NULL
-        AND m.id NOT IN :blockedMessageIds
-        AND m.senderId NOT IN :blockedMessageIds
+            AND m.receiverId = :receiverId
+            AND m.isReceiverRead = false
+            AND m.messageType = 'RECEIVED'
+            AND m.isReceiverDeleted = false
+            AND m.receivedAt IS NOT NULL
+            AND m.id NOT IN :blockedMessageIds
+            AND m.receivedAt BETWEEN :sendTime AND :messageOpenTime
     """
     )
-    fun countUnreadMessagesByReceiverId(
+    fun countUnreadMessagesByReceiverIdAndBetweenSendTimeAndOpenTime(
         @Param("receiverId") receiverId: Long,
-        @Param("blockedMessageIds") blockedMessageIds: List<Long>
+        @Param("blockedMessageIds") blockedMessageIds: List<Long>,
+        @Param("sendTime") sendTime: LocalDateTime,
+        @Param("messageOpenTime") messageOpenTime: LocalDateTime
     ): Long
+
+    fun send(send: Boolean): MutableList<MessageJpaEntity>
 }

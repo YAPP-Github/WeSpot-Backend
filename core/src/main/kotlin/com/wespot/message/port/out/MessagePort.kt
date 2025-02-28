@@ -3,7 +3,6 @@ package com.wespot.message.port.out
 import com.wespot.message.Message
 import com.wespot.message.MessageType
 import org.springframework.data.domain.Pageable
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface MessagePort {
@@ -59,8 +58,11 @@ interface MessagePort {
 
     fun findByMessageTypeAndSendAtBefore(sendAt: LocalDateTime): List<Message>
 
-    fun countUnreadMessagesByReceiverId(
+    fun countUnreadMessagesByReceiverIdAndBetweenSendTimeAndMessageOpenTime(
         receiverId: Long,
-        blockedMessageIds: List<Long>
+        blockedMessageIds: List<Long>,
+        sendTime: LocalDateTime,
+        messageOpenTime: LocalDateTime
     ): Long
+
 }

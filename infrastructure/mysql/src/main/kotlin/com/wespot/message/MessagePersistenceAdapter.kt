@@ -25,8 +25,18 @@ class MessagePersistenceAdapter(
             .map { MessageMapper.mapToDomainEntity(it) }
     }
 
-    override fun countUnreadMessagesByReceiverId(receiverId: Long, blockedMessageIds: List<Long>): Long {
-        return messageJpaRepository.countUnreadMessagesByReceiverId(receiverId, blockedMessageIds)
+    override fun countUnreadMessagesByReceiverIdAndBetweenSendTimeAndMessageOpenTime(
+        receiverId: Long,
+        blockedMessageIds: List<Long>,
+        sendTime: LocalDateTime,
+        messageOpenTime: LocalDateTime
+    ): Long {
+        return messageJpaRepository.countUnreadMessagesByReceiverIdAndBetweenSendTimeAndOpenTime(
+            receiverId,
+            blockedMessageIds,
+            sendTime,
+            messageOpenTime,
+        )
     }
 
     override fun save(message: Message): Message {
