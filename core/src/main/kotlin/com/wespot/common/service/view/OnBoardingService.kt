@@ -23,10 +23,11 @@ class OnBoardingService(
     }
 
     @Transactional
-    override fun isViewedOnBoardingSheetBy(category: OnBoardingComponentRequest): Boolean {
+    override fun viewOnBoardingSheetBy(category: OnBoardingComponentRequest) {
         val userId = SecurityUtils.getLoginUser(userPort).id
-        val isViewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId) ?: return true
-        return isViewedOnBoardingSheet.isAlreadyViewed(
+        val isViewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId) ?: return
+
+        isViewedOnBoardingSheet.view(
             category.name,
             viewedOnBoardingSheetPort::save
         )

@@ -13,6 +13,6 @@ interface OnBoardingSwagger {
     fun getOnBoardingComponents(category: OnBoardingComponentRequest): ResponseEntity<OnBoardingResponse>
 
     @Operation(summary = "유저가 온보딩 시트를 이미 받아본적이 있는지 여부를 확인하는 API 입니다.")
-    fun isViewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Boolean>
+    fun viewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Unit>
 
 }
