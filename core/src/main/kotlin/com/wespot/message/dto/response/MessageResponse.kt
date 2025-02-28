@@ -5,7 +5,6 @@ import com.wespot.message.Message
 import com.wespot.school.School
 import com.wespot.user.User
 import com.wespot.user.dto.response.UserResponse
-import java.time.LocalDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class MessageResponse(
@@ -19,7 +18,7 @@ data class MessageResponse(
     val isReported: Boolean,
     val readAt: String?,
     val isAnonymous: Boolean
-){
+) {
     companion object {
 
         fun from(
