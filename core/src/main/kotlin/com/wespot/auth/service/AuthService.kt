@@ -9,6 +9,8 @@ import com.wespot.auth.port.out.AuthDataPort
 import com.wespot.auth.port.out.PersonalInfoPort
 import com.wespot.auth.port.out.RefreshTokenPort
 import com.wespot.auth.service.jwt.JwtTokenProvider
+import com.wespot.common.ViewedOnBoardingSheet
+import com.wespot.common.out.ViewedOnBoardingSheetPort
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.image.Image
@@ -25,6 +27,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.servlet.View
 import java.time.LocalDateTime
 import java.util.*
 
@@ -49,9 +52,10 @@ class AuthService(
     private val restrictionPort: RestrictionPort,
     private val fcmPort: FCMPort,
     private val personalInfoPort: PersonalInfoPort,
+    private val viewedOnBoardingSheetPort: ViewedOnBoardingSheetPort,
 
     @Value("\${jwt.secret}")
-    private val secretKey: String
+    private val secretKey: String,
 ) : AuthUseCase {
 
     override fun socialAccess(authLoginRequest: AuthLoginRequest): Any {
@@ -90,6 +94,8 @@ class AuthService(
         refreshTokenService.saveOrUpdateRefreshToken(generateToken.refreshToken, user)
         val userVersion = userVersionPort.findByUserId(user.id) ?: UserVersion.createInitialState(user.id)
         saveUserVersion(userVersion, extraSignInRequest)
+        val viewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId = user.id)
+            ?: ViewedOnBoardingSheet.createInitialState(userId = user.id, existsViewedOnBoardingSheet = null)
 
         return TokenAndUserDetailResponse(
             accessToken = generateToken.accessToken,
@@ -101,7 +107,9 @@ class AuthService(
                 isMarketingNotification = user.userConsent.consentValue ?: false
             ),
             name = user.name,
-            isProfileChanged = true
+            isProfileChanged = true,
+            isViewedMessageOnBoardingSheet = viewedOnBoardingSheet.isViewedMessageOnBoardingSheet,
+            isViewedVoteOnBoardingSheet = viewedOnBoardingSheet.isViewedVoteOnBoardingSheet
         )
     }
 
@@ -147,7 +155,9 @@ class AuthService(
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
             name = signIn.name,
-            isProfileChanged = false
+            isProfileChanged = false,
+            isViewedMessageOnBoardingSheet = false,
+            isViewedVoteOnBoardingSheet = false
         )
     }
 
