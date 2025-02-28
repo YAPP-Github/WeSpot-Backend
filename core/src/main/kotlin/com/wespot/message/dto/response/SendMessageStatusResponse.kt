@@ -4,7 +4,7 @@ data class SendMessageStatusResponse(
     val isSendAllowed: Boolean,
     val countRemainingMessages: Int,
     val countUnReadMessages: Int
-){
+) {
     companion object {
 
         fun from(
