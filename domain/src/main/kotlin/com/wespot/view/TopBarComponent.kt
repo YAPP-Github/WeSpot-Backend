@@ -1,4 +1,4 @@
-package com.wespot.common.view
+package com.wespot.view
 
 data class TopBarComponent(
     val type: String,

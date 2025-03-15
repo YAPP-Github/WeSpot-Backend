@@ -1,4 +1,4 @@
-package com.wespot.common.view.update
+package com.wespot.view.update
 
 import com.wespot.common.NotificationTypeToUpdateFeatureContent
 import com.wespot.common.link.DeepLink
@@ -21,12 +21,12 @@ data class UpdatedModalComponent(
 
         private const val TYPE = "updateOverviewModal"
 
-        fun fromWithNotificationType(notificationType: NotificationType): UpdatedModalComponent {
+        fun fromWithNotificationType(notificationType: NotificationType): com.wespot.view.update.UpdatedModalComponent {
             val notificationTypeToUpdateFeatureContent =
                 NotificationTypeToUpdateFeatureContent.fromWithNotificationType(notificationType)
 
-            return UpdatedModalComponent(
-                type = TYPE,
+            return com.wespot.view.update.UpdatedModalComponent(
+                type = com.wespot.view.update.UpdatedModalComponent.Companion.TYPE,
                 topBarComponent = TopBarComponent.from(notificationTypeToUpdateFeatureContent.topBarComponentText),
                 titleComponent = TitleComponent.from(notificationTypeToUpdateFeatureContent.titleComponentText),
                 subTitleComponent = SubTitleComponent.from(notificationTypeToUpdateFeatureContent.subTitleComponentText),
@@ -36,7 +36,9 @@ data class UpdatedModalComponent(
                     notificationTypeToUpdateFeatureContent.imageComponentHeight
                 ),
                 chipComponent = ChipComponent.from(notificationTypeToUpdateFeatureContent.chipComponentText),
-                descriptionComponent = DescriptionComponent.from(notificationTypeToUpdateFeatureContent.descriptionComponentText),
+                descriptionComponent = DescriptionComponent.from(
+                    notificationTypeToUpdateFeatureContent.descriptionComponentText
+                ),
                 descriptionImageComponent = DescriptionImageComponent.of(
                     notificationTypeToUpdateFeatureContent.descriptionImageComponentURL,
                     notificationTypeToUpdateFeatureContent.descriptionImageComponentWidth,

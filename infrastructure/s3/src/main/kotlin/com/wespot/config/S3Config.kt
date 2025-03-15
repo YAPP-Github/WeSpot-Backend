@@ -37,7 +37,10 @@ class S3Config(
         val credentialProvider: StaticCredentialsProvider = StaticCredentialsProvider.create(
             AwsBasicCredentials.create(accessKey, secretKey)
         )
-        return S3Presigner.builder().credentialsProvider(credentialProvider).region(Region.AP_NORTHEAST_2).build()
+        return S3Presigner.builder()
+            .credentialsProvider(credentialProvider)
+            .region(Region.AP_NORTHEAST_2)
+            .build()
     }
 
 }

@@ -1,9 +1,9 @@
-package com.wespot.common.view
+package com.wespot.view
 
 data class OnBoardingBottomSheetComponent(
     val name: String,
     val onBoardingImageComponent: OnBoardingImageComponent,
-    val onBoardingDescriptionComponent: OnBoardingDescriptionComponent
+    val onBoardingDescriptionComponent: com.wespot.view.OnBoardingDescriptionComponent
 ) {
 
     companion object {
@@ -23,7 +23,7 @@ data class OnBoardingBottomSheetComponent(
             return OnBoardingBottomSheetComponent(
                 name = TYPE,
                 onBoardingImageComponent = OnBoardingImageComponent.createMessageComponent(),
-                onBoardingDescriptionComponent = OnBoardingDescriptionComponent.createMessageComponent()
+                onBoardingDescriptionComponent = com.wespot.view.OnBoardingDescriptionComponent.createMessageComponent()
             )
         }
 
@@ -31,7 +31,7 @@ data class OnBoardingBottomSheetComponent(
             return OnBoardingBottomSheetComponent(
                 name = TYPE,
                 onBoardingImageComponent = OnBoardingImageComponent.createVoteComponent(),
-                onBoardingDescriptionComponent = OnBoardingDescriptionComponent.createVoteComponent()
+                onBoardingDescriptionComponent = com.wespot.view.OnBoardingDescriptionComponent.createVoteComponent()
             )
         }
 

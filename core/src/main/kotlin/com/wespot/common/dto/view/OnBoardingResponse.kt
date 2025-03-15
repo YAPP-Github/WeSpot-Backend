@@ -35,7 +35,7 @@ data class OnBoardingResponse(
 
             companion object {
 
-                fun from(buttonComponent: ButtonComponent): ButtonComponentResponse {
+                fun from(buttonComponent: com.wespot.view.ButtonComponent): ButtonComponentResponse {
                     return ButtonComponentResponse(buttonComponent.type, buttonComponent.text)
                 }
 
@@ -112,7 +112,7 @@ data class OnBoardingResponse(
 
             fun fromWithDescriptionComponent(
                 page: Int,
-                data: OnBoardingDescriptionComponent
+                data: com.wespot.view.OnBoardingDescriptionComponent
             ): MessageOnBoardingPageResponse {
                 return MessageOnBoardingPageResponse(
                     page = page,

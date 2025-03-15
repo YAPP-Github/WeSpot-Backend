@@ -1,4 +1,4 @@
-package com.wespot.common.view
+package com.wespot.view
 
 class TitleComponent(
     val type: String,

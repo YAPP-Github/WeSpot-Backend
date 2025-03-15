@@ -1,4 +1,4 @@
-package com.wespot.common.view
+package com.wespot.view
 
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView

@@ -23,8 +23,8 @@ class ImageService(
     override fun createPresignedUrl(imageExtension: String, expirationTime: Long): PresignedResponse {
         val prefix = UUID.randomUUID()
             .toString()
-            .replace("-", "")
-        val imageName = "$prefix.$imageExtension"
+            .replace("-", "") // prefix is what ?
+        val imageName = "$prefix.$imageExtension" // image name is prefix and image extension
         val url = s3Port.getPresignedUrl(imageName, expirationTime)
 
         return PresignedResponse(url, imageName)

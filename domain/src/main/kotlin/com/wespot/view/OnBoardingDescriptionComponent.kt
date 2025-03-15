@@ -1,17 +1,17 @@
-package com.wespot.common.view
+package com.wespot.view
 
 data class OnBoardingDescriptionComponent(
-    val titleComponent: TitleComponent,
-    val textLinesComponent: TextLinesComponent,
-    val buttonComponent: ButtonComponent
+    val titleComponent: com.wespot.view.TitleComponent,
+    val textLinesComponent: com.wespot.view.TextLinesComponent,
+    val buttonComponent: com.wespot.view.ButtonComponent
 ) {
 
     companion object {
 
-        fun createMessageComponent(): OnBoardingDescriptionComponent {
-            return OnBoardingDescriptionComponent(
-                titleComponent = TitleComponent.from("쪽지에 대해 알려드릴게요"),
-                textLinesComponent = TextLinesComponent.from(
+        fun createMessageComponent(): com.wespot.view.OnBoardingDescriptionComponent {
+            return com.wespot.view.OnBoardingDescriptionComponent(
+                titleComponent = com.wespot.view.TitleComponent.Companion.from("쪽지에 대해 알려드릴게요"),
+                textLinesComponent = com.wespot.view.TextLinesComponent.Companion.from(
                     textLines = listOf(
                         Pair(
                             "https://dw2d2daekmyur.cloudfront.net/message_01.png",
@@ -27,14 +27,14 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.from("이해했어요")
+                buttonComponent = com.wespot.view.ButtonComponent.Companion.from("이해했어요")
             )
         }
 
-        fun createVoteComponent(): OnBoardingDescriptionComponent {
-            return OnBoardingDescriptionComponent(
-                titleComponent = TitleComponent.from("우리반 비밀 투표에 대해 알려드릴게요"),
-                textLinesComponent = TextLinesComponent.from(
+        fun createVoteComponent(): com.wespot.view.OnBoardingDescriptionComponent {
+            return com.wespot.view.OnBoardingDescriptionComponent(
+                titleComponent = com.wespot.view.TitleComponent.Companion.from("우리반 비밀 투표에 대해 알려드릴게요"),
+                textLinesComponent = com.wespot.view.TextLinesComponent.Companion.from(
                     textLines = listOf(
                         Pair(
                             "https://dw2d2daekmyur.cloudfront.net/vote_01.png",
@@ -50,7 +50,7 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.from("이해했어요")
+                buttonComponent = com.wespot.view.ButtonComponent.Companion.from("이해했어요")
             )
         }
 

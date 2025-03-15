@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.common.link.DeepLink
 import com.wespot.common.view.*
-import com.wespot.common.view.update.UpdatedModalComponent
+import com.wespot.view.update.UpdatedModalComponent
 
 data class UpdatedModalComponentResponse(
     val id: Long,
@@ -194,7 +194,7 @@ data class UpdatedModalComponentResponse(
     }
 
     companion object {
-        fun from(updatedModalComponent: UpdatedModalComponent): UpdatedModalComponentResponse {
+        fun from(updatedModalComponent: com.wespot.view.update.UpdatedModalComponent): UpdatedModalComponentResponse {
             return UpdatedModalComponentResponse(
                 id = 1,
                 name = updatedModalComponent.type,
