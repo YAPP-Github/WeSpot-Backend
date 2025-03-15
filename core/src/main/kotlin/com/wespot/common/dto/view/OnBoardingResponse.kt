@@ -1,6 +1,7 @@
 package com.wespot.common.dto.view
 
 import com.wespot.common.view.*
+import com.wespot.view.button.ButtonComponent
 
 data class OnBoardingResponse(
     val id: Long,
@@ -35,7 +36,7 @@ data class OnBoardingResponse(
 
             companion object {
 
-                fun from(buttonComponent: com.wespot.view.ButtonComponent): ButtonComponentResponse {
+                fun from(buttonComponent: ButtonComponent): ButtonComponentResponse {
                     return ButtonComponentResponse(buttonComponent.type, buttonComponent.text)
                 }
 

@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.text
 
 data class DescriptionComponent(
     val type: String,

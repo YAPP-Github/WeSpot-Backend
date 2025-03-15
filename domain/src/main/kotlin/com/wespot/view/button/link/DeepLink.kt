@@ -1,4 +1,4 @@
-package com.wespot.common.link
+package com.wespot.view.button.link
 
 enum class DeepLink(val deepLinkURL: String) {
 

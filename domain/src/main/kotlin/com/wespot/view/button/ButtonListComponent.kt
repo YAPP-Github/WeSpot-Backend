@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.button
 
 data class ButtonListComponent(
     val type: String,

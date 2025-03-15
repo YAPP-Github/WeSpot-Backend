@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.button
 
 enum class OnClickActionType(
     val type: String

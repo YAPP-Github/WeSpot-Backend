@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.text
 
 class TextLinesComponent(
     val type: String,

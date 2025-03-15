@@ -2,7 +2,7 @@ package com.wespot.common.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.wespot.common.link.DeepLink
+import com.wespot.view.button.link.DeepLink
 import com.wespot.common.view.*
 import com.wespot.view.update.UpdatedModalComponent
 

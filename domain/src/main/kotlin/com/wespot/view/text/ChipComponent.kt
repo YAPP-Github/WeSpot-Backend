@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.text
 
 data class ChipComponent(
     val type: String,

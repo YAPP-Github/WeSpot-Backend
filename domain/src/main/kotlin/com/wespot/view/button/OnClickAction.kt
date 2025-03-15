@@ -1,6 +1,6 @@
-package com.wespot.view
+package com.wespot.view.button
 
-import com.wespot.common.link.DeepLink
+import com.wespot.view.button.link.DeepLink
 
 data class OnClickAction(
     val type: String,

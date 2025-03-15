@@ -1,7 +1,7 @@
 package com.wespot.view.update
 
 import com.wespot.common.NotificationTypeToUpdateFeatureContent
-import com.wespot.common.link.DeepLink
+import com.wespot.view.button.link.DeepLink
 import com.wespot.common.view.*
 import com.wespot.notification.NotificationType
 

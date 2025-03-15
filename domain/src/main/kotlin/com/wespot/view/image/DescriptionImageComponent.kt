@@ -1,4 +1,4 @@
-package com.wespot.view
+package com.wespot.view.image
 
 data class DescriptionImageComponent(
     val type: String,
