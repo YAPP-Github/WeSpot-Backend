@@ -2,8 +2,8 @@ package com.wespot.common.service.view
 
 import com.wespot.common.dto.UpdatedModalComponentResponse
 import com.wespot.common.`in`.UpdatedFeatureUseCase
-import com.wespot.common.view.update.UpdatedModalComponent
 import com.wespot.notification.PublishNotificationType
+import com.wespot.view.update.UpdatedModalComponent
 import org.springframework.stereotype.Service
 
 @Service

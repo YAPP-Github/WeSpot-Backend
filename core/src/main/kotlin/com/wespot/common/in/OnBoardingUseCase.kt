@@ -1,7 +1,7 @@
 package com.wespot.common.`in`
 
 import com.wespot.common.dto.OnBoardingComponentRequest
-import com.wespot.common.dto.view.OnBoardingResponse
+import com.wespot.common.dto.OnBoardingResponse
 
 interface OnBoardingUseCase {
 
