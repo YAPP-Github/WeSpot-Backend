@@ -12,7 +12,7 @@ data class ChipComponent(
 
         const val TYPE = "chipComponent"
 
-        fun from(
+        fun of(
             richText: RichText,
             paddings: Paddings,
             borderColor: String,

@@ -7,4 +7,11 @@ enum class Align(val value: String) {
     END("End")
     ;
 
+    companion object {
+        fun from(align: String): Align {
+            return entries
+                .first { it.value == align }
+        }
+    }
+
 }

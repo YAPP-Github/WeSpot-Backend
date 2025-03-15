@@ -2,8 +2,8 @@ package com.wespot.common.service.view
 
 import com.wespot.common.dto.UpdatedModalComponentResponse
 import com.wespot.common.`in`.UpdatedFeatureUseCase
-import com.wespot.view.update.UpdatedModalComponent
 import com.wespot.notification.PublishNotificationType
+import com.wespot.view.update.UpdatedModalComponent
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,7 +11,7 @@ class UpdatedFeatureService : UpdatedFeatureUseCase {
 
     override fun getUpdatedFeatureScreen(publishNotificationType: PublishNotificationType): UpdatedModalComponentResponse {
         val updateModalComponent =
-            com.wespot.view.update.UpdatedModalComponent.fromWithNotificationType(publishNotificationType.updatedUserNotificationType)
+            UpdatedModalComponent.fromWithNotificationType(publishNotificationType.updatedUserNotificationType)
 
         return UpdatedModalComponentResponse.from(updateModalComponent)
     }

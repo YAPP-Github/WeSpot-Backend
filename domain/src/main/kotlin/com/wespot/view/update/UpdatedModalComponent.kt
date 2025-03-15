@@ -2,64 +2,45 @@ package com.wespot.view.update
 
 import com.wespot.common.NotificationTypeToUpdateFeatureContent
 import com.wespot.view.button.link.DeepLink
-import com.wespot.common.view.*
 import com.wespot.notification.NotificationType
+import com.wespot.view.TopBarComponent
+import com.wespot.view.button.ButtonsComponent
+import com.wespot.view.image.ImageComponent
+import com.wespot.view.text.ChipComponent
+import com.wespot.view.text.TextComponent
 
 data class UpdatedModalComponent(
     val type: String,
     val topBarComponent: TopBarComponent,
-    val titleComponent: TitleComponent,
-    val subTitleComponent: SubTitleComponent,
-    val imageComponent: ImageComponent,
+    val firstTextComponent: TextComponent,
+    val secondTextComponent: TextComponent,
+    val firstImageComponent: ImageComponent,
     val chipComponent: ChipComponent,
-    val descriptionComponent: DescriptionComponent,
-    val descriptionImageComponent: DescriptionImageComponent,
-    val buttonListComponent: ButtonListComponent
+    val thirdTextComponent: TextComponent,
+    val secondImageComponent: ImageComponent,
+    val buttonsComponent: ButtonsComponent
 ) {
 
     companion object {
 
         private const val TYPE = "updateOverviewModal"
 
-        fun fromWithNotificationType(notificationType: NotificationType): com.wespot.view.update.UpdatedModalComponent {
+        fun fromWithNotificationType(notificationType: NotificationType): UpdatedModalComponent {
             val notificationTypeToUpdateFeatureContent =
                 NotificationTypeToUpdateFeatureContent.fromWithNotificationType(notificationType)
 
-            return com.wespot.view.update.UpdatedModalComponent(
-                type = com.wespot.view.update.UpdatedModalComponent.Companion.TYPE,
-                topBarComponent = TopBarComponent.from(notificationTypeToUpdateFeatureContent.topBarComponentText),
-                titleComponent = TitleComponent.from(notificationTypeToUpdateFeatureContent.titleComponentText),
-                subTitleComponent = SubTitleComponent.from(notificationTypeToUpdateFeatureContent.subTitleComponentText),
-                imageComponent = ImageComponent.of(
-                    notificationTypeToUpdateFeatureContent.imageComponentURL,
-                    notificationTypeToUpdateFeatureContent.imageComponentWidth,
-                    notificationTypeToUpdateFeatureContent.imageComponentHeight
-                ),
-                chipComponent = ChipComponent.from(notificationTypeToUpdateFeatureContent.chipComponentText),
-                descriptionComponent = DescriptionComponent.from(
-                    notificationTypeToUpdateFeatureContent.descriptionComponentText
-                ),
-                descriptionImageComponent = DescriptionImageComponent.of(
-                    notificationTypeToUpdateFeatureContent.descriptionImageComponentURL,
-                    notificationTypeToUpdateFeatureContent.descriptionImageComponentWidth,
-                    notificationTypeToUpdateFeatureContent.descriptionImageComponentHeight
-                ),
-                ButtonListComponent.from(
-                    notificationTypeToUpdateFeatureContent.buttonComponentProperties
-                        .map {
-                            InnerButtonComponent.of(
-                                it[0] as String,
-                                it[1] as String,
-                                it[2] as String,
-                                it[3] as String,
-                                it[4] as OnClickActionType,
-                                it[5] as DeepLink
-                            )
-                        }
-                        .toList()
-                )
+            return UpdatedModalComponent(
+                type = TYPE,
+                topBarComponent = notificationTypeToUpdateFeatureContent.topBarComponent,
+                firstTextComponent = notificationTypeToUpdateFeatureContent.textComponents[0],
+                secondTextComponent = notificationTypeToUpdateFeatureContent.textComponents[1],
+                firstImageComponent = notificationTypeToUpdateFeatureContent.imageComponents[0],
+                chipComponent = notificationTypeToUpdateFeatureContent.chipComponent,
+                thirdTextComponent = notificationTypeToUpdateFeatureContent.textComponents[2],
+                secondImageComponent = notificationTypeToUpdateFeatureContent.imageComponents[1],
+                buttonsComponent = notificationTypeToUpdateFeatureContent.buttonsComponent
             )
         }
-
     }
+
 }

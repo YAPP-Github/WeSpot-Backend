@@ -12,7 +12,7 @@ data class TopBarComponent(
 
         const val TYPE = "topBarComponent"
 
-        fun from(richText: RichText, icons: List<Icon>): TopBarComponent {
+        fun of(richText: RichText, icons: List<Icon>): TopBarComponent {
             return TopBarComponent(
                 TYPE,
                 TopBarContent.of(richText, icons)

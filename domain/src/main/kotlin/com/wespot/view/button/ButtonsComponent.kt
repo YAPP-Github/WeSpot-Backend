@@ -2,7 +2,7 @@ package com.wespot.view.button
 
 import com.wespot.view.padding.Paddings
 
-data class ButtonListComponent(
+data class ButtonsComponent(
     val type: String,
     val content: ButtonsContent,
 ) {
@@ -11,8 +11,8 @@ data class ButtonListComponent(
 
         const val TYPE = "buttonsComponent"
 
-        fun from(buttons: List<ButtonComponent>, paddings: Paddings): ButtonListComponent {
-            return ButtonListComponent(
+        fun of(buttons: List<ButtonComponent>, paddings: Paddings): ButtonsComponent {
+            return ButtonsComponent(
                 TYPE,
                 ButtonsContent.of(buttons, paddings)
             )

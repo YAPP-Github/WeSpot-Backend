@@ -10,4 +10,16 @@ data class RichText(
     val fontWeight: String
 ) {
 
+    companion object {
+        fun of(
+            text: String,
+            color: String,
+            fontSize: Int,
+            align: String,
+            fontWeight: String
+        ): RichText {
+            return RichText(text, StringColor.from(color), fontSize, Align.from(align), fontWeight)
+        }
+    }
+
 }
