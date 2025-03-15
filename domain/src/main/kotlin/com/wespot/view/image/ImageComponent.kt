@@ -4,7 +4,7 @@ import com.wespot.view.padding.Paddings
 
 data class ImageComponent(
     val type: String,
-    val imageContent: ImageContent,
+    val content: ImageContent,
 ) {
 
     companion object {

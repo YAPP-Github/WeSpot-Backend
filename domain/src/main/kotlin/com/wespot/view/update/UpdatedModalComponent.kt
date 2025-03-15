@@ -1,7 +1,6 @@
 package com.wespot.view.update
 
 import com.wespot.common.NotificationTypeToUpdateFeatureContent
-import com.wespot.view.button.link.DeepLink
 import com.wespot.notification.NotificationType
 import com.wespot.view.TopBarComponent
 import com.wespot.view.button.ButtonsComponent

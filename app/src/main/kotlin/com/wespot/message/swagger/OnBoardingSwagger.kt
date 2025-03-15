@@ -1,7 +1,7 @@
 package com.wespot.message.swagger
 
 import com.wespot.common.dto.OnBoardingComponentRequest
-import com.wespot.common.dto.view.OnBoardingResponse
+import com.wespot.common.dto.OnBoardingResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

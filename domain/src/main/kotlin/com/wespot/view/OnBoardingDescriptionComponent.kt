@@ -1,6 +1,7 @@
 package com.wespot.view
 
 import com.wespot.view.button.ButtonComponent
+import com.wespot.view.text.RichText
 import com.wespot.view.text.TextLinesComponent
 
 data class OnBoardingDescriptionComponent(
@@ -30,7 +31,12 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.of("이해했어요")
+                buttonComponent = ButtonComponent.of(
+                    RichText.of("이해했어요", "#FFFFFFFF", 16, "Center", "bold"),
+                    "#FFFFFFFF",
+                    "#FFFFFFFF"
+                )
+//                buttonComponent = ButtonComponent.of("이해했어요")
             )
         }
 
@@ -53,7 +59,11 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.of("이해했어요")
+                buttonComponent = ButtonComponent.of(
+                    RichText.of("이해했어요", "#FFFFFFFF", 16, "Center", "bold"),
+                    "#FFFFFFFF",
+                    "#FFFFFFFF"
+                )
             )
         }
 

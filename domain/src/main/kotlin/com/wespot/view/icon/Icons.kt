@@ -1,7 +1,7 @@
 package com.wespot.view.icon
 
 data class Icons(
-    val icon: List<Icon>
+    val values: List<Icon>
 ) {
 
     companion object {

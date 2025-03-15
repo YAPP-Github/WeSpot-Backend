@@ -1,7 +1,7 @@
 package com.wespot.common.onboarding
 
 import com.wespot.common.dto.OnBoardingComponentRequest
-import com.wespot.common.dto.view.OnBoardingResponse
+import com.wespot.common.dto.OnBoardingResponse
 import com.wespot.common.`in`.OnBoardingUseCase
 import com.wespot.message.swagger.OnBoardingSwagger
 import org.springframework.http.ResponseEntity
