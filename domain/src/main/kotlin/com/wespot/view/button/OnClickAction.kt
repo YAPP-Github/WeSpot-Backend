@@ -19,6 +19,10 @@ data class OnClickAction(
             )
         }
 
+        fun fromWithType(type: String): OnClickAction {
+            return OnClickAction(type, DeepLink.NONE)
+        }
+
     }
 
 }
