@@ -1,10 +1,10 @@
 package com.wespot.common
 
-import com.wespot.view.button.link.DeepLink
-import com.wespot.common.view.OnClickActionType
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.notification.NotificationType
+import com.wespot.view.button.OnClickActionType
+import com.wespot.view.button.link.DeepLink
 import org.springframework.http.HttpStatus
 
 enum class NotificationTypeToUpdateFeatureContent(
