@@ -1,22 +1,21 @@
 package com.wespot.view.image
 
+import com.wespot.view.padding.Paddings
+
 data class ImageComponent(
     val type: String,
-    val url: String,
-    val width: Int,
-    val height: Int,
+    val imageContent: ImageContent,
 ) {
 
     companion object {
 
         private const val TYPE = "imageComponent"
 
-        fun of(url: String, width: Int, height: Int): ImageComponent {
-            return ImageComponent(TYPE, url, width, height)
-        }
-
-        fun fromSameSizeAsParentComponent(url: String): ImageComponent {
-            return ImageComponent(TYPE, url, 0, 0)
+        fun of(url: String, width: Int, height: Int, paddings: Paddings): ImageComponent {
+            return ImageComponent(
+                TYPE,
+                ImageContent.of(url, width, height, paddings)
+            )
         }
 
     }

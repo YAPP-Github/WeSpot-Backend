@@ -1,29 +1,42 @@
 package com.wespot.view.button
 
 import com.wespot.view.button.link.DeepLink
+import com.wespot.view.color.StringColor
+import com.wespot.view.text.RichText
 
 data class ButtonComponent(
-    val type: String,
-    val text: String,
-    val link: String = "",
+    val richText: RichText,
+    val buttonColor: StringColor,
+    val pressColor: StringColor,
+    val onClickAction: OnClickAction
 ) {
 
     companion object {
 
-        private const val TYPE = "buttonComponent"
-
-        fun from(text: String): ButtonComponent {
+        fun of(
+            richText: RichText,
+            buttonColor: String,
+            pressColor: String,
+        ): ButtonComponent {
             return ButtonComponent(
-                TYPE,
-                text
+                richText,
+                StringColor.from(buttonColor),
+                StringColor.from(pressColor),
+                OnClickAction.fromWithType("BackNavigation")
             )
         }
 
-        fun ofWithDeepLink(text: String, deepLink: DeepLink): ButtonComponent {
+        fun ofWithDeepLink(
+            richText: RichText,
+            buttonColor: String,
+            pressColor: String,
+            deepLink: DeepLink
+        ): ButtonComponent {
             return ButtonComponent(
-                TYPE,
-                text,
-                deepLink.deepLinkURL
+                richText,
+                StringColor.from(buttonColor),
+                StringColor.from(pressColor),
+                OnClickAction.of(deepLink)
             )
         }
 

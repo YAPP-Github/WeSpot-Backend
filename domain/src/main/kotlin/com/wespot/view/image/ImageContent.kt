@@ -8,4 +8,16 @@ data class ImageContent(
     val height: Int,
     val paddings: Paddings
 ) {
+
+    companion object {
+        fun of(url: String, width: Int, height: Int, paddings: Paddings): ImageContent {
+            return ImageContent(
+                url,
+                width,
+                height,
+                paddings
+            )
+        }
+    }
+
 }

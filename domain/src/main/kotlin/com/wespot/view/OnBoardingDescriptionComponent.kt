@@ -30,7 +30,7 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.from("이해했어요")
+                buttonComponent = ButtonComponent.of("이해했어요")
             )
         }
 
@@ -53,7 +53,7 @@ data class OnBoardingDescriptionComponent(
                         ),
                     )
                 ),
-                buttonComponent = ButtonComponent.from("이해했어요")
+                buttonComponent = ButtonComponent.of("이해했어요")
             )
         }
 

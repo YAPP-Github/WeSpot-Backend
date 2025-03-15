@@ -9,12 +9,21 @@ data class OnClickAction(
 
     companion object {
 
+        private const val DEEP_LINK_TYPE = "deepLinkNavigation"
+
         fun of(onClickActionType: OnClickActionType, deepLink: DeepLink): OnClickAction {
             if (onClickActionType == OnClickActionType.NONE) {
                 return OnClickAction(onClickActionType.type, DeepLink.NONE)
             }
             return OnClickAction(
                 onClickActionType.type,
+                deepLink
+            )
+        }
+
+        fun of(deepLink: DeepLink): OnClickAction {
+            return OnClickAction(
+                DEEP_LINK_TYPE,
                 deepLink
             )
         }
