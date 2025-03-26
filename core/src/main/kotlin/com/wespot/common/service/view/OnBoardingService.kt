@@ -16,10 +16,13 @@ class OnBoardingService(
     private val viewedOnBoardingSheetPort: ViewedOnBoardingSheetPort,
 ) : OnBoardingUseCase {
 
-    override fun getOnBoardingComponents(category: OnBoardingComponentRequest): OnBoardingResponse {
+    override fun getOnBoardingComponents(category: OnBoardingComponentRequest): List<OnBoardingResponse> {
         val onBoardingBottomSheetComponent = OnBoardingBottomSheetComponent.fromWithCategory(category.name)
 
-        return OnBoardingResponse.from(onBoardingBottomSheetComponent)
+        return listOf(
+            OnBoardingResponse.fromFirstPage(onBoardingBottomSheetComponent),
+            OnBoardingResponse.fromSecondpage(onBoardingBottomSheetComponent)
+        )
     }
 
     @Transactional

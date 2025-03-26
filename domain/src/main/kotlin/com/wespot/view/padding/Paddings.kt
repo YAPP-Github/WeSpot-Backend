@@ -7,7 +7,7 @@ data class Paddings(
 ) {
 
     companion object {
-        fun of(start: Int?, end: Int?, bottom: Int?): Paddings {
+        fun of(start: Int?, end: Int?, bottom: Int?, top: Int?): Paddings {
             return Paddings(start, end, bottom)
         }
     }

@@ -17,7 +17,7 @@ class OnBoardingController(
 ) : OnBoardingSwagger {
 
     @GetMapping
-    override fun getOnBoardingComponents(category: OnBoardingComponentRequest): ResponseEntity<OnBoardingResponse> {
+    override fun getOnBoardingComponents(category: OnBoardingComponentRequest): ResponseEntity<List<OnBoardingResponse>> {
         val response = onBoardingUseCase.getOnBoardingComponents(category)
 
         return ResponseEntity.ok(response)

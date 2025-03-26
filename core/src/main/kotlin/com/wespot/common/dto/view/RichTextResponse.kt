@@ -9,7 +9,7 @@ data class RichTextResponse(
     val color: String,
     val fontSize: Int,
     val align: String,
-    val fontWeight: String
+    val fontWeight: String?
 ) {
 
     companion object {
