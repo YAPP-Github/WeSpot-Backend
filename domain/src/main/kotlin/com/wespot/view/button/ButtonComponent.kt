@@ -26,6 +26,20 @@ data class ButtonComponent(
             )
         }
 
+        fun ofWithClickActionType(
+            richText: RichText,
+            buttonColor: String,
+            pressColor: String,
+            onClickActionType: OnClickActionType
+        ): ButtonComponent {
+            return ButtonComponent(
+                richText,
+                StringColor.from(buttonColor),
+                StringColor.from(pressColor),
+                OnClickAction.fromWithType(onClickActionType)
+            )
+        }
+
         fun ofWithDeepLink(
             richText: RichText,
             buttonColor: String,

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 interface OnBoardingSwagger {
 
     @Operation(summary = "온보딩 시트를 받는 서버드리븐 API 입니다.")
-    fun getOnBoardingComponents(category: OnBoardingComponentRequest): ResponseEntity<OnBoardingResponse>
+    fun getOnBoardingComponents(category: OnBoardingComponentRequest): ResponseEntity<List<OnBoardingResponse>>
 
     @Operation(summary = "유저가 쪽지 혹은 투표 온보딩 시트를 조회함을 저장하는 API 입니다.")
     fun viewedOnBoardingSheetBy(category: OnBoardingComponentRequest): ResponseEntity<Unit>

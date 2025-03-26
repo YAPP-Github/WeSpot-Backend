@@ -7,7 +7,7 @@ data class RichText(
     val color: StringColor,
     val fontSize: Int,
     val align: Align,
-    val fontWeight: String
+    val fontWeight: String?
 ) {
 
     companion object {
@@ -16,7 +16,7 @@ data class RichText(
             color: String,
             fontSize: Int,
             align: String,
-            fontWeight: String
+            fontWeight: String?
         ): RichText {
             return RichText(text, StringColor.from(color), fontSize, Align.from(align), fontWeight)
         }

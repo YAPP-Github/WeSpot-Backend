@@ -6,6 +6,7 @@ enum class OnClickActionType(
 
     DEEP_LINK("deepLinkNavigation"),
     NONE(""),
+    ACTION("action"),
     ;
 
 }

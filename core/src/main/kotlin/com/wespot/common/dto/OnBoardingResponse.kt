@@ -1,161 +1,92 @@
 package com.wespot.common.dto
 
+import com.wespot.common.dto.view.ButtonsComponentResponse
+import com.wespot.common.dto.view.ImageComponentResponse
+import com.wespot.common.dto.view.TextComponentResponse
+import com.wespot.common.dto.view.TextListComponentResponse
 import com.wespot.view.OnBoardingBottomSheetComponent
 
 data class OnBoardingResponse(
     val id: Long,
     val name: String,
-//    val data: List<MessageOnBoardingPageResponse>
+    val data: List<Any>
 ) {
 
     companion object {
 
-        fun from(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+        fun fromFirstPage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
             return OnBoardingResponse(
                 id = 1,
                 name = onBoardingBottomSheetComponent.name,
-//                onBoardingBottomSheetComponent.data.map { MessageOnBoardingPageResponse.from(it) }
+                data = listOf(
+                    ContentSectionResponse.from(
+                        TextComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.textComponent),
+                        ImageComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.imageComponent)
+                    ),
+                    BottomSectionResponse.from(
+                        ButtonsComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.buttonsComponent)
+                    ),
+                )
+            )
+        }
+
+        fun fromSecondpage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+            return OnBoardingResponse(
+                id = 2,
+                name = onBoardingBottomSheetComponent.name,
+                data = listOf(
+                    ContentSectionResponse.from(
+                        TextComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.textComponent),
+                        TextListComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.textListComponent)
+                    ),
+                    BottomSectionResponse.from(
+                        ButtonsComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.buttonsComponent)
+                    )
+                )
             )
         }
 
     }
 
-//    data class MessageOnBoardingPageResponse(
-//        val page: Int,
-//        val data: List<Any>
-//    ) {
-//
-//        data class TitleComponentResponse(
-//            val type: String,
-//            val text: String
-//        ) {
-//
-//            companion object {
-//
-//                fun from(titleComponent: TitleComponent): TitleComponentResponse {
-//                    return TitleComponentResponse(titleComponent.type, titleComponent.text)
-//                }
-//
-//            }
-//
-//        }
-//
-//        data class ButtonComponentResponse(
-//            val type: String,
-//            val text: String
-//        ) {
-//
-//            companion object {
-//
-//                fun from(buttonComponent: ButtonComponent): ButtonComponentResponse {
-//                    return ButtonComponentResponse(buttonComponent.type, buttonComponent.text)
-//                }
-//
-//            }
-//
-//        }
-//
-//        data class ImageComponentResponse(
-//            val type: String,
-//            val url: String,
-//            val width: Int,
-//            val height: Int
-//        ) {
-//
-//            companion object {
-//
-//                fun from(imageComponent: ImageComponent): ImageComponentResponse {
-//                    return ImageComponentResponse(
-//                        imageComponent.type,
-//                        imageComponent.url,
-//                        imageComponent.width,
-//                        imageComponent.height
-//                    )
-//                }
-//
-//            }
-//        }
-//
-//        data class TextLinesComponentResponse(
-//            val type: String,
-//            val textList: List<TextLineComponentResponse>
-//        ) {
-//
-//            companion object {
-//
-//                fun from(textLinesComponent: TextLinesComponent): TextLinesComponentResponse {
-//                    return TextLinesComponentResponse(
-//                        textLinesComponent.type,
-//                        textLinesComponent.textLines.map { TextLineComponentResponse.of(it) }
-//                    )
-//                }
-//
-//            }
-//
-//        }
-//
-//        data class TextLineComponentResponse(
-//            val icon: String,
-//            val text: String
-//        ) {
-//            companion object {
-//
-//                fun of(textLineComponent: TextLineComponent): TextLineComponentResponse {
-//                    return TextLineComponentResponse(textLineComponent.icon, textLineComponent.text)
-//                }
-//
-//            }
-//        }
-//
-//        companion object {
-//            fun fromWithImageComponent(
-//                page: Int,
-//                data: OnBoardingImageComponent
-//            ): MessageOnBoardingPageResponse {
-//                return MessageOnBoardingPageResponse(
-//                    page = page,
-//                    data = listOf(
-//                        TitleComponentResponse.from(data.titleComponent),
-//                        ImageComponentResponse.from(data.imageComponent),
-//                        ButtonComponentResponse.from(data.buttonComponent)
-//                    )
-//                )
-//            }
-//
-//            fun fromWithDescriptionComponent(
-//                page: Int,
-//                data: com.wespot.view.OnBoardingDescriptionComponent
-//            ): MessageOnBoardingPageResponse {
-//                return MessageOnBoardingPageResponse(
-//                    page = page,
-//                    data = listOf(
-//                        TitleComponentResponse.from(data.titleComponent),
-//                        TextLinesComponentResponse.from(data.textLinesComponent),
-//                        ButtonComponentResponse.from(data.buttonComponent)
-//                    )
-//                )
-//            }
-//        }
-//
-//    }
-//
-//    companion object {
-//        fun from(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
-//            return OnBoardingResponse(
-//                id = 1,
-//                name = onBoardingBottomSheetComponent.name,
-//                data = listOf(
-//                    MessageOnBoardingPageResponse.fromWithImageComponent(
-//                        page = 1,
-//                        data = onBoardingBottomSheetComponent.onBoardingImageComponent
-//                    ),
-//                    MessageOnBoardingPageResponse.fromWithDescriptionComponent(
-//                        page = 2,
-//                        data = onBoardingBottomSheetComponent.onBoardingDescriptionComponent
-//                    )
-//                )
-//            )
-//        }
-//    }
+    data class ContentSectionResponse(
+        val type: String,
+        val components: List<Any>
+    ) {
+
+        companion object {
+
+            private const val TYPE = "contentSection"
+
+            fun from(vararg components: Any): BottomSectionResponse {
+                return BottomSectionResponse(
+                    TYPE,
+                    components.asList()
+                )
+            }
+
+        }
+
+    }
+
+    data class BottomSectionResponse(
+        val type: String,
+        val components: List<Any>
+    ) {
+
+        companion object {
+
+            private const val TYPE = "bottomSection"
+
+            fun from(vararg components: Any): BottomSectionResponse {
+                return BottomSectionResponse(
+                    TYPE,
+                    components.asList()
+                )
+            }
+
+        }
+
+    }
+
 
 }

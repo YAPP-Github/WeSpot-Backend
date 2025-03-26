@@ -34,15 +34,15 @@ enum class NotificationTypeToUpdateFeatureContent(
         listOf(
             TextComponent.of(
                 RichText.of("이제 원하는 사진으로\\n프로필을 설정할 수 있어요", "#FFF7F7F8", 20, "Start", "Bold"),
-                Paddings.of(30, 30, 8)
+                Paddings.of(30, 30, 8, null)
             ),
             TextComponent.of(
                 RichText.of("나만의 특별한 프로필로 친구들에게 나를 소개해 보세요", "#FF76777D", 14, "Start", "Medium"),
-                Paddings.of(30, 30, 48)
+                Paddings.of(30, 30, 48, null)
             ),
             TextComponent.of(
                 RichText.of("나만의 개성을 담은 특별한 프로필은\\n반 친구들 사이에서 나를 더 잘 표현해 줄 거예요", "#FFEAEBEC", 14, "Start", "SemiBold"),
-                Paddings.of(30, 30, 50)
+                Paddings.of(30, 30, 50, null)
             ),
         ),
         listOf(
@@ -50,18 +50,18 @@ enum class NotificationTypeToUpdateFeatureContent(
                 "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
                 220,
                 268,
-                Paddings.of(null, null, 32)
+                Paddings.of(null, null, 32, null)
             ),
             ImageComponent.of(
                 "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
                 220,
                 324,
-                Paddings.of(null, null, 118)
+                Paddings.of(null, null, 118, null)
             )
         ),
         ChipComponent.of(
             RichText.of("이렇게 활용돼요", "#FFFFFFFF", 14, "Center", "SemiBold"),
-            Paddings.of(30, null, 20),
+            Paddings.of(30, null, 20, null),
             "#FF323439",
             "#FFF6FE8B"
         ),
@@ -79,7 +79,7 @@ enum class NotificationTypeToUpdateFeatureContent(
                     DeepLink.PROFILE_IMAGE_UPDATE_URL
                 )
             ),
-            Paddings.of(20, 20, 12)
+            Paddings.of(20, 20, 12, null)
         )
     )
     ;

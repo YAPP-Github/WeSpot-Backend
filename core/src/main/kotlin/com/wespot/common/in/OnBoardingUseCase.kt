@@ -5,7 +5,7 @@ import com.wespot.common.dto.OnBoardingResponse
 
 interface OnBoardingUseCase {
 
-    fun getOnBoardingComponents(category: OnBoardingComponentRequest): OnBoardingResponse
+    fun getOnBoardingComponents(category: OnBoardingComponentRequest): List<OnBoardingResponse>
 
     fun viewOnBoardingSheetBy(category: OnBoardingComponentRequest)
 

@@ -1,20 +1,20 @@
 package com.wespot.view.text
 
-class TextLinesComponent(
+class TextListComponent(
     val type: String,
-    val textLines: List<TextLineComponent>
+    val textList: List<TextLineComponent>
 ) {
 
     companion object {
 
         private const val TYPE = "textListComponent"
 
-        fun from(textLines: List<Pair<String, String>>): TextLinesComponent {
+        fun from(textLines: List<Pair<String, RichText>>): TextListComponent {
             val values: List<TextLineComponent> = textLines.stream()
                 .map { TextLineComponent.of(it.first, it.second) }
                 .toList()
 
-            return TextLinesComponent(TYPE, values)
+            return TextListComponent(TYPE, values)
         }
 
     }
