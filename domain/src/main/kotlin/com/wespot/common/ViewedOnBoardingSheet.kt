@@ -38,4 +38,14 @@ data class ViewedOnBoardingSheet(
         commited.call(this)
     }
 
+    fun isViewed(name: String): Boolean {
+        return when (name) {
+            "MESSAGE" -> isViewedMessageOnBoardingSheet
+            "VOTE" -> isViewedVoteOnBoardingSheet
+            else -> {
+                false
+            }
+        }
+    }
+
 }
