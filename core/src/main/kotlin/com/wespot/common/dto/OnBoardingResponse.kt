@@ -30,7 +30,7 @@ data class OnBoardingResponse(
             )
         }
 
-        fun fromSecondpage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+        fun fromSecondPage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
             return OnBoardingResponse(
                 id = 2,
                 name = onBoardingBottomSheetComponent.name,

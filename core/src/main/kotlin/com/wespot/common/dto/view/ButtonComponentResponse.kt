@@ -8,7 +8,8 @@ data class ButtonComponentResponse(
     val richText: RichTextResponse,
     val buttonColor: String,
     val pressColor: String,
-    val onClickAction: OnClickActionResponse
+    val onClickAction: OnClickActionResponse,
+    val paddings: PaddingsResponse?
 ) {
 
     companion object {
@@ -17,7 +18,8 @@ data class ButtonComponentResponse(
                 RichTextResponse.from(buttonComponent.richText),
                 buttonComponent.buttonColor.value,
                 buttonComponent.pressColor.value,
-                OnClickActionResponse.from(buttonComponent.onClickAction)
+                OnClickActionResponse.from(buttonComponent.onClickAction),
+                PaddingsResponse.from(buttonComponent.paddings)
             )
         }
     }
