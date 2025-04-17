@@ -33,7 +33,7 @@ data class OnBoardingWelcomePageComponent(
                             "#FFF6FE8B",
                             "#FFC0C66B",
                             OnClickActionType.ACTION,
-                            Paddings.of(top = 16, bottom = 16)
+                            Paddings.of(top = 8, bottom = 8)
                         )
                     ),
                     Paddings.of(start = 20, end = 20, bottom = 12, top = 12)
@@ -58,7 +58,7 @@ data class OnBoardingWelcomePageComponent(
                             "#FFF6FE8B",
                             "#FFC0C66B",
                             OnClickActionType.ACTION,
-                            Paddings.of(top = 16, bottom = 16)
+                            Paddings.of(top = 8, bottom = 8)
                         )
                     ),
                     Paddings.of(start = 20, end = 20, bottom = 12, top = 12)

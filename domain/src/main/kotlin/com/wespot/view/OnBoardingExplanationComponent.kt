@@ -62,7 +62,8 @@ data class OnBoardingExplanationComponent(
                             RichText.of("이해했어요", "#FF1B1C1E", 16, "Center", "SemiBold"),
                             "#FFF6FE8B",
                             "#FFC0C66B",
-                            OnClickActionType.ACTION
+                            OnClickActionType.ACTION,
+                            Paddings.of(top = 8, bottom = 8)
                         )
                     ),
                     Paddings.of(start = 20, end = 20, bottom = 12, top = 12)
@@ -116,7 +117,8 @@ data class OnBoardingExplanationComponent(
                             RichText.of("이해했어요", "#FF1B1C1E", 16, "Center", "SemiBold"),
                             "#FFF6FE8B",
                             "#FFC0C66B",
-                            OnClickActionType.ACTION
+                            OnClickActionType.ACTION,
+                            Paddings.of(top = 8, bottom = 8)
                         )
                     ),
                     Paddings.of(start = 20, end = 20, bottom = 12, top = 12)
