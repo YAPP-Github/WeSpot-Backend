@@ -4,7 +4,6 @@ import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.image.event.UpdateProfileImageEvent
-import com.wespot.user.UserIntroduction
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.util.*
@@ -44,7 +43,7 @@ data class Image(
             return savedImage(image)
         }
 
-        private fun createImage(url: String, cloudFrontUrl: String): Image {
+        fun createImage(url: String, cloudFrontUrl: String): Image {
             require(url.isNotBlank()) {
                 throw CustomException(
                     HttpStatus.BAD_REQUEST,

@@ -8,4 +8,6 @@ interface ImagePort {
 
     fun deleteByUrl(url: String)
 
+    fun deleteById(imageId: Long)
+
 }
