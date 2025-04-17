@@ -23,9 +23,9 @@ data class MessageV2(
     val isReceiverDeleted: Boolean,
     val receiverDeletedAt: LocalDateTime?,
 
-    val messageRoomId: Long,
+    val messageRoomId: Long?,
     val anonymousProfileId: Long?,
-    val messageRoomOwnerId: Long,
-    val isBookmarked: Boolean
+    val messageRoomOwnerId: Long?,
+    val isBookmarked: Boolean?
 ) {
 }
