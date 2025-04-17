@@ -59,10 +59,10 @@ class MessageJpaEntityV2(
 
     val receiverDeletedAt: LocalDateTime?,
 
-    val messageRoomId: Long,
+    val messageRoomId: Long? = 0,
     val anonymousProfileId: Long?,
-    val messageRoomOwnerId: Long,
-    val isBookmarked: Boolean
+    val messageRoomOwnerId: Long? = 0,
+    val isBookmarked: Boolean? = false
 ) {
 
 }
