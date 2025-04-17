@@ -2,8 +2,8 @@ package com.wespot.report.service
 
 import com.wespot.common.service.ServiceTest
 import com.wespot.exception.CustomException
-import com.wespot.message.MessageJpaRepository
-import com.wespot.message.MessageMapper
+import com.wespot.message.v1.MessageJpaRepository
+import com.wespot.message.v1.MessageMapper
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.report.ReportJpaRepository
 import com.wespot.report.ReportType
@@ -11,7 +11,6 @@ import com.wespot.report.dto.ReportRequest
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
-import com.wespot.user.repository.RestrictionJpaRepository
 import com.wespot.user.repository.UserJpaRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe

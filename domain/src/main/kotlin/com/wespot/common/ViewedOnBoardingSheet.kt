@@ -7,6 +7,7 @@ data class ViewedOnBoardingSheet(
     val userId: Long,
     var isViewedMessageOnBoardingSheet: Boolean,
     var isViewedVoteOnBoardingSheet: Boolean,
+    var isViewedAnswerMessageOnBoardingSheet: Boolean,
 ) {
 
     companion object {
@@ -21,7 +22,8 @@ data class ViewedOnBoardingSheet(
                 id = 0,
                 userId = userId,
                 isViewedMessageOnBoardingSheet = false,
-                isViewedVoteOnBoardingSheet = false
+                isViewedVoteOnBoardingSheet = false,
+                isViewedAnswerMessageOnBoardingSheet = false
             )
         }
     }

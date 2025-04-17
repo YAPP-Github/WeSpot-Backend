@@ -1,14 +1,14 @@
-package com.wespot.message
+package com.wespot.message.v2
 
 import com.wespot.common.BaseEntity
+import com.wespot.message.MessageType
 import jakarta.persistence.*
 import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "message")
-class MessageJpaEntity(
-
+class MessageJpaEntityV2(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
@@ -57,6 +57,12 @@ class MessageJpaEntity(
     @field: NotNull
     val isReceiverDeleted: Boolean,
 
-    val receiverDeletedAt: LocalDateTime?
+    val receiverDeletedAt: LocalDateTime?,
 
-)
+    val messageRoomId: Long,
+    val anonymousProfileId: Long?,
+    val messageRoomOwnerId: Long,
+    val isBookmarked: Boolean
+) {
+
+}

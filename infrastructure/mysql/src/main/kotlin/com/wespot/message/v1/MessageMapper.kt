@@ -1,6 +1,8 @@
-package com.wespot.message
+package com.wespot.message.v1
 
 import com.wespot.common.BaseEntity
+import com.wespot.message.Message
+import com.wespot.message.MessageContent
 
 object MessageMapper {
 

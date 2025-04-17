@@ -1,5 +1,7 @@
-package com.wespot.message
+package com.wespot.message.v1
 
+import com.wespot.message.Message
+import com.wespot.message.MessageType
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import com.wespot.message.port.out.MessagePort
