@@ -1,4 +1,4 @@
-package com.wespot.message
+package com.wespot.message.v1
 
 import com.wespot.message.port.`in`.DeleteMessageUseCase
 import org.springframework.http.ResponseEntity

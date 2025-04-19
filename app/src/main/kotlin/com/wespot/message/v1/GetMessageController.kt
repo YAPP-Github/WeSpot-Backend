@@ -1,5 +1,6 @@
-package com.wespot.message
+package com.wespot.message.v1
 
+import com.wespot.message.MessageType
 import com.wespot.message.dto.response.*
 import com.wespot.message.port.`in`.GetMessageUseCase
 import org.springframework.http.ResponseEntity
