@@ -1,7 +1,6 @@
-package com.wespot.message
+package com.wespot.message.v1
 
 import com.wespot.message.dto.request.UpdateMessageRequest
-import com.wespot.message.dto.response.UpdateMessageResponse
 import com.wespot.message.port.`in`.ModifyMessageUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

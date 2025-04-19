@@ -1,4 +1,4 @@
-package com.wespot.message
+package com.wespot.message.v1
 
 import com.wespot.message.dto.request.SendMessageRequest
 import com.wespot.message.dto.response.SendMessageResponse

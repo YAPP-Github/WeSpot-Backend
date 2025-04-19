@@ -28,49 +28,66 @@ class AnonymousProfileService(
 ) : AnonymousProfileUseCase {
 
     @Transactional
-    override fun createAnonymousProfile(createdAnonymousProfileRequest: CreatedAnonymousProfileRequest) {
+    override fun createAnonymousProfile(createdAnonymousProfileRequest: CreatedAnonymousProfileRequest): AnonymousProfile {
         val loginUser = SecurityUtils.getLoginUser(userPort)
-        val names = userPort.findAll()
-            .map { it.name }
-            .toSet()
+        val receiver = userPort.findById(createdAnonymousProfileRequest.receiverId) ?: throw CustomException(
+            HttpStatus.NOT_FOUND,
+            ExceptionView.TOAST,
+            "상대방을 찾을 수 없어 익명 프로필을 생성할 수 없습니다."
+        )
+        val users = userPort.findAll()
         val image = Image.createImage(createdAnonymousProfileRequest.imageUrl, cloudFrontUrl)
-        val profileName = ProfileName.of(createdAnonymousProfileRequest.name, names)
+        val alreadyExistsAnonymousProfileWithReceiver = anonymousProfilePort.findAllByOwnerIdAndReceiverId(
+            loginUser.id,
+            receiver.id
+        )
+        val profileName = ProfileName.of(
+            createdAnonymousProfileRequest.name,
+            users,
+            alreadyExistsAnonymousProfileWithReceiver
+        )
 
-        val anonymousProfile = AnonymousProfile.of(
+        val anonymousProfile = AnonymousProfile.createInitial(
             image = image,
             profileName = profileName,
             owner = loginUser,
-            receiverId = createdAnonymousProfileRequest.receiverId
+            receiver = receiver,
+            alreadyExistsAnonymousProfileWithReceiver = alreadyExistsAnonymousProfileWithReceiver,
         )
 
-        anonymousProfilePort.save(anonymousProfile)
+        val savedAnonymousProfile = anonymousProfilePort.save(anonymousProfile)
         EventUtils.publish(SavedImageEvent(image))
+        return savedAnonymousProfile
     }
 
     @Transactional
     override fun updateAnonymousProfile(
         profileId: Long,
         updatedAnonymousProfileRequest: UpdatedAnonymousProfileRequest
-    ) {
+    ): AnonymousProfile {
         val loginUser = SecurityUtils.getLoginUser(userPort)
-        val names = userPort.findAll()
-            .map { it.name }
-            .toSet()
-        val image = Image.createImage(updatedAnonymousProfileRequest.imageUrl, cloudFrontUrl)
-        val profileName = ProfileName.of(updatedAnonymousProfileRequest.name, names)
-
         val savedAnonymousProfile = anonymousProfilePort.findByProfileId(profileId) ?: throw CustomException(
             HttpStatus.BAD_REQUEST,
             ExceptionView.TOAST,
             "실명 프로필로를 찾을 수 없습니다."
         )
+        val users = userPort.findAll()
+        val alreadyExistsAnonymousProfileWithReceiver = anonymousProfilePort.findAllByOwnerIdAndReceiverId(
+            loginUser.id,
+            savedAnonymousProfile.receiver.id
+        )
+        val image = Image.createImage(updatedAnonymousProfileRequest.imageUrl, cloudFrontUrl)
+        val profileName =
+            ProfileName.of(updatedAnonymousProfileRequest.name, users, alreadyExistsAnonymousProfileWithReceiver)
+
 
         val updatedAnonymousProfile = savedAnonymousProfile.update(
             image, profileName, loginUser.id
         )
-        anonymousProfilePort.save(updatedAnonymousProfile)
+        val savedAnonymousProfileAfterUpdate = anonymousProfilePort.save(updatedAnonymousProfile)
 
         EventUtils.publish(SavedImageEvent(image))
         EventUtils.publish(DeletedImageEvent(savedAnonymousProfile.imageUrl))
+        return savedAnonymousProfileAfterUpdate
     }
 }
