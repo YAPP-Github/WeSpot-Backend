@@ -28,7 +28,7 @@ class AnonymousProfileService(
 ) : AnonymousProfileUseCase {
 
     @Transactional
-    override fun createAnonymousProfile(createdAnonymousProfileRequest: CreatedAnonymousProfileRequest) {
+    override fun createAnonymousProfile(createdAnonymousProfileRequest: CreatedAnonymousProfileRequest): AnonymousProfile {
         val loginUser = SecurityUtils.getLoginUser(userPort)
         val names = userPort.findAll()
             .map { it.name }
@@ -36,22 +36,23 @@ class AnonymousProfileService(
         val image = Image.createImage(createdAnonymousProfileRequest.imageUrl, cloudFrontUrl)
         val profileName = ProfileName.of(createdAnonymousProfileRequest.name, names)
 
-        val anonymousProfile = AnonymousProfile.of(
+        val anonymousProfile = AnonymousProfile.createInitial(
             image = image,
             profileName = profileName,
             owner = loginUser,
             receiverId = createdAnonymousProfileRequest.receiverId
         )
 
-        anonymousProfilePort.save(anonymousProfile)
+        val savedAnonymousProfile = anonymousProfilePort.save(anonymousProfile)
         EventUtils.publish(SavedImageEvent(image))
+        return savedAnonymousProfile
     }
 
     @Transactional
     override fun updateAnonymousProfile(
         profileId: Long,
         updatedAnonymousProfileRequest: UpdatedAnonymousProfileRequest
-    ) {
+    ): AnonymousProfile {
         val loginUser = SecurityUtils.getLoginUser(userPort)
         val names = userPort.findAll()
             .map { it.name }
@@ -68,9 +69,10 @@ class AnonymousProfileService(
         val updatedAnonymousProfile = savedAnonymousProfile.update(
             image, profileName, loginUser.id
         )
-        anonymousProfilePort.save(updatedAnonymousProfile)
+        val savedAnonymousProfileAfterUpdate = anonymousProfilePort.save(updatedAnonymousProfile)
 
         EventUtils.publish(SavedImageEvent(image))
         EventUtils.publish(DeletedImageEvent(savedAnonymousProfile.imageUrl))
+        return savedAnonymousProfileAfterUpdate;
     }
 }

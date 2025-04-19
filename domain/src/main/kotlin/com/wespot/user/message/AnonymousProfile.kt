@@ -18,7 +18,7 @@ class AnonymousProfile(
 ) {
     companion object {
 
-        fun of(
+        fun createInitial(
             image: Image,
             profileName: ProfileName,
             owner: User,
@@ -32,6 +32,26 @@ class AnonymousProfile(
                 receiverId = receiverId,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now()
+            )
+        }
+
+        fun of(
+            id: Long,
+            imageUrl: String,
+            name: String,
+            owner: User,
+            receiverId: Long,
+            createdAt: LocalDateTime,
+            updatedAt: LocalDateTime
+        ): AnonymousProfile {
+            return AnonymousProfile(
+                id = id,
+                imageUrl = imageUrl,
+                name = name,
+                owner = owner,
+                receiverId = receiverId,
+                createdAt = createdAt,
+                updatedAt = updatedAt
             )
         }
     }
