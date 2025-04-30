@@ -1,5 +1,8 @@
 package com.wespot.user.adapter
 
+import com.wespot.message.v2.MessageV2JpaRepository
+import com.wespot.school.School
+import com.wespot.school.SchoolJpaRepository
 import com.wespot.user.mapper.AnonymousProfileMapper
 import com.wespot.user.message.AnonymousProfile
 import com.wespot.user.port.out.AnonymousProfilePort
@@ -11,18 +14,24 @@ import org.springframework.stereotype.Repository
 @Repository
 class AnonymousProfilePersistenceAdapter(
     private val anonymousProfileJpaRepository: AnonymousProfileJpaRepository,
-    private val userJpaRepository: UserJpaRepository
+    private val userJpaRepository: UserJpaRepository,
+    private val schoolJpaRepository: SchoolJpaRepository
 ) : AnonymousProfilePort {
 
     override fun findByProfileId(profileId: Long): AnonymousProfile? {
         return anonymousProfileJpaRepository.findByIdOrNull(profileId)
             ?.let { anonymousProfile ->
+                val schoolMap =
+                    schoolJpaRepository.findAllByIdIn(listOf(anonymousProfile.ownerId, anonymousProfile.receiverId))
+                        .associateBy { it.id }
                 AnonymousProfileMapper.mapToDomainEntity(
                     anonymousProfile,
-                    owner = userJpaRepository.findByIdOrNull(anonymousProfile.ownerId)
+                    ownerJpaEntity = userJpaRepository.findByIdOrNull(anonymousProfile.ownerId)
                         ?: throw IllegalArgumentException("유저를 찾을 수 없습니다."),
-                    receiver = userJpaRepository.findByIdOrNull(anonymousProfile.receiverId)
-                        ?: throw IllegalArgumentException("유저를 찾을 수 없습니다.")
+                    receiverJpaEntity = userJpaRepository.findByIdOrNull(anonymousProfile.receiverId)
+                        ?: throw IllegalArgumentException("유저를 찾을 수 없습니다."),
+                    ownerSchoolJpaEntity = schoolMap[anonymousProfile.ownerId]!!,
+                    receiverSchoolJpaEntity = schoolMap[anonymousProfile.receiverId]!!
                 )
             }
     }
@@ -41,9 +50,20 @@ class AnonymousProfilePersistenceAdapter(
             ?: throw IllegalArgumentException("유저를 찾을 수 없습니다.")
         val receiver = userJpaRepository.findByIdOrNull(receiverId)
             ?: throw IllegalArgumentException("유저를 찾을 수 없습니다.")
+        val schoolMap =
+            schoolJpaRepository.findAllByIdIn(listOf(ownerId, receiverId))
+                .associateBy { it.id }
 
         return anonymousProfileJpaRepository.findAllByOwnerIdAndReceiverId(ownerId, receiverId)
-            .map { AnonymousProfileMapper.mapToDomainEntity(it, owner, receiver) }
+            .map {
+                AnonymousProfileMapper.mapToDomainEntity(
+                    anonymousProfileJpaEntity = it,
+                    ownerJpaEntity = owner,
+                    receiverJpaEntity = receiver,
+                    ownerSchoolJpaEntity = schoolMap[ownerId]!!,
+                    receiverSchoolJpaEntity = schoolMap[receiverId]!!
+                )
+            }
     }
 
 }

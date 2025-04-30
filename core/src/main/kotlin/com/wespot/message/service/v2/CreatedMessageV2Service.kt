@@ -4,7 +4,7 @@ import com.wespot.EventUtils
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
-import com.wespot.message.MessageV2
+import com.wespot.message.v2.MessageV2
 import com.wespot.message.dto.request.CreatedMessageV2Request
 import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.port.`in`.CreatedMessageV2UseCase
@@ -41,10 +41,10 @@ class CreatedMessageV2Service(
             receiver = receiver,
             anonymousProfile = anonymousProfile,
             alreadyUsedMessageOnToday = messageV2Port.countTodaySendMessages(sender.id),
-            isBlockedFromReceiver = blockedUserPort.existsByBlockerIdAndBlockedId(
-                blockerId = receiver.id,
-                blockedId = sender.id
-            )
+//            isBlockedFromReceiver = blockedUserPort.existsByBlockerIdAndBlockedId(
+//                blockerId = receiver.id,
+//                blockedId = sender.id
+//            )
         )
 
         EventUtils.publish(ReceivedMessageEvent(receiver = receiver, messageId = message.id))

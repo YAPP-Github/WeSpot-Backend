@@ -177,7 +177,7 @@ class AuthService(
         return User.create(
             email = signUpToken.email,
             password = passwordEncoder.encode(signUpToken.email + secretKey),
-            schoolId = school.id,
+            school = school,
             name = signUpRequest.name,
             grade = signUpRequest.grade,
             groupNumber = signUpRequest.classNumber,

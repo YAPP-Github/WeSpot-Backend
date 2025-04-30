@@ -95,8 +95,7 @@ class SearchUserService(
     private fun fetchCursorData(cursorId: Long): CursorSearchData {
         val cursorUser = userPort.findById(cursorId)
             ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "사용자 정보를 찾을 수 없습니다.")
-        val school = cursorUser.schoolId.let { schoolPort.findById(it) }
-            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
+        val school = cursorUser.school
 
         val cursorSchoolTypeOrder = when (school.schoolType) {
             SchoolType.MIDDLE -> 1
@@ -117,15 +116,10 @@ class SearchUserService(
     ): UserListResponse {
         val hasNext = totalCount > pageable.pageSize
         val userResponses = users.map { user ->
-            val schools = findSchool(user)
-            UserResponse.from(user, schools.name)
+            val school = user.school
+            UserResponse.from(user, school.name)
         }
         return UserListResponse.from(users = userResponses, hasNext = hasNext)
-    }
-
-    private fun findSchool(user: User): School {
-        return schoolPort.findById(user.schoolId)
-            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
     }
 
 }

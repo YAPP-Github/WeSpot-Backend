@@ -23,6 +23,8 @@ class MessageJpaEntityV2(
     val isReceiverRead: Boolean,
     val readAt: LocalDateTime?,
 
+    @field:NotNull
+    val isBlocked: Boolean,
     @field: NotNull
     val isReported: Boolean,
     @Embedded
@@ -40,12 +42,11 @@ class MessageJpaEntityV2(
     @field: NotNull
     val messageRoomOwnerId: Long,
     @field: NotNull
-    val isBookmarked: Boolean = false,
-
+    val isSenderBookmarked: Boolean = false,
     @field: NotNull
-    val isAnonymous: Boolean,
-    val anonymousProfileId: Long?,
+    val isReceiverBookmarked: Boolean = false,
 
-    ) {
+    val anonymousProfileId: Long?
+) {
 
 }

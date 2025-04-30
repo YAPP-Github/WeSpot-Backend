@@ -41,7 +41,7 @@ class GetMessageService(
         message.validateReadMessage(loginUser)
         val receiver = findUserById(message.receiverId, userPort)
         val sender = findUserById(message.senderId, userPort)
-        val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
+        val receiverSchool = findSchoolById(receiver.school.id, schoolPort)
         val isBlocked = blockedUsers.any { it.messageId == messageId }
 
         return MessageResponse.of(
@@ -58,7 +58,7 @@ class GetMessageService(
         val receiver: User = getLoginUser(userPort)
         val blockedUsers = findAllByBlockerId(receiver.id, blockedUserPort)
         val blockedMessageIds = blockedUsers.map { it.messageId }
-        val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
+        val receiverSchool = findSchoolById(receiver.school.id, schoolPort)
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
 
         val messages = messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
@@ -113,11 +113,10 @@ class GetMessageService(
         return MessageListResponse.from(
             messages = messages.map { message ->
                 val receiver = findUserById(message.receiverId, userPort)
-                val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
                 MessageResponse.of(
                     message = message,
                     receiver = receiver,
-                    school = receiverSchool,
+                    school = receiver.school,
                     isBlocked = false,
                     sender = loginUser
                 )
@@ -157,11 +156,10 @@ class GetMessageService(
 
         return MessageSimpleListResponse.from(messages = messages.map { message ->
             val receiver = findUserById(message.receiverId, userPort)
-            val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
             MessageResponse.of(
                 message = message,
                 receiver = receiver,
-                school = receiverSchool,
+                school = receiver.school,
                 isBlocked = false,
                 sender = loginUser
             )
@@ -182,7 +180,6 @@ class GetMessageService(
         val messages = blockedMessages.map { blockedUser ->
             val message = findMessageById(blockedUser.messageId, messagePort)
             val receiver = findUserById(message.receiverId, userPort)
-            val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
 
             MessageBlockedResponse.from(
                 message = message,
@@ -192,7 +189,7 @@ class GetMessageService(
                     iconUrl = BAN_PROFILE_ICON_URL
                 ),
                 receiver = receiver,
-                school = receiverSchool,
+                school = receiver.school,
                 isBlocked = true
             )
         }

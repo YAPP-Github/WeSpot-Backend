@@ -7,4 +7,6 @@ interface AnonymousProfileJpaRepository : JpaRepository<AnonymousProfileJpaEntit
 
     fun findAllByOwnerIdAndReceiverId(ownerId: Long, receiverId: Long): List<AnonymousProfileJpaEntity>
 
+    fun findByIdIn(ids: List<Long>): List<AnonymousProfileJpaEntity>
+
 }

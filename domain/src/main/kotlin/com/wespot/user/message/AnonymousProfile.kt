@@ -18,7 +18,7 @@ class AnonymousProfile(
 ) {
     companion object {
 
-        fun createInitial(
+        fun createInitial( // null 로 주면 기본 프로필로 설정 (image)
             image: Image,
             profileName: ProfileName,
             owner: User,

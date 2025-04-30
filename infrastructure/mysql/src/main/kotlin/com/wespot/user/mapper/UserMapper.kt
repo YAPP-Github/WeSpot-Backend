@@ -1,13 +1,15 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
+import com.wespot.school.SchoolJpaEntity
+import com.wespot.school.SchoolMapper
 import com.wespot.user.User
 import com.wespot.user.UserIntroduction
 import com.wespot.user.entity.UserJpaEntity
 
 object UserMapper {
 
-    fun mapToDomainEntity(userJpaEntity: UserJpaEntity): User =
+    fun mapToDomainEntity(userJpaEntity: UserJpaEntity, schoolJpaEntity: SchoolJpaEntity): User =
         User(
             id = userJpaEntity.id,
             email = userJpaEntity.email,
@@ -15,7 +17,7 @@ object UserMapper {
             name = userJpaEntity.name,
             introduction = UserIntroduction.from(userJpaEntity.introduction),
             gender = userJpaEntity.gender,
-            schoolId = userJpaEntity.schoolId,
+            school = SchoolMapper.mapToDomainEntity(schoolJpaEntity),
             grade = userJpaEntity.grade,
             classNumber = userJpaEntity.classNumber,
             role = userJpaEntity.role,
@@ -42,7 +44,7 @@ object UserMapper {
             name = user.name,
             introduction = user.introduction.introduction,
             gender = user.gender,
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber,
             role = user.role,
