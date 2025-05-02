@@ -1,6 +1,8 @@
 package com.wespot.vote.domain
 
 import com.wespot.exception.CustomException
+import com.wespot.school.School
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.RestrictionType
 import com.wespot.user.User
 import com.wespot.user.fixture.ProfileFixture
@@ -82,13 +84,17 @@ class VoteTest() : BehaviorSpec({
 
     given("투표를 할 때") {
         val voteOptions = createVoteOptionByCount(10)
+        val school = SchoolFixture.generate(id = 1)
         val voteIdentifier =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1L, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
+                LocalDate.now()
+            )
         `when`("중복된 투표를 하는 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val users = listOf(
-                UserFixture.createWithId(1),
-                UserFixture.createWithId(2)
+                UserFixture.createWithIdSchool(id = 1, school = school),
+                UserFixture.createWithIdSchool(id = 2, school = school)
             )
             vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
@@ -109,15 +115,18 @@ class VoteTest() : BehaviorSpec({
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val restrictionUser =
                 UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                    1,
-                    listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                    id = 1,
+                    school = school,
+                    restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
                 )
-            val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+            val withDrawUser = UserFixture.createWithIdSchool(id = 2, school = school)
+                .withdraw()
+                .completeWithdraw(ProfileFixture.createWithId(1))
             val shouldThrow1 = shouldThrow<CustomException> {
                 vote.addBallot(
                     1,
                     restrictionUser,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(id = 3, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -125,7 +134,7 @@ class VoteTest() : BehaviorSpec({
                 vote.addBallot(
                     1,
                     withDrawUser,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(3, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -140,14 +149,16 @@ class VoteTest() : BehaviorSpec({
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val restrictionUser =
                 UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                    1,
-                    listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                    id = 1,
+                    school = school,
+                    restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
                 )
-            val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+            val withDrawUser = UserFixture.createWithIdSchool(id = 2, school = school).withdraw()
+                .completeWithdraw(ProfileFixture.createWithId(1))
             val shouldThrow1 = shouldThrow<CustomException> {
                 vote.addBallot(
                     1,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(id = 3, school = school),
                     restrictionUser,
                     LocalDateTime.now()
                 )
@@ -155,7 +166,7 @@ class VoteTest() : BehaviorSpec({
             val shouldThrow2 = shouldThrow<CustomException> {
                 vote.addBallot(
                     1,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(id = 3, school = school),
                     withDrawUser,
                     LocalDateTime.now()
                 )
@@ -170,8 +181,8 @@ class VoteTest() : BehaviorSpec({
         `when`("중복되지 않은 투표를 하는 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val users = listOf(
-                UserFixture.createWithId(1),
-                UserFixture.createWithId(2)
+                UserFixture.createWithIdSchool(id = 1, school = school),
+                UserFixture.createWithIdSchool(id = 2, school = school)
             )
             vote.addBallot(1, users[0], users[1], LocalDateTime.now())
 
@@ -190,8 +201,8 @@ class VoteTest() : BehaviorSpec({
         `when`("오늘의 질문지가 아닌 질문지를 선택한 경우") {
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val users = listOf(
-                UserFixture.createWithId(1),
-                UserFixture.createWithId(2)
+                UserFixture.createWithIdSchool(id = 1, school = school),
+                UserFixture.createWithIdSchool(id = 2, school = school)
             )
 
             then("예외가 발생한다.") {
@@ -213,9 +224,10 @@ class VoteTest() : BehaviorSpec({
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 1L, 2L),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 2L, 3L)
         )
+        val school = SchoolFixture.generate()
         `when`("5명 이하의 학생들을") {
-            val users = createUserByCount(5)
-            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val users = createUserByCount(5, school = school)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots, school = school)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
             then("정상적으로 반환한다.") {
@@ -227,8 +239,8 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("최대 5명의 학생들을") {
-            val users = createUserByCount(8)
-            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val users = createUserByCount(8, school = school)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots, school = school)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
             val userCounts = voteUsers.map { it.id }.toSet()
@@ -241,15 +253,19 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("투표할 친구를 찾는 과정에서 탈퇴 및 제재를 당한 유저가 있다면") {
-            val users = createUserByCount(3).toMutableList()
-            users.add(UserFixture.createWithId(4).withdraw().completeWithdraw(ProfileFixture.createWithId(1)))
+            val users = createUserByCount(3, school = school).toMutableList()
+            users.add(
+                UserFixture.createWithIdSchool(id = 4, school = school).withdraw()
+                    .completeWithdraw(ProfileFixture.createWithId(1))
+            )
             users.add(
                 UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
                     5,
+                    school = school,
                     listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
                 )
             )
-            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots)
+            val vote = VoteFixture.createWithVoteNumberAndBallots(0, ballots, school = school)
             val me = users[0]
             val voteUsers = vote.findUsersForVote(users, me)
             then("제외시킨다.") {
@@ -268,8 +284,12 @@ class VoteTest() : BehaviorSpec({
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 3L, 5L, 4L),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 4L, 4L, 6L),
         )
+        val school = SchoolFixture.generate()
         val voteIdentifier =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
+                LocalDate.now()
+            )
 
         `when`("등수를 집계할 때, 존재하지 않는 유저의 통계는") {
             val users = createUserByCount(5)
@@ -278,8 +298,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -298,8 +318,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -317,8 +337,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -342,8 +362,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -370,8 +390,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -394,8 +414,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -445,8 +465,12 @@ class VoteTest() : BehaviorSpec({
             ),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 2L, 1L, 2L),
         )
+        val school = SchoolFixture.generate()
         val voteIdentifier =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
+                LocalDate.now()
+            )
 
         `when`("목록을 조회하는 경우") {
             val users = createUserByCount(5)
@@ -455,8 +479,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     it.createdAt
                 )
             }
@@ -482,8 +506,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     it.createdAt
                 )
             }
@@ -506,8 +530,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     it.createdAt
                 )
             }
@@ -564,8 +588,12 @@ class VoteTest() : BehaviorSpec({
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 3L, 1L, 5L),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1L, 1L, 2L, 1L),
         )
+        val school = SchoolFixture.generate()
         val voteIdentifier =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
+                LocalDate.now()
+            )
 
         `when`("목록을 조회하는 경우") {
             val users = createUserByCount(5)
@@ -574,8 +602,8 @@ class VoteTest() : BehaviorSpec({
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     it.createdAt
                 )
             }
@@ -601,22 +629,23 @@ class VoteTest() : BehaviorSpec({
 
     given("초기 상태의 투표함을 만들 때,") {
         val voteOptions = createVoteOptionByCount(10)
+        val school = SchoolFixture.generate()
         `when`("이전 투표가 없으면") {
-            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
             val now = LocalDate.now()
             val voteIdentifier = VoteIdentifier.of(user, now)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
 
             then("VoteNumber가 0으로 설정된다.") {
                 vote.voteIdentifier.date shouldBe voteIdentifier.date
-                vote.voteIdentifier.schoolId shouldBe user.schoolId
+                vote.voteIdentifier.schoolId shouldBe user.school.id
                 vote.voteIdentifier.grade shouldBe user.grade
                 vote.voteIdentifier.classNumber shouldBe user.classNumber
                 vote.voteNumber shouldBe 0
             }
         }
         `when`("이전 투표가 존재하면") {
-            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
             val yesterday = LocalDate.now().minusDays(1)
             val voteIdentifier = VoteIdentifier.of(user, yesterday)
             val previousVote = Vote.of(voteIdentifier, voteOptions, null)
@@ -625,7 +654,7 @@ class VoteTest() : BehaviorSpec({
 
             then("VoteNumber가 이전 투표의 VoteNumber + 1 로 설정된다.") {
                 vote.voteIdentifier.date shouldBe newVoteIdentifier.date
-                vote.voteIdentifier.schoolId shouldBe user.schoolId
+                vote.voteIdentifier.schoolId shouldBe user.school.id
                 vote.voteIdentifier.grade shouldBe user.grade
                 vote.voteIdentifier.classNumber shouldBe user.classNumber
                 vote.voteNumber shouldBe 1
@@ -633,8 +662,8 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("입력된 학급과 PreviousVote의 학급이 동일하지 않을 때") {
-            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
-            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
+            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 2)
             val now = LocalDate.now()
             val firstUserVoteIdentifier = VoteIdentifier.of(firstUser, now.minusDays(1))
             val previousVote = Vote.of(firstUserVoteIdentifier, voteOptions, null)
@@ -648,8 +677,8 @@ class VoteTest() : BehaviorSpec({
         }
 
         `when`("입력된 날짜의 어제가 previousVote의 date가 아니면") {
-            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
-            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val firstUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
+            val secondUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
             val now = LocalDate.now()
             val firstUserVoteIdentifier = VoteIdentifier.of(firstUser, now.minusDays(2))
             val previousVote = Vote.of(firstUserVoteIdentifier, voteOptions, null)
@@ -672,16 +701,17 @@ class VoteTest() : BehaviorSpec({
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 3, 1),
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 4, 2),
         )
+        val school = SchoolFixture.generate()
         `when`("참여한 인원의 수를") {
-            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
             val voteOptions = createVoteOptionByCount(5)
             val voteIdentifier = VoteIdentifier.of(user, LocalDate.now())
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             ballots.forEach {
                 vote.addBallot(
                     it.voteOptionId,
-                    UserFixture.createWithId(it.senderId),
-                    UserFixture.createWithId(it.receiverId),
+                    UserFixture.createWithIdSchool(it.senderId, school = school),
+                    UserFixture.createWithIdSchool(it.receiverId, school = school),
                     LocalDateTime.now()
                 )
             }
@@ -694,17 +724,18 @@ class VoteTest() : BehaviorSpec({
     }
 
     given("투표하고자 하는 친구를 찾을 때") {
+        val school = SchoolFixture.generate()
         `when`("입력된 친구들이 투표함의 학급에 해당하지 않는 경우") {
             val classmates = createUserByCount(5).toMutableList()
-            val otherClassmateUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val otherClassmateUser = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 2)
             val voteIdentifier = VoteIdentifier.of(classmates[0], LocalDate.now())
             val voteOptions = createVoteOptionByCount(5)
             val vote = Vote.of(voteIdentifier, voteOptions, null)
             val shouldThrow1 =
                 shouldThrow<CustomException> { vote.findUsersForVote(classmates, otherClassmateUser) }
 
-            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
-            classmates.add(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2))
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
+            classmates.add(UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 2))
             val shouldThrow2 =
                 shouldThrow<CustomException> { vote.findUsersForVote(classmates, user) }
 
@@ -716,12 +747,13 @@ class VoteTest() : BehaviorSpec({
     }
 
     given("투표에 참여한 인원이") {
+        val school = SchoolFixture.generate()
         `when`("투표함의 학급에 해당하지 않는 경우") {
-            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1)
+            val user = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1)
             val voteOptions = createVoteOptionByCount(5)
             val voteIdentifier = VoteIdentifier.of(user, LocalDate.now())
             val vote = Vote.of(voteIdentifier, voteOptions, null)
-            val otherClassmate = UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 2)
+            val otherClassmate = UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 2)
             val shouldThrow1 =
                 shouldThrow<CustomException> { vote.addBallot(1, user, otherClassmate, LocalDateTime.now()) }
             val shouldThrow2 =
@@ -743,10 +775,10 @@ private fun createVoteOptionByCount(voteOptionCount: Long): List<VoteOption> {
     return voteOptions
 }
 
-private fun createUserByCount(userCount: Long): List<User> {
+private fun createUserByCount(userCount: Long, school: School = SchoolFixture.generate(id = 1)): List<User> {
     val users = ArrayList<User>()
     for (id in 1..userCount) {
-        users.add(UserFixture.createWithId(id))
+        users.add(UserFixture.createWithIdSchool(id, school = school))
     }
     return users
 }

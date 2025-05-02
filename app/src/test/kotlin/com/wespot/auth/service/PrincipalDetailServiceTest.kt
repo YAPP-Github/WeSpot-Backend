@@ -13,7 +13,7 @@ class PrincipalDetailServiceTest: BehaviorSpec({
 
     given("principalDetailService 테스트") {
 
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
 
         `when`("유저 아이디로 유저 정보를 가져올 때") {
             every { userPort.findByEmail(user.email) } returns user

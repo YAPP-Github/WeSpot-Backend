@@ -1,5 +1,7 @@
 package com.wespot.user.adapter
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.school.SchoolJpaEntity
 import com.wespot.school.SchoolJpaRepository
 import com.wespot.user.User
@@ -10,6 +12,7 @@ import com.wespot.user.port.out.UserPort
 import com.wespot.user.repository.UserJpaRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -31,12 +34,16 @@ class UserPersistenceAdapter(
     }
 
     private fun getBySchool(it: UserJpaEntity): SchoolJpaEntity {
-        return schoolJpaRepository.findByIdOrNull(it.schoolId) ?: throw IllegalArgumentException("학교를 찾을 수 없습니다.")
+        return schoolJpaRepository.findByIdOrNull(it.schoolId) ?: throw CustomException(
+            message = "학교를 찾을 수 없습니다.",
+            view = ExceptionView.TOAST,
+            status = HttpStatus.NOT_FOUND,
+        )
     }
 
     override fun save(user: User): User {
         return userJpaRepository.save(UserMapper.mapToJpaEntity(user))
-            .let { UserMapper.mapToDomainEntity(userJpaEntity = it, schoolJpaEntity = getBySchool(it)) }
+            .let { UserMapper.mapToDomainEntity(userJpaEntity = it, school = user.school) }
     }
 
     override fun searchUsers(

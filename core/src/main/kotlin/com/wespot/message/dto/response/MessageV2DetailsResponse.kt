@@ -16,7 +16,8 @@ data class MessageV2DetailsResponse(
         val createdAt: String,
         val content: String,
         val isReceived: Boolean,
-        val isSend: Boolean
+        val isSend: Boolean,
+        val isAbleToAnswer: Boolean = false,
     ) {
 
         companion object {
@@ -26,7 +27,8 @@ data class MessageV2DetailsResponse(
                     createdAt = message.message.createdAt.toString(),
                     content = message.message.content.content,
                     isReceived = message.isReceived,
-                    isSend = message.isSend
+                    isSend = message.isSend,
+                    isAbleToAnswer = message.isAbleToAnswer,
                 )
             }
         }

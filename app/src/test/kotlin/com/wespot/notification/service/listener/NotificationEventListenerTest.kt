@@ -1,25 +1,20 @@
 package com.wespot.notification.service.listener
 
 import com.wespot.common.service.ServiceTest
-import com.wespot.message.Message
-import com.wespot.message.MessageTimeValidator
-import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.port.out.MessagePort
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.event.EndVoteEvent
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 class NotificationEventListenerTest @Autowired constructor(
@@ -27,6 +22,7 @@ class NotificationEventListenerTest @Autowired constructor(
     private val userPort: UserPort,
     private val messagePort: MessagePort,
     private val notificationPort: NotificationPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
@@ -71,12 +67,13 @@ class NotificationEventListenerTest @Autowired constructor(
     @Test
     fun `유저가 회원가입했을 때, 알림이 발생한다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val users = listOf(
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test3@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test4@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test5@KAKAO"))
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test3@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test4@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test5@KAKAO", school = school))
         )
 
         // when
@@ -96,12 +93,13 @@ class NotificationEventListenerTest @Autowired constructor(
     @Test
     fun `투표 종료가 되었을 때, 알림이 발생한다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val users = listOf(
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test3@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test4@KAKAO")),
-            userPort.save(UserFixture.createWithIdAndEmail(0, "Test5@KAKAO"))
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test3@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test4@KAKAO", school = school)),
+            userPort.save(UserFixture.createWithIdAndEmail(0, "Test5@KAKAO", school = school))
         )
 
         // when

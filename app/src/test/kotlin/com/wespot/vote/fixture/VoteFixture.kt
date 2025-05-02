@@ -1,5 +1,7 @@
 package com.wespot.vote.fixture
 
+import com.wespot.school.School
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.vote.Ballot
 import com.wespot.vote.Ballots
 import com.wespot.vote.Vote
@@ -11,15 +13,19 @@ object VoteFixture {
 
     fun create() = Vote(
         id = 0L,
-        voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
+        voteIdentifier = VoteIdentifier(1L, 1, 1, LocalDate.now()),
         voteNumber = 0,
         voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
         ballots = Ballots.from(Collections.emptyList())
     )
 
-    fun createWithVoteNumberAndBallots(voteNumber: Int, ballots: List<Ballot>) = Vote(
+    fun createWithVoteNumberAndBallots(
+        voteNumber: Int,
+        ballots: List<Ballot>,
+        school: School = SchoolFixture.generate()
+    ) = Vote(
         id = 1L,
-        voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
+        voteIdentifier = VoteIdentifier(schoolId = school.id, 1, 1, LocalDate.now()),
         voteNumber = voteNumber,
         voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
         ballots = Ballots.from(ballots)
@@ -28,7 +34,7 @@ object VoteFixture {
     fun createWithIdAndVoteNumberAndBallots(id: Long, voteNumber: Int, ballots: List<Ballot>) =
         Vote(
             id = id,
-            voteIdentifier = VoteIdentifier(1L, 1, 1,LocalDate.now()),
+            voteIdentifier = VoteIdentifier(1L, 1, 1, LocalDate.now()),
             voteNumber = voteNumber,
             voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
             ballots = Ballots.from(ballots)
@@ -42,7 +48,7 @@ object VoteFixture {
     ) =
         Vote(
             id = id,
-            voteIdentifier = VoteIdentifier(1L, 1, 1,createdAt),
+            voteIdentifier = VoteIdentifier(1L, 1, 1, createdAt),
             voteNumber = voteNumber,
             voteOptionsByVoteDate = VoteOptionsByVoteDateFixture.create(),
             ballots = Ballots.from(ballots)

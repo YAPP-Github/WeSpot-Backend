@@ -15,7 +15,7 @@ import java.time.LocalDate
 class UserTest : BehaviorSpec({
 
     given("유저에게") {
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
 
         `when`("제한을 주었을 때") {
             val originRestriction = user.restriction
@@ -49,7 +49,7 @@ class UserTest : BehaviorSpec({
     }
 
     given("유저의") {
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
         `when`("메시지 알림 설정을") {
             user.changeSettings(
                 isEnableMessageNotification = true,
@@ -77,7 +77,7 @@ class UserTest : BehaviorSpec({
     }
 
     given("유저가") {
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
         `when`("탈퇴를") {
             val withdrawUser = user.withdraw()
             then("정상적으로 진행한다.") {
@@ -87,7 +87,7 @@ class UserTest : BehaviorSpec({
     }
 
     given("유저가") {
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
         `when`("제재가 풀렸는지") {
             val initialRestriction = Restriction.createInitialState()
             val restriction = initialRestriction.addRestrict(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)
@@ -110,7 +110,7 @@ class UserTest : BehaviorSpec({
     given("소개에") {
         val badWordsIntroduction = "ㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅅㅂㅂㅂㅂㅂㅂ"
         `when`("욕설이 포함되어 있는 경우") {
-            val createUser = UserFixture.createWithId(1)
+            val createUser = UserFixture.createWithIdSchool(1)
             val shouldThrow = shouldThrow<CustomException> { createUser.updateProfile(badWordsIntroduction) }
             then("예외가 발생한다.") {
                 shouldThrow shouldHaveMessage "소개에 비속어가 포함되어 있습니다."

@@ -1,6 +1,7 @@
 package com.wespot.user.service
 
 import com.wespot.auth.service.SecurityUtils
+import com.wespot.school.SchoolMapper
 import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
@@ -8,11 +9,7 @@ import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import io.mockk.verify
+import io.mockk.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -29,15 +26,16 @@ class SearchServiceTest : BehaviorSpec({
             val keyword = "김"
             val cursorId = 0L
             val pageable = PageRequest.of(0, 10, Sort.by("id"))
+
             val users = listOf(
-                UserFixture.createUser(1L, "user1@example.com", "김갑수", 1L),
-                UserFixture.createUser(2L, "user2@example.com", "김경식", 2L),
-                UserFixture.createUser(3L, "user3@example.com", "김경수", 3L)
+                UserFixture.createUser(1L, "user1@example.com", "김갑수", SchoolFixture.generateJpaEntity(id = 1L)),
+                UserFixture.createUser(2L, "user2@example.com", "김경식", SchoolFixture.generateJpaEntity(id = 2L)),
+                UserFixture.createUser(3L, "user3@example.com", "김경수", SchoolFixture.generateJpaEntity(id = 3L))
             )
             val school1 = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
             val school2 = SchoolFixture.createSchool(2L, "부산고등학교", SchoolType.HIGH, "부산", "부산시 남구")
             val school3 = SchoolFixture.createSchool(3L, "광주고등학교", SchoolType.HIGH, "광주", "광주시 서구")
-            val loginUser = UserFixture.createWithId(1L)
+            val loginUser = UserFixture.createWithIdSchool(1L)
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
@@ -64,13 +62,14 @@ class SearchServiceTest : BehaviorSpec({
             val keyword = "경"
             val cursorId = 1L
             val pageable = PageRequest.of(0, 10, Sort.by("id"))
-            val cursorUser = UserFixture.createUser(1L, "cursor@example.com", "김갑수", 1L)
-            val school = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
+            val school = SchoolFixture.generate(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
+            val cursorUser =
+                UserFixture.createUser(1L, "cursor@example.com", "김갑수", school = SchoolMapper.mapToJpaEntity(school))
             val users = listOf(
-                UserFixture.createUser(2L, "user2@example.com", "김경식", 2L),
-                UserFixture.createUser(3L, "user3@example.com", "김경수", 3L)
+                UserFixture.createUser(2L, "user2@example.com", "김경식", SchoolFixture.generateJpaEntity(2L)),
+                UserFixture.createUser(3L, "user3@example.com", "김경수", SchoolFixture.generateJpaEntity(3L))
             )
-            val loginUser = UserFixture.createWithId(1L)
+            val loginUser = UserFixture.createWithIdSchool(1L)
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
@@ -83,7 +82,6 @@ class SearchServiceTest : BehaviorSpec({
 
             then("커서 기반의 사용자들을 반환한다") {
                 verify { userPort.findById(cursorId) }
-                verify { schoolPort.findById(1L) }
                 verify { userPort.searchUsers(keyword, "김갑수", "서울고등학교", 2, cursorId, pageable, loginUser.id) }
                 result.users.size shouldBe 2
                 result.hasNext shouldBe false
@@ -98,12 +96,13 @@ class SearchServiceTest : BehaviorSpec({
             val keyword = "경"
             val cursorId = 2L
             val pageable = PageRequest.of(0, 10, Sort.by("id"))
-            val cursorUser = UserFixture.createUser(2L, "cursor@example.com", "김경식", 2L)
-            val school = SchoolFixture.createSchool(2L, "부산고등학교", SchoolType.HIGH, "부산", "부산시 남구")
+            val school = SchoolFixture.generate(2L, "부산고등학교", SchoolType.HIGH, "부산", "부산시 남구")
+            val cursorUser =
+                UserFixture.createUser(2L, "cursor@example.com", "김경식", school = SchoolMapper.mapToJpaEntity(school))
             val users = listOf(
-                UserFixture.createUser(3L, "user3@example.com", "김경수", 3L)
+                UserFixture.createUser(3L, "user3@example.com", "김경수", SchoolFixture.generateJpaEntity(id = 3L))
             )
-            val loginUser = UserFixture.createWithId(1L)
+            val loginUser = UserFixture.createWithIdSchool(1L)
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
@@ -116,7 +115,6 @@ class SearchServiceTest : BehaviorSpec({
 
             then("다음 페이지의 사용자들을 반환한다") {
                 verify { userPort.findById(cursorId) }
-                verify { schoolPort.findById(2L) }
                 verify { userPort.searchUsers(keyword, "김경식", "부산고등학교", 2, cursorId, pageable, loginUser.id) }
                 result.users.size shouldBe 1
                 result.hasNext shouldBe false
@@ -131,16 +129,15 @@ class SearchServiceTest : BehaviorSpec({
             val keyword = "김"
             val cursorId = 0L
             val pageable = PageRequest.of(0, 10, Sort.by("id"))
+            val school1 = SchoolFixture.generate(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
+            val school2 = SchoolFixture.generate(2L, "부산고등학교", SchoolType.HIGH, "부산", "부산시 남구")
+            val school3 = SchoolFixture.generate(3L, "광주고등학교", SchoolType.HIGH, "광주", "광주시 서구")
             val users = listOf(
-                UserFixture.createUser(1L, "user1@example.com", "김경식", 1L),
-                UserFixture.createUser(2L, "user2@example.com", "김경수", 2L),
-                UserFixture.createUser(3L, "user3@example.com", "김갑수", 3L)
+                UserFixture.createUser(1L, "user1@example.com", "김경식", SchoolMapper.mapToJpaEntity(school1)),
+                UserFixture.createUser(2L, "user2@example.com", "김경수", SchoolMapper.mapToJpaEntity(school2)),
+                UserFixture.createUser(3L, "user3@example.com", "김갑수", SchoolMapper.mapToJpaEntity(school3))
             )
-
-            val school1 = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
-            val school2 = SchoolFixture.createSchool(2L, "부산고등학교", SchoolType.HIGH, "부산", "부산시 남구")
-            val school3 = SchoolFixture.createSchool(3L, "광주고등학교", SchoolType.HIGH, "광주", "광주시 서구")
-            val loginUser = UserFixture.createWithId(1L)
+            val loginUser = UserFixture.createWithIdSchool(1L)
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser

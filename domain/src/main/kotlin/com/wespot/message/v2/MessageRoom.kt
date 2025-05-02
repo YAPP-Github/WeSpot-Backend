@@ -28,7 +28,7 @@ data class MessageRoom(
                 roomMessage = roomMessage,
                 messages = MessageDetails.of(
                     viewer = viewer,
-                    messages = messages.filter { it.isContainsOf(roomMessage) }
+                    messages = listOf(roomMessage) + messages.filter { it.isContainsOf(roomMessage) }
                 )
             )
         }

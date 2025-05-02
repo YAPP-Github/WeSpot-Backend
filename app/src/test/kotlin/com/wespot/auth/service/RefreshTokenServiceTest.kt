@@ -19,7 +19,7 @@ class RefreshTokenServiceTest : BehaviorSpec({
 
     given("refreshTokenService 테스트") {
         val token = "newRefreshToken"
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
 
         val now = LocalDateTime.now()
         mockkStatic(LocalDateTime::class)

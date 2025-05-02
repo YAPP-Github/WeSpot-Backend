@@ -1,7 +1,10 @@
 package com.wespot.voteoption.fixture
 
+import com.wespot.common.BaseEntity
+import com.wespot.common.util.RandomGenerator
 import com.wespot.voteoption.VoteOption
 import com.wespot.voteoption.VoteOptionContent
+import com.wespot.voteoption.VoteOptionJpaEntity
 import java.time.LocalDateTime
 
 object VoteOptionFixture {
@@ -19,5 +22,35 @@ object VoteOptionFixture {
         createdAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
     )
+
+    fun generate(
+        id: Long = RandomGenerator.generateNonNullNumeric(5).toLong(),
+        content: String = RandomGenerator.generateNonNullString(5),
+        createdAt: LocalDateTime = LocalDateTime.now(),
+        updatedAt: LocalDateTime = LocalDateTime.now(),
+    ): VoteOption {
+        return VoteOption(
+            id = id,
+            content = VoteOptionContent.from(content),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
+    }
+
+    fun generateJpaEntity(
+        id: Long = RandomGenerator.generateNonNullNumeric(5).toLong(),
+        content: String = RandomGenerator.generateNonNullString(5),
+        createdAt: LocalDateTime = LocalDateTime.now(),
+        updatedAt: LocalDateTime = LocalDateTime.now(),
+    ): VoteOptionJpaEntity {
+        return VoteOptionJpaEntity(
+            id = id,
+            content = content,
+            baseEntity = BaseEntity(
+                createdAt = createdAt,
+                updatedAt = updatedAt,
+            ),
+        )
+    }
 
 }

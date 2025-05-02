@@ -7,6 +7,7 @@ import com.wespot.message.dto.response.*
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.school.School
+import com.wespot.school.SchoolMapper
 import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
@@ -18,7 +19,6 @@ import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.*
-import org.mockito.BDDMockito
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import java.time.Clock
@@ -47,11 +47,17 @@ class GetMessageServiceTest : BehaviorSpec({
         // 시간을 조작하여 테스트 시간 설정
         val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
         MessageTimeValidator.setClock(fixedClock)
+        school = SchoolFixture.generate(
+            id = 1,
+            name = "서울고등학교",
+            schoolType = SchoolType.HIGH,
+            address = "서울",
+            region = "서울시 강남구"
+        )
 
-        sender = UserFixture.createSender()
-        blockedSender = UserFixture.createWithId(3)
-        receiver = UserFixture.createReceiver()
-        school = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
+        sender = UserFixture.createSender(school = SchoolMapper.mapToJpaEntity(school))
+        blockedSender = UserFixture.createWithId(id = 3, schoolJpaEntity = SchoolMapper.mapToJpaEntity(school))
+        receiver = UserFixture.createReceiver(school = SchoolMapper.mapToJpaEntity(school))
         UserFixture.setSecurityContextUser(receiver)
     }
 
@@ -85,7 +91,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
 
             then("올바른 메시지를 반환해야 한다") {
@@ -113,7 +119,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
                     senderId = sender.id,
@@ -153,7 +159,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
                     senderId = sender.id,
@@ -194,7 +200,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(sender.id) } returns sender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { userPort.findByIdIn(listOf(sender.id, blockedSender.id)) } returns listOf(sender, blockedSender)
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
@@ -244,7 +250,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(sender.id) } returns sender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
             every { userPort.findByIdIn(listOf(blockedSender.id)) } returns listOf(blockedSender)
             every {
@@ -292,7 +298,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
             every { userPort.findByIdIn(listOf(sender.id)) } returns listOf(sender)
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { messagePort.countReceivedMessagesAfterCursor(any(), any(), any()) } returns 5
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(
                 BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(
@@ -360,7 +366,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { messagePort.findById(1) } returns messages[0]
 
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(

@@ -6,15 +6,17 @@ import java.time.LocalDateTime
 data class MessageDetail(
     val isReceived: Boolean,
     val isSend: Boolean,
+    val isAbleToAnswer: Boolean,
     val message: MessageV2
 ) {
 
     companion object {
 
-        fun of(viewer: User, message: MessageV2): MessageDetail {
+        fun of(viewer: User, message: MessageV2, isLatestMessage: Boolean): MessageDetail {
             return MessageDetail(
                 isReceived = message.isReceived(viewer = viewer),
                 isSend = message.isSent(viewer = viewer),
+                isAbleToAnswer = if (isLatestMessage) message.isAbleToAnswer(viewer = viewer) else false,
                 message = message
             )
         }

@@ -1,26 +1,21 @@
 package com.wespot.notification.service.listener
 
-import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
-import com.wespot.message.event.MessageLimitEvent
 import com.wespot.message.event.ReadMessageByReceiverEvent
 import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.notification.NotificationType
-import com.wespot.notification.fixtrue.NotificationFixture
 import com.wespot.notification.port.out.NotificationPort
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import jakarta.persistence.EntityManager
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.util.concurrent.TimeUnit
 
 class MessageNotificationEventListenerTest @Autowired constructor(
@@ -58,8 +53,8 @@ class MessageNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `쪽지를 받은 이에게 알림이 발송된다`() {
         // given
-        val sender = userPort.save(UserFixture.createWithId(0))
-        val receiver = userPort.save(UserFixture.createWithId(0))
+        val sender = userPort.save(UserFixture.createWithIdSchool(0))
+        val receiver = userPort.save(UserFixture.createWithIdSchool(0))
         val message = messagePort.save(MessageFixture.createWithIdAndSenderIdAndReceiverId(0, sender.id, receiver.id))
         val sendService = mockk<FirebaseNotificationService>()
 
@@ -79,8 +74,8 @@ class MessageNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `수신자가 쪽지를 읽으면 송신자에게 알림이 발송된다`() {
         // given
-        val sender = userPort.save(UserFixture.createWithId(0))
-        val receiver = userPort.save(UserFixture.createWithId(0))
+        val sender = userPort.save(UserFixture.createWithIdSchool(0))
+        val receiver = userPort.save(UserFixture.createWithIdSchool(0))
         val message = messagePort.save(MessageFixture.createWithIdAndSenderIdAndReceiverId(0, sender.id, receiver.id))
         val sendService = mockk<FirebaseNotificationService>()
 

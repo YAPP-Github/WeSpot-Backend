@@ -133,10 +133,10 @@ data class MessageV2(
 
     fun isRead(viewer: User): Boolean {
         if (viewer.isMeSender(senderId = sender.id)) {
-            return false
+            return true
         }
 
-        return readAt == null
+        return readAt != null
     }
 
     fun isMeOwnerOfMessageRoom(viewer: User): Boolean {
@@ -260,6 +260,14 @@ data class MessageV2(
         }
 
         return sender.profile.iconUrl
+    }
+
+    fun isAbleToAnswer(viewer: User): Boolean {
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return true
+        }
+
+        return false
     }
 
 

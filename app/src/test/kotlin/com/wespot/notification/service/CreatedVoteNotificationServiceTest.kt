@@ -4,25 +4,28 @@ import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.Test
 
 class CreatedVoteNotificationServiceTest @Autowired constructor(
     private val createdVoteNotificationService: CreatedVoteNotificationService,
     private val notificationPort: NotificationPort,
     private val userPort: UserPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
     fun `투표 생성 알림을 발송한다`() {
         // given
-        (1..5).map { UserFixture.createWithId(0) }.forEach { userPort.save(it) }
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        (1..5).map { UserFixture.createWithId(id = 0, schoolJpaEntity = school) }.forEach { userPort.save(it) }
         val sendService = mockk<FirebaseNotificationService>()
 
         // when

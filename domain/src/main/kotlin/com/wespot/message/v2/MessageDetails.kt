@@ -11,7 +11,13 @@ data class MessageDetails(
 
         fun of(viewer: User, messages: List<MessageV2>): MessageDetails {
             val resultOfMessage = messages.sortedBy { it.createdAt }
-                .map { MessageDetail.of(viewer = viewer, message = it) }
+                .mapIndexed { index, message ->
+                    MessageDetail.of(
+                        viewer = viewer,
+                        message = message,
+                        isLatestMessage = index == messages.lastIndex
+                    )
+                }
 
             return MessageDetails(messages = resultOfMessage)
         }

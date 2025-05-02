@@ -3,6 +3,7 @@ package com.wespot.common.util
 import org.apache.commons.lang3.RandomStringUtils
 import java.util.*
 import java.util.function.Supplier
+import kotlin.reflect.KClass
 
 object RandomGenerator {
     private val RANDOM = Random()
@@ -64,13 +65,13 @@ object RandomGenerator {
         return RANDOM.nextBoolean()
     }
 
-    fun <ENUM : Enum<*>?> generateEnum(enumClass: Class<ENUM>): ENUM? {
-        val enumConstants = enumClass.enumConstants
+    fun <ENUM : Enum<*>> generateEnum(enumClass: KClass<ENUM>): ENUM? {
+        val enumConstants = enumClass.java.enumConstants
         return generateNullAbleObject { enumConstants[RANDOM.nextInt(enumConstants.size)] }
     }
 
-    fun <ENUM : Enum<*>?> generateNonNullEnum(enumClass: Class<ENUM>): ENUM {
-        val enumConstants = enumClass.enumConstants
+    fun <ENUM : Enum<*>> generateNonNullEnum(enumClass: KClass<ENUM>): ENUM {
+        val enumConstants = enumClass.java.enumConstants
         return enumConstants[RANDOM.nextInt(enumConstants.size)]
     }
 
