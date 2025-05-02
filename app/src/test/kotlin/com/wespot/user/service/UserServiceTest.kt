@@ -1,25 +1,20 @@
 package com.wespot.user.service
 
 import com.wespot.auth.service.SecurityUtils.getLoginUser
-import com.wespot.school.School
 import com.wespot.school.fixture.SchoolFixture
+import com.wespot.school.port.out.SchoolPort
+import com.wespot.user.UserIntroduction
 import com.wespot.user.dto.response.UserResponse
+import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.ProfileBackgroundPort
 import com.wespot.user.port.out.ProfileIconPort
-import com.wespot.user.port.out.UserPort
-import com.wespot.school.port.out.SchoolPort
-import com.wespot.user.Profile
-import com.wespot.user.User
-import com.wespot.user.UserIntroduction
-import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.port.out.ProfilePort
+import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
-import org.springframework.security.core.context.SecurityContextHolder
 
 class UserServiceTest : BehaviorSpec({
     val userPort = mockk<UserPort>()
@@ -35,14 +30,10 @@ class UserServiceTest : BehaviorSpec({
         profileIconPort = profileIconPort
     )
 
-    lateinit var user: User
-    lateinit var school: School
-    lateinit var profile: Profile
-
-    beforeContainer {
-        user = spyk(UserFixture.createWithId(1))
-        school = SchoolFixture.createWithId(1)
-        profile = spyk(ProfileFixture.createWithId(1))
+    given("UserService 테스트") {
+        val school = SchoolFixture.generate(id = 1)
+        val user = UserFixture.createWithIdSchool(1, school = school)
+        val profile = ProfileFixture.createWithId(1)
 
         every { userPort.findById(user.id) } returns user
         every { userPort.save(any()) } returns user
@@ -50,17 +41,10 @@ class UserServiceTest : BehaviorSpec({
         every { schoolPort.findById(school.id) } returns school
 
         UserFixture.setSecurityContextUser(user)
-    }
-
-    afterContainer {
-        SecurityContextHolder.clearContext()
-    }
-
-    given("UserService 테스트") {
 
         `when`("me() 메서드를 호출할 때") {
             every { getLoginUser(userPort) } returns user
-            every { schoolPort.findById(user.schoolId) } returns school
+            every { schoolPort.findById(user.school.id) } returns school
 
             val userResponse = userService.me()
 
@@ -77,15 +61,6 @@ class UserServiceTest : BehaviorSpec({
             val profileRequest = UserFixture.updateProfileRequest()
 
             every { getLoginUser(userPort) } returns user
-            every { user.updateProfile(any()) } answers {
-                user.copy(
-                    introduction = profileRequest.introduction?.let { UserIntroduction.from(it) } ?: user.introduction,
-                    profile = profile.copy(
-                        backgroundColor = profileRequest.backgroundColor ?: user.profile.backgroundColor,
-                        iconUrl = profileRequest.iconUrl ?: user.profile.iconUrl
-                    )
-                )
-            }
             every { profilePort.save(any()) } returns profile
             every { userPort.save(any()) } returns user
 

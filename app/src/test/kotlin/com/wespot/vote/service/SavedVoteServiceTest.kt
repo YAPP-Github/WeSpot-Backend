@@ -3,6 +3,8 @@ package com.wespot.vote.service
 import com.wespot.common.service.ServiceTest
 import com.wespot.exception.CustomException
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -33,6 +35,7 @@ class SavedVoteServiceTest @Autowired constructor(
     private val ballotJpaRepository: BallotJpaRepository,
     private val votePort: VotePort,
     private val notificationPort: NotificationPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -43,16 +46,23 @@ class SavedVoteServiceTest @Autowired constructor(
     fun setUp() {
         voteOptions.clear()
         users.clear()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         for (i in 0 until 8) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako"))
+            val userJpaEntity = UserMapper.mapToJpaEntity(
+                UserFixture.createWithIdAndEmail(
+                    id = 0,
+                    email = "TestEmail${i}@Kakako",
+                    school = school
+                )
+            )
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
-                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
+                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(id = 0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
         val voteIdentifier =
             VoteIdentifier.of(
-                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(school.id, 1, 1),
                 LocalDate.now()
             )
         vote =
@@ -62,7 +72,10 @@ class SavedVoteServiceTest @Autowired constructor(
     @Test
     fun `투표에 지정된 질문지를 반환받는다`() {
         // given
-        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        val loginUser = UserMapper.mapToDomainEntity(
+            users[users.size - 1],
+            schoolJpaEntity = schoolJpaRepository.findById(users[users.size - 1].schoolId).get()
+        )
         UserFixture.setSecurityContextUser(loginUser)
 
         // when
@@ -86,7 +99,9 @@ class SavedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users.last().schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         val throwingCallable = { voteService.saveVote(requests) }
 
@@ -128,7 +143,9 @@ class SavedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users.last().schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         val throwingCallable = { voteService.saveVote(requests) }
 
@@ -150,7 +167,9 @@ class SavedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users.last().schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         val throwingCallable = { voteService.saveVote(requests) }
 
@@ -188,7 +207,9 @@ class SavedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users.last().schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[users.size - 1], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests)
         val notifications = notificationPort.findAll()
@@ -257,19 +278,33 @@ class SavedVoteServiceTest @Autowired constructor(
         )
 
         // when
-        var loginUser = UserMapper.mapToDomainEntity(users[users.size - 1])
+        var schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users.last().schoolId))
+        var loginUser = UserMapper.mapToDomainEntity(users[users.size - 1], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests1)
-        loginUser = UserMapper.mapToDomainEntity(users[users.size - 2])
+
+        schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[users.size - 2].schoolId))
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 2], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests2)
-        loginUser = UserMapper.mapToDomainEntity(users[users.size - 3])
+
+        schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[users.size - 3].schoolId))
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 3], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests3)
-        loginUser = UserMapper.mapToDomainEntity(users[users.size - 6])
+
+        schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[users.size - 6].schoolId))
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 6], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests4)
-        loginUser = UserMapper.mapToDomainEntity(users[users.size - 7])
+
+        schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[users.size - 7].schoolId))
+        loginUser = UserMapper.mapToDomainEntity(users[users.size - 7], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         voteService.saveVote(requests5)
         val notifications = notificationPort.findAll()

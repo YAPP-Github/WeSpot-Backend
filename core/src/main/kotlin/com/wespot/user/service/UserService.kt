@@ -30,7 +30,7 @@ class UserService(
 
     override fun me(): UserResponse {
         val loginUser = getLoginUser(userPort = userPort)
-        val school = findSchool(loginUser)
+        val school = loginUser.school
 
         return UserResponse.from(loginUser, school.name)
     }
@@ -71,8 +71,4 @@ class UserService(
         return CharacterListResponse.from(characterResponses)
     }
 
-    private fun findSchool(user: User): School {
-        return schoolPort.findById(user.schoolId)
-            ?: throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "학교 정보를 찾을 수 없습니다.")
-    }
 }

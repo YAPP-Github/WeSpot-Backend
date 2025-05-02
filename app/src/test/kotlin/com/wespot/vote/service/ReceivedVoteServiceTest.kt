@@ -3,6 +3,9 @@ package com.wespot.vote.service
 import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
 import com.wespot.exception.CustomException
+import com.wespot.school.School
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -18,6 +21,7 @@ import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +36,7 @@ class ReceivedVoteServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
+    private var schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -43,8 +48,10 @@ class ReceivedVoteServiceTest @Autowired constructor(
     fun setUp() {
         voteOptions.clear()
         users.clear()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         for (i in 0 until 10) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako"))
+            val userJpaEntity =
+                UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako", school = school))
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
@@ -52,20 +59,25 @@ class ReceivedVoteServiceTest @Autowired constructor(
         }
         val voteIdentifier2 =
             VoteIdentifier.of(
-                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
                 LocalDate.now().minusDays(1)
             )
         vote2 =
             votePort.save(Vote.of(voteIdentifier2, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
         val voteIdentifier1 =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
+                LocalDate.now()
+            )
         vote1 =
             votePort.save(Vote.of(voteIdentifier1, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, vote2))
     }
 
     @Test
     fun `본인이 받은 투표 목록을 조회한다`() {
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         val now = LocalDateTime.now()
         val plusOneMinute = now.plusMinutes(1)
@@ -150,7 +162,9 @@ class ReceivedVoteServiceTest @Autowired constructor(
     fun `본인이 받지 않은 질문지에 대해 투표를 개별 조회하게 되면 예외가 발생한다`() {
         val now = LocalDateTime.now()
         val plusOneMinute = now.plusMinutes(1)
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
@@ -205,7 +219,9 @@ class ReceivedVoteServiceTest @Autowired constructor(
     fun `본인이 받은 투표를 개별 조회한다`() {
         val now = LocalDateTime.now()
         val plusOneMinute = now.plusMinutes(1)
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
@@ -265,7 +281,9 @@ class ReceivedVoteServiceTest @Autowired constructor(
     fun `본인이 받은 투표를 개별 조회 한 뒤, 읽음 처리 된다`() {
         val now = LocalDateTime.now()
         val plusOneMinute = now.plusMinutes(1)
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(

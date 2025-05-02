@@ -11,7 +11,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 class NotificationHelperTest : ServiceTest() {
@@ -23,7 +22,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `쪽지 알림 여러개를 한번에 발송한다`() {
         // given
-        val users = (1..5).map { UserFixture.createWithId(it.toLong()) }
+        val users = (1..5).map { UserFixture.createWithIdSchool(it.toLong()) }
         users.forEach {
             it.changeSettings(
                 isEnableVoteNotification = true,
@@ -57,7 +56,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `투표 알림 여러개를 한번에 발송한다`() {
         // given
-        val users = (1..5).map { UserFixture.createWithId(it.toLong()) }
+        val users = (1..5).map { UserFixture.createWithIdSchool(it.toLong()) }
         users.forEach {
             it.changeSettings(
                 isEnableVoteNotification = true,
@@ -91,7 +90,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `쪽지 알림을 발송한다`() {
         // given
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         user.changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = true,
@@ -116,7 +115,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `투표 알림을 발송한다`() {
         // given
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         user.changeSettings(
             isEnableVoteNotification = true,
             isEnableMessageNotification = true,
@@ -141,7 +140,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `사용자가 알림 설정을 꺼놓아 단체 알림에 포함되지 않는다`() {
         // given
-        val users = (1..5).map { UserFixture.createWithId(it.toLong()) }
+        val users = (1..5).map { UserFixture.createWithIdSchool(it.toLong()) }
         val notifications = (1..5).map {
             Notification.createVoteInitialState(
                 userId = users[it - 1].id,
@@ -178,7 +177,7 @@ class NotificationHelperTest : ServiceTest() {
     @Test
     fun `사용자가 알림 설정을 꺼놓아 개별 알림에 포함되지 않는다`() {
         // given
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         val notification = Notification.createVoteInitialState(
             userId = user.id,
             title = "title",

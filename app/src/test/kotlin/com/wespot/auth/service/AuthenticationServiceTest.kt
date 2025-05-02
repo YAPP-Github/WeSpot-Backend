@@ -18,7 +18,7 @@ class AuthenticationServiceTest : BehaviorSpec({
 
     given("authenticationService 테스트") {
 
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         val token = "token"
 
         val claims = mockk<Claims>()

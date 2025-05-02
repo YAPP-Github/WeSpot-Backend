@@ -1,6 +1,7 @@
 package com.wespot.user.mapper
 
 import com.wespot.common.BaseEntity
+import com.wespot.school.SchoolJpaEntity
 import com.wespot.user.User
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.entity.message.AnonymousProfileJpaEntity
@@ -10,11 +11,20 @@ object AnonymousProfileMapper {
 
     fun mapToDomainEntity(
         anonymousProfileJpaEntity: AnonymousProfileJpaEntity,
-        owner: UserJpaEntity,
-        receiver: UserJpaEntity
+        ownerJpaEntity: UserJpaEntity,
+        ownerSchoolJpaEntity: SchoolJpaEntity,
+        receiverJpaEntity: UserJpaEntity,
+        receiverSchoolJpaEntity: SchoolJpaEntity
     ): AnonymousProfile {
-        val ownerDomainEntity = UserMapper.mapToDomainEntity(owner)
-        val receiverDomainEntity = UserMapper.mapToDomainEntity(receiver)
+        val ownerDomainEntity =
+            UserMapper.mapToDomainEntity(
+                userJpaEntity = ownerJpaEntity,
+                schoolJpaEntity = ownerSchoolJpaEntity
+            )
+        val receiverDomainEntity = UserMapper.mapToDomainEntity(
+            userJpaEntity = receiverJpaEntity,
+            schoolJpaEntity = receiverSchoolJpaEntity
+        )
 
         return AnonymousProfile(
             id = anonymousProfileJpaEntity.id,

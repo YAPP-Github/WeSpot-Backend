@@ -7,27 +7,34 @@ import org.springframework.data.repository.query.Param
 
 interface SchoolJpaRepository : JpaRepository<SchoolJpaEntity, Long> {
 
-    @Query("""
+    @Query(
+        """
         SELECT s
         FROM SchoolJpaEntity s
         WHERE s.name LIKE %:keyword%
         AND s.id > :cursorId
         ORDER BY s.id ASC
-    """)
+    """
+    )
     fun findAllByNameContainingAndIdGreaterThan(
         @Param("keyword") keyword: String,
         @Param("cursorId") cursorId: Long,
         pageable: Pageable
     ): List<SchoolJpaEntity>
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(s)
         FROM SchoolJpaEntity s
         WHERE s.name LIKE %:keyword%
         AND s.id > :cursorId
-    """)
+    """
+    )
     fun countByNameContainingAndIdGreaterThan(
         @Param("keyword") keyword: String,
         @Param("cursorId") cursorId: Long
     ): Long
+
+    fun findAllByIdIn(schoolIds: List<Long>): List<SchoolJpaEntity>
+
 }

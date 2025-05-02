@@ -4,6 +4,7 @@ import com.wespot.exception.CustomException
 import com.wespot.message.Message
 import com.wespot.message.MessageTimeValidator
 import com.wespot.message.fixture.MessageFixture
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.fixture.UserFixture
@@ -11,6 +12,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import io.kotest.property.resolution.resolve
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -66,8 +68,8 @@ class MessageTest : BehaviorSpec({
             val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     badWordsContent,
-                    UserFixture.createWithId(1),
-                    UserFixture.createWithId(2),
+                    UserFixture.createWithIdSchool(1),
+                    UserFixture.createWithIdSchool(2),
                     "senderName",
                     false
                 )
@@ -80,8 +82,8 @@ class MessageTest : BehaviorSpec({
             val shouldThrow = shouldThrow<CustomException> {
                 Message.sendMessage(
                     emptyContent,
-                    UserFixture.createWithId(1),
-                    UserFixture.createWithId(2),
+                    UserFixture.createWithIdSchool(1),
+                    UserFixture.createWithIdSchool(2),
                     "senderName",
                     false
                 )
@@ -94,12 +96,14 @@ class MessageTest : BehaviorSpec({
     }
 
     given("쪽지를 수정할 때") {
+        val school = SchoolFixture.generate()
         val restrictionUser =
             UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                1,
-                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                id = 1,
+                school = school,
+                restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
             )
-        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val withDrawUser = UserFixture.createWithIdSchool(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
         val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
         val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
         `when`("수정하는 자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
@@ -129,17 +133,19 @@ class MessageTest : BehaviorSpec({
     }
 
     given("쪽지를 보낼 때") {
+        val school = SchoolFixture.generate()
         val restrictionUser =
             UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                1,
-                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                id = 1,
+                school = school,
+                restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
             )
-        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val withDrawUser = UserFixture.createWithIdSchool(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
         `when`("송신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
             val shouldThrow1 = shouldThrow<CustomException> {
                 Message.sendMessage(
                     "hello",
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(3),
                     withDrawUser,
                     withDrawUser.name,
                     false,
@@ -148,7 +154,7 @@ class MessageTest : BehaviorSpec({
             val shouldThrow2 = shouldThrow<CustomException> {
                 Message.sendMessage(
                     "hello",
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(3),
                     restrictionUser,
                     restrictionUser.name,
                     false
@@ -166,7 +172,7 @@ class MessageTest : BehaviorSpec({
                 Message.sendMessage(
                     "hello",
                     withDrawUser,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(3),
                     "senderName",
                     false,
                 )
@@ -175,7 +181,7 @@ class MessageTest : BehaviorSpec({
                 Message.sendMessage(
                     "hello",
                     restrictionUser,
-                    UserFixture.createWithId(3),
+                    UserFixture.createWithIdSchool(3),
                     "senderName",
                     false
                 )
@@ -189,12 +195,14 @@ class MessageTest : BehaviorSpec({
     }
 
     given("받은 쪽지를 삭제할 때") {
+        val school = SchoolFixture.generate()
         val restrictionUser =
             UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                1,
-                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                id = 1,
+                school = school,
+                restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
             )
-        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val withDrawUser = UserFixture.createWithIdSchool(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
         val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
         val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
         `when`("수신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {
@@ -213,12 +221,14 @@ class MessageTest : BehaviorSpec({
     }
 
     given("보낸 쪽지를 삭제할 때") {
+        val school = SchoolFixture.generate()
         val restrictionUser =
             UserFixture.createUserWithIdAndRestrictionTypeAndRestrictDay(
-                1,
-                listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
+                id = 1,
+                school = school,
+                restrictions = listOf(Pair(RestrictionType.PERMANENT_BAN_MESSAGE_REPORT, Long.MAX_VALUE))
             )
-        val withDrawUser = UserFixture.createWithId(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
+        val withDrawUser = UserFixture.createWithIdSchool(2).withdraw().completeWithdraw(ProfileFixture.createWithId(1))
         val restrictionUserMessage = MessageFixture.createMessage("Hello", 2, 1, "senderName")
         val withDrawUserMessage = MessageFixture.createMessage("Hello", 1, 2, "senderName")
         `when`("송신자가 탈퇴 혹은 이용제재를 당한 사용자라면") {

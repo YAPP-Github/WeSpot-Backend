@@ -91,6 +91,8 @@ subprojects {
         testImplementation("org.testcontainers:testcontainers:1.19.0")
         testImplementation("org.testcontainers:junit-jupiter:1.19.0")
 
+        testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+
     }
 
     dependencyManagement {

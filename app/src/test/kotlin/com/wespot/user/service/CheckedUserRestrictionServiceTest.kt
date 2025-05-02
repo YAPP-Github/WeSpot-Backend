@@ -1,6 +1,8 @@
 package com.wespot.user.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
@@ -11,13 +13,15 @@ import kotlin.test.Test
 
 class CheckedUserRestrictionServiceTest @Autowired constructor(
     private val userPort: UserPort,
-    private val checkedUserRestrictionService: CheckedUserRestrictionService
+    private val checkedUserRestrictionService: CheckedUserRestrictionService,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
     fun `사용자가 제한을 당하지 않은 것을 확인한다`() {
         // given
-        val user = UserFixture.createWithId(0)
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user = UserFixture.createWithId(0, schoolJpaEntity = school)
         val savedUser = userPort.save(user)
         UserFixture.setSecurityContextUser(savedUser)
 
@@ -32,9 +36,11 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
     @Test
     fun `사용자가 쪽지와 투표로 인해 영구제재를 당했을 때, 쪽지에 대한 제재 상황을 반환받는다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val user =
             UserFixture.createUserWithRestrictionTypeAndRestrictDay(
-                listOf(
+                school = school,
+                restrictions = listOf(
                     Pair(
                         RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
                         Long.MAX_VALUE
@@ -59,9 +65,11 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
     @Test
     fun `사용자가 투표 영구 제재와 쪽지 이용 제재를 받았을 때, 투표로 인해 영구제재를 당한 것을 확인한다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val user =
             UserFixture.createUserWithRestrictionTypeAndRestrictDay(
-                listOf(
+                school = school,
+                restrictions = listOf(
                     Pair(
                         RestrictionType.PERMANENT_BAN_VOTE_REPORT,
                         Long.MAX_VALUE
@@ -87,9 +95,11 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
     fun `사용자가 쪽지로 인해 30일 이용제한을 당한 것을 확인한다`() {
         // given
         val now = LocalDate.now()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val user =
             UserFixture.createUserWithRestrictionTypeAndRestrictDay(
-                listOf(
+                school = school,
+                restrictions = listOf(
                     Pair(
                         RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                         30
@@ -111,9 +121,11 @@ class CheckedUserRestrictionServiceTest @Autowired constructor(
     fun `쪽지 90일 제한을 받은 사용자의 제한을 확인한다`() {
         // given
         val now = LocalDate.now()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val user =
             UserFixture.createUserWithRestrictionTypeAndRestrictDay(
-                listOf(
+                school = school,
+                restrictions = listOf(
                     Pair(
                         RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
                         90

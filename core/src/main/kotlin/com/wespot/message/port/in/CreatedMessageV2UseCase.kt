@@ -1,6 +1,6 @@
 package com.wespot.message.port.`in`
 
-import com.wespot.message.MessageV2
+import com.wespot.message.v2.MessageV2
 import com.wespot.message.dto.request.CreatedMessageV2Request
 
 interface CreatedMessageV2UseCase {

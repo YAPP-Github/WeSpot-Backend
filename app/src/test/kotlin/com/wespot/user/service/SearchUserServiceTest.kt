@@ -31,7 +31,7 @@ class SearchUserServiceTest @Autowired constructor(
                 "hell",
                 "hello1@kakao",
                 listOf(Pair(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)),
-                savedSchool.id
+                savedSchool
             )
         )
         val withDrawUser = userPort.save(
@@ -39,7 +39,7 @@ class SearchUserServiceTest @Autowired constructor(
                 0,
                 "hello2@kakao",
                 "helloo",
-                savedSchool.id,
+                savedSchool,
                 0
             ).withdraw().completeWithdraw(ProfileFixture.createWithId(0))
         )
@@ -75,7 +75,7 @@ class SearchUserServiceTest @Autowired constructor(
                 0,
                 "hello@kakao",
                 "hello",
-                savedSchool.id,
+                savedSchool,
                 0
             )
         )
@@ -84,7 +84,7 @@ class SearchUserServiceTest @Autowired constructor(
                 0,
                 "hello2@kakao",
                 "hello2",
-                savedSchool.id,
+                savedSchool,
                 0
             )
         )
@@ -93,7 +93,7 @@ class SearchUserServiceTest @Autowired constructor(
                 "hell",
                 "hello1@kakao",
                 listOf(Pair(RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT, 30)),
-                savedSchool.id
+                savedSchool
             )
         )
         val withDrawUser = userPort.save(
@@ -101,7 +101,7 @@ class SearchUserServiceTest @Autowired constructor(
                 0,
                 "hello2@kakao",
                 "helloo",
-                savedSchool.id,
+                savedSchool,
                 0
             ).withdraw().completeWithdraw(ProfileFixture.createWithId(0))
         )

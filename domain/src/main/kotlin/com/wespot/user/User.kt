@@ -2,6 +2,7 @@ package com.wespot.user
 
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.school.School
 import com.wespot.user.restriction.Restriction
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
@@ -15,7 +16,7 @@ data class User(
     val introduction: UserIntroduction,
     val gender: Gender,
     val role: Role,
-    val schoolId: Long,
+    val school: School,
     val grade: Int,
     val classNumber: Int,
     val profile: Profile,
@@ -32,6 +33,7 @@ data class User(
     val withdrawalCompleteAt: LocalDateTime?,
 ) {
 
+
     fun updateProfile(
         introduction: String,
     ) =
@@ -43,7 +45,7 @@ data class User(
             introduction = UserIntroduction.from(introduction),
             gender = gender,
             role = role,
-            schoolId = schoolId,
+            school = school,
             grade = grade,
             classNumber = classNumber,
             profile = profile,
@@ -69,7 +71,7 @@ data class User(
             introduction = introduction,
             gender = gender,
             role = role,
-            schoolId = schoolId,
+            school = school,
             grade = grade,
             classNumber = classNumber,
             profile = profile,
@@ -96,7 +98,7 @@ data class User(
             introduction = introduction,
             gender = gender,
             role = role,
-            schoolId = schoolId,
+            school = school,
             grade = grade,
             classNumber = classNumber,
             profile = profile,
@@ -125,7 +127,7 @@ data class User(
         introduction = UserIntroduction.emptyUserIntroduction(),
         gender = gender,
         role = Role.GUEST,
-        schoolId = schoolId,
+        school = school,
         grade = grade,
         classNumber = classNumber,
         profile = profile,
@@ -147,16 +149,16 @@ data class User(
         withdrawalCompleteAt = LocalDateTime.now(),
     )
 
-
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
+        private const val EVER_NAME = "에버"
 
         fun create(
             email: String,
             password: String,
             name: String,
-            schoolId: Long,
+            school: School,
             grade: Int,
             groupNumber: Int,
             social: Social,
@@ -170,7 +172,7 @@ data class User(
             introduction = UserIntroduction.fromNullable(introduction),
             gender = gender,
             role = Role.USER,
-            schoolId = schoolId,
+            school = school,
             grade = grade,
             classNumber = groupNumber,
             profile = Profile.createInit(null),
@@ -206,7 +208,7 @@ data class User(
                 introduction = user.introduction,
                 gender = user.gender,
                 role = user.role,
-                schoolId = user.schoolId,
+                school = user.school,
                 grade = user.grade,
                 classNumber = user.classNumber,
                 profile = profile ?: user.profile,
@@ -258,7 +260,7 @@ data class User(
 
     fun isClassmate(
         otherUser: User
-    ) = this.schoolId == otherUser.schoolId
+    ) = this.school.id == otherUser.school.id
         && this.grade == otherUser.grade
         && this.classNumber == otherUser.classNumber
 
@@ -285,6 +287,18 @@ data class User(
             val noContentFcm = fcm.clearFcmToken()
             saveFcm(noContentFcm)
         }
+    }
+
+    fun isMeSender(senderId: Long): Boolean {
+        return id == senderId
+    }
+
+    fun isMeReceiver(receiverId: Long): Boolean {
+        return id == receiverId
+    }
+
+    fun isEver(): Boolean {
+        return name == EVER_NAME
     }
 
 }

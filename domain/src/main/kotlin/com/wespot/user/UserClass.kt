@@ -9,7 +9,7 @@ data class UserClass(
     companion object {
 
         fun of(user: User) = UserClass(
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber
         )

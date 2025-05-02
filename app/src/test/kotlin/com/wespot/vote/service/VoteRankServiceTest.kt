@@ -2,6 +2,8 @@ package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -28,7 +30,8 @@ class VoteRankServiceTest @Autowired constructor(
     private var userJpaRepository: UserJpaRepository,
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
-    private var votePort: VotePort
+    private var votePort: VotePort,
+    private var schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -39,8 +42,10 @@ class VoteRankServiceTest @Autowired constructor(
     fun setUp() {
         voteOptions.clear()
         users.clear()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         for (i in 0 until 8) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako"))
+            val userJpaEntity =
+                UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako", school = school))
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
                 VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
@@ -48,7 +53,7 @@ class VoteRankServiceTest @Autowired constructor(
         }
         val voteIdentifier =
             VoteIdentifier.of(
-                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
                 LocalDate.now()
             )
         vote =
@@ -59,7 +64,9 @@ class VoteRankServiceTest @Autowired constructor(
     fun `투표 결과 1~5등을 조회한다`() {
         // given
         val now = LocalDateTime.now()
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
@@ -118,7 +125,9 @@ class VoteRankServiceTest @Autowired constructor(
     fun `투표 결과 1등을 조회한다`() {
         // given
         val now = LocalDateTime.now()
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity =
+            schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = users[0].schoolId))
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(
