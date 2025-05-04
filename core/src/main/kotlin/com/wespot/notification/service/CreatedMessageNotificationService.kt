@@ -1,5 +1,7 @@
 package com.wespot.notification.service
 
+import com.wespot.message.v2.MessageV2
+import com.wespot.notification.message.MessageAnswerNotificationService
 import com.wespot.notification.message.OpenMessageNotificationService
 import com.wespot.notification.message.ReadMessageByReceiverService
 import com.wespot.notification.message.ReceivedMessageNotificationService
@@ -17,6 +19,7 @@ class CreatedMessageNotificationService(
     private val openMessageNotificationService: OpenMessageNotificationService,
     private val receivedMessageNotificationService: ReceivedMessageNotificationService,
     private val readMessageByReceiverService: ReadMessageByReceiverService,
+    private val messageAnswerNotificationService: MessageAnswerNotificationService,
     private val notificationHelper: NotificationHelper
 ) : MessageNotificationUseCase {
 
@@ -43,6 +46,14 @@ class CreatedMessageNotificationService(
                 ?: return
         notificationPort.save(notification)
         notificationHelper.sendNotification(sender, notification)
+    }
+
+    @Transactional
+    override fun answerMessage(sender: User, receiver: User, message: MessageV2) {
+        val notification =
+            messageAnswerNotificationService.getNotification(sender = sender, receiver = receiver, message = message)
+        notificationPort.save(notification)
+        notificationHelper.sendNotification(receiver = receiver, notification = notification)
     }
 
 }

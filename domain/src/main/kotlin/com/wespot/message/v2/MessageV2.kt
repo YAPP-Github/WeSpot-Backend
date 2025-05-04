@@ -1,9 +1,12 @@
 package com.wespot.message.v2
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
+import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.user.User
+import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
@@ -299,6 +302,62 @@ data class MessageV2(
         }
 
         isReceiverBookmarked = !isReceiverBookmarked
+    }
+
+    fun isAbleToView(viewer: User): Boolean {
+        return viewer.isMeSender(senderId = sender.id) || viewer.isMeReceiver(receiverId = receiver.id)
+    }
+
+    fun answerMessage(viewer: User, content: MessageContent): MessageV2 {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            throw CustomException(
+                message = "받은 쪽지에 대해서만 답장할 수 있습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        val newMessage = MessageV2(
+            id = 0L,
+            content = content,
+            sender = receiver,
+            receiver = sender,
+            isReceiverRead = false,
+            readAt = null,
+
+            isBlocked = false,
+            isReported = false,
+
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+
+            isSenderDeleted = false,
+            senderDeletedAt = null,
+
+            isReceiverDeleted = false,
+            receiverDeletedAt = null,
+
+            messageRoomId = messageRoomId(),
+            messageRoomOwnerId = messageRoomOwnerId,
+
+            isSenderBookmarked = false,
+            isReceiverBookmarked = false,
+
+            anonymousProfile = anonymousProfile,
+        )
+
+        EventUtils.publish(UsedAnswerFeatureEvent(user = viewer))
+        EventUtils.publish(MessageAnswerEvent(sender = receiver, receiver = sender, message = this))
+
+        return newMessage
+    }
+
+    private fun messageRoomId(): Long? {
+        if (isRoom()) {
+            return id
+        }
+
+        return messageRoomId
     }
 
 }

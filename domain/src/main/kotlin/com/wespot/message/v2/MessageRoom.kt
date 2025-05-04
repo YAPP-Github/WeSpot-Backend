@@ -2,6 +2,7 @@ package com.wespot.message.v2
 
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.message.MessageContent
 import com.wespot.user.User
 import com.wespot.user.message.AnonymousProfile
 import org.springframework.http.HttpStatus
@@ -20,6 +21,14 @@ data class MessageRoom(
                 throw CustomException(
                     message = "쪽지 방이 아닙니다.",
                     status = HttpStatus.BAD_REQUEST,
+                    view = ExceptionView.TOAST,
+                )
+            }
+
+            if (!roomMessage.isAbleToView(viewer = viewer)) {
+                throw CustomException(
+                    message = "해당 쪽지 방을 볼 수 있는 권한이 존재하지 않습니다.",
+                    status = HttpStatus.FORBIDDEN,
                     view = ExceptionView.TOAST,
                 )
             }
@@ -112,6 +121,12 @@ data class MessageRoom(
 
     fun anonymousProfile(): AnonymousProfile? {
         return roomMessage.anonymousProfile
+    }
+
+    fun answer(sender: User, content: String): MessageV2 {
+        val validatedContent = MessageContent.from(content = content)
+
+        return messages.answer(sender = sender, content = validatedContent)
     }
 
 }
