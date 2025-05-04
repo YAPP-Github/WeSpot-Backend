@@ -285,16 +285,6 @@ data class MessageV2(
         return anonymousProfile.id == anonymousProfileId
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is MessageV2) return false
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
     fun bookmark(viewer: User) {
         if (viewer.isMeSender(senderId = sender.id)) {
             isSenderBookmarked = !isSenderBookmarked
@@ -358,6 +348,24 @@ data class MessageV2(
         }
 
         return messageRoomId
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MessageV2) return false
+        if (id != 0L && other.id != 0L) {
+            return id == other.id
+        }
+
+        return createdAt == other.createdAt && content == other.content
+    }
+
+    override fun hashCode(): Int {
+        if (id != 0L) {
+            return id.hashCode()
+        }
+
+        return 31 * createdAt.hashCode() + content.hashCode()
     }
 
 }
