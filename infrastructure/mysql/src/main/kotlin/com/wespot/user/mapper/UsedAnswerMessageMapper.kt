@@ -3,6 +3,7 @@ package com.wespot.user.mapper
 import com.wespot.common.BaseEntity
 import com.wespot.user.entity.message.UsedAnswerMessageJpaEntity
 import com.wespot.user.message.UsedAnswerMessage
+import java.time.LocalDateTime
 
 object UsedAnswerMessageMapper {
 
@@ -12,14 +13,13 @@ object UsedAnswerMessageMapper {
             userId = usedAnswerMessageJpaEntity.userId,
             isUsedAnswerMessageFeature = usedAnswerMessageJpaEntity.isUsedAnswerMessageFeature,
             createdAt = usedAnswerMessageJpaEntity.baseEntity.createdAt,
-            updatedAt = usedAnswerMessageJpaEntity.baseEntity.updatedAt
         )
 
     fun mapToJpaEntity(usedAnswerMessage: UsedAnswerMessage): UsedAnswerMessageJpaEntity = UsedAnswerMessageJpaEntity(
         id = usedAnswerMessage.id,
         userId = usedAnswerMessage.userId,
         isUsedAnswerMessageFeature = usedAnswerMessage.isUsedAnswerMessageFeature,
-        baseEntity = BaseEntity(usedAnswerMessage.createdAt, usedAnswerMessage.updatedAt)
+        baseEntity = BaseEntity(usedAnswerMessage.createdAt, LocalDateTime.now())
     )
 
 }

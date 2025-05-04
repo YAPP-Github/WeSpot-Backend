@@ -1,9 +1,12 @@
 package com.wespot.message.v2
 
+import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
+import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.user.User
+import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
@@ -15,6 +18,7 @@ data class MessageV2(
     val receiver: User,
     val isReceiverRead: Boolean,
     val readAt: LocalDateTime?,
+
     val isBlocked: Boolean,
     val isReported: Boolean,
 
@@ -29,8 +33,9 @@ data class MessageV2(
 
     val messageRoomId: Long?,
     val messageRoomOwnerId: Long,
-    val isSenderBookmarked: Boolean,
-    val isReceiverBookmarked: Boolean,
+
+    var isSenderBookmarked: Boolean,
+    var isReceiverBookmarked: Boolean,
 
     val anonymousProfile: AnonymousProfile?,
 ) {
@@ -49,9 +54,7 @@ data class MessageV2(
         ): MessageV2 {
             if (COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY <= alreadyUsedMessageOnToday) {
                 throw CustomException(
-                    HttpStatus.BAD_REQUEST,
-                    ExceptionView.TOAST,
-                    "하루에 쪽지는 3개만 보낼 수 있습니다."
+                    HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 쪽지는 3개만 보낼 수 있습니다."
                 )
             }
 
@@ -282,5 +285,87 @@ data class MessageV2(
         return anonymousProfile.id == anonymousProfileId
     }
 
+    fun bookmark(viewer: User) {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            isSenderBookmarked = !isSenderBookmarked
+            return
+        }
+
+        isReceiverBookmarked = !isReceiverBookmarked
+    }
+
+    fun isAbleToView(viewer: User): Boolean {
+        return viewer.isMeSender(senderId = sender.id) || viewer.isMeReceiver(receiverId = receiver.id)
+    }
+
+    fun answerMessage(viewer: User, content: MessageContent): MessageV2 {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            throw CustomException(
+                message = "받은 쪽지에 대해서만 답장할 수 있습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        val newMessage = MessageV2(
+            id = 0L,
+            content = content,
+            sender = receiver,
+            receiver = sender,
+            isReceiverRead = false,
+            readAt = null,
+
+            isBlocked = false,
+            isReported = false,
+
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now(),
+
+            isSenderDeleted = false,
+            senderDeletedAt = null,
+
+            isReceiverDeleted = false,
+            receiverDeletedAt = null,
+
+            messageRoomId = messageRoomId(),
+            messageRoomOwnerId = messageRoomOwnerId,
+
+            isSenderBookmarked = false,
+            isReceiverBookmarked = false,
+
+            anonymousProfile = anonymousProfile,
+        )
+
+        EventUtils.publish(UsedAnswerFeatureEvent(user = viewer))
+        EventUtils.publish(MessageAnswerEvent(sender = receiver, receiver = sender, message = this))
+
+        return newMessage
+    }
+
+    private fun messageRoomId(): Long? {
+        if (isRoom()) {
+            return id
+        }
+
+        return messageRoomId
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MessageV2) return false
+        if (id != 0L && other.id != 0L) {
+            return id == other.id
+        }
+
+        return createdAt == other.createdAt && content == other.content
+    }
+
+    override fun hashCode(): Int {
+        if (id != 0L) {
+            return id.hashCode()
+        }
+
+        return 31 * createdAt.hashCode() + content.hashCode()
+    }
 
 }
