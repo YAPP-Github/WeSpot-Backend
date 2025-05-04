@@ -16,7 +16,7 @@ class UpdatedMessageV2Service(
     private val messageV2Port: MessageV2Port,
 ) : UpdatedMessageV2UseCase {
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun bookmarkMessage(messageId: Long) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
