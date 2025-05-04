@@ -3,6 +3,7 @@ package com.wespot.message.v2
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import com.wespot.user.message.AnonymousProfile
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -92,6 +93,25 @@ data class MessageRoom(
 
     fun isReported(): Boolean {
         return roomMessage.isReportedByReceiver(viewer = viewer)
+    }
+
+    fun isAbleToAnswer(): Boolean {
+        return messages.isAbleToAnswer()
+    }
+
+    fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
+        if (roomMessage.isSameUserProfileAndNotAnonymous(viewer = viewer)) {
+            return true
+        }
+        return false
+    }
+
+    fun isSameAnonymousProfile(anonymousProfileId: Long): Boolean {
+        return roomMessage.isSameAnonymousProfile(anonymousProfileId = anonymousProfileId)
+    }
+
+    fun anonymousProfile(): AnonymousProfile? {
+        return roomMessage.anonymousProfile
     }
 
 }

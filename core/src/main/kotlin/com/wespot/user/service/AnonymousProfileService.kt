@@ -9,6 +9,7 @@ import com.wespot.image.event.DeletedImageEvent
 import com.wespot.image.event.SavedImageEvent
 import com.wespot.user.dto.request.CreatedAnonymousProfileRequest
 import com.wespot.user.dto.request.UpdatedAnonymousProfileRequest
+import com.wespot.message.dto.response.AnonymousProfileResponse
 import com.wespot.user.message.AnonymousProfile
 import com.wespot.user.message.ProfileName
 import com.wespot.user.port.`in`.AnonymousProfileUseCase
@@ -90,4 +91,5 @@ class AnonymousProfileService(
         EventUtils.publish(DeletedImageEvent(savedAnonymousProfile.imageUrl))
         return savedAnonymousProfileAfterUpdate
     }
+
 }
