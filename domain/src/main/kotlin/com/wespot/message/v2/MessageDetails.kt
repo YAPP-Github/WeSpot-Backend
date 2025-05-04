@@ -36,7 +36,7 @@ data class MessageDetails(
         return messages
     }
 
-    fun isAbleToAnswer():Boolean{
+    fun isAbleToAnswer(): Boolean {
         return messages.any { it.isAbleToAnswer }
     }
 
