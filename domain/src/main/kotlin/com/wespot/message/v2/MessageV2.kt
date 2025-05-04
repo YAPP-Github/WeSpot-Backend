@@ -15,6 +15,7 @@ data class MessageV2(
     val receiver: User,
     val isReceiverRead: Boolean,
     val readAt: LocalDateTime?,
+
     val isBlocked: Boolean,
     val isReported: Boolean,
 
@@ -29,8 +30,9 @@ data class MessageV2(
 
     val messageRoomId: Long?,
     val messageRoomOwnerId: Long,
-    val isSenderBookmarked: Boolean,
-    val isReceiverBookmarked: Boolean,
+
+    var isSenderBookmarked: Boolean,
+    var isReceiverBookmarked: Boolean,
 
     val anonymousProfile: AnonymousProfile?,
 ) {
@@ -49,9 +51,7 @@ data class MessageV2(
         ): MessageV2 {
             if (COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY <= alreadyUsedMessageOnToday) {
                 throw CustomException(
-                    HttpStatus.BAD_REQUEST,
-                    ExceptionView.TOAST,
-                    "하루에 쪽지는 3개만 보낼 수 있습니다."
+                    HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 쪽지는 3개만 보낼 수 있습니다."
                 )
             }
 
@@ -282,5 +282,23 @@ data class MessageV2(
         return anonymousProfile.id == anonymousProfileId
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MessageV2) return false
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    fun bookmark(viewer: User) {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            isSenderBookmarked = !isSenderBookmarked
+            return
+        }
+
+        isReceiverBookmarked = !isReceiverBookmarked
+    }
 
 }
