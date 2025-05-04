@@ -22,4 +22,6 @@ interface MessageV2Port {
 
     fun findAllByMessageRoomId(messageRoomId: Long): List<MessageV2>
 
+    fun findAllMessageRoomBySenderIdAndReceiverId(senderId: Long, receiverId: Long): List<MessageV2>
+
 }

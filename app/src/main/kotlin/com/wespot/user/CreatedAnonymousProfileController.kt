@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/messages/profiles")
-class AnonymousProfileController(
+@RequestMapping("/api/v1/messages")
+class CreatedAnonymousProfileController(
     private val anonymousProfileUseCase: AnonymousProfileUseCase
 ) {
 
-    @PostMapping
+    @PostMapping("/profiles")
     fun createAnonymousProfile(@RequestBody createdAnonymousProfileRequest: CreatedAnonymousProfileRequest): ResponseEntity<Unit> {
         anonymousProfileUseCase.createAnonymousProfile(createdAnonymousProfileRequest)
 
@@ -21,7 +21,7 @@ class AnonymousProfileController(
             .build()
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/profiles/{id}")
     fun unblockUser(
         @PathVariable id: Long,
         @RequestBody updatedAnonymousProfileRequest: UpdatedAnonymousProfileRequest

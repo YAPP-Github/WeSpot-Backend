@@ -32,4 +32,9 @@ interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
 
     fun findAllByMessageRoomId(messageRoomId: Long): List<MessageJpaEntityV2>
 
+    fun findAllByMessageRoomIdIsNullAndSenderIdAndReceiverId(
+        senderId: Long,
+        receiverId: Long,
+    ): List<MessageJpaEntityV2>
+
 }

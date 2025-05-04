@@ -1,6 +1,9 @@
 package com.wespot.message.v2
 
+import com.wespot.exception.CustomException
+import com.wespot.exception.ExceptionView
 import com.wespot.user.User
+import org.springframework.http.HttpStatus
 
 data class MessageRooms(
     val rooms: List<MessageRoom>
@@ -28,6 +31,21 @@ data class MessageRooms(
 
     fun asList(): List<MessageRoom> {
         return rooms
+    }
+
+    fun viewer(): User {
+        val viewerSet = rooms.map { it.viewer }
+            .toSet()
+
+        if (viewerSet.size != 1) {
+            throw CustomException(
+                message = "조회자는 무조건 1명을 초과할 수 없습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        return viewerSet.first()
     }
 
 }

@@ -270,5 +270,17 @@ data class MessageV2(
         return false
     }
 
+    fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
+        return isRoom() && viewer.isMeSender(senderId = sender.id) && anonymousProfile == null
+    }
+
+    fun isSameAnonymousProfile(anonymousProfileId: Long): Boolean {
+        if (anonymousProfile == null) {
+            return false
+        }
+
+        return anonymousProfile.id == anonymousProfileId
+    }
+
 
 }

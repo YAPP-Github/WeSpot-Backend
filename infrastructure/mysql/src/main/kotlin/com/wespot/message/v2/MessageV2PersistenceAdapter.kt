@@ -126,4 +126,13 @@ class MessageV2PersistenceAdapter(
         return getCompleteMessageV2(messages)
     }
 
+    override fun findAllMessageRoomBySenderIdAndReceiverId(senderId: Long, receiverId: Long): List<MessageV2> {
+        val messageRooms = messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderIdAndReceiverId(
+            senderId = senderId,
+            receiverId = receiverId
+        )
+
+        return getCompleteMessageV2(messageRooms)
+    }
+
 }
