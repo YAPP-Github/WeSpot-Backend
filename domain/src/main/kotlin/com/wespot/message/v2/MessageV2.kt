@@ -5,9 +5,11 @@ import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
 import com.wespot.message.event.MessageAnswerEvent
+import com.wespot.message.event.ReadMessageByReceiverEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
+import org.hibernate.event.internal.EventUtil
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -360,6 +362,18 @@ data class MessageV2(
             return
         }
 
+        if (isReceiverRead) {
+            return
+        }
+
+        EventUtils.publish(
+            ReadMessageByReceiverEvent(
+                sender = sender,
+                receiver = receiver,
+                messageId = id,
+                beforeIsReceiverRead = false,
+            )
+        )
         readAt = LocalDateTime.now()
         isReceiverRead = true
     }
