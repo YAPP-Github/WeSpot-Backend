@@ -62,7 +62,7 @@ data class MessageDetail(
     }
 
     fun isNotDeleted(viewer: User): Boolean {
-        return message.isDeleted(viewer = viewer)
+        return !message.isDeleted(viewer = viewer)
     }
 
 }
