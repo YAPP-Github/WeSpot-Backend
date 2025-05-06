@@ -72,7 +72,10 @@ class GetMessageV2Service(
         val messageDetails = messageV2Port.findAllByMessageRoomId(messageRoomId = messageId)
 
         val room = MessageRoom.of(viewer = loginUser, roomMessage = roomMessage, messages = messageDetails)
-        return MessageV2DetailsResponse.from(room = room)
+        val response = MessageV2DetailsResponse.from(room = room)
+        room.readUnreadMessages()
+            .forEach { messageV2Port.save(it) }
+        return response
     }
 
 }

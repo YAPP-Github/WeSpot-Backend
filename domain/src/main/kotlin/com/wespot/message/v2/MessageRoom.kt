@@ -173,4 +173,8 @@ data class MessageRoom(
         return messages.asList(viewer = viewer)
     }
 
+    fun readUnreadMessages():List<MessageV2>{
+        return messages.readUnreadMessage(viewer = viewer)
+    }
+
 }

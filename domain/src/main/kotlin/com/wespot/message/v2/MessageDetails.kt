@@ -65,4 +65,11 @@ data class MessageDetails(
         return messages.filter { it.isNotDeleted(viewer = viewer) }
     }
 
+    fun readUnreadMessage(viewer: User): List<MessageV2> {
+        return messages.filter { it.isUnread(viewer = viewer) }
+            .onEach { it.message.read(viewer = viewer) }
+            .map { it.message }
+
+    }
+
 }
