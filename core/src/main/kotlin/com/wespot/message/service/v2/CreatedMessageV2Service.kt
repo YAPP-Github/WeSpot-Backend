@@ -66,7 +66,7 @@ class CreatedMessageV2Service(
             status = HttpStatus.NOT_FOUND,
         )
 
-        MessageV2.createInitial(
+        val welcomeMessage = MessageV2.createInitial(
             content = MessageContent.createWelcomeMessage(receiverName = signUpUser.name).content,
             sender = ever,
             receiver = signUpUser,
@@ -74,6 +74,7 @@ class CreatedMessageV2Service(
             savedMessageFunction = { message -> messageV2Port.save(message) },
             alreadyUsedMessageOnToday = 0,
         )
+        messageV2Port.save(messageV2 = welcomeMessage)
     }
 
 
