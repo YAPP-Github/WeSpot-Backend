@@ -17,6 +17,7 @@ data class MessageV2DetailsResponse(
         val content: String,
         val isReceived: Boolean,
         val isSend: Boolean,
+        val isRead: Boolean,
         val isAbleToAnswer: Boolean = false,
     ) {
 
@@ -28,6 +29,7 @@ data class MessageV2DetailsResponse(
                     content = message.message.content.content,
                     isReceived = message.isReceived,
                     isSend = message.isSend,
+                    isRead = message.isRead,
                     isAbleToAnswer = message.isAbleToAnswer,
                 )
             }

@@ -16,8 +16,8 @@ data class MessageV2(
     val content: MessageContent,
     val sender: User,
     val receiver: User,
-    val isReceiverRead: Boolean,
-    val readAt: LocalDateTime?,
+    var isReceiverRead: Boolean,
+    var readAt: LocalDateTime?,
 
     val isBlocked: Boolean,
     val isReported: Boolean,
@@ -348,6 +348,19 @@ data class MessageV2(
         }
 
         return messageRoomId
+    }
+
+    fun read(viewer: User) {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            return
+        }
+
+        if (!viewer.isMeReceiver(receiverId = receiver.id)) {
+            return
+        }
+
+        readAt = LocalDateTime.now()
+        isReceiverRead = true
     }
 
     override fun equals(other: Any?): Boolean {
