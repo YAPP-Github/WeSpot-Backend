@@ -8,4 +8,6 @@ interface UsedAnswerMessagePort {
 
     fun existsByUserId(userId: Long): Boolean
 
+    fun findByUserId(userId: Long): UsedAnswerMessage?
+
 }
