@@ -126,6 +126,61 @@ data class OnBoardingExplanationComponent(
             )
         }
 
+        fun createAnswerMessageComponent(): OnBoardingExplanationComponent {
+            return OnBoardingExplanationComponent(
+                textComponent = TextComponent.of(
+                    RichText.of("답장하기에 대해 알려드릴게요", "#FFF7F7F8", 20, "Center", "Bold"),
+                    Paddings.of(bottom = 7)
+                ),
+                textListComponent = TextListComponent.from(
+                    textLines = listOf(
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/answer_message_01.png",
+                            RichText.of(
+                                "쪽지는 답장 쪽지를 포함하여 하루에 총 3개만 보낼 수 있어요",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/answer_message_02.png",
+                            RichText.of(
+                                "상대에게 온 쪽지에 답장을 보내도 남은 쪽지 개수에서 차감돼요",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/answer_message_03.png",
+                            RichText.of(
+                                "친구가 내 답장을 읽으면 알려드릴게요",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                    )
+                ),
+                buttonsComponent = ButtonsComponent.of(
+                    listOf(
+                        ButtonComponent.ofWithClickActionType(
+                            RichText.of("이해했어요", "#FF1B1C1E", 16, "Center", "SemiBold"),
+                            "#FFF6FE8B",
+                            "#FFC0C66B",
+                            OnClickActionType.ACTION,
+                            Paddings.of(top = 8, bottom = 8)
+                        )
+                    ),
+                    Paddings.of(start = 20, end = 20, bottom = 12, top = 12)
+                )
+            )
+        }
+
     }
 
 }

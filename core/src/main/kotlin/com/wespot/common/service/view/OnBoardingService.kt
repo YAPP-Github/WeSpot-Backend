@@ -19,6 +19,7 @@ class OnBoardingService(
     private val viewedOnBoardingSheetPort: ViewedOnBoardingSheetPort,
 ) : OnBoardingUseCase {
 
+    @Transactional(readOnly = true)
     override fun getOnBoardingComponents(category: OnBoardingComponentRequest): List<OnBoardingResponse> {
         val userId = SecurityUtils.getLoginUser(userPort).id
         val viewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId) ?: throw CustomException(
@@ -33,9 +34,21 @@ class OnBoardingService(
 
         val onBoardingBottomSheetComponent = OnBoardingBottomSheetComponent.fromWithCategory(category.name)
 
-        return listOf(
-            OnBoardingResponse.fromFirstPage(onBoardingBottomSheetComponent),
-            OnBoardingResponse.fromSecondPage(onBoardingBottomSheetComponent)
+        val firstPage = onBoardingBottomSheetComponent.onBoardingWelcomePageComponent
+        val secondPage = onBoardingBottomSheetComponent.onBoardingExplanationComponent
+        var pageId = 0L
+
+        return listOfNotNull(
+            if (firstPage == null) null else OnBoardingResponse.fromFirstPage(
+                id = ++pageId,
+                onBoardingBottomSheetComponentName = onBoardingBottomSheetComponent.name,
+                onBoardingWelcomePageComponent = firstPage
+            ),
+            if (secondPage == null) null else OnBoardingResponse.fromSecondPage(
+                id = ++pageId,
+                onBoardingBottomSheetComponentName = onBoardingBottomSheetComponent.name,
+                onBoardingExplanationComponent = secondPage
+            )
         )
     }
 

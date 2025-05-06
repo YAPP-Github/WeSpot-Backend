@@ -37,9 +37,9 @@ class GetMessageV2Service(
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
         val sentMessageRooms =
-            sentMessageRoomsFinder.invoke(loginUser.id) // messageV2Port.findAllMessageRoomBySenderId(senderId = loginUser.id)
+            sentMessageRoomsFinder.invoke(loginUser.id)
         val receivedMessageRooms =
-            receivedMessageRoomsFinder.invoke(loginUser.id) // messageV2Port.findAllMessageRoomByReceiverId(receiverId = loginUser.id)
+            receivedMessageRoomsFinder.invoke(loginUser.id)
 
         val rooms: List<MessageV2> = sentMessageRooms + receivedMessageRooms
 
