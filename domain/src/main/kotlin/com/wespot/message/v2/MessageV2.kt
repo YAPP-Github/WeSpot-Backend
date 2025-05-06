@@ -6,10 +6,10 @@ import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
 import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.message.event.ReadMessageByReceiverEvent
+import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
-import org.hibernate.event.internal.EventUtil
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -56,7 +56,7 @@ data class MessageV2(
             receiver: User,
             anonymousProfile: AnonymousProfile?,
             alreadyUsedMessageOnToday: Int,
-//            isBlockedFromReceiver: Boolean // 정책 논의중
+            savedMessageFunction: (MessageV2) -> MessageV2
         ): MessageV2 {
             if (COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY <= alreadyUsedMessageOnToday) {
                 throw CustomException(
@@ -64,15 +64,7 @@ data class MessageV2(
                 )
             }
 
-//            if (isBlockedFromReceiver) {
-//                throw CustomException(
-//                    HttpStatus.FORBIDDEN,
-//                    ExceptionView.TOAST,
-//                    "차단당한 상대에게는 쪽지를 보낼 수 없습니다."
-//                )
-//            }
-
-            return MessageV2(
+            val message = MessageV2(
                 id = 0,
                 content = MessageContent.from(content),
                 sender = sender,
@@ -102,6 +94,11 @@ data class MessageV2(
 
                 anonymousProfile = anonymousProfile
             )
+
+            val savedMessage = savedMessageFunction.invoke(message)
+            EventUtils.publish(ReceivedMessageEvent(receiver = receiver, messageId = savedMessage.id))
+
+            return savedMessage
         }
 
     }
