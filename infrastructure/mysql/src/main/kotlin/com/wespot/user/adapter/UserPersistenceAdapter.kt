@@ -172,4 +172,13 @@ class UserPersistenceAdapter(
         }
     }
 
+    override fun findByName(name: String): User? {
+        return userJpaRepository.findByName(name = name)?.let {
+            UserMapper.mapToDomainEntity(
+                userJpaEntity = it,
+                schoolJpaEntity = getBySchool(it)
+            )
+        }
+    }
+
 }

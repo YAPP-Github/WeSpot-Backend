@@ -58,4 +58,7 @@ interface UserPort {
         withdrawalRequestAt: LocalDateTime,
         withdrawalStatus: WithdrawalStatus
     ): List<User>
+
+    fun findByName(name: String): User?
+
 }
