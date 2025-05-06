@@ -5,6 +5,8 @@ import com.wespot.common.dto.view.ImageComponentResponse
 import com.wespot.common.dto.view.TextComponentResponse
 import com.wespot.common.dto.view.TextListComponentResponse
 import com.wespot.view.OnBoardingBottomSheetComponent
+import com.wespot.view.OnBoardingExplanationComponent
+import com.wespot.view.OnBoardingWelcomePageComponent
 
 data class OnBoardingResponse(
     val id: Long,
@@ -14,33 +16,41 @@ data class OnBoardingResponse(
 
     companion object {
 
-        fun fromFirstPage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+        fun fromFirstPage(
+            id: Long = 1,
+            onBoardingBottomSheetComponentName: String,
+            onBoardingWelcomePageComponent: OnBoardingWelcomePageComponent
+        ): OnBoardingResponse {
             return OnBoardingResponse(
-                id = 1,
-                name = onBoardingBottomSheetComponent.name,
+                id = id,
+                name = onBoardingBottomSheetComponentName,
                 data = listOf(
                     ContentSectionResponse.from(
-                        TextComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.textComponent),
-                        ImageComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.imageComponent)
+                        TextComponentResponse.from(onBoardingWelcomePageComponent.textComponent),
+                        ImageComponentResponse.from(onBoardingWelcomePageComponent.imageComponent)
                     ),
                     BottomSectionResponse.from(
-                        ButtonsComponentResponse.from(onBoardingBottomSheetComponent.onBoardingWelcomePageComponent.buttonsComponent)
+                        ButtonsComponentResponse.from(onBoardingWelcomePageComponent.buttonsComponent)
                     ),
                 )
             )
         }
 
-        fun fromSecondPage(onBoardingBottomSheetComponent: OnBoardingBottomSheetComponent): OnBoardingResponse {
+        fun fromSecondPage(
+            id: Long = 2,
+            onBoardingBottomSheetComponentName: String,
+            onBoardingExplanationComponent: OnBoardingExplanationComponent
+        ): OnBoardingResponse {
             return OnBoardingResponse(
-                id = 2,
-                name = onBoardingBottomSheetComponent.name,
+                id = id,
+                name = onBoardingBottomSheetComponentName,
                 data = listOf(
                     ContentSectionResponse.from(
-                        TextComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.textComponent),
-                        TextListComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.textListComponent)
+                        TextComponentResponse.from(onBoardingExplanationComponent.textComponent),
+                        TextListComponentResponse.from(onBoardingExplanationComponent.textListComponent)
                     ),
                     BottomSectionResponse.from(
-                        ButtonsComponentResponse.from(onBoardingBottomSheetComponent.onBoardingExplanationComponent.buttonsComponent)
+                        ButtonsComponentResponse.from(onBoardingExplanationComponent.buttonsComponent)
                     )
                 )
             )

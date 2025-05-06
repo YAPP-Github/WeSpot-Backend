@@ -13,6 +13,7 @@ data class ViewedOnBoardingSheet(
     companion object {
         private const val IS_MESSAGE_VIEW = "MESSAGE"
         private const val IS_VOTE_VIEW = "VOTE"
+        private const val IS_ANSWER_MESSAGE_VIEW = "ANSWER_MESSAGE"
 
         fun createInitialState(
             userId: Long,
@@ -35,6 +36,10 @@ data class ViewedOnBoardingSheet(
 
         if (name == IS_VOTE_VIEW) {
             isViewedVoteOnBoardingSheet = true
+        }
+
+        if (name == IS_ANSWER_MESSAGE_VIEW) {
+            isViewedAnswerMessageOnBoardingSheet = true
         }
 
         commited.call(this)

@@ -2,8 +2,8 @@ package com.wespot.view
 
 data class OnBoardingBottomSheetComponent(
     val name: String,
-    val onBoardingWelcomePageComponent: OnBoardingWelcomePageComponent,
-    val onBoardingExplanationComponent: OnBoardingExplanationComponent
+    val onBoardingWelcomePageComponent: OnBoardingWelcomePageComponent?,
+    val onBoardingExplanationComponent: OnBoardingExplanationComponent?
 ) {
 
     companion object {
@@ -16,6 +16,7 @@ data class OnBoardingBottomSheetComponent(
             return when (onboardingCategory) {
                 OnBoardingCategory.MESSAGE -> createMessageType()
                 OnBoardingCategory.VOTE -> createVoteType()
+                OnBoardingCategory.ANSWER_MESSAGE -> createAnswerMessageType()
             }
         }
 
@@ -32,6 +33,14 @@ data class OnBoardingBottomSheetComponent(
                 name = TYPE,
                 onBoardingWelcomePageComponent = OnBoardingWelcomePageComponent.createVoteComponent(),
                 onBoardingExplanationComponent = OnBoardingExplanationComponent.createVoteComponent()
+            )
+        }
+
+        private fun createAnswerMessageType(): OnBoardingBottomSheetComponent {
+            return OnBoardingBottomSheetComponent(
+                name = TYPE,
+                onBoardingWelcomePageComponent = null,
+                onBoardingExplanationComponent = OnBoardingExplanationComponent.createAnswerMessageComponent()
             )
         }
 
