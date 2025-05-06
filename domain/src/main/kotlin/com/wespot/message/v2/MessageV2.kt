@@ -8,7 +8,6 @@ import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
-import jakarta.persistence.Id
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -20,8 +19,11 @@ data class MessageV2(
     var isReceiverRead: Boolean,
     var readAt: LocalDateTime?,
 
-    val isBlocked: Boolean,
-    val isReported: Boolean,
+    var isSenderBlocked: Boolean,
+    var isSenderBlockedAt: LocalDateTime?,
+
+    var isReceiverBlocked: Boolean,
+    var isReceiverBlockedAt: LocalDateTime?,
 
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
@@ -75,8 +77,11 @@ data class MessageV2(
                 isReceiverRead = false,
                 readAt = null,
 
-                isBlocked = false,
-                isReported = false,
+                isSenderBlocked = false,
+                isSenderBlockedAt = null,
+
+                isReceiverBlocked = false,
+                isReceiverBlockedAt = null,
 
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -230,18 +235,10 @@ data class MessageV2(
 
     fun isBlockedByReceiver(viewer: User): Boolean {
         if (viewer.isMeSender(senderId = sender.id)) {
-            return isBlocked
+            return isReceiverBlocked
         }
 
-        return false
-    }
-
-    fun isReportedByReceiver(viewer: User): Boolean {
-        if (viewer.isMeSender(senderId = sender.id)) {
-            return isReported
-        }
-
-        return false
+        return isSenderBlocked
     }
 
     fun isReceiverEver(viewer: User): Boolean {
@@ -316,8 +313,11 @@ data class MessageV2(
             isReceiverRead = false,
             readAt = null,
 
-            isBlocked = false,
-            isReported = false,
+            isSenderBlocked = false,
+            isSenderBlockedAt = null,
+
+            isReceiverBlocked = false,
+            isReceiverBlockedAt = null,
 
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
@@ -394,6 +394,24 @@ data class MessageV2(
         return isReceiverDeleted
     }
 
+    fun block(viewer: User) {
+        if (!isRoom()) {
+            throw CustomException(
+                message = "차단은 쪽지방에서만 진행 가능합니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        if (viewer.isMeSender(senderId = sender.id)) {
+            isSenderBlocked = !isSenderBlocked
+            isSenderBlockedAt = if (isSenderBlocked) LocalDateTime.now() else null
+            return
+        }
+
+        isReceiverBlocked = !isReceiverBlocked
+        isReceiverBlockedAt = if (isReceiverBlocked) LocalDateTime.now() else null
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -127,10 +127,6 @@ data class MessageRoom(
             .maxOrNull()!!
     }
 
-    fun isReported(): Boolean {
-        return roomMessage.isReportedByReceiver(viewer = viewer)
-    }
-
     fun isAbleToAnswer(): Boolean {
         return messages.isAbleToAnswer()
     }

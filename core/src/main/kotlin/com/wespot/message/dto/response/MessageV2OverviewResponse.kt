@@ -15,7 +15,6 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
     val grade: Int?,
     val classNumber: Int?,
     val isBookmarked: Boolean,
-    val isReported: Boolean,
     val isBlocked: Boolean,
     val isEver: Boolean
 ) {
@@ -35,7 +34,6 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
                 grade = room.receiverGrade(),
                 classNumber = room.receiverClassNumber(),
                 isBookmarked = room.isBookmarked(),
-                isReported = room.isReported(),
                 isBlocked = room.isBlocked(),
                 isEver = room.isReceiverEver()
             )
