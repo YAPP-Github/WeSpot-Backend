@@ -79,6 +79,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("loginUserId") loginUserId: Long,
         pageable: Pageable
     ): List<UserJpaEntity>
+
     @Query(
         """
         SELECT COUNT(u)
@@ -127,4 +128,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         withdrawalRequestAt: LocalDateTime,
         withdrawalStatus: WithdrawalStatus
     ): List<UserJpaEntity>
+
+    fun findByName(name: String): UserJpaEntity?
+
 }

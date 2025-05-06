@@ -3,16 +3,19 @@ package com.wespot.message.service.v2
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.message.MessageContent
 import com.wespot.message.dto.request.CreatedMessageV2Request
 import com.wespot.message.port.`in`.CreatedMessageV2UseCase
 import com.wespot.message.port.out.MessageV2Port
 import com.wespot.message.v2.MessageV2
+import com.wespot.user.User
 import com.wespot.user.dto.request.CreatedAnonymousProfileRequest
 import com.wespot.user.message.AnonymousProfile
 import com.wespot.user.port.`in`.AnonymousProfileUseCase
 import com.wespot.user.port.out.UserPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CreatedMessageV2Service(
@@ -53,6 +56,24 @@ class CreatedMessageV2Service(
         }
 
         return null
+    }
+
+    @Transactional
+    override fun welcomeMessage(signUpUser: User) {
+        val ever = userPort.findByName(name = User.EVER_NAME) ?: throw CustomException(
+            message = "해당 계정이 존재하지 않습니다.",
+            view = ExceptionView.TOAST,
+            status = HttpStatus.NOT_FOUND,
+        )
+
+        MessageV2.createInitial(
+            content = MessageContent.createWelcomeMessage(receiverName = signUpUser.name).content,
+            sender = ever,
+            receiver = signUpUser,
+            anonymousProfile = null,
+            savedMessageFunction = { message -> messageV2Port.save(message) },
+            alreadyUsedMessageOnToday = 0,
+        )
     }
 
 

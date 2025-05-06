@@ -152,7 +152,7 @@ data class User(
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
-        private const val EVER_NAME = "에버"
+        const val EVER_NAME = "에버"
 
         fun create(
             email: String,
