@@ -47,8 +47,8 @@ class MessageV2PersistenceAdapter(
         return getCompleteMessageV2(messageRooms)
     }
 
-    private fun getCompleteMessageV2(messageRooms: List<MessageJpaEntityV2>): List<MessageV2> {
-        val userIds: List<Long> = messageRooms.map { listOf(it.senderId, it.receiverId) }
+    private fun getCompleteMessageV2(messages: List<MessageJpaEntityV2>): List<MessageV2> {
+        val userIds: List<Long> = messages.map { listOf(it.senderId, it.receiverId) }
             .flatMap { it.asSequence() }
             .distinct()
 
@@ -60,14 +60,14 @@ class MessageV2PersistenceAdapter(
         val schoolsMap = schoolJpaRepository.findAllByIdIn(schoolIds)
             .associateBy { it.id }
 
-        val anonymousProfileIds: List<Long> = messageRooms.filter { it.anonymousProfileId != null }
+        val anonymousProfileIds: List<Long> = messages.filter { it.anonymousProfileId != null }
             .map { it.anonymousProfileId!! }
             .distinct()
         val anonymousProfiles: Map<Long, AnonymousProfileJpaEntity> =
             anonymousProfileJpaRepository.findByIdIn(anonymousProfileIds)
                 .associateBy { it.id }
 
-        return messageRooms
+        return messages
             .filter { messageRoom -> usersMap[messageRoom.senderId] != null && usersMap[messageRoom.receiverId] != null }
             .map { messageRoom ->
                 val sender = usersMap[messageRoom.senderId]!!
@@ -133,6 +133,16 @@ class MessageV2PersistenceAdapter(
         )
 
         return getCompleteMessageV2(messageRooms)
+    }
+
+    override fun findAllLastMessageOfRoomByReceiverIdAndFromDate(receiverId: Long, from: LocalDate): List<MessageV2> {
+        val messages =
+            messageV2JpaRepository.findAllLastMessageOfRoomByReceiverIdAndFromDate(
+                receiverId = receiverId,
+                from = from
+            )
+
+        return getCompleteMessageV2(messages = messages)
     }
 
 }

@@ -11,6 +11,7 @@ import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
 import org.hibernate.event.internal.EventUtil
 import org.springframework.http.HttpStatus
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class MessageV2(
@@ -47,7 +48,7 @@ data class MessageV2(
 
     companion object {
 
-        private const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
+        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
 
         fun createInitial(
             content: String,
@@ -429,6 +430,10 @@ data class MessageV2(
 
         isReceiverBlocked = !isReceiverBlocked
         isReceiverBlockedAt = if (isReceiverBlocked) LocalDateTime.now() else null
+    }
+
+    fun isSentAtSameDate(date: LocalDate): Boolean {
+        return date == createdAt.toLocalDate()
     }
 
     override fun equals(other: Any?): Boolean {
