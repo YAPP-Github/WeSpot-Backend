@@ -45,7 +45,7 @@ data class MessageV2DetailsResponse(
                 name = room.receiverName(),
                 messageRoomId = room.id(),
                 isBookmarked = room.isBookmarked(),
-                messageDetails = room.messages.asList()
+                messageDetails = room.messageDetailsAsList()
                     .map { MessageDetailResponse.from(it) }
             )
         }

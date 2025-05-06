@@ -8,6 +8,7 @@ import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
+import jakarta.persistence.Id
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -25,11 +26,11 @@ data class MessageV2(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 
-    val isSenderDeleted: Boolean,
-    val senderDeletedAt: LocalDateTime?,
+    var isSenderDeleted: Boolean,
+    var senderDeletedAt: LocalDateTime?,
 
-    val isReceiverDeleted: Boolean,
-    val receiverDeletedAt: LocalDateTime?,
+    var isReceiverDeleted: Boolean,
+    var receiverDeletedAt: LocalDateTime?,
 
     val messageRoomId: Long?,
     val messageRoomOwnerId: Long,
@@ -362,6 +363,37 @@ data class MessageV2(
         readAt = LocalDateTime.now()
         isReceiverRead = true
     }
+
+    fun delete(deleter: User): MessageV2 {
+        val alreadyDeleted = isDeleted(viewer = deleter)
+
+        if (alreadyDeleted) {
+            throw CustomException(
+                message = "이미 삭제된 쪽지입니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        if (deleter.isMeSender(senderId = sender.id)) {
+            isSenderDeleted = true
+            senderDeletedAt = senderDeletedAt ?: LocalDateTime.now()
+            return this
+        }
+
+        isReceiverDeleted = true
+        receiverDeletedAt = receiverDeletedAt ?: LocalDateTime.now()
+        return this
+    }
+
+    fun isDeleted(viewer: User): Boolean {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            return isSenderDeleted
+        }
+
+        return isReceiverDeleted
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

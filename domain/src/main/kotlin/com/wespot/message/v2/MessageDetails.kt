@@ -37,8 +37,8 @@ data class MessageDetails(
         return messages.map { it.chatTime() }
     }
 
-    fun asList(): List<MessageDetail> {
-        return messages
+    fun asList(viewer: User): List<MessageDetail> {
+        return asExcludeDeleteMessageDetails(viewer = viewer)
     }
 
     fun isAbleToAnswer(): Boolean {
@@ -49,6 +49,20 @@ data class MessageDetails(
         val toAnswerMessage = messages.last()
 
         return toAnswerMessage.createAnswerMessage(sender = sender, content = content)
+    }
+
+    fun deleteMessage(viewer: User, messageId: Long): MessageV2 {
+        val toDeleteMessage = messages.find { it.message.id == messageId } ?: throw CustomException(
+            message = "삭제하려는 쪽지를 찾을 수 없습니다.",
+            status = HttpStatus.BAD_REQUEST,
+            view = ExceptionView.TOAST,
+        )
+
+        return toDeleteMessage.delete(deleter = viewer)
+    }
+
+    private fun asExcludeDeleteMessageDetails(viewer: User): List<MessageDetail> {
+        return messages.filter { it.isNotDeleted(viewer = viewer) }
     }
 
 }

@@ -43,6 +43,33 @@ data class MessageRoom(
             )
         }
 
+        fun of(viewer: User, allMessagesOfRoom: List<MessageV2>): MessageRoom {
+            val roomMessage = allMessagesOfRoom.find { it.isRoom() } ?: throw CustomException(
+                message = "쪽지 방이 존재하지 않습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+
+            if (!roomMessage.isAbleToView(viewer = viewer)) {
+                throw CustomException(
+                    message = "해당 쪽지 방을 볼 수 있는 권한이 존재하지 않습니다.",
+                    status = HttpStatus.FORBIDDEN,
+                    view = ExceptionView.TOAST,
+                )
+            }
+
+            val messageDetails = allMessagesOfRoom.filter { !it.isRoom() }
+
+            return MessageRoom(
+                viewer = viewer,
+                roomMessage = roomMessage,
+                messages = MessageDetails.of(
+                    viewer = viewer,
+                    messages = listOf(roomMessage) + messageDetails.filter { it.isContainsOf(roomMessage) }
+                )
+            )
+        }
+
     }
 
     fun isExistsUnReadMessage(): Boolean {
@@ -127,6 +154,27 @@ data class MessageRoom(
         val validatedContent = MessageContent.from(content = content)
 
         return messages.answer(sender = sender, content = validatedContent)
+    }
+
+    fun deleteMessage(messageId: Long): MessageV2 {
+        val excludedDeletedMessage = messageDetailsAsList()
+
+        if (excludedDeletedMessage.size <= 1) {
+            throw CustomException(
+                message = "해당 쪽지를 삭제하면 쪽지 방에 남은 쪽지가 존재하지 않습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        return messages.deleteMessage(
+            viewer = viewer,
+            messageId = messageId
+        )
+    }
+
+    fun messageDetailsAsList(): List<MessageDetail> {
+        return messages.asList(viewer = viewer)
     }
 
 }
