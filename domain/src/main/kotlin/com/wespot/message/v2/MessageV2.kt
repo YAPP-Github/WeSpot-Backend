@@ -240,7 +240,11 @@ data class MessageV2(
             return isReceiverBlocked
         }
 
-        return isSenderBlocked
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return isSenderBlocked
+        }
+
+        return false
     }
 
     fun isReceiverEver(viewer: User): Boolean {
