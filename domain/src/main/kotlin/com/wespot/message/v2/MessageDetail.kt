@@ -57,4 +57,12 @@ data class MessageDetail(
         return message.answerMessage(viewer = sender, content = content)
     }
 
+    fun delete(deleter: User): MessageV2 {
+        return message.delete(deleter = deleter)
+    }
+
+    fun isNotDeleted(viewer: User): Boolean {
+        return message.isDeleted(viewer = viewer)
+    }
+
 }
