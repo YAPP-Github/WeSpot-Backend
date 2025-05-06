@@ -11,6 +11,7 @@ data class MessageDetail(
     val isReceived: Boolean,
     val isSend: Boolean,
     val isAbleToAnswer: Boolean,
+    val isRead: Boolean,
     val message: MessageV2
 ) {
 
@@ -21,6 +22,7 @@ data class MessageDetail(
                 isReceived = message.isReceived(viewer = viewer),
                 isSend = message.isSent(viewer = viewer),
                 isAbleToAnswer = if (isLatestMessage) message.isAbleToAnswer(viewer = viewer) else false,
+                isRead = message.isRead(viewer = viewer),
                 message = message
             )
         }
