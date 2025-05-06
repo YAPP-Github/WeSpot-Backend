@@ -25,8 +25,11 @@ object MessageV2Mapper {
         isReceiverRead = messageJpaEntityV2.isReceiverRead,
         readAt = messageJpaEntityV2.readAt,
 
-        isBlocked = messageJpaEntityV2.isBlocked,
-        isReported = messageJpaEntityV2.isReported,
+        isSenderBlocked = messageJpaEntityV2.isSenderBlocked,
+        isSenderBlockedAt = messageJpaEntityV2.isSenderBlockedAt,
+
+        isReceiverBlocked = messageJpaEntityV2.isReceiverBlocked,
+        isReceiverBlockedAt = messageJpaEntityV2.isReceiverBlockedAt,
 
         createdAt = messageJpaEntityV2.baseEntity.createdAt,
         updatedAt = messageJpaEntityV2.baseEntity.updatedAt,
@@ -72,8 +75,11 @@ object MessageV2Mapper {
             isReceiverRead = messageJpaEntityV2.isReceiverRead,
             readAt = messageJpaEntityV2.readAt,
 
-            isBlocked = messageJpaEntityV2.isBlocked,
-            isReported = messageJpaEntityV2.isReported,
+            isSenderBlocked = messageJpaEntityV2.isSenderBlocked,
+            isSenderBlockedAt = messageJpaEntityV2.isSenderBlockedAt,
+
+            isReceiverBlocked = messageJpaEntityV2.isReceiverBlocked,
+            isReceiverBlockedAt = messageJpaEntityV2.isReceiverBlockedAt,
 
             createdAt = messageJpaEntityV2.baseEntity.createdAt,
             updatedAt = messageJpaEntityV2.baseEntity.updatedAt,
@@ -100,8 +106,11 @@ object MessageV2Mapper {
         isReceiverRead = messageV2.isReceiverRead,
         readAt = messageV2.readAt,
 
-        isBlocked = messageV2.isBlocked,
-        isReported = messageV2.isReported,
+        isSenderBlocked = messageV2.isSenderBlocked,
+        isSenderBlockedAt = messageV2.isSenderBlockedAt,
+
+        isReceiverBlocked = messageV2.isReceiverBlocked,
+        isReceiverBlockedAt = messageV2.isReceiverBlockedAt,
 
         baseEntity = BaseEntity(messageV2.createdAt, messageV2.updatedAt),
         isSenderDeleted = messageV2.isSenderDeleted,

@@ -23,10 +23,14 @@ class MessageJpaEntityV2(
     val isReceiverRead: Boolean,
     val readAt: LocalDateTime?,
 
-    @field:NotNull
-    val isBlocked: Boolean,
     @field: NotNull
-    val isReported: Boolean,
+    var isSenderBlocked: Boolean,
+    var isSenderBlockedAt: LocalDateTime?,
+
+    @field: NotNull
+    var isReceiverBlocked: Boolean,
+    var isReceiverBlockedAt: LocalDateTime?,
+
     @Embedded
     val baseEntity: BaseEntity,
 
