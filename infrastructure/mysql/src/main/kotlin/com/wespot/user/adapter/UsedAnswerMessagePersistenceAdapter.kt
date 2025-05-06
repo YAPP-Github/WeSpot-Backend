@@ -22,4 +22,9 @@ class UsedAnswerMessagePersistenceAdapter(
         return usedAnswerMessageJpaRepository.existsByUserId(userId = userId)
     }
 
+    override fun findByUserId(userId: Long): UsedAnswerMessage? {
+        return usedAnswerMessageJpaRepository.findByUserId(userId = userId)
+            ?.let { UsedAnswerMessageMapper.mapToDomainEntity(it) }
+    }
+
 }

@@ -7,4 +7,6 @@ interface UsedAnswerMessageJpaRepository : JpaRepository<UsedAnswerMessageJpaEnt
 
     fun existsByUserId(userId: Long): Boolean
 
+    fun findByUserId(userId: Long): UsedAnswerMessageJpaEntity?
+
 }
