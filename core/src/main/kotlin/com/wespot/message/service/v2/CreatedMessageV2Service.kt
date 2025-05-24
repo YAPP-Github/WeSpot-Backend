@@ -48,8 +48,8 @@ class CreatedMessageV2Service(
         if (createdMessageV2Request.isAnonymous) {
             return profileUseCase.createAnonymousProfile(
                 CreatedAnonymousProfileRequest(
-                    name = createdMessageV2Request.anonymousProfileName,
-                    imageUrl = createdMessageV2Request.anonymousImageUrl,
+                    name = createdMessageV2Request.anonymousProfileName!!,
+                    imageUrl = createdMessageV2Request.anonymousImageUrl!!,
                     receiverId = createdMessageV2Request.receiverId
                 )
             )

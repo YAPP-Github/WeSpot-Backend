@@ -46,7 +46,7 @@ class GetMessageV2Service(
         val messageRoomIds: List<Long> = rooms.map { it.id }
         val messageDetails = messageV2Port.findAllLastMessageOfRoomByRoomIdIn(messageRoomIds)
 
-        val messageRooms = MessageRooms.createOverview(user = loginUser, rooms = rooms, messageDetails = messageDetails)
+        val messageRooms = MessageRooms.createOverview(viewer = loginUser, rooms = rooms, messageDetails = messageDetails)
 
         return messageRooms.asList()
             .map { MessageV2OverviewResponse.from(it) }

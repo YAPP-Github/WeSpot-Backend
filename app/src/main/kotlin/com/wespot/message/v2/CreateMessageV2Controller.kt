@@ -14,7 +14,7 @@ class CreateMessageV2Controller(
 
     @PostMapping
     fun createMessageV2(
-        createdMessageV2Request: CreatedMessageV2Request
+        @RequestBody createdMessageV2Request: CreatedMessageV2Request
     ): ResponseEntity<Unit> {
         createdMessageV2UseCase.createMessage(createdMessageV2Request)
 

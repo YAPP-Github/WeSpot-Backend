@@ -4,7 +4,10 @@ import com.wespot.message.dto.response.MessageV2DetailsResponse
 import com.wespot.message.dto.response.MessageV2OverviewResponse
 import com.wespot.message.port.`in`.GetMessageV2UseCase
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v2/messages")

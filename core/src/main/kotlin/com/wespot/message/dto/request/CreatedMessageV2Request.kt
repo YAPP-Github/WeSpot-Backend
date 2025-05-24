@@ -5,8 +5,8 @@ class CreatedMessageV2Request(
     val receiverId: Long,
 
     val isAnonymous: Boolean,
-    val anonymousImageUrl: String,
-    val anonymousProfileName: String,
+    val anonymousImageUrl: String?,
+    val anonymousProfileName: String?,
 ) {
 
 }

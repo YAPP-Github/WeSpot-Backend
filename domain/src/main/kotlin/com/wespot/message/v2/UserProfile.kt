@@ -30,9 +30,13 @@ data class UserProfile(
         }
 
         fun createByUserProfile(
-            user: User,
+            user: User?,
             messageRoom: List<MessageRoom>
-        ): UserProfile {
+        ): UserProfile? {
+            if (user == null) {
+                return null
+            }
+
             return UserProfile(
                 profileId = user.profile.id,
                 image = user.profile.iconUrl,
@@ -54,7 +58,7 @@ data class UserProfile(
 
     fun isAbleToAnswer(): Boolean {
         if (messageRoom == EMPTY_MESSAGE_ROOM) {
-            return false
+            return true
         }
 
         return messageRoom.isAbleToAnswer()

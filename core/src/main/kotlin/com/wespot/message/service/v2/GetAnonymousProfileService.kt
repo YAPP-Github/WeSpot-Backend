@@ -18,16 +18,16 @@ class GetAnonymousProfileService(
 
     @Transactional(readOnly = true)
     override fun getAnonymousProfileByReceiverId(receiverId: Long): List<AnonymousProfileResponse> {
-        val sender = SecurityUtils.getLoginUser(userPort = userPort)
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
         val messageRooms =
-            messagePort.findAllMessageRoomBySenderIdAndReceiverId(senderId = sender.id, receiverId = receiverId)
+            messagePort.findAllMessageRoomBySenderIdAndReceiverId(senderId = loginUser.id, receiverId = receiverId)
         val messageRoomIds = messageRooms.map { it.id }
         val messageDetails = messagePort.findAllLastMessageOfRoomByRoomIdIn(messageRoomIds)
 
         val rooms =
-            MessageRooms.createOverview(user = sender, rooms = messageRooms, messageDetails = messageDetails)
+            MessageRooms.createOverview(viewer = loginUser, rooms = messageRooms, messageDetails = messageDetails)
 
-        return UserProfiles.of(messageRooms = rooms)
+        return UserProfiles.of(viewer = loginUser, messageRooms = rooms)
             .asList()
             .map { AnonymousProfileResponse.from(it) }
     }

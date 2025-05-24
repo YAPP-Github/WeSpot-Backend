@@ -80,8 +80,12 @@ data class MessageRoom(
         return roomMessage.id
     }
 
-    fun isAnonymous(): Boolean {
-        return roomMessage.isAnonymousReceiver(viewer = viewer)
+    fun isMeUsingAnonymous(): Boolean {
+        return roomMessage.isMeAnonymous(viewer = viewer)
+    }
+
+    fun isReceiverUsingAnonymous(): Boolean {
+        return roomMessage.isReceiverAnonymous(viewer = viewer)
     }
 
     fun isViewerOwnerOfMessageRoom(): Boolean {
@@ -173,7 +177,7 @@ data class MessageRoom(
         return messages.asList(viewer = viewer)
     }
 
-    fun readUnreadMessages():List<MessageV2>{
+    fun readUnreadMessages(): List<MessageV2> {
         return messages.readUnreadMessage(viewer = viewer)
     }
 
