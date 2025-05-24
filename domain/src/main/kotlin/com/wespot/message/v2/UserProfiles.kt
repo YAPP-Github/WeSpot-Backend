@@ -2,6 +2,7 @@ package com.wespot.message.v2
 
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.user.User
 import org.springframework.http.HttpStatus
 
 data class UserProfiles(
@@ -10,7 +11,7 @@ data class UserProfiles(
 
     companion object {
 
-        fun of(messageRooms: MessageRooms): UserProfiles {
+        fun of(viewer: User, messageRooms: MessageRooms): UserProfiles {
             val isContainsOwnerIsNotViewer = messageRooms.asList()
                 .any { !it.isViewerOwnerOfMessageRoom() }
             if (isContainsOwnerIsNotViewer) {
@@ -22,7 +23,7 @@ data class UserProfiles(
             }
 
             val anonymousProfiles = messageRooms.asList()
-                .filter { it.isAnonymous() }
+                .filter { it.isMeUsingAnonymous() }
                 .map { it.anonymousProfile()!! }
 
             val resultOfUserProfiles = anonymousProfiles.map { anonymousProfile ->
@@ -31,12 +32,13 @@ data class UserProfiles(
                     messageRoom = messageRooms.asList()
                 )
             } + UserProfile.createByUserProfile(
-                user = messageRooms.viewer(),
+                user = viewer,
                 messageRoom = messageRooms.asList()
             )
 
             return UserProfiles(
-                userProfiles = resultOfUserProfiles.sortedBy { it.recentlyTalk() }
+                userProfiles = resultOfUserProfiles.filterNotNull()
+                    .sortedBy { it.recentlyTalk() }
                     .reversed()
             )
         }

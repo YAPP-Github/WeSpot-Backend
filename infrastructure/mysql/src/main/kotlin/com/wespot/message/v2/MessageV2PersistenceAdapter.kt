@@ -139,7 +139,7 @@ class MessageV2PersistenceAdapter(
         val messages =
             messageV2JpaRepository.findAllLastMessageOfRoomByReceiverIdAndFromDate(
                 receiverId = receiverId,
-                from = from
+                from = from.atStartOfDay()
             )
 
         return getCompleteMessageV2(messages = messages)

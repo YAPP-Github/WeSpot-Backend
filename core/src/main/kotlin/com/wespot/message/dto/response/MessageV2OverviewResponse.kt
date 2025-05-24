@@ -28,7 +28,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
                 thumbnail = room.receiverProfileImage(),
                 isExistsUnreadMessage = room.isExistsUnReadMessage(),
                 latestChatTime = room.latestChatTime(),
-                isAnonymous = room.isAnonymous(),
+                isAnonymous = room.isReceiverUsingAnonymous(),
                 name = room.receiverName(),
                 schoolName = room.receiverSchoolName(),
                 grade = room.receiverGrade(),

@@ -58,7 +58,7 @@ interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
     )
     fun findAllLastMessageOfRoomByReceiverIdAndFromDate(
         receiverId: Long,
-        from: LocalDate
+        from: LocalDateTime
     ): List<MessageJpaEntityV2>
 
 }

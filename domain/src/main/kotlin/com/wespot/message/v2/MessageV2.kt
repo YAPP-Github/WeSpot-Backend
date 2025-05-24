@@ -178,7 +178,17 @@ data class MessageV2(
         return anonymousProfile != null
     }
 
-    fun isAnonymousReceiver(viewer: User): Boolean {
+    fun isMeAnonymous(viewer: User): Boolean {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return false
+        }
+
+        return anonymousProfile != null
+    }
+
+    fun isReceiverAnonymous(viewer: User): Boolean {
         validateRoomMessage()
 
         return receiverUsingAnonymousProfile(viewer = viewer)
@@ -268,11 +278,7 @@ data class MessageV2(
     }
 
     fun isAbleToAnswer(viewer: User): Boolean {
-        if (viewer.isMeReceiver(receiverId = receiver.id)) {
-            return true
-        }
-
-        return false
+        return viewer.isMeReceiver(receiverId = receiver.id)
     }
 
     fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
