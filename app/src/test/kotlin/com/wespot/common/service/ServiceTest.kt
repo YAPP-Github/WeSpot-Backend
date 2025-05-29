@@ -3,7 +3,6 @@ package com.wespot.common.service
 import com.wespot.DatabaseCleanup
 import com.wespot.common.infra.TestContainer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import

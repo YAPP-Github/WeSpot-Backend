@@ -90,8 +90,8 @@ object MessageFixture {
     ): Message {
         return Message.sendMessage(
             content = content,
-            receiver = UserFixture.createWithId(receiverId),
-            sender = UserFixture.createWithId(senderId),
+            receiver = UserFixture.createWithIdSchool(receiverId),
+            sender = UserFixture.createWithIdSchool(senderId),
             senderName = senderName,
             isAnonymous = false,
         )

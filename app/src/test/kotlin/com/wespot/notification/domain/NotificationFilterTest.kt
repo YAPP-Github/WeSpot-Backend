@@ -16,11 +16,11 @@ class NotificationFilterTest : BehaviorSpec({
 
     given("단체 알림을") {
         val users = listOf(
-            UserFixture.createWithId(1L),
-            UserFixture.createWithId(2L),
-            UserFixture.createWithId(3L),
-            UserFixture.createWithId(4L),
-            UserFixture.createWithId(5L)
+            UserFixture.createWithIdSchool(1L),
+            UserFixture.createWithIdSchool(2L),
+            UserFixture.createWithIdSchool(3L),
+            UserFixture.createWithIdSchool(4L),
+            UserFixture.createWithIdSchool(5L)
         )
         val messageNotifications = users.map {
             Notification.createMessageInitialState(
@@ -112,7 +112,7 @@ class NotificationFilterTest : BehaviorSpec({
     }
 
     given("개별 알림을") {
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
         val messageNotification = Notification.createMessageInitialState(
             userId = user.id,
             title = "title",

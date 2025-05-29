@@ -2,10 +2,10 @@ package com.wespot.user.repository
 
 import com.wespot.user.WithdrawalStatus
 import com.wespot.user.entity.UserJpaEntity
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.data.domain.Pageable
 import java.time.LocalDateTime
 
 interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
@@ -79,6 +79,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("loginUserId") loginUserId: Long,
         pageable: Pageable
     ): List<UserJpaEntity>
+
     @Query(
         """
         SELECT COUNT(u)
@@ -127,4 +128,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         withdrawalRequestAt: LocalDateTime,
         withdrawalStatus: WithdrawalStatus
     ): List<UserJpaEntity>
+
+    fun findByName(name: String): UserJpaEntity?
+
 }

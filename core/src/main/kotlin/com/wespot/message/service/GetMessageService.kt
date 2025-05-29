@@ -18,6 +18,7 @@ import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class GetMessageService(
@@ -39,14 +40,16 @@ class GetMessageService(
         val message = findMessageById(messageId, messagePort)
         message.validateReadMessage(loginUser)
         val receiver = findUserById(message.receiverId, userPort)
-        val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
+        val sender = findUserById(message.senderId, userPort)
+        val receiverSchool = findSchoolById(receiver.school.id, schoolPort)
         val isBlocked = blockedUsers.any { it.messageId == messageId }
 
-        return MessageResponse.from(
+        return MessageResponse.of(
             message = message,
             receiver = receiver,
             school = receiverSchool,
-            isBlocked = isBlocked
+            isBlocked = isBlocked,
+            sender = sender
         )
     }
 
@@ -55,7 +58,7 @@ class GetMessageService(
         val receiver: User = getLoginUser(userPort)
         val blockedUsers = findAllByBlockerId(receiver.id, blockedUserPort)
         val blockedMessageIds = blockedUsers.map { it.messageId }
-        val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
+        val receiverSchool = findSchoolById(receiver.school.id, schoolPort)
         val pageRequest = PageRequest.of(0, 10, Sort.by("id").descending())
 
         val messages = messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
@@ -72,13 +75,19 @@ class GetMessageService(
             blockedMessageIds = blockedMessageIds
         ) > 10
 
+        val senderIds = messages.map { it.senderId }
+            .distinct()
+        val senders = userPort.findByIdIn(senderIds)
+            .associateBy { it.id }
+
         return MessageListResponse.from(
             messages = messages.map { message ->
-                MessageResponse.from(
+                MessageResponse.of(
                     message = message,
                     receiver = receiver,
                     school = receiverSchool,
-                    isBlocked = blockedMessageIds.contains(message.id)
+                    isBlocked = blockedMessageIds.contains(message.id),
+                    sender = senders[message.senderId]!!
                 )
             },
             hasNext = hasNext
@@ -104,12 +113,12 @@ class GetMessageService(
         return MessageListResponse.from(
             messages = messages.map { message ->
                 val receiver = findUserById(message.receiverId, userPort)
-                val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
-                MessageResponse.from(
+                MessageResponse.of(
                     message = message,
                     receiver = receiver,
-                    school = receiverSchool,
-                    isBlocked = false
+                    school = receiver.school,
+                    isBlocked = false,
+                    sender = loginUser
                 )
             },
             hasNext = hasNext
@@ -121,9 +130,13 @@ class GetMessageService(
         val sendMessageCount = messagePort.sendMessageCount(loginUser.id)
         val limit = MESSAGE_LIMIT - sendMessageCount
         val blockedUsers = findAllByBlockerId(loginUser.id, blockedUserPort)
-        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverId(
+        val now = LocalDateTime.now()
+        val tomorrow = now.plusDays(1)
+        val countUnReadMessages = messagePort.countUnreadMessagesByReceiverIdAndBetweenSendTimeAndMessageOpenTime(
             receiverId = loginUser.id,
-            blockedMessageIds = blockedUsers.map { it.messageId }
+            blockedMessageIds = blockedUsers.map { it.messageId },
+            sendTime = LocalDateTime.of(now.year, now.month, now.dayOfMonth, 22, 0, 0),
+            messageOpenTime = LocalDateTime.of(tomorrow.year, tomorrow.month, tomorrow.dayOfMonth, 17, 0, 0)
         ).toInt()
 
         return SendMessageStatusResponse(
@@ -143,12 +156,12 @@ class GetMessageService(
 
         return MessageSimpleListResponse.from(messages = messages.map { message ->
             val receiver = findUserById(message.receiverId, userPort)
-            val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
-            MessageResponse.from(
+            MessageResponse.of(
                 message = message,
                 receiver = receiver,
-                school = receiverSchool,
-                isBlocked = false
+                school = receiver.school,
+                isBlocked = false,
+                sender = loginUser
             )
         })
     }
@@ -167,7 +180,6 @@ class GetMessageService(
         val messages = blockedMessages.map { blockedUser ->
             val message = findMessageById(blockedUser.messageId, messagePort)
             val receiver = findUserById(message.receiverId, userPort)
-            val receiverSchool = findSchoolById(receiver.schoolId, schoolPort)
 
             MessageBlockedResponse.from(
                 message = message,
@@ -177,7 +189,7 @@ class GetMessageService(
                     iconUrl = BAN_PROFILE_ICON_URL
                 ),
                 receiver = receiver,
-                school = receiverSchool,
+                school = receiver.school,
                 isBlocked = true
             )
         }

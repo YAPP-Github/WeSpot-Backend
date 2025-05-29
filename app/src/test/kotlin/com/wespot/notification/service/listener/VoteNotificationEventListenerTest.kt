@@ -4,6 +4,8 @@ import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.notification.NotificationType
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.event.SignUpUserEvent
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
@@ -27,13 +29,15 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     private val userPort: UserPort,
     private val voteOptionPort: VoteOptionPort,
     private val notificationPort: NotificationPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
     fun `학급에 새로운 친구가 가입하면 알림이 발송된다`() {
         // given
-        val user1 = userPort.save(UserFixture.createWithId(0))
-        val user2 = userPort.save(UserFixture.createWithId(0))
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user1 = userPort.save(UserFixture.createWithId(id = 0, schoolJpaEntity = school))
+        val user2 = userPort.save(UserFixture.createWithId(id = 0, schoolJpaEntity = school))
         val sendService = mockk<FirebaseNotificationService>()
 
         // when
@@ -51,8 +55,10 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `새로운 인원이 투표에 참여한 경우 알림이 발송된다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val sendService = mockk<FirebaseNotificationService>()
-        val users = (1..6).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao")) }
+        val users =
+            (1..6).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao", school = school)) }
         val voteOptions = (1..5).map { voteOptionPort.save(VoteOptionFixture.create()) }
         val voteIdentifier = VoteIdentifier.of(users[0], LocalDate.now())
         val vote = Vote.of(voteIdentifier, voteOptions, null)
@@ -77,8 +83,9 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `투표를 받은 이에게 알림이 발송된다`() {
         // given
-        val receiver = userPort.save(UserFixture.createWithId(0))
-        val sender = userPort.save(UserFixture.createWithIdAndEmail(0, "hello@Kakao"));
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val receiver = userPort.save(UserFixture.createWithId(id = 0, schoolJpaEntity = school))
+        val sender = userPort.save(UserFixture.createWithIdAndEmail(0, "hello@Kakao", school = school));
         val sendService = mockk<FirebaseNotificationService>()
 
         // when
@@ -97,8 +104,10 @@ class VoteNotificationEventListenerTest @Autowired constructor(
     @Test
     fun `투표가 종료되었을 때, 반 친구들에게 알림이 발송된다`() {
         // given
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         val sendService = mockk<FirebaseNotificationService>()
-        val users = (1..5).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao")) }
+        val users =
+            (1..5).map { userPort.save(UserFixture.createWithIdAndEmail(0, "hello${it}@Kakao", school = school)) }
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit

@@ -27,7 +27,7 @@ data class Message(
     val isSenderDeleted: Boolean,
     val senderDeletedAt: LocalDateTime?,
     val isReceiverDeleted: Boolean,
-    val receiverDeletedAt: LocalDateTime?
+    val receiverDeletedAt: LocalDateTime?,
 ) {
 
     fun updateMessage(
@@ -66,7 +66,7 @@ data class Message(
             isSenderDeleted = isSenderDeleted,
             senderDeletedAt = senderDeletedAt,
             isReceiverDeleted = isReceiverDeleted,
-            receiverDeletedAt = receiverDeletedAt
+            receiverDeletedAt = receiverDeletedAt,
         )
         message.validateMessageReceiver()
 
@@ -113,7 +113,7 @@ data class Message(
             isSenderDeleted = isSenderDeleted,
             senderDeletedAt = senderDeletedAt,
             isReceiverDeleted = isReceiverDeleted,
-            receiverDeletedAt = receiverDeletedAt
+            receiverDeletedAt = receiverDeletedAt,
         )
         message.validateSentMessage(user)
         return message
@@ -299,7 +299,7 @@ data class Message(
                 isSenderDeleted = false,
                 senderDeletedAt = null,
                 isReceiverDeleted = false,
-                receiverDeletedAt = null
+                receiverDeletedAt = null,
             )
             message.validateMessageReceiver()
 
@@ -330,7 +330,7 @@ data class Message(
                 isSenderDeleted = false,
                 senderDeletedAt = null,
                 isReceiverDeleted = false,
-                receiverDeletedAt = null
+                receiverDeletedAt = null,
             )
         }
 

@@ -12,8 +12,8 @@ import io.kotest.matchers.throwable.shouldHaveMessage
 class ReportTest : BehaviorSpec({
 
     given("신고를 생성할 때") {
-        val sender = UserFixture.createWithId(1L)
-        val receiver = UserFixture.createWithId(1L)
+        val sender = UserFixture.createWithIdSchool(1L)
+        val receiver = UserFixture.createWithIdSchool(1L)
 
         `when`("송신자와 수신자가 동일하면 ") {
             val shouldThrow =
@@ -28,7 +28,7 @@ class ReportTest : BehaviorSpec({
     given("신고의") {
         `when`("타입이 Message 인지") {
             val report =
-                Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithId(1L), null, UserFixture.createWithId(2L))
+                Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithIdSchool(1L), null, UserFixture.createWithIdSchool(2L))
             val messageReport = report.isMessageReport()
             val voteReport = report.isVoteReport()
             then("확인한다.") {
@@ -38,7 +38,7 @@ class ReportTest : BehaviorSpec({
         }
         `when`("타입이 Vote 인지") {
             val report =
-                Report.of(ReportType.VOTE, 1L, UserFixture.createWithId(1L), null, UserFixture.createWithId(2L))
+                Report.of(ReportType.VOTE, 1L, UserFixture.createWithIdSchool(1L), null, UserFixture.createWithIdSchool(2L))
             val messageReport = report.isMessageReport()
             val voteReport = report.isVoteReport()
 
@@ -51,11 +51,11 @@ class ReportTest : BehaviorSpec({
 
     given("서로 다른 신고가") {
         val sameReport1 =
-            Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithId(1L), null, UserFixture.createWithId(2L))
+            Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithIdSchool(1L), null, UserFixture.createWithIdSchool(2L))
         val sameReport2 =
-            Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithId(1L), null, UserFixture.createWithId(2L))
+            Report.of(ReportType.MESSAGE, 1L, UserFixture.createWithIdSchool(1L), null, UserFixture.createWithIdSchool(2L))
         val differenceReport =
-            Report.of(ReportType.VOTE, 1L, UserFixture.createWithId(1L), null, UserFixture.createWithId(2L))
+            Report.of(ReportType.VOTE, 1L, UserFixture.createWithIdSchool(1L), null, UserFixture.createWithIdSchool(2L))
         `when`("같은 신고인지") {
             val same = sameReport1.isSameReport(sameReport2)
             val difference = sameReport1.isSameReport(differenceReport)

@@ -6,6 +6,8 @@ import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.message.service.ModifyMessageService
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
@@ -20,7 +22,8 @@ class RealModifyMessageServiceTest @Autowired constructor(
     private val modifyMessageService: ModifyMessageService,
     private val userPort: UserPort,
     private val messagePort: MessagePort,
-    private val notificationPort: NotificationPort
+    private val notificationPort: NotificationPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
@@ -29,8 +32,10 @@ class RealModifyMessageServiceTest @Autowired constructor(
         val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
         MessageTimeValidator.setClock(fixedClock)
 
-        val receiver = userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO"))
-        val sender = userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO"))
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val receiver = userPort.save(UserFixture.createWithIdAndEmail(0, "Test1@KAKAO", school = school))
+        val sender = userPort.save(UserFixture.createWithIdAndEmail(0, "Test2@KAKAO", school = school))
+
         UserFixture.setSecurityContextUser(receiver)
         val message = messagePort.save(
             MessageFixture.createMessageWithReceived(

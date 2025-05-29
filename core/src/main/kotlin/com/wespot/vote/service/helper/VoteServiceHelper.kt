@@ -25,7 +25,7 @@ object VoteServiceHelper {
 
     fun findClassmatesByUser(userPort: UserPort, user: User): List<User> {
         return userPort.findAllBySchoolIdAndGradeAndClassNumber(
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber
         )
@@ -33,7 +33,7 @@ object VoteServiceHelper {
 
     fun findVoteByUser(votePort: VotePort, user: User, date: LocalDate): Vote {
         return votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber,
             date = date
@@ -47,7 +47,7 @@ object VoteServiceHelper {
 
     fun findVotesReceiverIdOrderByDateDesc(votePort: VotePort, user: User, cursorId: Long, limit: Long): List<Vote> {
         return votePort.findAllBySchoolIdAndGradeAndClassNumberAndReceiverIdOrderByDateDesc(
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber,
             receiverId = user.id,
@@ -63,7 +63,7 @@ object VoteServiceHelper {
         limit: Long
     ): List<Vote> {
         return votePort.findAllBySchoolIdAndGradeAndClassNumberAndSenderIdOrderByDateDesc(
-            schoolId = user.schoolId,
+            schoolId = user.school.id,
             grade = user.grade,
             classNumber = user.classNumber,
             senderId = user.id,

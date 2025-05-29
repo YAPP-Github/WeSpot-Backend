@@ -4,6 +4,8 @@ import com.wespot.common.service.ServiceTest
 import com.wespot.notification.NotificationType
 import com.wespot.notification.fixtrue.NotificationFixture
 import com.wespot.notification.port.out.NotificationPort
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
 import io.kotest.matchers.shouldBe
@@ -15,12 +17,14 @@ class InquiryNotificationServiceTest @Autowired constructor(
     private val inquiryNotificationService: InquiryNotificationService,
     private val userPort: UserPort,
     private val notificationPort: NotificationPort,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     @Test
     fun `유저가 알림을 조회한다`() {
         // given
-        val user = userPort.save(UserFixture.createWithId(0))
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user = userPort.save(UserFixture.createWithId(0, schoolJpaEntity = school))
         UserFixture.setSecurityContextUser(user)
         val notifications = notificationPort.saveAll((user.id..user.id + 4).map {
             NotificationFixture.createWithIdAndUserIdAndTypeAndTargetId(
@@ -59,7 +63,8 @@ class InquiryNotificationServiceTest @Autowired constructor(
     @Test
     fun `유저가 알림을 조회해, 읽음 상태로 변경된다`() {
         // given
-        val user = userPort.save(UserFixture.createWithId(0))
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user = userPort.save(UserFixture.createWithId(id = 0, schoolJpaEntity = school))
         UserFixture.setSecurityContextUser(user)
         notificationPort.saveAll((user.id..user.id + 4).map {
             NotificationFixture.createWithIdAndUserIdAndTypeAndTargetId(

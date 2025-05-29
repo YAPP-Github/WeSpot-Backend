@@ -7,6 +7,7 @@ import com.wespot.message.dto.response.*
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.school.School
+import com.wespot.school.SchoolMapper
 import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
@@ -46,11 +47,17 @@ class GetMessageServiceTest : BehaviorSpec({
         // 시간을 조작하여 테스트 시간 설정
         val fixedClock = Clock.fixed(Instant.parse("2023-03-18T18:00:00Z"), ZoneId.of("UTC"))
         MessageTimeValidator.setClock(fixedClock)
+        school = SchoolFixture.generate(
+            id = 1,
+            name = "서울고등학교",
+            schoolType = SchoolType.HIGH,
+            address = "서울",
+            region = "서울시 강남구"
+        )
 
-        sender = UserFixture.createSender()
-        blockedSender = UserFixture.createWithId(3)
-        receiver = UserFixture.createReceiver()
-        school = SchoolFixture.createSchool(1L, "서울고등학교", SchoolType.HIGH, "서울", "서울시 강남구")
+        sender = UserFixture.createSender(school = SchoolMapper.mapToJpaEntity(school))
+        blockedSender = UserFixture.createWithId(id = 3, schoolJpaEntity = SchoolMapper.mapToJpaEntity(school))
+        receiver = UserFixture.createReceiver(school = SchoolMapper.mapToJpaEntity(school))
         UserFixture.setSecurityContextUser(receiver)
     }
 
@@ -84,16 +91,17 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
 
             then("올바른 메시지를 반환해야 한다") {
                 val response = getMessageService.getMessage(messageId)
-                response shouldBe MessageResponse.from(
+                response shouldBe MessageResponse.of(
                     message = messages[0],
                     receiver = receiver,
                     school = school,
-                    isBlocked = false
+                    isBlocked = false,
+                    sender = sender
                 )
             }
 
@@ -111,7 +119,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
                     senderId = sender.id,
@@ -132,11 +140,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 10
                 result.hasNext shouldBe true
                 result shouldBe MessageListResponse.from(messages.take(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = sender
                     )
                 }, hasNext = true)
             }
@@ -150,7 +159,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { userPort.findById(sender.id) } returns sender
             every { userPort.findById(receiver.id) } returns receiver
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every {
                 messagePort.findAllMessagesByTypeAndSenderAfterCursor(
                     senderId = sender.id,
@@ -171,11 +180,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 1
                 result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = sender
                     )
                 }, hasNext = false)
             }
@@ -190,7 +200,8 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(sender.id) } returns sender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
+            every { userPort.findByIdIn(listOf(sender.id, blockedSender.id)) } returns listOf(sender, blockedSender)
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
@@ -214,14 +225,19 @@ class GetMessageServiceTest : BehaviorSpec({
             then("첫 10개의 수신 메시지 목록을 반환해야 한다") {
                 result.messages.size shouldBe 10
                 result.hasNext shouldBe true
-                result shouldBe MessageListResponse.from(messages.take(10).map { message ->
-                    MessageResponse.from(
-                        message = message,
-                        receiver = receiver,
-                        school = school,
-                        isBlocked = false
+
+                MessageListResponse.from(result.messages.take(6), result.hasNext) shouldBe
+                    MessageListResponse.from(
+                        messages.take(6).map { message ->
+                            MessageResponse.of(
+                                message = message,
+                                receiver = receiver,
+                                school = school,
+                                isBlocked = false,
+                                sender = sender
+                            )
+                        }, hasNext = true
                     )
-                }, hasNext = true)
             }
         }
 
@@ -234,8 +250,9 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(sender.id) } returns sender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns emptyList()
+            every { userPort.findByIdIn(listOf(blockedSender.id)) } returns listOf(blockedSender)
             every {
                 messagePort.findAllMessagesByTypeAndReceiverAfterCursor(
                     receiverId = receiver.id,
@@ -259,11 +276,12 @@ class GetMessageServiceTest : BehaviorSpec({
                 result.messages.size shouldBe 1
                 result.hasNext shouldBe false
                 result shouldBe MessageListResponse.from(messages.drop(10).map { message ->
-                    MessageResponse.from(
+                    MessageResponse.of(
                         message = message,
                         receiver = receiver,
                         school = school,
-                        isBlocked = false
+                        isBlocked = false,
+                        sender = blockedSender
                     )
                 }, hasNext = false)
             }
@@ -276,9 +294,11 @@ class GetMessageServiceTest : BehaviorSpec({
             val blockedUserIds = listOf(blockedSender.id)
 
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
+            every { userPort.findById(sender.id) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { userPort.findByIdIn(listOf(sender.id)) } returns listOf(sender)
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { messagePort.countReceivedMessagesAfterCursor(any(), any(), any()) } returns 5
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(
                 BlockedUserFixture.createWithIdAndBlockedIdAndBlockerId(
@@ -312,7 +332,14 @@ class GetMessageServiceTest : BehaviorSpec({
         `when`("status() 메서드를 호출할 때") {
             every { SecurityUtils.getLoginUser(userPort) } returns sender
             every { messagePort.sendMessageCount(sender.id) } returns 0
-            every { messagePort.countUnreadMessagesByReceiverId(any(), any()) } returns 0
+            every {
+                messagePort.countUnreadMessagesByReceiverIdAndBetweenSendTimeAndMessageOpenTime(
+                    any(),
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns 0
             every { blockedUserPort.findAllByBlockerId(sender.id) } returns emptyList()
 
             then("SendMessageStatusResponse를 반환해야 한다") {
@@ -339,7 +366,7 @@ class GetMessageServiceTest : BehaviorSpec({
             every { SecurityUtils.getLoginUser(userPort) } returns receiver
             every { userPort.findById(receiver.id) } returns receiver
             every { userPort.findById(blockedSender.id) } returns blockedSender
-            every { schoolPort.findById(receiver.schoolId) } returns school
+            every { schoolPort.findById(receiver.school.id) } returns school
             every { messagePort.findById(1) } returns messages[0]
 
             every { blockedUserPort.findAllByBlockerId(receiver.id) } returns listOf(

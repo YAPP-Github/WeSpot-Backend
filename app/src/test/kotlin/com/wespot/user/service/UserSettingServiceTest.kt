@@ -1,6 +1,9 @@
 package com.wespot.user.service
 
 import com.wespot.common.service.ServiceTest
+import com.wespot.school.SchoolJpaEntity
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.dto.request.ModifiedSettingRequest
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.port.out.UserPort
@@ -10,13 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired
 
 class UserSettingServiceTest @Autowired constructor(
     private val userSettingService: UserSettingService,
-    private val userPort: UserPort
+    private val userPort: UserPort,
+    private val schoolJpaRepository: SchoolJpaRepository
 ) : ServiceTest() {
 
     @Test
     fun `유저가 알림 설정을 변경한다`() {
         // given
-        val user = UserFixture.createWithId(0)
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user = UserFixture.createWithId(0, schoolJpaEntity = school)
         val savedUser = userPort.save(user)
         UserFixture.setSecurityContextUser(savedUser)
         val modifiedSettingRequest = ModifiedSettingRequest(
@@ -37,7 +42,8 @@ class UserSettingServiceTest @Autowired constructor(
 
     @Test
     fun `유저가 알림 설정을 조회한다`() {
-        val user = UserFixture.createWithId(0)
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+        val user = UserFixture.createWithId(0, schoolJpaEntity = school)
         val savedUser = userPort.save(user)
         UserFixture.setSecurityContextUser(savedUser)
         val modifiedSettingRequest = ModifiedSettingRequest(

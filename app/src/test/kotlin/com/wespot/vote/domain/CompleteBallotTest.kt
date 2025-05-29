@@ -16,10 +16,10 @@ class CompleteBallotTest : BehaviorSpec({
     given("완전한 투표지를 만들 때") {
         val ballot =
             BallotFixture.createByVoteAndVoteOptionAndSenderAndReceiver(1, 1, 1, 2)
-        val validSender = UserFixture.createWithId(1)
-        val invalidSender = UserFixture.createWithId(2)
-        val validReceiver = UserFixture.createWithId(2)
-        val invalidReceiver = UserFixture.createWithId(1)
+        val validSender = UserFixture.createWithIdSchool(1)
+        val invalidSender = UserFixture.createWithIdSchool(2)
+        val validReceiver = UserFixture.createWithIdSchool(2)
+        val invalidReceiver = UserFixture.createWithIdSchool(1)
         val validVote = VoteFixture.createWithIdAndVoteNumberAndBallots(1, 0, emptyList())
         val invalidVote = VoteFixture.createWithIdAndVoteNumberAndBallots(2, 0, emptyList())
         val validVoteOption = VoteOptionFixture.createWithId(1)

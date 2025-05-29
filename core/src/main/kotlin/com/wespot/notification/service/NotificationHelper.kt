@@ -26,12 +26,12 @@ class NotificationHelper(
         notificationServicePort.sendMulticastNotification(notificationUsers, notificationInfo)
     }
 
-    fun sendNotification(user: User?, notification: Notification) {
-        user ?: return
-        notificationFilterService.filterNotification(user, notification) ?: return
+    fun sendNotification(receiver: User?, notification: Notification) {
+        receiver ?: return
+        notificationFilterService.filterNotification(receiver, notification) ?: return
 
         notificationServicePort.sendNotification(
-            user,
+            receiver,
             NotificationInfo.createInitialState(notification)
         )
     }

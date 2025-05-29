@@ -19,5 +19,6 @@ dependencies {
     testImplementation("io.jsonwebtoken:jjwt-impl:0.11.2")
     testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
     testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.apache.commons:commons-lang3:3.0")
 
 }

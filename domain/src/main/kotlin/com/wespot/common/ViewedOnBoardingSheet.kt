@@ -1,0 +1,58 @@
+package com.wespot.common
+
+import kotlin.reflect.KFunction1
+
+data class ViewedOnBoardingSheet(
+    val id: Long,
+    val userId: Long,
+    var isViewedMessageOnBoardingSheet: Boolean,
+    var isViewedVoteOnBoardingSheet: Boolean,
+    var isViewedAnswerMessageOnBoardingSheet: Boolean,
+) {
+
+    companion object {
+        private const val IS_MESSAGE_VIEW = "MESSAGE"
+        private const val IS_VOTE_VIEW = "VOTE"
+        private const val IS_ANSWER_MESSAGE_VIEW = "ANSWER_MESSAGE"
+
+        fun createInitialState(
+            userId: Long,
+            existsViewedOnBoardingSheet: ViewedOnBoardingSheet?
+        ): ViewedOnBoardingSheet {
+            return existsViewedOnBoardingSheet ?: ViewedOnBoardingSheet(
+                id = 0,
+                userId = userId,
+                isViewedMessageOnBoardingSheet = false,
+                isViewedVoteOnBoardingSheet = false,
+                isViewedAnswerMessageOnBoardingSheet = false
+            )
+        }
+    }
+
+    fun view(name: String, commited: KFunction1<ViewedOnBoardingSheet, ViewedOnBoardingSheet>) {
+        if (name == IS_MESSAGE_VIEW) {
+            isViewedMessageOnBoardingSheet = true
+        }
+
+        if (name == IS_VOTE_VIEW) {
+            isViewedVoteOnBoardingSheet = true
+        }
+
+        if (name == IS_ANSWER_MESSAGE_VIEW) {
+            isViewedAnswerMessageOnBoardingSheet = true
+        }
+
+        commited.call(this)
+    }
+
+    fun isViewed(name: String): Boolean {
+        return when (name) {
+            "MESSAGE" -> isViewedMessageOnBoardingSheet
+            "VOTE" -> isViewedVoteOnBoardingSheet
+            else -> {
+                false
+            }
+        }
+    }
+
+}

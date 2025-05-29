@@ -3,14 +3,14 @@ description: Request new Feature
 title: "[feature]: "
 labels: ["🌱기능🌱"]
 body:
-  - type: input
-    id: parentKey
-    attributes:
-      label: Epic/Story Ticket Number
-      description: WS-75 - 회원가입/로그인 | WS-79 - 투표 홈 | WS-88 - 쪽지 홈 | WS-104 - 알림 | WS-131 - 투표 결과 | WS-132 - 전체 | WS-134 - 쪽지 보관함
-      placeholder: WS-132
-    validations:
-      required: true
+#  - type: input
+#    id: parentKey
+#    attributes:
+#      label: Epic/Story Ticket Number
+#      description: WS-75 - 회원가입/로그인 | WS-79 - 투표 홈 | WS-88 - 쪽지 홈 | WS-104 - 알림 | WS-131 - 투표 결과 | WS-132 - 전체 | WS-134 - 쪽지 보관함
+#      placeholder: WS-132
+#    validations:
+#      required: true
   - type: markdown
     attributes:
       value: |
@@ -22,15 +22,15 @@ body:
       description: 어떤 기능을 추가할건가요?
     validations:
       required: true
-  - type: textarea
-    id: todo
-    attributes:
-      label: Todo
-      description: 작업사항을 나누어 작성해주세요!
-      value: |
-        - [ ] todo1
-  - type: textarea
-    id: etc
-    attributes:
-      label: 기타사항
-      description: 추가로 기록이 필요한 경우 작성해주세요!
+#  - type: textarea
+#    id: todo
+#    attributes:
+#      label: Todo
+#      description: 작업사항을 나누어 작성해주세요!
+#      value: |
+#        - [ ] todo1
+#  - type: textarea
+#    id: etc
+#    attributes:
+#      label: 기타사항
+#      description: 추가로 기록이 필요한 경우 작성해주세요!

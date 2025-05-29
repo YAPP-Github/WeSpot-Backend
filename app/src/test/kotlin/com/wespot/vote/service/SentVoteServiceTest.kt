@@ -2,6 +2,8 @@ package com.wespot.vote.service
 
 import com.wespot.DatabaseCleanup
 import com.wespot.common.service.ServiceTest
+import com.wespot.school.SchoolJpaRepository
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
@@ -17,6 +19,7 @@ import com.wespot.voteoption.VoteOptionJpaRepository
 import com.wespot.voteoption.VoteOptionMapper
 import com.wespot.voteoption.fixture.VoteOptionFixture
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldHaveSameHashCodeAs
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +32,7 @@ class SentVoteServiceTest @Autowired constructor(
     private var voteOptionJpaRepository: VoteOptionJpaRepository,
     private var ballotJpaRepository: BallotJpaRepository,
     private var votePort: VotePort,
+    private var schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
 
     private var users: MutableList<UserJpaEntity> = mutableListOf()
@@ -40,22 +44,26 @@ class SentVoteServiceTest @Autowired constructor(
     fun setUp() {
         voteOptions.clear()
         users.clear()
+        val school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
         for (i in 0 until 10) {
-            val userJpaEntity = UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako"))
+            val userJpaEntity =
+                UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail${i}@Kakako", school = school))
             users.add(userJpaRepository.save(userJpaEntity))
             val voteOptionJpaEntity =
-                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(0))
+                VoteOptionMapper.mapToJpaEntity(VoteOptionFixture.createWithId(id = 0))
             voteOptions.add(voteOptionJpaRepository.save(voteOptionJpaEntity))
         }
         val voteIdentifier2 =
             VoteIdentifier.of(
-                UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1),
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1),
                 LocalDate.now().minusDays(1)
             )
         vote2 =
             votePort.save(Vote.of(voteIdentifier2, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, null))
         val voteIdentifier1 =
-            VoteIdentifier.of(UserFixture.createWithSchoolIdAndGradeAndClassNumber(1, 1, 1), LocalDate.now())
+            VoteIdentifier.of(
+                UserFixture.createWithSchoolIdAndGradeAndClassNumber(schoolId = school.id, 1, 1), LocalDate.now()
+            )
         vote1 =
             votePort.save(Vote.of(voteIdentifier1, voteOptions.map { VoteOptionMapper.mapToDomainEntity(it) }, vote2))
     }
@@ -65,7 +73,10 @@ class SentVoteServiceTest @Autowired constructor(
         // given
         val now = LocalDateTime.now()
         val plusOneMinute = now.plusMinutes(1)
-        val loginUser = UserMapper.mapToDomainEntity(users[0])
+        val schoolJpaEntity = schoolJpaRepository.save(
+            SchoolFixture.generateJpaEntity(id = users[0].schoolId)
+        )
+        val loginUser = UserMapper.mapToDomainEntity(users[0], schoolJpaEntity)
         UserFixture.setSecurityContextUser(loginUser)
         ballotJpaRepository.save(
             BallotMapper.mapToJpaEntity(

@@ -14,7 +14,7 @@ data class VoteIdentifier(
 
         fun of(user: User, date: LocalDate): VoteIdentifier {
             return VoteIdentifier(
-                schoolId = user.schoolId,
+                schoolId = user.school.id,
                 grade = user.grade,
                 classNumber = user.classNumber,
                 date = date

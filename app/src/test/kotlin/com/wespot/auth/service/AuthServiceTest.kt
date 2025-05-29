@@ -25,6 +25,7 @@ import com.wespot.user.port.out.UserConsentPort
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.port.out.RestrictionPort
 import com.wespot.auth.port.out.PersonalInfoPort
+import com.wespot.common.out.ViewedOnBoardingSheetPort
 import com.wespot.user.port.out.UserVersionPort
 
 import io.kotest.assertions.throwables.shouldThrow
@@ -58,6 +59,7 @@ class AuthServiceTest : BehaviorSpec({
     val restrictionPort = mockk<RestrictionPort>()
     val personalInfoPort = mockk<PersonalInfoPort>()
     val userVersionPort = mockk<UserVersionPort>()
+    val viewedOnBoardingSheetPort = mockk<ViewedOnBoardingSheetPort>()
 
     val secretKey = "testSecretKey"
 
@@ -80,7 +82,8 @@ class AuthServiceTest : BehaviorSpec({
             restrictionPort = restrictionPort,
             personalInfoPort = personalInfoPort,
             cloudFrontUrl = "cloud-front-url",
-            userVersionPort = userVersionPort
+            userVersionPort = userVersionPort,
+            viewedOnBoardingSheetPort = viewedOnBoardingSheetPort
         )
     )
 
@@ -150,7 +153,7 @@ class AuthServiceTest : BehaviorSpec({
         }
 
         `when`("기존 사용자가 loginAccess를 호출할 때") {
-            val user = UserFixture.createWithId(1)
+            val user = UserFixture.createWithIdSchool(id = 1)
             val tokenResponse = TokenAndUserDetailResponse(
                 accessToken = "accessToken",
                 refreshToken = "refreshToken",
@@ -161,7 +164,9 @@ class AuthServiceTest : BehaviorSpec({
                     isMarketingNotification = user.userConsent.consentValue ?: false
                 ),
                 name = user.name,
-                isProfileChanged = false
+                isProfileChanged = false,
+                isViewedMessageOnBoardingSheet = false,
+                isViewedVoteOnBoardingSheet = false
             )
 
             every { userPort.findByEmail(formatSocialEmail) } returns user
@@ -211,7 +216,9 @@ class AuthServiceTest : BehaviorSpec({
                 isMarketingNotification = signUpRequest.consents.marketing
             ),
             name = user.name,
-            isProfileChanged = false
+            isProfileChanged = false,
+            isViewedMessageOnBoardingSheet = false,
+            isViewedVoteOnBoardingSheet = false
         )
 
         every { authService.checkSignUpToken(signUpRequest.signUpToken) } returns authData
@@ -277,7 +284,7 @@ class AuthServiceTest : BehaviorSpec({
 
         val refreshTokenExpiredAt = getExpirationLocalDateTime(60 * 60 * 24 * 30).toString()
 
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         val authentication = mockk<Authentication>()
         val generateToken = AuthFixture.createTokenResponse(refreshTokenExpiredAt)
 
@@ -321,7 +328,7 @@ class AuthServiceTest : BehaviorSpec({
             refreshToken = "testRefreshToken"
         )
 
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
         val authentication = mockk<Authentication>()
         val generateToken = AuthFixture.createTokenResponse(refreshTokenExpiredAt)
 
@@ -373,7 +380,7 @@ class AuthServiceTest : BehaviorSpec({
 
     given("revoke 테스트") {
 
-        val user = UserFixture.createWithId(1)
+        val user = UserFixture.createWithIdSchool(1)
 
         every { authService.getLoginUserId() } returns user.id
         every { userPort.findById(user.id) } returns user

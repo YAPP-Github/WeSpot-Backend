@@ -18,4 +18,8 @@ class ImagePersistentAdapter(
         imageJpaRepository.deleteByUrl(url)
     }
 
+    override fun deleteById(imageId: Long) {
+        imageJpaRepository.deleteById(imageId)
+    }
+
 }

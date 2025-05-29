@@ -13,7 +13,7 @@ class VoteRecordTest : BehaviorSpec({
 
     given("VoteMetrics와 User를 활용해") {
         val voteMetrics = VoteMetrics.createInitialState(1L)
-        val user = UserFixture.createWithId(1L)
+        val user = UserFixture.createWithIdSchool(1L)
         `when`("VoteRecord를") {
             val actual = VoteRecord.of(user, voteMetrics)
             then("정상적으로 생성한다.") {
@@ -25,7 +25,7 @@ class VoteRecordTest : BehaviorSpec({
         }
 
         `when`("VoteRecord를 생성할 때, VoteMetrics내의 userId와 입력된 userId가 일치하지 않으면") {
-            val invalidUser = UserFixture.createWithId(2L)
+            val invalidUser = UserFixture.createWithIdSchool(2L)
             then("예외가 발생한다.") {
                 val shouldThrow = shouldThrow<CustomException> { VoteRecord.of(invalidUser, voteMetrics) }
                 shouldThrow shouldHaveMessage "userId가 일치하지 않습니다."

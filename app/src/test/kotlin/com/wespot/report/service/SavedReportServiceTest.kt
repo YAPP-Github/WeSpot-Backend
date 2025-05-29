@@ -2,20 +2,22 @@ package com.wespot.report.service
 
 import com.wespot.common.service.ServiceTest
 import com.wespot.exception.CustomException
-import com.wespot.message.MessageJpaRepository
-import com.wespot.message.MessageMapper
+import com.wespot.message.v1.MessageJpaRepository
+import com.wespot.message.v1.MessageMapper
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.report.ReportJpaRepository
 import com.wespot.report.ReportType
 import com.wespot.report.dto.ReportRequest
+import com.wespot.school.*
+import com.wespot.school.fixture.SchoolFixture
 import com.wespot.user.RestrictionType
 import com.wespot.user.fixture.UserFixture
 import com.wespot.user.mapper.UserMapper
-import com.wespot.user.repository.RestrictionJpaRepository
 import com.wespot.user.repository.UserJpaRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -24,12 +26,20 @@ class SavedReportServiceTest @Autowired constructor(
     private val userJpaRepository: UserJpaRepository,
     private val messageJpaRepository: MessageJpaRepository,
     private val reportJpaRepository: ReportJpaRepository,
+    private val schoolJpaRepository: SchoolJpaRepository,
 ) : ServiceTest() {
+
+    private lateinit var school: SchoolJpaEntity
+
+    @BeforeEach
+    fun setUp() {
+        school = schoolJpaRepository.save(SchoolFixture.generateJpaEntity())
+    }
 
     @Test
     fun `로그인하지 않은 유저가 신고하는 경우, 예외가 발생한다`() {
         // given
-        val loginUser = UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")
+        val loginUser = UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao", school = school)
         UserFixture.setSecurityContextUser(loginUser)
         val savedMessage = messageJpaRepository.save(MessageMapper.mapToJpaEntity(MessageFixture.createWithId(0L)))
         val reportRequest = ReportRequest(
@@ -49,8 +59,16 @@ class SavedReportServiceTest @Autowired constructor(
     fun `신고 당한 사람이 존재하지 않을 경우, 예외가 발생한다`() {
         // given
         val userJpaEntity =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(userJpaEntity))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail0@Kakao",
+                        school = school
+                    )
+                )
+            )
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(userJpaEntity, school))
         val reportRequest = ReportRequest(
             targetId = 100L,
             reportType = ReportType.VOTE,
@@ -68,8 +86,17 @@ class SavedReportServiceTest @Autowired constructor(
     fun `신고하고자 하는 쪽지가 존재하지 않는 경우, 예외가 발생한다`() {
         // given
         val sender =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail0@Kakao",
+                        school = school
+                    )
+                )
+            )
+        val schoolEntity = schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = sender.schoolId))
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender, schoolEntity))
         val reportRequest = ReportRequest(
             targetId = 1L,
             reportType = ReportType.MESSAGE,
@@ -87,12 +114,36 @@ class SavedReportServiceTest @Autowired constructor(
     fun `신고한 이가 쪽지의 수신자가 아닌 경우 예외가 발생한다`() {
         // given
         val reportSender =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail0@Kakao",
+                        school = school
+                    )
+                )
+            )
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender, school))
         val messageSender =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail2@Kakao")))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail2@Kakao",
+                        school = school
+                    )
+                )
+            )
         val otherPerson =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail3@Kakao")))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail3@Kakao",
+                        school = school
+                    )
+                )
+            )
         val savedMessage = messageJpaRepository.save(
             MessageMapper.mapToJpaEntity(
                 MessageFixture.createWithIdAndSenderIdAndReceiverId(
@@ -119,10 +170,26 @@ class SavedReportServiceTest @Autowired constructor(
     fun `쪽지를 신고하는 경우, 쪽지가 지워진다`() {
         // given
         val reportSender =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail0@Kakao")))
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail0@Kakao",
+                        school = school
+                    )
+                )
+            )
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(reportSender, school))
         val reportReceiver =
-            userJpaRepository.save(UserMapper.mapToJpaEntity(UserFixture.createWithIdAndEmail(0, "TestEmail1@Kakao")))
+            userJpaRepository.save(
+                UserMapper.mapToJpaEntity(
+                    UserFixture.createWithIdAndEmail(
+                        0,
+                        "TestEmail1@Kakao",
+                        school = school
+                    )
+                )
+            )
         val savedMessage = messageJpaRepository.save(
             MessageMapper.mapToJpaEntity(
                 MessageFixture.createWithIdAndSenderIdAndReceiverId(
@@ -157,19 +224,20 @@ class SavedReportServiceTest @Autowired constructor(
                 UserMapper.mapToJpaEntity(
                     UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
                         "TestEmail0@Kakao",
-                        1,
+                        schoolId = school.id,
                         1,
                         1
                     )
                 )
             )
-        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender))
+        val schoolEntity = schoolJpaRepository.save(SchoolFixture.generateJpaEntity(id = sender.schoolId))
+        UserFixture.setSecurityContextUser(UserMapper.mapToDomainEntity(sender, schoolEntity))
         val reportReceiver =
             userJpaRepository.save(
                 UserMapper.mapToJpaEntity(
                     UserFixture.createWithEmailAndSchoolIdAndGradeAndClassNumber(
                         "TestEmail1@Kakao",
-                        1,
+                        schoolId = school.id,
                         1,
                         1
                     )
