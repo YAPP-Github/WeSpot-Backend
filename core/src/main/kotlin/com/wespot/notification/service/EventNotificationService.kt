@@ -1,14 +1,13 @@
 package com.wespot.notification.service
 
 import com.wespot.notification.LatestVersionType
-import com.wespot.notification.NotificationType
 import com.wespot.notification.PublishNotificationType
 import com.wespot.notification.dto.NotificationPublishingRequest
 import com.wespot.notification.dto.PublishNotificationTypeResponse
+import com.wespot.notification.event.EventPublishNotificationService
 import com.wespot.notification.port.`in`.PublishNotificationUseCase
 import com.wespot.notification.port.out.LatestVersionPort
 import com.wespot.notification.port.out.NotificationPort
-import com.wespot.notification.event.EventPublishNotificationService
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.port.out.UserVersionPort
 import org.springframework.stereotype.Component
@@ -48,7 +47,7 @@ class EventNotificationService(
             body = notificationPublishingRequest.body
         )
 
-       notificationPort.saveAll(notifications)
+        notificationPort.saveAll(notifications)
         notificationHelper.sendNotifications(users, notifications)
     }
 

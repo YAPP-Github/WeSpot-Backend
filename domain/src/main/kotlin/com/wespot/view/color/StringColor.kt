@@ -15,7 +15,7 @@ data class StringColor(
         }
 
         private fun validate(color: String) {
-            if (color.length != 9 || color[0] != '#') {
+            if ((color.length != 9 && color.length != 7) || color[0] != '#') {
                 throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "color length must be 9")
             }
 

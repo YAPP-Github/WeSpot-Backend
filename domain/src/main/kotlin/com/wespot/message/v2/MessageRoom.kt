@@ -136,10 +136,7 @@ data class MessageRoom(
     }
 
     fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
-        if (roomMessage.isSameUserProfileAndNotAnonymous(viewer = viewer)) {
-            return true
-        }
-        return false
+        return roomMessage.isSameUserProfileAndNotAnonymous(viewer = viewer)
     }
 
     fun isSameAnonymousProfile(anonymousProfileId: Long): Boolean {
@@ -179,6 +176,26 @@ data class MessageRoom(
 
     fun readUnreadMessages(): List<MessageV2> {
         return messages.readUnreadMessage(viewer = viewer)
+    }
+
+    fun senderProfileImage(): String {
+        return roomMessage.myProfileImage(viewer = viewer)
+    }
+
+    fun senderName(): String {
+        return roomMessage.myName(viewer = viewer)
+    }
+
+    fun senderSchoolName(): String? {
+        return roomMessage.mySchoolName(viewer = viewer)
+    }
+
+    fun senderGrade(): Int? {
+        return roomMessage.myGrade(viewer = viewer)
+    }
+
+    fun senderClassNumber(): Int? {
+        return roomMessage.myClassNumber(viewer = viewer)
     }
 
 }
