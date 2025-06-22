@@ -47,13 +47,13 @@ enum class NotificationTypeToUpdateFeatureContent(
         ),
         listOf(
             ImageComponent.of(
-                "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
+                "https://dw2d2daekmyur.cloudfront.net/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%91%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_UPPER.png",
                 220,
                 268,
                 Paddings.of(null, null, 32, null)
             ),
             ImageComponent.of(
-                "https://dw2d2daekmyur.cloudfront.net/%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png",
+                "https://dw2d2daekmyur.cloudfront.net/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%91%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A5%E1%86%B8%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5%E1%84%90%E1%85%B3_%E1%84%89%E1%85%A5%E1%84%87%E1%85%A5%E1%84%83%E1%85%B3%E1%84%85%E1%85%B5%E1%84%87%E1%85%B3%E1%86%AB_LOWER.png",
                 220,
                 324,
                 Paddings.of(null, null, 118, null)
@@ -73,8 +73,8 @@ enum class NotificationTypeToUpdateFeatureContent(
                     "#FF48494C",
                 ),
                 ButtonComponent.ofWithDeepLink(
-                    RichText.of("다음에 하기", "#FFF7F7F8", 16, "Center", "SemiBold"),
-                    "#FF5A5C63",
+                    RichText.of("프로필 설정하기", "#FFF7F7F8", 16, "Center", "SemiBold"),
+                    "#F6FE8B",
                     "#FF48494C",
                     DeepLink.PROFILE_IMAGE_UPDATE_URL
                 )

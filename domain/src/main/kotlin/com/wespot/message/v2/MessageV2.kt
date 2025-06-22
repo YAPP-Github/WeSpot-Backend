@@ -484,6 +484,76 @@ data class MessageV2(
         return date == createdAt.toLocalDate()
     }
 
+    fun myProfileImage(viewer: User): String {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return receiver.profile.iconUrl
+        }
+
+        if (isMeAnonymous(viewer)) {
+            return anonymousProfile!!.imageUrl
+        }
+
+        return sender.profile.iconUrl
+    }
+
+    fun myName(viewer: User): String {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return receiver.name
+        }
+
+        if (isMeAnonymous(viewer)) {
+            return anonymousProfile!!.name
+        }
+
+        return sender.name
+    }
+
+    fun mySchoolName(viewer: User): String? {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return receiver.school.name
+        }
+
+        if (isMeAnonymous(viewer)) {
+            return null
+        }
+
+        return sender.school.name
+    }
+
+    fun myGrade(viewer: User): Int? {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return receiver.grade
+        }
+
+        if (isMeAnonymous(viewer)) {
+            return null
+        }
+
+        return sender.grade
+    }
+
+    fun myClassNumber(viewer: User): Int? {
+        validateRoomMessage()
+
+        if (viewer.isMeReceiver(receiverId = receiver.id)) {
+            return receiver.classNumber
+        }
+
+        if (isMeAnonymous(viewer)) {
+            return null
+        }
+
+        return sender.classNumber
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is MessageV2) return false
