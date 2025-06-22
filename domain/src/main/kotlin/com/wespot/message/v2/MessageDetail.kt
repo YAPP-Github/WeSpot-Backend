@@ -17,11 +17,19 @@ data class MessageDetail(
 
     companion object {
 
-        fun of(viewer: User, message: MessageV2, isLatestMessage: Boolean): MessageDetail {
+        fun of(
+            viewer: User,
+            message: MessageV2,
+            alreadyUsedMessageOnToday: Int,
+            isLatestMessage: Boolean
+        ): MessageDetail {
             return MessageDetail(
                 isReceived = message.isReceived(viewer = viewer),
                 isSend = message.isSent(viewer = viewer),
-                isAbleToAnswer = if (isLatestMessage) message.isAbleToAnswer(viewer = viewer) else false,
+                isAbleToAnswer = if (isLatestMessage) message.isAbleToAnswer(
+                    viewer = viewer,
+                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday
+                ) else false,
                 isRead = message.isRead(viewer = viewer),
                 message = message
             )
@@ -29,15 +37,15 @@ data class MessageDetail(
 
     }
 
-    fun isUnread(viewer: User): Boolean {
-        return !message.isRead(viewer = viewer)
+    fun isUnread(): Boolean {
+        return !isRead
     }
 
     fun chatTime(): LocalDateTime {
         return message.createdAt
     }
 
-    fun createAnswerMessage(sender: User, content: MessageContent): MessageV2 {
+    fun createAnswerMessage(sender: User, alreadyUsedMessageOnToday: Int, content: MessageContent): MessageV2 {
         if (!isAbleToAnswer) {
             throw CustomException(
                 message = "답장할 수 있는 쪽지가 아닙니다.",
@@ -54,7 +62,11 @@ data class MessageDetail(
             )
         }
 
-        return message.answerMessage(viewer = sender, content = content)
+        return message.answerMessage(
+            viewer = sender,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+            content = content
+        )
     }
 
     fun delete(deleter: User): MessageV2 {

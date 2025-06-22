@@ -1,10 +1,14 @@
 package com.wespot.common.dto
 
-enum class OnBoardingComponentRequest {
+import com.wespot.view.OnBoardingCategory
 
-    MESSAGE,
-    VOTE,
-    ANSWER_MESSAGE,
+enum class OnBoardingComponentRequest(
+    val categoryIfUserDoNotUpdate: OnBoardingCategory,
+    val categoryIfUserUpdated: OnBoardingCategory
+) {
+
+    MESSAGE(OnBoardingCategory.MESSAGE, OnBoardingCategory.ANSWER_MESSAGE),
+    VOTE(OnBoardingCategory.VOTE, OnBoardingCategory.VOTE),
     ;
 
 }

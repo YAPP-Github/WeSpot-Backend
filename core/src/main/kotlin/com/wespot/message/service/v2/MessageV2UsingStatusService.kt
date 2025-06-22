@@ -32,7 +32,8 @@ class MessageV2UsingStatusService(
             isSendAllowed = MessageV2.COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY > countTodaySentMessage,
             countRemainingMessages = MessageV2.COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY - countTodaySentMessage,
             countUnReadMessages = messages.filter { !it.isRead(viewer = loginUser) }.size,
-            countUnReplayMessages = messages.filter { it.isSentAtSameDate(date = today) }.size
+            countUnReplayMessages = messages.filter { it.isSentAtSameDate(date = today) }.size,
+            isReceivedAllowed = loginUser.isEnableMessage(),
         )
     }
 

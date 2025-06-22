@@ -21,10 +21,17 @@ class AnswerMessageV2Service(
 
         val message = messageV2Port.findById(id = messageRoomId)
         val messageDetails = messageV2Port.findAllByMessageRoomId(message.id)
-        val room = MessageRoom.of(viewer = loginUser, roomMessage = message, messages = messageDetails)
+        val alreadyUsedMessageOnToday = messageV2Port.countTodaySendMessages(senderId = loginUser.id)
+        val room = MessageRoom.of(
+            viewer = loginUser,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+            roomMessage = message,
+            messages = messageDetails
+        )
 
         val answerMessage = room.answer(
             sender = loginUser,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
             content = answerMessageRequest.content,
         )
         messageV2Port.save(answerMessage)

@@ -24,6 +24,7 @@ class CreatedMessageV2Service(
     private val messageV2Port: MessageV2Port,
 ) : CreatedMessageV2UseCase {
 
+    @Transactional
     override fun createMessage(createdMessageV2Request: CreatedMessageV2Request): MessageV2 {
         val sender = SecurityUtils.getLoginUser(userPort)
         val receiver =
@@ -66,7 +67,7 @@ class CreatedMessageV2Service(
             status = HttpStatus.NOT_FOUND,
         )
 
-        val welcomeMessage = MessageV2.createInitial(
+        MessageV2.createInitial(
             content = MessageContent.createWelcomeMessage(receiverName = signUpUser.name).content,
             sender = ever,
             receiver = signUpUser,
@@ -74,7 +75,6 @@ class CreatedMessageV2Service(
             savedMessageFunction = { message -> messageV2Port.save(message) },
             alreadyUsedMessageOnToday = 0,
         )
-        messageV2Port.save(messageV2 = welcomeMessage)
     }
 
 

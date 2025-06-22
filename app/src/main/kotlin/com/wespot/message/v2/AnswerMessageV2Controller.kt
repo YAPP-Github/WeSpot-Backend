@@ -23,5 +23,4 @@ class AnswerMessageV2Controller(
             .build()
     }
 
-
 }

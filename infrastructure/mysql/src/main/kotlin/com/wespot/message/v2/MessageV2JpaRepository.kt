@@ -17,6 +17,10 @@ interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
 
     fun findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBookmarkedTrue(receiverId: Long): List<MessageJpaEntityV2>
 
+    fun findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBlockedTrue(senderId: Long): List<MessageJpaEntityV2>
+
+    fun findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBlockedTrue(receiverId: Long): List<MessageJpaEntityV2>
+
     @Query(
         """
             SELECT message

@@ -5,7 +5,10 @@ import jakarta.persistence.*
 import software.amazon.awssdk.annotations.NotNull
 
 @Entity
-@Table(name = "anonymous_profile")
+@Table(
+    name = "anonymous_profile",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["name"])]
+)
 class AnonymousProfileJpaEntity(
 
     @Id
@@ -16,6 +19,7 @@ class AnonymousProfileJpaEntity(
     val imageUrl: String,
 
     @field: NotNull
+    @Column(unique = true)
     val name: String,
 
     @field: NotNull

@@ -9,14 +9,16 @@ object SettingMapper {
         Setting(
             isEnableVoteNotification = settingJpaEntity.isEnableVoteNotification,
             isEnableMessageNotification = settingJpaEntity.isEnableMessageNotification,
-            isEnableMarketingNotification = settingJpaEntity.isEnableMarketingNotification
+            isEnableMarketingNotification = settingJpaEntity.isEnableMarketingNotification,
+            isEnableMessage = settingJpaEntity.isEnableMessageV2
         )
 
     fun mapToJpaEntity(setting: Setting): SettingJpaEntity =
         SettingJpaEntity(
             isEnableVoteNotification = setting.isEnableVoteNotification,
             isEnableMessageNotification = setting.isEnableMessageNotification,
-            isEnableMarketingNotification = setting.isEnableMarketingNotification
+            isEnableMarketingNotification = setting.isEnableMarketingNotification,
+            isEnableMessageV2 = setting.isEnableMessage
         )
 
 }

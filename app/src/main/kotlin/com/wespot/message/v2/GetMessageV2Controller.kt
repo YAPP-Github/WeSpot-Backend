@@ -29,6 +29,13 @@ class GetMessageV2Controller(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/blocked")
+    fun getBlockedMessagesOverview(): ResponseEntity<List<MessageV2OverviewResponse>> {
+        val response = getMessageV2UseCase.getBlockedMessageOverview()
+
+        return ResponseEntity.ok(response)
+    }
+
     @GetMapping("/{messageId}/details")
     fun getMessageDetails(@PathVariable messageId: Long): ResponseEntity<MessageV2DetailsResponse> {
         val response = getMessageV2UseCase.getMessageDetails(messageId)

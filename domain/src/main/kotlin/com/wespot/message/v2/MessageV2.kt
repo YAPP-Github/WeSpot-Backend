@@ -5,7 +5,7 @@ import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
 import com.wespot.message.event.MessageAnswerEvent
-import com.wespot.message.event.ReadMessageByReceiverEvent
+import com.wespot.message.event.ReadMessageEvent
 import com.wespot.message.event.ReceivedMessageEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
@@ -48,7 +48,8 @@ data class MessageV2(
 
     companion object {
 
-        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
+        //        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY=3
+        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 100 // 개발하는 동안 100개로 유지
 
         fun createInitial(
             content: String,
@@ -58,6 +59,11 @@ data class MessageV2(
             alreadyUsedMessageOnToday: Int,
             savedMessageFunction: (MessageV2) -> MessageV2
         ): MessageV2 {
+            if (!isAbleToUseMessage(sender, receiver)) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "쪽지 기능이 비활성화 되어 있는 유저가 존재합니다."
+                )
+            }
             if (COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY <= alreadyUsedMessageOnToday) {
                 throw CustomException(
                     HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 쪽지는 3개만 보낼 수 있습니다."
@@ -96,11 +102,22 @@ data class MessageV2(
             )
 
             val savedMessage = savedMessageFunction.invoke(message)
-            EventUtils.publish(ReceivedMessageEvent(receiver = receiver, messageId = savedMessage.id))
+            val receivedMessageEvent = ReceivedMessageEvent(
+                sender = sender,
+                senderAnonymousProfile = anonymousProfile,
+                receiver = receiver,
+                receiverAnonymousProfile = null,
+                message = savedMessage
+            )
 
+            EventUtils.publish(receivedMessageEvent)
+            print("created message ...")
             return savedMessage
         }
 
+        private fun isAbleToUseMessage(user1: User, user2: User): Boolean {
+            return user1.isEnableMessage() && user2.isEnableMessage()
+        }
     }
 
     fun isRoom(): Boolean {
@@ -128,11 +145,11 @@ data class MessageV2(
     }
 
     fun isReceived(viewer: User): Boolean {
-        return viewer.id == receiver.id
+        return viewer.isMeReceiver(receiverId = receiver.id)
     }
 
     fun isSent(viewer: User): Boolean {
-        return viewer.id == sender.id
+        return viewer.isMeSender(senderId = sender.id)
     }
 
     fun isContainsOf(roomMessage: MessageV2): Boolean {
@@ -145,7 +162,7 @@ data class MessageV2(
             return true
         }
 
-        return readAt != null
+        return isReceiverRead
     }
 
     fun isMeOwnerOfMessageRoom(viewer: User): Boolean {
@@ -243,16 +260,12 @@ data class MessageV2(
         return isReceiverBookmarked
     }
 
-    fun isBlockedByReceiver(viewer: User): Boolean {
+    fun isBlockedByMe(viewer: User): Boolean {
         if (viewer.isMeSender(senderId = sender.id)) {
-            return isReceiverBlocked
-        }
-
-        if (viewer.isMeReceiver(receiverId = receiver.id)) {
             return isSenderBlocked
         }
 
-        return false
+        return isReceiverBlocked
     }
 
     fun isReceiverEver(viewer: User): Boolean {
@@ -277,8 +290,10 @@ data class MessageV2(
         return sender.profile.iconUrl
     }
 
-    fun isAbleToAnswer(viewer: User): Boolean {
-        return viewer.isMeReceiver(receiverId = receiver.id)
+    fun isAbleToAnswer(viewer: User, alreadyUsedMessageOnToday: Int): Boolean {
+        return alreadyUsedMessageOnToday < COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY
+            && viewer.isMeReceiver(receiverId = receiver.id)
+            && isAbleToUseMessage(sender, receiver)
     }
 
     fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
@@ -306,10 +321,25 @@ data class MessageV2(
         return viewer.isMeSender(senderId = sender.id) || viewer.isMeReceiver(receiverId = receiver.id)
     }
 
-    fun answerMessage(viewer: User, content: MessageContent): MessageV2 {
+    fun answerMessage(viewer: User, alreadyUsedMessageOnToday: Int, content: MessageContent): MessageV2 {
+        if (!isAbleToUseMessage(sender, receiver)) {
+            throw CustomException(
+                message = "쪽지 기능이 비활성화 되어 있는 유저가 존재합니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
         if (viewer.isMeSender(senderId = sender.id)) {
             throw CustomException(
                 message = "받은 쪽지에 대해서만 답장할 수 있습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
+
+        if (alreadyUsedMessageOnToday >= COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY) {
+            throw CustomException(
+                message = "하루에 쪽지는 3개만 보낼 수 있습니다.",
                 status = HttpStatus.BAD_REQUEST,
                 view = ExceptionView.TOAST,
             )
@@ -348,9 +378,21 @@ data class MessageV2(
         )
 
         EventUtils.publish(UsedAnswerFeatureEvent(user = viewer))
-        EventUtils.publish(MessageAnswerEvent(sender = receiver, receiver = sender, message = this))
+        EventUtils.publish(
+            MessageAnswerEvent(
+                sender = receiver,
+                senderAnonymousProfile = if (isUserOwner(receiver)) anonymousProfile else null,
+                receiver = sender,
+                receiverAnonymousProfile = if (isUserOwner(sender)) anonymousProfile else null,
+                message = this
+            )
+        )
 
         return newMessage
+    }
+
+    private fun isUserOwner(user: User): Boolean {
+        return user.id == messageRoomOwnerId
     }
 
     private fun messageRoomId(): Long? {
@@ -374,16 +416,19 @@ data class MessageV2(
             return
         }
 
-        EventUtils.publish(
-            ReadMessageByReceiverEvent(
-                sender = sender,
-                receiver = receiver,
-                messageId = id,
-                beforeIsReceiverRead = false,
-            )
-        )
         readAt = LocalDateTime.now()
         isReceiverRead = true
+
+        val receiverOfViewer = if (viewer.isSameUser(sender)) receiver else sender
+        EventUtils.publish(
+            ReadMessageEvent(
+                sender = receiverOfViewer,
+                senderAnonymousProfile = if (isUserOwner(receiverOfViewer)) anonymousProfile else null,
+                receiver = viewer,
+                receiverAnonymousProfile = if (isUserOwner(viewer)) anonymousProfile else null,
+                message = this,
+            )
+        )
     }
 
     fun delete(deleter: User): MessageV2 {

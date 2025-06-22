@@ -21,9 +21,11 @@ class DeleteMessageV2Service(
 
         val message = messageV2Port.findById(id = messageId)
         val allMessagesOfRoom = getAllMessagesOfRoom(message)
+        val noMeaningNumber = 0
 
         val room = MessageRoom.of(
             viewer = loginUser,
+            alreadyUsedMessageOnToday = noMeaningNumber,
             allMessagesOfRoom = allMessagesOfRoom,
         )
         val deleteMessage = room.deleteMessage(messageId = messageId)

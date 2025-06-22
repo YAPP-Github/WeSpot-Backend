@@ -4,7 +4,7 @@ import com.wespot.EventUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.message.Message
-import com.wespot.message.event.ReceivedMessageEvent
+import com.wespot.message.event.ReceivedMessageEventV1
 import com.wespot.message.port.`in`.SchedulerMessageUseCase
 import com.wespot.message.port.out.MessagePort
 import com.wespot.user.port.out.UserPort
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -44,9 +43,9 @@ class ScheduledMessageSenderService(
             )
 
             EventUtils.publish(
-                ReceivedMessageEvent(
+                ReceivedMessageEventV1(
                     receiver = receiver,
-                    messageId = receivedMessage.id
+                    messageId = receivedMessage.id,
                 )
             )
         } catch (e: Exception) {

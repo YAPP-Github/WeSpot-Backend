@@ -45,8 +45,15 @@ class GetMessageV2Service(
 
         val messageRoomIds: List<Long> = rooms.map { it.id }
         val messageDetails = messageV2Port.findAllLastMessageOfRoomByRoomIdIn(messageRoomIds)
+        val alreadyUsedMessageOnToday = messageV2Port.countTodaySendMessages(loginUser.id)
 
-        val messageRooms = MessageRooms.createOverview(viewer = loginUser, rooms = rooms, messageDetails = messageDetails)
+        val messageRooms =
+            MessageRooms.createOverview(
+                viewer = loginUser,
+                rooms = rooms,
+                alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+                messageDetails = messageDetails
+            )
 
         return messageRooms.asList()
             .map { MessageV2OverviewResponse.from(it) }
@@ -65,13 +72,31 @@ class GetMessageV2Service(
     }
 
     @Transactional(readOnly = true)
+    override fun getBlockedMessageOverview(): List<MessageV2OverviewResponse> {
+        return getCompleteMessageOverviewByFinder(
+            sentMessageRoomsFinder = { senderId ->
+                messageV2Port.findAllMessageRoomBySenderIdAndIsSenderBlockedTrue(senderId = senderId)
+            },
+            receivedMessageRoomsFinder = { receiverId ->
+                messageV2Port.findAllMessageRoomByReceiverIdAndIsReceiverBlockedTrue(receiverId = receiverId)
+            }
+        )
+    }
+
+    @Transactional(readOnly = true)
     override fun getMessageDetails(messageId: Long): MessageV2DetailsResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
         val roomMessage = messageV2Port.findById(id = messageId)
         val messageDetails = messageV2Port.findAllByMessageRoomId(messageRoomId = messageId)
+        val alreadyUsedMessageOnToday = messageV2Port.countTodaySendMessages(senderId = loginUser.id)
 
-        val room = MessageRoom.of(viewer = loginUser, roomMessage = roomMessage, messages = messageDetails)
+        val room = MessageRoom.of(
+            viewer = loginUser,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+            roomMessage = roomMessage,
+            messages = messageDetails
+        )
         val response = MessageV2DetailsResponse.from(room = room)
         room.readUnreadMessages()
             .forEach { messageV2Port.save(it) }

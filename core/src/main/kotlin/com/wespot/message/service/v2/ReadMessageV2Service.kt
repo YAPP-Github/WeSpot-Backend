@@ -17,8 +17,8 @@ class ReadMessageV2Service(
     override fun readMessage(messageId: Long) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
         val message = messageV2Port.findById(id = messageId)
-        message.read(viewer = loginUser)
-        messageV2Port.save(messageV2 = message)
+//        message.read(viewer = loginUser)
+//        messageV2Port.save(messageV2 = message)
     }
 
 }

@@ -1,40 +1,85 @@
 package com.wespot.message.dto.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.wespot.CommonDateTimeFormat
 import com.wespot.message.v2.MessageRoom
 import java.time.LocalDateTime
 
 data class MessageV2OverviewResponse( // TODO : 문서 변경
     val id: Long,
+
+    val senderProfile: MessageProfileResponse,
+
     val isMeMessageRoomOwner: Boolean,
-    val thumbnail: String,
-    val isExistsUnreadMessage: Boolean,
+    val isExistsUnreadMessage: Boolean, // TODO : 쪽지방 생성시에는 빨콩 잘 뜨는데, 그렇지 않으면 안뜸 이거 유의해서 보면 좋을 듯
+    @JsonFormat(pattern = CommonDateTimeFormat.DEFAULT_DATE_TIME)
     val latestChatTime: LocalDateTime,
-    val isAnonymous: Boolean,
-    val name: String,
-    val schoolName: String?,
-    val grade: Int?,
-    val classNumber: Int?,
+
+    val receiverProfile: MessageProfileResponse,
+
     val isBookmarked: Boolean,
     val isBlocked: Boolean,
     val isEver: Boolean
 ) {
+
+    data class MessageProfileResponse(
+        val isAnonymous: Boolean,
+        val iconUrl: String,
+        val name: String,
+        val schoolName: String?,
+        val grade: Int?,
+        val classNumber: Int?
+    ) {
+
+        companion object {
+            fun of(
+                iconUrl: String,
+                name: String,
+                schoolName: String?,
+                grade: Int?,
+                classNumber: Int?
+            ): MessageProfileResponse {
+                return MessageProfileResponse(
+                    isAnonymous = schoolName == null && grade == null && classNumber == null,
+                    iconUrl = iconUrl,
+                    name = name,
+                    schoolName = schoolName,
+                    grade = grade,
+                    classNumber = classNumber
+                )
+            }
+        }
+
+    }
 
     companion object {
 
         fun from(room: MessageRoom): MessageV2OverviewResponse {
             return MessageV2OverviewResponse(
                 id = room.id(),
+
+                senderProfile = MessageProfileResponse.of(
+                    iconUrl = room.senderProfileImage(),
+                    name = room.senderName(),
+                    schoolName = room.senderSchoolName(),
+                    grade = room.senderGrade(),
+                    classNumber = room.senderClassNumber()
+                ),
+
                 isMeMessageRoomOwner = room.isViewerOwnerOfMessageRoom(),
-                thumbnail = room.receiverProfileImage(),
                 isExistsUnreadMessage = room.isExistsUnReadMessage(),
                 latestChatTime = room.latestChatTime(),
-                isAnonymous = room.isReceiverUsingAnonymous(),
-                name = room.receiverName(),
-                schoolName = room.receiverSchoolName(),
-                grade = room.receiverGrade(),
-                classNumber = room.receiverClassNumber(),
+
+                receiverProfile = MessageProfileResponse.of(
+                    iconUrl = room.receiverProfileImage(),
+                    name = room.receiverName(),
+                    schoolName = room.receiverSchoolName(),
+                    grade = room.receiverGrade(),
+                    classNumber = room.receiverClassNumber()
+                ),
+
                 isBookmarked = room.isBookmarked(),
-                isBlocked = room.isBlocked(),
+                isBlocked = room.isBlockedByMe(),
                 isEver = room.isReceiverEver()
             )
         }
