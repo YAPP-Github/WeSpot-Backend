@@ -40,6 +40,16 @@ class CreatedMessageV2Service(
             sender = sender,
             receiver = receiver,
             anonymousProfile = anonymousProfile,
+            isAlreadyExistsRoomTalkWithThisReceiverWithRealName = { user1, user2 ->
+                messageV2Port.isExistsBySenderIdAndReceiverIdWithRealName(
+                    user1.id,
+                    user2.id
+                ) ||
+                    messageV2Port.isExistsBySenderIdAndReceiverIdWithRealName(
+                        user2.id,
+                        user1.id
+                    )
+            },
             savedMessageFunction = { message -> messageV2Port.save(message) },
             alreadyUsedMessageOnToday = messageV2Port.countTodaySendMessages(sender.id),
         )
@@ -73,6 +83,7 @@ class CreatedMessageV2Service(
             receiver = signUpUser,
             anonymousProfile = null,
             savedMessageFunction = { message -> messageV2Port.save(message) },
+            isAlreadyExistsRoomTalkWithThisReceiverWithRealName = { user1, user2 -> false },
             alreadyUsedMessageOnToday = 0,
         )
     }

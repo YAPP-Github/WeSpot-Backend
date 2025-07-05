@@ -74,7 +74,6 @@ data class MessageDetails(
         return messages.filter { it.isUnread() }
             .onEach { it.message.read(viewer = viewer) }
             .map { it.message }
-
     }
 
 }

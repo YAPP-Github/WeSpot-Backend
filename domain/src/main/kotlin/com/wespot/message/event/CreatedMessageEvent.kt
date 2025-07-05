@@ -4,7 +4,7 @@ import com.wespot.message.v2.MessageV2
 import com.wespot.user.User
 import com.wespot.user.message.AnonymousProfile
 
-data class ReceivedMessageEvent(
+data class CreatedMessageEvent(
     val sender: User,
     val senderAnonymousProfile: AnonymousProfile?,
     val receiver: User,

@@ -65,4 +65,9 @@ interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
         from: LocalDateTime
     ): List<MessageJpaEntityV2>
 
+    fun existsBySenderIdAndReceiverIdAndAnonymousProfileIdIsNull(
+        senderId: Long,
+        receiverId: Long
+    ) :Boolean
+
 }

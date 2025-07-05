@@ -157,4 +157,11 @@ class MessageV2PersistenceAdapter(
         return getCompleteMessageV2(messages = messages)
     }
 
+    override fun isExistsBySenderIdAndReceiverIdWithRealName(senderId: Long, receiverId: Long): Boolean {
+        return messageV2JpaRepository.existsBySenderIdAndReceiverIdAndAnonymousProfileIdIsNull(
+            senderId = senderId,
+            receiverId = receiverId
+        )
+    }
+
 }

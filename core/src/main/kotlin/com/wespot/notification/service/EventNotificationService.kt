@@ -31,7 +31,7 @@ class EventNotificationService(
     }
 
     @Transactional
-    override fun publishProfileUpdate(notificationPublishingRequest: NotificationPublishingRequest) {
+    override fun publish(notificationPublishingRequest: NotificationPublishingRequest) {
         val androidLatestVersion = latestVersionPort.get(LatestVersionType.ANDROID)
         val iosLatestVersion = latestVersionPort.get(LatestVersionType.IOS)
         val users = userPort.findAll()

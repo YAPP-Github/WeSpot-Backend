@@ -9,6 +9,7 @@ enum class PublishNotificationType(
 ) {
 
     PROFILE_UPDATE(NotificationType.PROFILE_UPDATE, NotificationType.UPDATE_REQUIRED),
+    MESSAGE_ANSWER_UPDATE(NotificationType.ANSWER_MESSAGE, NotificationType.UPDATE_REQUIRED),
     ;
 
     fun getNotificationTypeByUserVersion(

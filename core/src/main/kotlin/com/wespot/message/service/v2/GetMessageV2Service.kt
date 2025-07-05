@@ -57,6 +57,7 @@ class GetMessageV2Service(
 
         return messageRooms.asList()
             .map { MessageV2OverviewResponse.from(it) }
+            .sortedByDescending { it.latestChatTime }
     }
 
     @Transactional(readOnly = true)
@@ -83,7 +84,7 @@ class GetMessageV2Service(
         )
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun getMessageDetails(messageId: Long): MessageV2DetailsResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
@@ -98,7 +99,8 @@ class GetMessageV2Service(
             messages = messageDetails
         )
         val response = MessageV2DetailsResponse.from(room = room)
-        room.readUnreadMessages()
+        val readUnreadMessages = room.readUnreadMessages()
+        readUnreadMessages
             .forEach { messageV2Port.save(it) }
         return response
     }

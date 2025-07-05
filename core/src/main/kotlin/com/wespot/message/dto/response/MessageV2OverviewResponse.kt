@@ -11,7 +11,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
     val senderProfile: MessageProfileResponse,
 
     val isMeMessageRoomOwner: Boolean,
-    val isExistsUnreadMessage: Boolean, // TODO : 쪽지방 생성시에는 빨콩 잘 뜨는데, 그렇지 않으면 안뜸 이거 유의해서 보면 좋을 듯
+    val isExistsUnreadMessage: Boolean,
     @JsonFormat(pattern = CommonDateTimeFormat.DEFAULT_DATE_TIME)
     val latestChatTime: LocalDateTime,
 

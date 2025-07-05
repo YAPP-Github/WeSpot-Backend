@@ -31,4 +31,6 @@ interface MessageV2Port {
 
     fun findAllLastMessageOfRoomByReceiverIdAndFromDate(receiverId: Long, from: LocalDate): List<MessageV2>
 
+    fun isExistsBySenderIdAndReceiverIdWithRealName(senderId: Long, receiverId: Long): Boolean
+
 }

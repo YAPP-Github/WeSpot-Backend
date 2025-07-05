@@ -6,7 +6,7 @@ import com.wespot.exception.ExceptionView
 import com.wespot.message.MessageContent
 import com.wespot.message.event.MessageAnswerEvent
 import com.wespot.message.event.ReadMessageEvent
-import com.wespot.message.event.ReceivedMessageEvent
+import com.wespot.message.event.CreatedMessageEvent
 import com.wespot.user.User
 import com.wespot.user.event.UsedAnswerFeatureEvent
 import com.wespot.user.message.AnonymousProfile
@@ -56,6 +56,7 @@ data class MessageV2(
             sender: User,
             receiver: User,
             anonymousProfile: AnonymousProfile?,
+            isAlreadyExistsRoomTalkWithThisReceiverWithRealName: (User, User) -> Boolean,
             alreadyUsedMessageOnToday: Int,
             savedMessageFunction: (MessageV2) -> MessageV2
         ): MessageV2 {
@@ -67,6 +68,18 @@ data class MessageV2(
             if (COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY <= alreadyUsedMessageOnToday) {
                 throw CustomException(
                     HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "하루에 쪽지는 3개만 보낼 수 있습니다."
+                )
+            }
+
+            if (anonymousProfile == null && isAlreadyExistsRoomTalkWithThisReceiverWithRealName.invoke(
+                    sender,
+                    receiver
+                )
+            ) {
+                throw CustomException(
+                    message = "해당 유저와 실명으로 대화를 나눈 기록이 이미 존재합니다.",
+                    status = HttpStatus.BAD_REQUEST,
+                    view = ExceptionView.TOAST,
                 )
             }
 
@@ -102,7 +115,7 @@ data class MessageV2(
             )
 
             val savedMessage = savedMessageFunction.invoke(message)
-            val receivedMessageEvent = ReceivedMessageEvent(
+            val createdMessageEvent = CreatedMessageEvent(
                 sender = sender,
                 senderAnonymousProfile = anonymousProfile,
                 receiver = receiver,
@@ -110,8 +123,7 @@ data class MessageV2(
                 message = savedMessage
             )
 
-            EventUtils.publish(receivedMessageEvent)
-            print("created message ...")
+            EventUtils.publish(createdMessageEvent)
             return savedMessage
         }
 
@@ -384,7 +396,7 @@ data class MessageV2(
                 senderAnonymousProfile = if (isUserOwner(receiver)) anonymousProfile else null,
                 receiver = sender,
                 receiverAnonymousProfile = if (isUserOwner(sender)) anonymousProfile else null,
-                message = this
+                message = newMessage
             )
         )
 

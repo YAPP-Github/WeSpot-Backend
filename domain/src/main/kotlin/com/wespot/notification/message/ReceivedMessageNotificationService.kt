@@ -1,5 +1,6 @@
 package com.wespot.notification.message
 
+import com.wespot.common.NotificationUtil
 import com.wespot.message.v2.MessageV2
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationType
@@ -31,14 +32,14 @@ class ReceivedMessageNotificationService {
         receiverAnonymousProfile: AnonymousProfile?,
         message: MessageV2
     ): Notification {
-        val receiverName = receiverAnonymousProfile?.name ?: receiver.name
+        val senderName = senderAnonymousProfile?.name ?: sender.name
 
         return Notification.createMessageInitialState(
             receiver.id,
             NotificationType.MESSAGE_RECEIVED,
             message.id,
-            "누군가의 소중한 마음이 담긴 쪽지가 도착했어요 \uD83D\uDC8C",
-            "${receiverName}님에게 전하고 싶은 이야기가 있대요",
+            senderName,
+            NotificationUtil.summaryContent(content = message.content.content),
         )
     }
 

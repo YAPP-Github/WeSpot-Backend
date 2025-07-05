@@ -18,7 +18,7 @@ class NotificationFilterService {
         }
 
         val usersGroup = users.associateBy { it.id }
-        validateNotificationType(notifications)
+//        validateNotificationType(notifications) // TODO : 이 부분은 레거시가 되었음, 현재는 여러개가 한번에 나갈 수 있는 상황
 
         return notifications.filter { usersGroup.containsKey(it.userId) }
             .filter { getNotificationSettingBy(usersGroup[it.userId]!!, notifications[0].type) }

@@ -3,7 +3,6 @@ package com.wespot.vote
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.voteoption.VoteOption
-import io.swagger.v3.oas.annotations.media.DependentRequired
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
@@ -44,11 +43,11 @@ data class VoteOptionsByVoteDate(
         }
 
         private fun validateVoteOptionsSize(allVoteOptionsSize: Int) {
-            require(allVoteOptionsSize >= 5) {
+            require(allVoteOptionsSize >= NUMBER_OF_VOTE_OPTIONS) {
                 throw CustomException(
                     HttpStatus.BAD_REQUEST,
                     ExceptionView.TOAST,
-                    "선택지는 최소 5개 이상이어야 합니다."
+                    "선택지는 최소 ${NUMBER_OF_VOTE_OPTIONS}개 이상이어야 합니다."
                 )
             }
         }

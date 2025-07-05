@@ -46,15 +46,15 @@ class MessageNotificationEventListener(
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun receiveMessage(receivedMessageEvent: ReceivedMessageEvent) {
-        logger.info("Received Message: $receivedMessageEvent")
+    fun receiveMessage(createdMessageEvent: CreatedMessageEvent) {
+        logger.info("Received Message: $createdMessageEvent")
 
         messageNotificationService.receiveMessage(
-            sender = receivedMessageEvent.sender,
-            senderAnonymousProfile = receivedMessageEvent.senderAnonymousProfile,
-            receiver = receivedMessageEvent.receiver,
-            receiverAnonymousProfile = receivedMessageEvent.receiverAnonymousProfile,
-            message = receivedMessageEvent.message,
+            sender = createdMessageEvent.sender,
+            senderAnonymousProfile = createdMessageEvent.senderAnonymousProfile,
+            receiver = createdMessageEvent.receiver,
+            receiverAnonymousProfile = createdMessageEvent.receiverAnonymousProfile,
+            message = createdMessageEvent.message,
         )
     }
 
