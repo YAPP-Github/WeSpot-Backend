@@ -20,7 +20,7 @@ class BlockedMessageV2Controller(
     ): ResponseEntity<Unit> {
         blockedMessageV2UseCase.blockMessage(messageId)
 
-        return ResponseEntity.noContent() // 읽음 처리에 알림 추가
+        return ResponseEntity.noContent()
             .build()
     }
 

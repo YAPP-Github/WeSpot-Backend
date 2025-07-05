@@ -7,6 +7,6 @@ interface PublishNotificationUseCase {
 
     fun viewAllOfPossibleToPublishTypes(): List<PublishNotificationTypeResponse>
 
-    fun publishProfileUpdate(notificationPublishingRequest: NotificationPublishingRequest)
+    fun publish(notificationPublishingRequest: NotificationPublishingRequest)
 
 }

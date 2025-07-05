@@ -3,7 +3,7 @@ package com.wespot.notification.service.listener
 import com.wespot.common.service.ServiceTest
 import com.wespot.firebase.FirebaseNotificationService
 import com.wespot.message.event.ReadMessageByReceiverEvent
-import com.wespot.message.event.ReceivedMessageEvent
+import com.wespot.message.event.ReceivedMessageEventV1
 import com.wespot.message.fixture.MessageFixture
 import com.wespot.message.port.out.MessagePort
 import com.wespot.notification.NotificationType
@@ -60,7 +60,7 @@ class MessageNotificationEventListenerTest @Autowired constructor(
 
         // when
         every { sendService.sendNotification(any(), any()) } returns Unit
-        messageNotificationEventListener.receiveMessage(ReceivedMessageEvent(receiver, message.id))
+        messageNotificationEventListener.receiveMessage(ReceivedMessageEventV1(receiver, message.id))
 
         // then
         await.atMost(2, TimeUnit.SECONDS).untilAsserted {

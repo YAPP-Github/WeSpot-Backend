@@ -26,7 +26,11 @@ class ImageEventListener(
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     fun saveImage(event: SavedImageEvent) {
-        imagePort.save(event.image)
+        val image = event.image
+        if (image.isBasicImage()) {
+            return
+        }
+        imagePort.save(image)
     }
 
     @Async

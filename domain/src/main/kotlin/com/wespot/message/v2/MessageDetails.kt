@@ -13,12 +13,13 @@ data class MessageDetails(
 
     companion object {
 
-        fun of(viewer: User, messages: List<MessageV2>): MessageDetails {
+        fun of(viewer: User, alreadyUsedMessageOnToday: Int, messages: List<MessageV2>): MessageDetails {
             val resultOfMessage = messages.sortedBy { it.createdAt }
                 .mapIndexed { index, message ->
                     MessageDetail.of(
                         viewer = viewer,
                         message = message,
+                        alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
                         isLatestMessage = index == messages.lastIndex
                     )
                 }
@@ -29,8 +30,8 @@ data class MessageDetails(
 
     }
 
-    fun isExistsUnreadMessage(viewer: User): Boolean {
-        return messages.any { it.isUnread(viewer = viewer) }
+    fun isExistsUnreadMessage(): Boolean {
+        return messages.any { !it.isRead }
     }
 
     fun chatsTime(): List<LocalDateTime> {
@@ -45,10 +46,14 @@ data class MessageDetails(
         return messages.any { it.isAbleToAnswer }
     }
 
-    fun answer(sender: User, content: MessageContent): MessageV2 {
+    fun answer(sender: User, alreadyUsedMessageOnToday: Int, content: MessageContent): MessageV2 {
         val toAnswerMessage = messages.last()
 
-        return toAnswerMessage.createAnswerMessage(sender = sender, content = content)
+        return toAnswerMessage.createAnswerMessage(
+            sender = sender,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+            content = content
+        )
     }
 
     fun deleteMessage(viewer: User, messageId: Long): MessageV2 {
@@ -66,10 +71,9 @@ data class MessageDetails(
     }
 
     fun readUnreadMessage(viewer: User): List<MessageV2> {
-        return messages.filter { it.isUnread(viewer = viewer) }
+        return messages.filter { it.isUnread() }
             .onEach { it.message.read(viewer = viewer) }
             .map { it.message }
-
     }
 
 }

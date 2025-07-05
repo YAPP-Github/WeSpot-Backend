@@ -1,5 +1,7 @@
 package com.wespot.message.dto.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.wespot.CommonDateTimeFormat
 import com.wespot.message.v2.MessageRoom
 import java.time.LocalDateTime
 
@@ -10,8 +12,8 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
 
     val isMeMessageRoomOwner: Boolean,
     val isExistsUnreadMessage: Boolean,
+    @JsonFormat(pattern = CommonDateTimeFormat.DEFAULT_DATE_TIME)
     val latestChatTime: LocalDateTime,
-    val isAnonymous: Boolean,
 
     val receiverProfile: MessageProfileResponse,
 
@@ -21,6 +23,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
 ) {
 
     data class MessageProfileResponse(
+        val isAnonymous: Boolean,
         val iconUrl: String,
         val name: String,
         val schoolName: String?,
@@ -37,6 +40,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
                 classNumber: Int?
             ): MessageProfileResponse {
                 return MessageProfileResponse(
+                    isAnonymous = schoolName == null && grade == null && classNumber == null,
                     iconUrl = iconUrl,
                     name = name,
                     schoolName = schoolName,
@@ -65,7 +69,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
                 isMeMessageRoomOwner = room.isViewerOwnerOfMessageRoom(),
                 isExistsUnreadMessage = room.isExistsUnReadMessage(),
                 latestChatTime = room.latestChatTime(),
-                isAnonymous = room.isReceiverUsingAnonymous(),
+
                 receiverProfile = MessageProfileResponse.of(
                     iconUrl = room.receiverProfileImage(),
                     name = room.receiverName(),
@@ -75,7 +79,7 @@ data class MessageV2OverviewResponse( // TODO : 문서 변경
                 ),
 
                 isBookmarked = room.isBookmarked(),
-                isBlocked = room.isBlocked(),
+                isBlocked = room.isBlockedByMe(),
                 isEver = room.isReceiverEver()
             )
         }

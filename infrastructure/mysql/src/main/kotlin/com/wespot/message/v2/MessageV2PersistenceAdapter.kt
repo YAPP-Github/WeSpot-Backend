@@ -103,6 +103,18 @@ class MessageV2PersistenceAdapter(
         return getCompleteMessageV2(messageRooms)
     }
 
+    override fun findAllMessageRoomBySenderIdAndIsSenderBlockedTrue(senderId: Long): List<MessageV2> {
+        val messageRooms =
+            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBlockedTrue(senderId = senderId)
+        return getCompleteMessageV2(messageRooms)
+    }
+
+    override fun findAllMessageRoomByReceiverIdAndIsReceiverBlockedTrue(receiverId: Long): List<MessageV2> {
+        val messageRooms =
+            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBlockedTrue(receiverId = receiverId)
+        return getCompleteMessageV2(messageRooms)
+    }
+
     override fun findAllLastMessageOfRoomByRoomIdIn(messageRoomIds: List<Long>): List<MessageV2> {
         val lastMessageDetailOfRooms = messageV2JpaRepository.findAllLastMessageOfRoomByRoomIdIn(messageRoomIds)
 
@@ -143,6 +155,13 @@ class MessageV2PersistenceAdapter(
             )
 
         return getCompleteMessageV2(messages = messages)
+    }
+
+    override fun isExistsBySenderIdAndReceiverIdWithRealName(senderId: Long, receiverId: Long): Boolean {
+        return messageV2JpaRepository.existsBySenderIdAndReceiverIdAndAnonymousProfileIdIsNull(
+            senderId = senderId,
+            receiverId = receiverId
+        )
     }
 
 }

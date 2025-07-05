@@ -4,6 +4,7 @@ import com.wespot.message.v2.MessageDetail
 import com.wespot.message.v2.MessageRoom
 
 data class MessageV2DetailsResponse(
+    val isReceiverAnonymous: Boolean,
     val thumbnail: String,
     val name: String,
     val messageRoomId: Long,
@@ -41,6 +42,7 @@ data class MessageV2DetailsResponse(
 
         fun from(room: MessageRoom): MessageV2DetailsResponse {
             return MessageV2DetailsResponse(
+                isReceiverAnonymous = room.isReceiverUsingAnonymous(),
                 thumbnail = room.receiverProfileImage(),
                 name = room.receiverName(),
                 messageRoomId = room.id(),

@@ -25,7 +25,7 @@ class MessageEventListener(
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun welcomeMessageV2(event: WelcomeMessageEvent){
+    fun welcomeMessageV2(event: WelcomeMessageEvent) {
         createdMessageV2UseCase.welcomeMessage(event.signUpUser)
     }
 

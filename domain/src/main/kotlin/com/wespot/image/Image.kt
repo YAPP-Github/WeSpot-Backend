@@ -13,13 +13,11 @@ data class Image(
     val url: String,
     val createdAt: LocalDateTime,
 ) {
-
     companion object {
-
         const val INIT_PROFILE_ICON_URL =
             "https://velog.velcdn.com/images/kpeel5839/post/56a802d1-2b99-46a7-9597-f75f788f61ed/image.png"
-        private val BASIC_IMAGE: Image = Image(0L, INIT_PROFILE_ICON_URL, LocalDateTime.MIN)
 
+        private val BASIC_IMAGE: Image = Image(0L, INIT_PROFILE_ICON_URL, LocalDateTime.MIN)
         fun ofWithSignUp(url: String?, cloudFrontUrl: String): Image {
             if (url == null) {
                 return Image(0L, "", LocalDateTime.now())
@@ -43,13 +41,9 @@ data class Image(
             return savedImage(image)
         }
 
-        fun createImage(url: String, cloudFrontUrl: String): Image {
-            require(url.isNotBlank()) {
-                throw CustomException(
-                    HttpStatus.BAD_REQUEST,
-                    ExceptionView.TOAST,
-                    "url은 필수로 존재해야합니다."
-                )
+        fun createImage(url: String?, cloudFrontUrl: String): Image {
+            if (url.isNullOrBlank()) {
+                return BASIC_IMAGE
             }
 
             require(cloudFrontUrl.isNotBlank()) {
@@ -63,6 +57,10 @@ data class Image(
             return Image(0L, "$cloudFrontUrl/$url", LocalDateTime.now())
         }
 
+    }
+
+    fun isBasicImage(): Boolean {
+        return url == INIT_PROFILE_ICON_URL
     }
 
 }

@@ -2,8 +2,8 @@ package com.wespot.message.event
 
 import com.wespot.user.User
 
-data class ReceivedMessageEvent(
+class ReceivedMessageEventV1(
     val receiver: User,
-    val messageId: Long
+    val messageId: Long,
 ) {
 }

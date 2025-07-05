@@ -10,9 +10,7 @@ data class OnBoardingBottomSheetComponent(
 
         private const val TYPE = "OnBoardingBottomSheet"
 
-        fun fromWithCategory(category: String): OnBoardingBottomSheetComponent {
-            val onboardingCategory = OnBoardingCategory.from(category)
-
+        fun fromWithCategory(onboardingCategory: OnBoardingCategory): OnBoardingBottomSheetComponent {
             return when (onboardingCategory) {
                 OnBoardingCategory.MESSAGE -> createMessageType()
                 OnBoardingCategory.VOTE -> createVoteType()

@@ -11,7 +11,8 @@ data class AnonymousProfileResponse(
     val isAnonymous: Boolean,
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
     val recentlyTalk: LocalDateTime?,
-    val myTurnToAnswer: Boolean
+    val myTurnToAnswer: Boolean,
+    val messageRoomId: Long?,
 ) {
 
     companion object {
@@ -24,7 +25,8 @@ data class AnonymousProfileResponse(
                 name = userProfile.name,
                 isAnonymous = userProfile.isAnonymous,
                 recentlyTalk = userProfile.recentlyTalk(),
-                myTurnToAnswer = userProfile.isAbleToAnswer()
+                myTurnToAnswer = userProfile.isAbleToAnswer(),
+                messageRoomId = userProfile.messageRoom?.id()
             )
         }
     }

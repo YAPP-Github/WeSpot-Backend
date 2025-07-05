@@ -152,7 +152,7 @@ data class User(
     companion object {
 
         private const val WITHDRAW_USER_NAME = "탈퇴한 유저입니다."
-        const val EVER_NAME = "에버"
+        const val EVER_NAME = "위스팟 행성의 에버"
 
         fun create(
             email: String,
@@ -240,13 +240,15 @@ data class User(
     }
 
     fun changeSettings(
-        isEnableVoteNotification: Boolean?,
-        isEnableMessageNotification: Boolean?,
-        isEnableMarketingNotification: Boolean?
+        isEnableVoteNotification: Boolean? = null,
+        isEnableMessageNotification: Boolean? = null,
+        isEnableMarketingNotification: Boolean? = null,
+        isEnableMessage: Boolean? = null,
     ) {
         isEnableVoteNotification?.let { this.setting = this.setting.copy(isEnableVoteNotification = it) }
         isEnableMessageNotification?.let { this.setting = this.setting.copy(isEnableMessageNotification = it) }
         isEnableMarketingNotification?.let { this.setting = this.setting.copy(isEnableMarketingNotification = it) }
+        isEnableMessage?.let { this.setting = this.setting.copy(isEnableMessage = it) }
     }
 
     fun isEnableVoteNotification() = setting.isEnableVoteNotification
@@ -309,6 +311,17 @@ data class User(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    fun isSameUser(user: User): Boolean {
+        return this.id == user.id
+    }
+
+    fun isEnableMessage(): Boolean {
+        if (isWithDraw() || isKeepRestrict()) {
+            return false
+        }
+        return setting.isEnableMessage
     }
 
 }

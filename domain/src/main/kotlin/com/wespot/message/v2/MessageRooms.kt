@@ -11,14 +11,24 @@ data class MessageRooms(
 
     companion object {
 
-        fun createOverview(viewer: User, rooms: List<MessageV2>, messageDetails: List<MessageV2>): MessageRooms {
+        fun createOverview(
+            viewer: User,
+            alreadyUsedMessageOnToday: Int,
+            rooms: List<MessageV2>,
+            messageDetails: List<MessageV2>
+        ): MessageRooms {
             val roomIdToMessages: Map<Long, List<MessageV2>> = messageDetails
                 .filter { it.messageRoomId != null }
                 .groupBy { it.messageRoomId!! }
 
             val resultOfRooms = rooms.map { roomMessage ->
-                val messages = roomIdToMessages[roomMessage.messageRoomId] ?: emptyList()
-                MessageRoom.of(viewer = viewer, roomMessage = roomMessage, messages = messages)
+                val messages = roomIdToMessages[roomMessage.id] ?: emptyList()
+                MessageRoom.of(
+                    viewer = viewer,
+                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+                    roomMessage = roomMessage,
+                    messages = messages
+                )
             }
 
             return MessageRooms(resultOfRooms)

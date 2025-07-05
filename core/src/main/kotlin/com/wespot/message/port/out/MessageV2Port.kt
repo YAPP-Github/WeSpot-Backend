@@ -17,6 +17,10 @@ interface MessageV2Port {
 
     fun findAllMessageRoomByReceiverIdAndIsReceiverBookmarkedTrue(receiverId: Long): List<MessageV2>
 
+    fun findAllMessageRoomBySenderIdAndIsSenderBlockedTrue(senderId: Long): List<MessageV2>
+
+    fun findAllMessageRoomByReceiverIdAndIsReceiverBlockedTrue(receiverId: Long): List<MessageV2>
+
     fun findAllLastMessageOfRoomByRoomIdIn(messageRoomIds: List<Long>): List<MessageV2>
 
     fun findById(id: Long): MessageV2
@@ -26,5 +30,7 @@ interface MessageV2Port {
     fun findAllMessageRoomBySenderIdAndReceiverId(senderId: Long, receiverId: Long): List<MessageV2>
 
     fun findAllLastMessageOfRoomByReceiverIdAndFromDate(receiverId: Long, from: LocalDate): List<MessageV2>
+
+    fun isExistsBySenderIdAndReceiverIdWithRealName(senderId: Long, receiverId: Long): Boolean
 
 }

@@ -9,6 +9,8 @@ interface GetMessageV2UseCase {
 
     fun getBookmarkedMessageOverview(): List<MessageV2OverviewResponse>
 
+    fun getBlockedMessageOverview(): List<MessageV2OverviewResponse>
+
     fun getMessageDetails(messageId: Long): MessageV2DetailsResponse
 
 }

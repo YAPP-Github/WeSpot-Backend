@@ -6,7 +6,6 @@ import com.wespot.exception.ExceptionView
 import com.wespot.user.User
 import com.wespot.vote.event.ReceivedVoteEvent
 import com.wespot.voteoption.VoteOption
-import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -1,12 +1,11 @@
 package com.wespot.message.dto.response
 
-import com.wespot.message.v2.MessageV2
-
 data class MessageV2StatusResponse(
     val isSendAllowed: Boolean,
     val countRemainingMessages: Int,
     val countUnReadMessages: Int,
     val countUnReplayMessages: Int,
+    val isReceivedAllowed: Boolean,
 ) {
 
     companion object {
@@ -16,12 +15,14 @@ data class MessageV2StatusResponse(
             countRemainingMessages: Int,
             countUnReadMessages: Int,
             countUnReplayMessages: Int,
+            isReceivedAllowed: Boolean
         ): MessageV2StatusResponse {
             return MessageV2StatusResponse(
                 isSendAllowed = isSendAllowed,
                 countRemainingMessages = countRemainingMessages,
                 countUnReadMessages = countUnReadMessages,
                 countUnReplayMessages = countUnReplayMessages,
+                isReceivedAllowed= isReceivedAllowed,
             )
         }
 

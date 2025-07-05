@@ -16,7 +16,12 @@ data class MessageRoom(
 
     companion object {
 
-        fun of(viewer: User, roomMessage: MessageV2, messages: List<MessageV2>): MessageRoom {
+        fun of(
+            viewer: User,
+            alreadyUsedMessageOnToday: Int,
+            roomMessage: MessageV2,
+            messages: List<MessageV2>
+        ): MessageRoom {
             if (!roomMessage.isRoom()) {
                 throw CustomException(
                     message = "쪽지 방이 아닙니다.",
@@ -38,12 +43,13 @@ data class MessageRoom(
                 roomMessage = roomMessage,
                 messages = MessageDetails.of(
                     viewer = viewer,
-                    messages = listOf(roomMessage) + messages.filter { it.isContainsOf(roomMessage) }
+                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+                    messages = listOf(roomMessage) + messages.filter { it.isContainsOf(roomMessage = roomMessage) }
                 )
             )
         }
 
-        fun of(viewer: User, allMessagesOfRoom: List<MessageV2>): MessageRoom {
+        fun of(viewer: User, alreadyUsedMessageOnToday: Int, allMessagesOfRoom: List<MessageV2>): MessageRoom {
             val roomMessage = allMessagesOfRoom.find { it.isRoom() } ?: throw CustomException(
                 message = "쪽지 방이 존재하지 않습니다.",
                 status = HttpStatus.BAD_REQUEST,
@@ -65,6 +71,7 @@ data class MessageRoom(
                 roomMessage = roomMessage,
                 messages = MessageDetails.of(
                     viewer = viewer,
+                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
                     messages = listOf(roomMessage) + messageDetails.filter { it.isContainsOf(roomMessage) }
                 )
             )
@@ -73,7 +80,7 @@ data class MessageRoom(
     }
 
     fun isExistsUnReadMessage(): Boolean {
-        return !roomMessage.isRead(viewer = viewer) || messages.isExistsUnreadMessage(viewer = viewer)
+        return !roomMessage.isRead(viewer = viewer) || messages.isExistsUnreadMessage()
     }
 
     fun id(): Long {
@@ -112,8 +119,8 @@ data class MessageRoom(
         return roomMessage.isMeBookmarked(viewer = viewer)
     }
 
-    fun isBlocked(): Boolean {
-        return roomMessage.isBlockedByReceiver(viewer = viewer)
+    fun isBlockedByMe(): Boolean {
+        return roomMessage.isBlockedByMe(viewer = viewer)
     }
 
     fun isReceiverEver(): Boolean {
@@ -147,10 +154,16 @@ data class MessageRoom(
         return roomMessage.anonymousProfile
     }
 
-    fun answer(sender: User, content: String): MessageV2 {
+    fun answer(sender: User, alreadyUsedMessageOnToday: Int, content: String): MessageV2 {
         val validatedContent = MessageContent.from(content = content)
 
-        return messages.answer(sender = sender, content = validatedContent)
+        val answerMessage = messages.answer(
+            sender = sender,
+            alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+            content = validatedContent
+        )
+
+        return answerMessage
     }
 
     fun deleteMessage(messageId: Long): MessageV2 {

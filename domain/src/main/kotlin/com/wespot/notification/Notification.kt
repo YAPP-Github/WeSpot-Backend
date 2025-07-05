@@ -65,11 +65,13 @@ data class Notification(
         }
 
         private fun validateVoteType(type: NotificationType) {
-            require(
-                type == NotificationType.VOTE
-                    || type == NotificationType.VOTE_RESULT
-                    || type == NotificationType.VOTE_RECEIVED
-            ) { throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "투표 관련 알림이 아닙니다.") }
+            require(type.isVote()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "투표 관련 알림이 아닙니다."
+                )
+            }
         }
 
         fun createMessageInitialState(
@@ -97,11 +99,13 @@ data class Notification(
         }
 
         private fun validateMessageType(type: NotificationType) {
-            require(
-                type == NotificationType.MESSAGE
-                    || type == NotificationType.MESSAGE_SENT
-                    || type == NotificationType.MESSAGE_RECEIVED
-            ) { throw CustomException(HttpStatus.BAD_REQUEST, ExceptionView.TOAST, "쪽지 관련 알림이 아닙니다.") }
+            require(type.isMessage()) {
+                throw CustomException(
+                    HttpStatus.BAD_REQUEST,
+                    ExceptionView.TOAST,
+                    "쪽지 관련 알림이 아닙니다."
+                )
+            }
         }
 
         fun createEventInitialState(

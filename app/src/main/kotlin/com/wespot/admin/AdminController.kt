@@ -74,7 +74,7 @@ class AdminController(
     override fun publishNotification(
         @RequestBody notificationPublishingRequest: NotificationPublishingRequest
     ): ResponseEntity<Unit> {
-        publishNotificationUseCase.publishProfileUpdate(notificationPublishingRequest)
+        publishNotificationUseCase.publish(notificationPublishingRequest)
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .build()

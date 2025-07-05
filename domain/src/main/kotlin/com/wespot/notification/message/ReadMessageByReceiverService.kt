@@ -17,7 +17,7 @@ class ReadMessageByReceiverService {
             NotificationType.MESSAGE_SENT,
             messageId,
             "방금 ${receiverName}님이 내가 보낸 쪽지를 읽었어요 \uD83E\uDEE2",
-            "앞으로도 에버가 큐피드가 되어 드릴게요",
+            "어떤 답장이 올까요?",
         )
     }
 

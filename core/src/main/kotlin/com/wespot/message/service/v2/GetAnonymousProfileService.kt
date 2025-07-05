@@ -23,9 +23,15 @@ class GetAnonymousProfileService(
             messagePort.findAllMessageRoomBySenderIdAndReceiverId(senderId = loginUser.id, receiverId = receiverId)
         val messageRoomIds = messageRooms.map { it.id }
         val messageDetails = messagePort.findAllLastMessageOfRoomByRoomIdIn(messageRoomIds)
+        val alreadyUsedMessageOnToday = messagePort.countTodaySendMessages(loginUser.id)
 
         val rooms =
-            MessageRooms.createOverview(viewer = loginUser, rooms = messageRooms, messageDetails = messageDetails)
+            MessageRooms.createOverview(
+                viewer = loginUser,
+                rooms = messageRooms,
+                alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+                messageDetails = messageDetails
+            )
 
         return UserProfiles.of(viewer = loginUser, messageRooms = rooms)
             .asList()

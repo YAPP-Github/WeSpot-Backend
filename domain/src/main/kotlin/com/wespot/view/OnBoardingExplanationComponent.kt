@@ -20,7 +20,7 @@ data class OnBoardingExplanationComponent(
             return OnBoardingExplanationComponent(
                 textComponent = TextComponent.of(
                     RichText.of("우리반 비밀 투표에 대해 알려드릴게요", "#FFF7F7F8", 20, "Center", "Bold"),
-                    Paddings.of(null, null, bottom = 7, null)
+                    Paddings.of(null, null, bottom = 34, null)
                 ),
                 textListComponent = TextListComponent.from(
                     textLines = listOf(
@@ -75,7 +75,7 @@ data class OnBoardingExplanationComponent(
             return OnBoardingExplanationComponent(
                 textComponent = TextComponent.of(
                     RichText.of("쪽지에 대해 알려드릴게요", "#FFF7F7F8", 20, "Center", "Bold"),
-                    Paddings.of(null, null, bottom = 7, null)
+                    Paddings.of(null, null, bottom = 34, null)
                 ),
                 textListComponent = TextListComponent.from(
                     textLines = listOf(
@@ -130,14 +130,14 @@ data class OnBoardingExplanationComponent(
             return OnBoardingExplanationComponent(
                 textComponent = TextComponent.of(
                     RichText.of("답장하기에 대해 알려드릴게요", "#FFF7F7F8", 20, "Center", "Bold"),
-                    Paddings.of(bottom = 7)
+                    Paddings.of(bottom = 34)
                 ),
                 textListComponent = TextListComponent.from(
                     textLines = listOf(
                         Pair(
                             "https://dw2d2daekmyur.cloudfront.net/answer_message_01.png",
                             RichText.of(
-                                "쪽지는 답장 쪽지를 포함하여 하루에 총 3개만 보낼 수 있어요",
+                                "쪽지는 답장 쪽지를 포함하여\n하루에 총 3개만 보낼 수 있어요",
                                 "#FFF7F7F8",
                                 14,
                                 "Start",
@@ -147,7 +147,7 @@ data class OnBoardingExplanationComponent(
                         Pair(
                             "https://dw2d2daekmyur.cloudfront.net/answer_message_02.png",
                             RichText.of(
-                                "상대에게 온 쪽지에 답장을 보내도 남은 쪽지 개수에서 차감돼요",
+                                "상대에게 온 쪽지에 답장을 보내도\n남은 쪽지 개수에서 차감돼요",
                                 "#FFF7F7F8",
                                 14,
                                 "Start",
