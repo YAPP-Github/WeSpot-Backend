@@ -3,6 +3,7 @@ package com.wespot.post.mapper
 import com.wespot.common.BaseEntity
 import com.wespot.post.PostCategory
 import com.wespot.post.PostCategoryEntity
+import java.time.LocalDateTime
 
 object PostCategoryMapper {
 
