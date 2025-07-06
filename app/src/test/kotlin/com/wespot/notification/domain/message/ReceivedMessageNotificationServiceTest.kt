@@ -1,9 +1,6 @@
 package com.wespot.notification.domain.message
 
-import com.wespot.notification.NotificationType
-import com.wespot.notification.message.ReceivedMessageNotificationService
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldBe
 
 class ReceivedMessageNotificationServiceTest : BehaviorSpec({
 

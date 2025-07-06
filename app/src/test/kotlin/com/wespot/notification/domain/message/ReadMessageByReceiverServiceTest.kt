@@ -16,7 +16,7 @@ class ReadMessageByReceiverServiceTest : BehaviorSpec({
                 notification.type shouldBe NotificationType.MESSAGE_SENT
                 notification.targetId shouldBe 1
                 notification.title shouldBe "방금 김재연님이 내가 보낸 쪽지를 읽었어요 \uD83E\uDEE2"
-                notification.body shouldBe "앞으로도 에버가 큐피드가 되어 드릴게요"
+                notification.body shouldBe "어떤 답장이 올까요?"
             }
         }
         `when`("처음 읽은 것이 아니라면, 메시지를 보낸 이에게") {

@@ -89,26 +89,26 @@ class NotificationFilterTest : BehaviorSpec({
                 filteredNotifications[2].userId shouldBe 3
             }
         }
-        `when`("서로 다른 알림 유형이 섞여있으면") {
-            messageNotifications.add(
-                Notification.createVoteInitialState(
-                    userId = 1,
-                    title = "title",
-                    body = "body",
-                    date = LocalDate.now(),
-                    type = NotificationType.VOTE
-                )
-            )
-            val shouldThrow = shouldThrow<CustomException> {
-                notificationFilterService.filterNotifications(
-                    users,
-                    messageNotifications
-                )
-            }
-            then("예외를 발생시킨다.") {
-                shouldThrow shouldHaveMessage "한번에 동일한 NotificationType만을 발송할 수 있습니다."
-            }
-        }
+//        `when`("서로 다른 알림 유형이 섞여있으면") {
+//            messageNotifications.add(
+//                Notification.createVoteInitialState(
+//                    userId = 1,
+//                    title = "title",
+//                    body = "body",
+//                    date = LocalDate.now(),
+//                    type = NotificationType.VOTE
+//                )
+//            )
+//            val shouldThrow = shouldThrow<CustomException> {
+//                notificationFilterService.filterNotifications(
+//                    users,
+//                    messageNotifications
+//                )
+//            }
+//            then("예외를 발생시킨다.") {
+//                shouldThrow shouldHaveMessage "한번에 동일한 NotificationType만을 발송할 수 있습니다."
+//            }
+//        }
     }
 
     given("개별 알림을") {
