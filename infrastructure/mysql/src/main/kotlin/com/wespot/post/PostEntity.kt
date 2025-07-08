@@ -14,6 +14,9 @@ class PostEntity(
     @field: NotNull
     val categoryId: Long,
 
+    @field: NotNull
+    val userId: Long,
+
     val title: String?,
 
     @field: NotNull
