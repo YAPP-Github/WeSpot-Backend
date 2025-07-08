@@ -4,4 +4,7 @@ import com.wespot.post.PostCategoryEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface PostCategoryJpaRepository : JpaRepository<PostCategoryEntity, Long> {
+
+    fun findAllByIdIn(categoryIds: List<Long>):List<PostCategoryEntity>
+
 }

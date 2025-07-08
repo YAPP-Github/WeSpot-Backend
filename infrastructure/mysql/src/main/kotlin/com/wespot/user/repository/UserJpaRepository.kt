@@ -131,4 +131,6 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
 
     fun findByName(name: String): UserJpaEntity?
 
+    fun findAllByIdIn(userIds: List<Long>): List<UserJpaEntity>
+
 }
