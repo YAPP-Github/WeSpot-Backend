@@ -181,4 +181,11 @@ class UserPersistenceAdapter(
         }
     }
 
+    override fun findAllByIdIn(ids: List<Long>): List<User> {
+        val userEntities = userJpaRepository.findAllByIdIn(ids)
+        val schoolIdToSchool = getSchoolMapsByUsers(userEntities)
+
+        return userEntities.map { UserMapper.mapToDomainEntity(it, schoolIdToSchool[it.schoolId]!!) }
+    }
+
 }

@@ -61,4 +61,6 @@ interface UserPort {
 
     fun findByName(name: String): User?
 
+    fun findAllByIdIn(ids: List<Long>): List<User>
+
 }
