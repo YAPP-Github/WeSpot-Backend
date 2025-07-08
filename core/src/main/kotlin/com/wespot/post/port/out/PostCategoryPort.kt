@@ -6,4 +6,6 @@ interface PostCategoryPort {
 
     fun findAll(): List<PostCategory>
 
+    fun findById(categoryId: Long): PostCategory?
+
 }

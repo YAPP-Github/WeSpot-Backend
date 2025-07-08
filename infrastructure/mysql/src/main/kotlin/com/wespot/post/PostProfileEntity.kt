@@ -16,7 +16,7 @@ class PostProfileEntity(
     val userId: Long,
 
     @field: NotNull
-    val url: Long,
+    val url: String,
 
     @field: NotNull
     val name: String,
