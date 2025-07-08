@@ -12,19 +12,18 @@ class PostEntity(
     val id: Long,
 
     @field: NotNull
-    val category_id: Long,
+    val categoryId: Long,
 
-    @field: NotNull
-    val title: String,
+    val title: String?,
 
     @field: NotNull
     val description: String,
 
     @field: NotNull
-    val likeCount: String,
+    val likeCount: Int,
 
     @field: NotNull
-    val commentCount: String,
+    val commentCount: Int,
 
     @Embedded
     val baseEntity: BaseEntity
