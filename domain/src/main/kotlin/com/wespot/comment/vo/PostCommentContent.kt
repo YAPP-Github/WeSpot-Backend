@@ -18,6 +18,10 @@ data class PostCommentContent(
 
         private const val CONTENT_LENGTH_LOWER_BOUND_INCLUSIVE = 1
 
+        fun from(content: String): PostCommentContent {
+            return PostCommentContent(content.trim())
+        }
+
     }
 
 }

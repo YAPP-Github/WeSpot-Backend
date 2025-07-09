@@ -26,7 +26,7 @@ object PostCommentMapper {
             id = entity.id,
             postId = entity.postId,
             user = user,
-            content = PostCommentContent(entity.content),
+            content = PostCommentContent.from(entity.content),
             likeCount = entity.likeCount,
             reportCount = entity.reportCount,
             createdAt = entity.baseEntity.createdAt

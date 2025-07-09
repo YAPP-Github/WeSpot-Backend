@@ -23,7 +23,7 @@ class PostComment(
             return PostComment(
                 postId = postId,
                 user = user,
-                content = PostCommentContent(content = content)
+                content = PostCommentContent.from(content = content)
             )
         }
     }
