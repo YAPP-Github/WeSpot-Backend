@@ -5,14 +5,14 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 
 @Entity
-@Table(name="comment_report")
-class CommentReportEntity(
+@Table(name = "post_comment_report")
+class PostCommentReportEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
     @field: NotNull
-    val commentId: Long,
+    val postCommentId: Long,
 
     @field: NotNull
     val userId: Long,

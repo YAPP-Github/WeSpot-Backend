@@ -5,14 +5,14 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 
 @Entity
-@Table(name = "comment_like")
-class CommentLikeEntity(
+@Table(name = "post_comment_like")
+class PostCommentLikeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
     @field: NotNull
-    val commentId: Long,
+    val postCommentId: Long,
 
     @field: NotNull
     val userId: Long,
