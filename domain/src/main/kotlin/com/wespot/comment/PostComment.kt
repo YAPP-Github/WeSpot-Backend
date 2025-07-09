@@ -1,14 +1,31 @@
 package com.wespot.comment
 
+import com.wespot.comment.vo.PostCommentContent
+import com.wespot.user.User
 import java.time.LocalDateTime
 
 class PostComment(
-    val id: Long,
+    val id: Long = 0L,
     val postId: Long,
-    val userId: Long,
-    val content: String,
-    val likeCount: Long,
-    val reportCount: Long,
-    val createdAt: LocalDateTime
+    val user: User,
+    val content: PostCommentContent,
+    val likeCount: Long = 0L,
+    val reportCount: Long = 0L,
+    val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
+
+    companion object {
+        fun of(
+            postId: Long,
+            user: User,
+            content: String,
+        ): PostComment {
+            return PostComment(
+                postId = postId,
+                user = user,
+                content = PostCommentContent.from(content = content)
+            )
+        }
+    }
+
 }

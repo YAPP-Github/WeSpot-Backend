@@ -1,5 +1,6 @@
 package com.wespot.post.adapter
 
+import com.wespot.comment.port.out.PostValidatePort
 import com.wespot.post.Post
 import com.wespot.post.PostEntity
 import com.wespot.post.PostImages
@@ -11,6 +12,7 @@ import com.wespot.post.repository.PostCategoryJpaRepository
 import com.wespot.post.repository.PostImageJpaRepository
 import com.wespot.post.repository.PostJpaRepository
 import com.wespot.user.port.out.UserPort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -19,7 +21,7 @@ class PostAdapter(
     private val postImageJpaRepository: PostImageJpaRepository,
     private val userPort: UserPort,
     private val postCategoryJpaRepository: PostCategoryJpaRepository
-) : PostPort {
+) : PostPort, PostValidatePort {
 
     override fun save(post: Post): Post {
         val postEntity = PostMapper.toEntity(post)
@@ -72,6 +74,16 @@ class PostAdapter(
         val posts = postJpaRepository.findAllByDescriptionContaining(description = description)
 
         return getCompletePost(posts)
+    }
+
+    override fun findById(postId: Long): Post? {
+        return postJpaRepository.findByIdOrNull(postId)
+            ?.let { getCompletePost(listOf(it)) }
+            ?.first()
+    }
+
+    override fun existsPostById(postId: Long): Boolean {
+        return postJpaRepository.existsById(postId)
     }
 
 }

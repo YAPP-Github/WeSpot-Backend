@@ -2,9 +2,9 @@ package com.wespot.comment
 
 import java.time.LocalDateTime
 
-class CommentReport(
+class PostCommentReport(
     val id: Long,
-    val commentId: Long,
+    val postCommentId: Long,
     val userId: Long,
     val createdAt: LocalDateTime
 ) {

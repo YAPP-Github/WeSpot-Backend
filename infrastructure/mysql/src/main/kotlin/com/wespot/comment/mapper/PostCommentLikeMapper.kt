@@ -1,16 +1,16 @@
 package com.wespot.comment.mapper
 
-import com.wespot.comment.CommentLike
-import com.wespot.comment.CommentLikeEntity
+import com.wespot.comment.PostCommentLike
+import com.wespot.comment.PostCommentLikeEntity
 import com.wespot.common.BaseEntity
 import java.time.LocalDateTime
 
-object CommentLikeMapper {
+object PostCommentLikeMapper {
 
-    fun toEntity(commentLike: CommentLike): CommentLikeEntity {
-        return CommentLikeEntity(
+    fun toEntity(commentLike: PostCommentLike): PostCommentLikeEntity {
+        return PostCommentLikeEntity(
             id = commentLike.id,
-            commentId = commentLike.commentId,
+            postCommentId = commentLike.postCommentId,
             userId = commentLike.userId,
             baseEntity = BaseEntity(
                 createdAt = commentLike.createdAt,
@@ -19,10 +19,10 @@ object CommentLikeMapper {
         )
     }
 
-    fun toDomain(entity: CommentLikeEntity): CommentLike {
-        return CommentLike(
+    fun toDomain(entity: PostCommentLikeEntity): PostCommentLike {
+        return PostCommentLike(
             id = entity.id,
-            commentId = entity.commentId,
+            postCommentId = entity.postCommentId,
             userId = entity.userId,
             createdAt = entity.baseEntity.createdAt
         )
