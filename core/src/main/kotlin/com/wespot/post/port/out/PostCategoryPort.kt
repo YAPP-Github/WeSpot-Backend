@@ -8,4 +8,6 @@ interface PostCategoryPort {
 
     fun findById(categoryId: Long): PostCategory?
 
+    fun findAllByMajorCategoryName(majorCategoryName: String): List<PostCategory>
+
 }
