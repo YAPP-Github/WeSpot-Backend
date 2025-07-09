@@ -7,22 +7,27 @@ import com.wespot.comment.dto.PostCommentCreatedRequest
 import com.wespot.comment.event.PostCommentCreatedEvent
 import com.wespot.comment.port.`in`.PostCommentCreatedUseCase
 import com.wespot.comment.port.out.PostCommentPort
+import com.wespot.comment.port.out.PostValidatePort
+import com.wespot.exception.CustomException
 import com.wespot.user.port.out.UserPort
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PostCommentCreatedService(
     private val userPort: UserPort,
-    private val postCommentPort: PostCommentPort
+    private val postCommentPort: PostCommentPort,
+    private val postValidatePort: PostValidatePort,
 ) : PostCommentCreatedUseCase {
 
     @Transactional
     override fun createComment(postCommentCreatedRequest: PostCommentCreatedRequest): Long {
-        // 알림 발생
-        // 익명 프로필 생성
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+        if (!postValidatePort.existsPostById(postCommentCreatedRequest.postId)) {
+            throw CustomException(status = HttpStatus.BAD_REQUEST, message = "해당하는 게시글을 찾을 수 없습니다.")
+        }
 
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
         val postComment = PostComment.of(
             postId = postCommentCreatedRequest.postId,
             content = postCommentCreatedRequest.content,

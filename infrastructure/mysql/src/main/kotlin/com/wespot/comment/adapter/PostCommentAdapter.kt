@@ -15,7 +15,7 @@ class PostCommentAdapter(
         val postCommentEntity = PostCommentMapper.toEntity(postComment)
         val savedPostCommentEntity = postCommentJpaRepository.save(postCommentEntity)
 
-        return PostCommentMapper.toDomain(savedPostCommentEntity)
+        return PostCommentMapper.toDomain(savedPostCommentEntity, postComment.user)
     }
 
 }

@@ -13,6 +13,7 @@ class PostComment(
     val reportCount: Long = 0L,
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
+
     companion object {
         fun of(
             postId: Long,
@@ -26,4 +27,5 @@ class PostComment(
             )
         }
     }
+
 }

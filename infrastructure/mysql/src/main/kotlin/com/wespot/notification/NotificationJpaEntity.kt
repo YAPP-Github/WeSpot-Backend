@@ -35,7 +35,7 @@ class NotificationJpaEntity(
     @field: NotNull
     val isRead: Boolean,
 
-    val readAt: LocalDateTime,
+    val readAt: LocalDateTime?,
 
     @field: NotNull
     val isEnabled: Boolean,

@@ -5,6 +5,7 @@ enum class SpecificNotificationType {
     VOTE,
     MESSAGE,
     UPDATE,
+    POST,
     ;
 
 }

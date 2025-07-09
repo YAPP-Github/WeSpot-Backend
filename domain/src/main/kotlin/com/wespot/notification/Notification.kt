@@ -7,18 +7,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class Notification(
-    val id: Long,
+    val id: Long = 0L,
     val userId: Long,
     val type: NotificationType,
-    val date: LocalDate,
+    val date: LocalDate = LocalDate.now(),
     val targetId: Long,
     val title: String,
     val body: String,
-    var isRead: Boolean,
-    var readAt: LocalDateTime,
-    var isEnabled: Boolean,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    var isRead: Boolean = false,
+    var readAt: LocalDateTime? = null,
+    var isEnabled: Boolean = true,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
     companion object {
@@ -72,6 +72,22 @@ data class Notification(
                     "투표 관련 알림이 아닙니다."
                 )
             }
+        }
+
+        fun create(
+            userId: Long,
+            type: NotificationType,
+            targetId: Long,
+            title: String,
+            body: String,
+        ): Notification {
+            return Notification(
+                userId = userId,
+                type = type,
+                targetId = targetId,
+                title = title,
+                body = body
+            )
         }
 
         fun createMessageInitialState(

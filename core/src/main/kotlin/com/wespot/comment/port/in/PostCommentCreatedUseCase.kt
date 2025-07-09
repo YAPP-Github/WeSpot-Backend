@@ -1,7 +1,9 @@
 package com.wespot.comment.port.`in`
 
+import com.wespot.comment.dto.PostCommentCreatedRequest
+
 interface PostCommentCreatedUseCase {
 
-    fun createComment(commentCreatedRequest: CommentCreatedRequest): Long
+    fun createComment(postCommentCreatedRequest: PostCommentCreatedRequest): Long
 
 }
