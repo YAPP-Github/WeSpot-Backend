@@ -12,4 +12,8 @@ interface PostPort {
 
     fun findById(postId: Long): Post?
 
+    fun findAllByCategoryId(categoryId: Long): List<Post>
+
+    fun findAllByCategoryIdIn(categoryIds: List<Long>): List<Post>
+
 }

@@ -9,4 +9,8 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
 
     fun findAllByDescriptionContaining(description: String): List<PostEntity>
 
+    fun findByCategoryId(categoryId: Long): List<PostEntity>
+
+    fun findByCategoryIdIn(categoryIds: List<Long>): List<PostEntity>
+
 }

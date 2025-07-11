@@ -82,6 +82,18 @@ class PostAdapter(
             ?.first()
     }
 
+    override fun findAllByCategoryId(categoryId: Long): List<Post> {
+        val posts = postJpaRepository.findByCategoryId(categoryId)
+
+        return getCompletePost(posts)
+    }
+
+    override fun findAllByCategoryIdIn(categoryIds: List<Long>): List<Post> {
+        val posts = postJpaRepository.findByCategoryIdIn(categoryIds)
+
+        return getCompletePost(posts)
+    }
+
     override fun existsPostById(postId: Long): Boolean {
         return postJpaRepository.existsById(postId)
     }
