@@ -28,4 +28,8 @@ class PostComment(
         }
     }
 
+    fun isWriter(userId: Long): Boolean {
+        return user.id == userId
+    }
+
 }

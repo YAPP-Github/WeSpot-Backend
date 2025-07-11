@@ -21,4 +21,9 @@ class PostProfileAdapter(
 
         return PostProfileMapper.toDomain(savedPostProfileEntity)
     }
+
+    override fun findByUserIdIn(userIds: List<Long>): List<PostProfile> {
+        return postProfileJpaRepository.findAllByUserIdIn(userIds = userIds)
+            .map { PostProfileMapper.toDomain(it) }
+    }
 }

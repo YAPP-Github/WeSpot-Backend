@@ -76,4 +76,8 @@ class Post(
         )
     }
 
+    fun isAuthor(userId: Long): Boolean {
+        return user.id == userId
+    }
+
 }

@@ -8,4 +8,6 @@ interface PostProfilePort {
 
     fun save(postProfile: PostProfile): PostProfile
 
+    fun findByUserIdIn(userIds: List<Long>): List<PostProfile>
+
 }

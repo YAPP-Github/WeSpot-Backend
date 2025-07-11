@@ -7,4 +7,6 @@ interface PostProfileJpaRepository : JpaRepository<PostProfileEntity, Long> {
 
     fun findByUserId(userId: Long): PostProfileEntity?
 
+    fun findAllByUserIdIn(userIds: List<Long>): List<PostProfileEntity>
+
 }
