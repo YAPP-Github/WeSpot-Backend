@@ -12,7 +12,7 @@ class PostEditController(
     private val postEditUseCase: PostEditUseCase
 ) {
 
-    @PatchMapping("/{postId}")
+    @PutMapping("/{postId}")
     fun editPost(
         @PathVariable postId: Long,
         @RequestBody updatedPostRequest: UpdatedPostRequest
