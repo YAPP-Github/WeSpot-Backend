@@ -16,4 +16,6 @@ interface PostInquiryByCategoryUseCase {
 
     fun findWrittenPosts(): List<PostResponse>
 
+    fun findAllPosts(): List<PostResponse>
+
 }
