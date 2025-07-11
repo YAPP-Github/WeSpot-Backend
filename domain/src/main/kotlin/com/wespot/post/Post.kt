@@ -118,7 +118,7 @@ class Post(
         return copyAndUpdateField(likeCount = this.likeCount - 1)
     }
 
-    fun addComment() {
+    fun addComment(): Post {
         return copyAndUpdateField(commentCount = this.commentCount + 1)
     }
 

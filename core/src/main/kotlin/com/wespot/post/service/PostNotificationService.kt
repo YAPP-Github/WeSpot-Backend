@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class PostNotificationService(
     private val userPort: UserPort,
-    private val postNotificationPort: PostNotificationPort
+    private val postNotificationPort: PostNotificationPort,
     private val postPort: PostPort
 ) : PostNotificationUseCase {
 
