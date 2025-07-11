@@ -5,4 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface PostLikeJpaRepository : JpaRepository<PostLikeEntity, Long> {
 
+    fun findAllByPostIdInAndUserId(postIds: List<Long>, userId: Long): List<PostLikeEntity>
+
+    fun findByPostIdAndUserId(postId: Long, userId: Long):PostLikeEntity?
+
 }

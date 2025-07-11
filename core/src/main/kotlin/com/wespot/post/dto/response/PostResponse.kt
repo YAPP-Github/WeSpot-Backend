@@ -8,11 +8,14 @@ data class PostResponse(
     val id: Long = 0L,
     val category: PostCategoryDetailResponses.PostCategoryDetailResponse,
     val user: UserResponse,
-    val title: String?,
+    val title: String? = null,
     val description: String,
-    val likeCount: Int,
-    val commentCount: Int,
-    val images: List<PostImageResponse>?,
+    val likeCount: Int = 0,
+    val isViewerPushedLike: Boolean = false,
+    val commentCount: Int = 0,
+    val isViewerPushedScrap: Boolean = false,
+    val isViewerPushedNotification: Boolean = false,
+    val images: List<PostImageResponse>? = null,
     val createdAt: LocalDateTime,
 ) {
 
@@ -28,6 +31,9 @@ data class PostResponse(
                 likeCount = post.likeCount,
                 commentCount = post.commentCount,
                 images = post.images?.postImages?.map { PostImageResponse.from(it) },
+                isViewerPushedLike = post.postStatusByViewer?.isViewerPushedLike ?: false,
+                isViewerPushedScrap = post.postStatusByViewer?.isViewerPushedScrap ?: false,
+                isViewerPushedNotification = post.postStatusByViewer?.isViewerPushedNotification ?: false,
                 createdAt = post.createdAt
             )
         }

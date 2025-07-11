@@ -11,7 +11,10 @@ class PostComment(
     val content: PostCommentContent,
     val likeCount: Long = 0L,
     val reportCount: Long = 0L,
-    val createdAt: LocalDateTime = LocalDateTime.now()
+
+    val postCommentStatusByViewer: PostCommentStatusByViewer? = null,
+
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
     companion object {
@@ -30,6 +33,48 @@ class PostComment(
 
     fun isWriter(userId: Long): Boolean {
         return user.id == userId
+    }
+
+    fun removeLike(): PostComment {
+        return update(
+            likeCount = this.likeCount - 1
+        )
+    }
+
+    private fun update(
+        id: Long = this.id,
+        postId: Long = this.postId,
+        user: User = this.user,
+        content: PostCommentContent = this.content,
+        likeCount: Long = this.likeCount,
+        reportCount: Long = this.reportCount,
+        postCommentStatusByViewer: PostCommentStatusByViewer? = this.postCommentStatusByViewer,
+        createdAt: LocalDateTime = this.createdAt,
+    ): PostComment {
+        return PostComment(
+            id = id,
+            postId = postId,
+            user = user,
+            content = content,
+            likeCount = likeCount,
+            reportCount = reportCount,
+            postCommentStatusByViewer = postCommentStatusByViewer,
+            createdAt = createdAt
+        )
+    }
+
+    fun addLike(): PostComment {
+        return update(
+            likeCount = this.likeCount + 1
+        )
+    }
+
+    fun removeReport(): PostComment {
+        TODO("Not yet implemented")
+    }
+
+    fun addReport(): PostComment {
+        TODO("Not yet implemented")
     }
 
 }

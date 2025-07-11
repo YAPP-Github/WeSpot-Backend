@@ -22,7 +22,9 @@ class PostCategoryAdapter(
             ?.let { PostCategoryMapper.toDomain(entity = it) }
     }
 
-    override fun findAllByMajorCategoryName(majorCategoryName: String): List<PostCategory> {
+    override fun findAllByMajorCategoryName(
+        majorCategoryName: String,
+    ): List<PostCategory> {
         return postCategoryJpaRepository.findAlLByMajorCategoryName(majorCategoryName)
             .map { PostCategoryMapper.toDomain(it) }
     }

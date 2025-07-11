@@ -10,4 +10,6 @@ interface PostCommentLikeJpaRepository : JpaRepository<PostCommentLikeEntity, Lo
 
     fun findAllByPostCommentIdInAndUserId(postCommentIds: List<Long>, userId: Long): List<PostCommentLikeEntity>
 
+    fun findByPostCommentIdAndUserId(postCommentId: Long, userId: Long): PostCommentLikeEntity?
+
 }

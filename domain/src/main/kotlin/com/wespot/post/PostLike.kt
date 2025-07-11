@@ -3,9 +3,9 @@ package com.wespot.post
 import java.time.LocalDateTime
 
 class PostLike(
-    val id: Long,
+    val id: Long = 0L,
     val postId: Long,
     val userId: Long,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
 }

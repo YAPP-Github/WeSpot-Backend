@@ -8,4 +8,10 @@ interface PostCommentLikePort {
 
     fun findAllByPostCommentIdInAndUserId(postCommentIds: List<Long>, userId: Long): List<PostCommentLike>
 
+    fun findByPostCommentIdAndUserId(postCommentId: Long, userId: Long): PostCommentLike?
+
+    fun save(postCommentLike: PostCommentLike): PostCommentLike
+
+    fun deleteById(id: Long)
+
 }

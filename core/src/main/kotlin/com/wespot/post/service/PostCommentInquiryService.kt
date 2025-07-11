@@ -19,7 +19,6 @@ class PostCommentInquiryService(
     private val postCommentPort: PostCommentPort,
     private val postProfilePort: PostProfilePort,
     private val postPort: PostPort,
-    private val postCommentLikePort: PostCommentLikePort,
 ) : PostCommentInquiryUseCase {
 
     @Transactional(readOnly = true)
@@ -29,19 +28,14 @@ class PostCommentInquiryService(
             status = HttpStatus.BAD_REQUEST,
             message = "존재하지 않는 게시글입니다."
         )
-        val postComments = postCommentPort.findAllByPostId(postId)
-        val postCommentIds = postComments.map { it.id }
+        val postComments = postCommentPort.findAllByPostId(postId, viewerId = loginUser.id)
         val userIds = postComments.map { it.user.id }
         val userIdToProfile = postProfilePort.findByUserIdIn(userIds)
             .associateBy { it.userId }
-        val postCommentIdToPostCommentLike = postCommentLikePort.findAllByPostCommentIdInAndUserId(
-            postCommentIds = postCommentIds, userId = loginUser.id
-        ).associateBy { it.postCommentId }
 
         return postComments.map {
             PostCommentResponse.of(
                 isPostOwner = post.isAuthor(loginUser.id),
-                didIPushLike = postCommentIdToPostCommentLike[it.id] != null,
                 postComment = it,
                 postProfile = userIdToProfile[it.user.id]!!
             )
