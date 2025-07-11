@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/api/v1/post/")
+@RequestMapping("/api/v1/post")
 class PostEditController(
     private val postEditUseCase: PostEditUseCase
 ) {
