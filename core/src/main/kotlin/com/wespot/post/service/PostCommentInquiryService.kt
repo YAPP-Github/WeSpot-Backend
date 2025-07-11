@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PostCommentInquiryService(
-    // TODO : post Package 로 이동
     private val userPort: UserPort,
     private val postCommentPort: PostCommentPort,
     private val postProfilePort: PostProfilePort,
