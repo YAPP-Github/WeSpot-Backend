@@ -1,4 +1,4 @@
-package com.wespot.comment
+package com.wespot.post
 
 import com.wespot.post.dto.response.PostCommentResponse
 import com.wespot.post.port.`in`.PostCommentInquiryUseCase

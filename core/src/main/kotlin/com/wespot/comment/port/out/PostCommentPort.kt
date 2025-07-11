@@ -6,6 +6,10 @@ interface PostCommentPort {
 
     fun save(postComment: PostComment): PostComment
 
-    fun findAllByPostId(postId: Long): List<PostComment>
+    fun findAllByPostId(postId: Long, viewerId: Long? = null): List<PostComment>
+
+    fun findAllByUserId(userId: Long, viewerId: Long? = null): List<PostComment>
+
+    fun findById(id: Long, viewerId: Long? = null): PostComment?
 
 }

@@ -4,13 +4,13 @@ import com.wespot.comment.port.out.PostValidatePort
 import com.wespot.post.Post
 import com.wespot.post.PostEntity
 import com.wespot.post.PostImages
+import com.wespot.post.PostStatusByViewer
 import com.wespot.post.mapper.PostCategoryMapper
 import com.wespot.post.mapper.PostImageMapper
 import com.wespot.post.mapper.PostMapper
 import com.wespot.post.port.out.PostPort
-import com.wespot.post.repository.PostCategoryJpaRepository
-import com.wespot.post.repository.PostImageJpaRepository
-import com.wespot.post.repository.PostJpaRepository
+import com.wespot.post.repository.*
+import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
@@ -20,7 +20,10 @@ class PostAdapter(
     private val postJpaRepository: PostJpaRepository,
     private val postImageJpaRepository: PostImageJpaRepository,
     private val userPort: UserPort,
-    private val postCategoryJpaRepository: PostCategoryJpaRepository
+    private val postCategoryJpaRepository: PostCategoryJpaRepository,
+    private val postLikeJpaRepository: PostLikeJpaRepository,
+    private val postNotificationJpaRepository: PostNotificationJpaRepository,
+    private val postScrapJpaRepository: PostScrapJpaRepository,
 ) : PostPort, PostValidatePort {
 
     override fun save(post: Post): Post {
@@ -40,13 +43,17 @@ class PostAdapter(
         )
     }
 
-    override fun searchByTitle(title: String): List<Post> {
+    override fun searchByTitle(title: String, viewerId: Long?): List<Post> {
         val posts = postJpaRepository.findAllByTitleContaining(title = title)
 
-        return getCompletePost(posts)
+        return getCompletePost(posts, viewerId)
     }
 
-    private fun getCompletePost(postEntities: List<PostEntity>): List<Post> {
+    private fun getCompletePost(
+        postEntities: List<PostEntity>,
+        viewerId: Long?
+    ): List<Post> {
+        val viewer = viewerId?.let { userPort.findById(it) }
         val userIds = postEntities.map { it.userId }.distinct()
         val categoryIds = postEntities.map { it.categoryId }.distinct()
         val postIds = postEntities.map { it.id }.distinct()
@@ -60,38 +67,79 @@ class PostAdapter(
             .map { PostImageMapper.toDomain(it) }
             .groupBy { it.postId }
 
-        return postEntities.map {
+        val postIdToPostStatusByViewer = getPostIdToPostStatusByViewer(postIds, viewer = viewer)
+
+        return postEntities.map { postEntity ->
             PostMapper.toDomain(
-                entity = it,
-                postCategory = categoryIdToCategory[it.categoryId]!!,
-                user = userIdToUser[it.userId]!!,
-                postImages = postIdToPostImages[it.id]?.let { postImages -> PostImages(postImages) }
+                entity = postEntity,
+                postCategory = categoryIdToCategory[postEntity.categoryId]!!,
+                user = userIdToUser[postEntity.userId]!!,
+                postImages = postIdToPostImages[postEntity.id]?.let { postImages -> PostImages(postImages) },
+                postStatusByViewer = postIdToPostStatusByViewer?.let { postIdToPostStatusByViewer[postEntity.id] }
             )
         }
     }
 
-    override fun searchByDescription(description: String): List<Post> {
-        val posts = postJpaRepository.findAllByDescriptionContaining(description = description)
+    private fun getPostIdToPostStatusByViewer(postIds: List<Long>, viewer: User?): Map<Long, PostStatusByViewer>? {
+        return viewer?.let { notNullViewer ->
+            val postIdToPostLike = postLikeJpaRepository.findAllByPostIdInAndUserId(
+                postIds = postIds, userId = notNullViewer.id
+            ).associateBy { postLike -> postLike.postId }
+            val postIdToPostNotification = postNotificationJpaRepository.findAllByPostIdInAndUserId(
+                postIds = postIds, userId = notNullViewer.id
+            ).associateBy { postNotification -> postNotification.postId }
+            val postIdToPostScrap = postScrapJpaRepository.findAllByPostIdInAndUserId(
+                postIds = postIds, userId = notNullViewer.id
+            ).associateBy { postScrap -> postScrap.postId }
 
-        return getCompletePost(posts)
+            return postIds.map { postId ->
+                PostStatusByViewer(
+                    postId = postId,
+                    isViewerPushedLike = postIdToPostLike.containsKey(postId),
+                    isViewerPushedNotification = postIdToPostNotification.containsKey(postId),
+                    isViewerPushedScrap = postIdToPostScrap.containsKey(postId)
+                )
+            }.associateBy { postStatusByViewer -> postStatusByViewer.postId }
+        }
     }
 
-    override fun findById(postId: Long): Post? {
+    override fun searchByDescription(description: String, viewerId: Long?): List<Post> {
+        val posts = postJpaRepository.findAllByDescriptionContaining(description = description)
+
+        return getCompletePost(posts, viewerId)
+    }
+
+    override fun findById(postId: Long, viewerId: Long?): Post? {
         return postJpaRepository.findByIdOrNull(postId)
-            ?.let { getCompletePost(listOf(it)) }
+            ?.let { getCompletePost(listOf(it), viewerId) }
             ?.first()
     }
 
-    override fun findAllByCategoryId(categoryId: Long): List<Post> {
+    override fun findAllByCategoryId(categoryId: Long, viewerId: Long?): List<Post> {
         val posts = postJpaRepository.findByCategoryId(categoryId)
 
-        return getCompletePost(posts)
+        return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllByCategoryIdIn(categoryIds: List<Long>): List<Post> {
+    override fun findAllByCategoryIdIn(
+        categoryIds: List<Long>,
+        viewerId: Long?
+    ): List<Post> {
         val posts = postJpaRepository.findByCategoryIdIn(categoryIds)
 
-        return getCompletePost(posts)
+        return getCompletePost(posts, viewerId)
+    }
+
+    override fun findAllByUserId(authorId: Long): List<Post> {
+        val posts = postJpaRepository.findAllByUserId(authorId)
+
+        return getCompletePost(posts, authorId)
+    }
+
+    override fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long): List<Post> {
+        val posts = postJpaRepository.findAllByIdIn(postIds)
+
+        return getCompletePost(posts, viewerId)
     }
 
     override fun existsPostById(postId: Long): Boolean {

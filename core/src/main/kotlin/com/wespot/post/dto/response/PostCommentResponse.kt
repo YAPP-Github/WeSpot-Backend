@@ -18,10 +18,8 @@ data class PostCommentResponse(
         private const val OWNER_NAME = "익명의 글쓴이"
         private const val VIEWER_NAME = "익명의 댓쓴이"
 
-
         fun of(
             isPostOwner: Boolean = false,
-            didIPushLike: Boolean = false,
             postComment: PostComment,
             postProfile: PostProfile
         ): PostCommentResponse {
@@ -30,7 +28,7 @@ data class PostCommentResponse(
                 authorName = if (isPostOwner) OWNER_NAME else VIEWER_NAME,
                 content = postComment.content.content,
                 likeCount = postComment.likeCount,
-                didIPushLike = didIPushLike,
+                didIPushLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,
                 isReported = postComment.reportCount > 0,
                 createdAt = postComment.createdAt
             )

@@ -1,0 +1,9 @@
+package com.wespot.post.port.`in`
+
+import com.wespot.post.dto.request.UpdatedPostRequest
+
+interface PostEditUseCase {
+
+    fun editPost(postId: Long, request: UpdatedPostRequest): Long
+
+}

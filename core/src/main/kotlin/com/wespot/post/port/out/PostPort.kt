@@ -6,14 +6,21 @@ interface PostPort {
 
     fun save(post: Post): Post
 
-    fun searchByTitle(title: String): List<Post>
+    fun searchByTitle(title: String, viewerId: Long? = null): List<Post>
 
-    fun searchByDescription(description: String): List<Post>
+    fun searchByDescription(description: String, viewerId: Long? = null): List<Post>
 
-    fun findById(postId: Long): Post?
+    fun findById(postId: Long, viewerId: Long? = null): Post?
 
-    fun findAllByCategoryId(categoryId: Long): List<Post>
+    fun findAllByCategoryId(categoryId: Long, viewerId: Long? = null): List<Post>
 
-    fun findAllByCategoryIdIn(categoryIds: List<Long>): List<Post>
+    fun findAllByCategoryIdIn(
+        categoryIds: List<Long>,
+        viewerId: Long? = null
+    ): List<Post>
+
+    fun findAllByUserId(authorId: Long): List<Post>
+
+    fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long): List<Post>
 
 }

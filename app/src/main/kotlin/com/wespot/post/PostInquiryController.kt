@@ -4,6 +4,7 @@ import com.wespot.post.dto.response.PostResponse
 import com.wespot.post.port.`in`.PostInquiryByCategoryUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -23,6 +24,34 @@ class PostInquiryController(
     @GetMapping
     fun findPostsByMajorCategoryName(majorCategoryName: String): ResponseEntity<List<PostResponse>> {
         val responses = postInquiryByCategoryUseCase.findPostsByMajorCategoryName(majorCategoryName)
+
+        return ResponseEntity.ok(responses)
+    }
+
+    @GetMapping("/{postId}")
+    fun findDetailPost(@PathVariable postId: Long): ResponseEntity<PostResponse> {
+        val responses = postInquiryByCategoryUseCase.findPostById(postId)
+
+        return ResponseEntity.ok(responses)
+    }
+
+    @GetMapping("/commented")
+    fun findCommentedPosts(): ResponseEntity<List<PostResponse>> {
+        val responses = postInquiryByCategoryUseCase.findCommentedPosts()
+
+        return ResponseEntity.ok(responses)
+    }
+
+    @GetMapping("/scrapped")
+    fun findScrappedPosts(): ResponseEntity<List<PostResponse>> {
+        val responses = postInquiryByCategoryUseCase.findScrappedPosts()
+
+        return ResponseEntity.ok(responses)
+    }
+
+    @GetMapping("/written")
+    fun findWrittenPosts(): ResponseEntity<List<PostResponse>> {
+        val responses = postInquiryByCategoryUseCase.findWrittenPosts()
 
         return ResponseEntity.ok(responses)
     }

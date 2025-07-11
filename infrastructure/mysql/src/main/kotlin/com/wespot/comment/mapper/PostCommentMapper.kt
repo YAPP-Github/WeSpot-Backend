@@ -2,6 +2,7 @@ package com.wespot.comment.mapper
 
 import com.wespot.comment.PostComment
 import com.wespot.comment.PostCommentEntity
+import com.wespot.comment.PostCommentStatusByViewer
 import com.wespot.comment.vo.PostCommentContent
 import com.wespot.common.BaseEntity
 import com.wespot.user.User
@@ -21,7 +22,9 @@ object PostCommentMapper {
         )
     }
 
-    fun toDomain(entity: PostCommentEntity, user: User): PostComment {
+    fun toDomain(
+        entity: PostCommentEntity, user: User, postCommentStatusByViewer: PostCommentStatusByViewer? = null
+    ): PostComment {
         return PostComment(
             id = entity.id,
             postId = entity.postId,
@@ -29,6 +32,7 @@ object PostCommentMapper {
             content = PostCommentContent.from(entity.content),
             likeCount = entity.likeCount,
             reportCount = entity.reportCount,
+            postCommentStatusByViewer = postCommentStatusByViewer,
             createdAt = entity.baseEntity.createdAt
         )
     }

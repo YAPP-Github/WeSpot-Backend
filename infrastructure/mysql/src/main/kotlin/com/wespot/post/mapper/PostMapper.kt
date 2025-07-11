@@ -1,10 +1,7 @@
 package com.wespot.post.mapper
 
 import com.wespot.common.BaseEntity
-import com.wespot.post.Post
-import com.wespot.post.PostCategory
-import com.wespot.post.PostEntity
-import com.wespot.post.PostImages
+import com.wespot.post.*
 import com.wespot.post.vo.PostDescription
 import com.wespot.post.vo.PostTitle
 import com.wespot.user.User
@@ -25,7 +22,13 @@ object PostMapper {
         )
     }
 
-    fun toDomain(entity: PostEntity, postCategory: PostCategory, user: User, postImages: PostImages?): Post {
+    fun toDomain(
+        entity: PostEntity,
+        postCategory: PostCategory,
+        user: User,
+        postImages: PostImages? = null,
+        postStatusByViewer: PostStatusByViewer? = null
+    ): Post {
         return Post(
             id = entity.id,
             category = postCategory,
@@ -35,6 +38,7 @@ object PostMapper {
             likeCount = entity.likeCount,
             commentCount = entity.commentCount,
             images = postImages,
+            postStatusByViewer = postStatusByViewer,
             createdAt = entity.baseEntity.createdAt
         )
     }

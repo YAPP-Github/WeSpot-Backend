@@ -8,4 +8,12 @@ interface PostInquiryByCategoryUseCase {
 
     fun findPostsByMajorCategoryName(majorCategoryName: String): List<PostResponse>
 
+    fun findPostById(postId: Long): PostResponse
+
+    fun findCommentedPosts(): List<PostResponse>
+
+    fun findScrappedPosts(): List<PostResponse>
+
+    fun findWrittenPosts(): List<PostResponse>
+
 }

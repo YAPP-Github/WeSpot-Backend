@@ -13,4 +13,8 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
 
     fun findByCategoryIdIn(categoryIds: List<Long>): List<PostEntity>
 
+    fun findAllByUserId(authorId: Long): List<PostEntity>
+
+    fun findAllByIdIn(postIds: List<Long>): List<PostEntity>
+
 }

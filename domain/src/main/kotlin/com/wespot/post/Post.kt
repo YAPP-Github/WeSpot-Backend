@@ -1,10 +1,12 @@
 package com.wespot.post
 
 import com.wespot.EventUtils
+import com.wespot.exception.CustomException
 import com.wespot.post.event.PostCreatedEvent
 import com.wespot.post.vo.PostDescription
 import com.wespot.post.vo.PostTitle
 import com.wespot.user.User
+import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class Post(
@@ -16,6 +18,9 @@ class Post(
     val likeCount: Int = 0,
     val commentCount: Int = 0,
     val images: PostImages? = null,
+
+    val postStatusByViewer: PostStatusByViewer? = null,
+
     val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
@@ -49,10 +54,10 @@ class Post(
     }
 
     private fun addImages(images: PostImages): Post {
-        return copy(images = images)
+        return copyAndUpdateField(images = images)
     }
 
-    private fun copy(
+    private fun copyAndUpdateField(
         id: Long = this.id,
         category: PostCategory = this.category,
         user: User = this.user,
@@ -78,6 +83,43 @@ class Post(
 
     fun isAuthor(userId: Long): Boolean {
         return user.id == userId
+    }
+
+    fun update(
+        category: PostCategory,
+        user: User,
+        title: String? = null,
+        description: String,
+        images: List<String> = listOf(),
+        cloudFrontUrl: String,
+        toUpdatePost: (Post) -> Post
+    ): Post {
+        require(isAuthor(user.id)) {
+            throw CustomException(
+                status = HttpStatus.FORBIDDEN, message = "게시글 작성자가 아닙니다.",
+            )
+        }
+
+        val updatedPost = copyAndUpdateField(
+            category = category,
+            title = title?.let { PostTitle(content = it) },
+            description = PostDescription(content = description),
+            images = PostImages.of(postId = id, cloudFrontUrl = cloudFrontUrl, images = images),
+        )
+
+        return toUpdatePost(updatedPost)
+    }
+
+    fun addLike(): Post {
+        return copyAndUpdateField(likeCount = this.likeCount + 1)
+    }
+
+    fun removeLike(): Post {
+        return copyAndUpdateField(likeCount = this.likeCount - 1)
+    }
+
+    fun addComment(): Post {
+        return copyAndUpdateField(commentCount = this.commentCount + 1)
     }
 
 }

@@ -1,6 +1,6 @@
 package com.wespot.post
 
-import com.wespot.post.port.`in`.PostNotificationUseCase
+import com.wespot.post.port.`in`.PostLikeUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/post")
-class PostNotificationSettingController(
-    private val postNotificationUseCase: PostNotificationUseCase
+class PostLikeController(
+    private val postLikeUseCase: PostLikeUseCase
 ) {
 
-    @PatchMapping("/{postId}/notification/comment")
-    fun updatePostNotificationSettingForComment(@PathVariable postId: Long): ResponseEntity<Unit> {
-        postNotificationUseCase.toggleNotification(postId)
+    @PatchMapping("/{postId}/like")
+    fun likePost(@PathVariable postId: Long): ResponseEntity<Unit> {
+        postLikeUseCase.likePost(postId)
 
         return ResponseEntity.noContent()
             .build()
