@@ -7,4 +7,6 @@ interface PostNotificationJpaRepository : JpaRepository<PostNotificationEntity, 
 
     fun findAllByPostId(postId: Long): List<PostNotificationEntity>
 
+    fun findByPostIdAndUserId(postId: Long, userId: Long): PostNotificationEntity?
+
 }

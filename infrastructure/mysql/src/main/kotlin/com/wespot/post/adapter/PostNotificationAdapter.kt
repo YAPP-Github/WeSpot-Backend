@@ -28,4 +28,20 @@ class PostNotificationAdapter(
         return postNotificationEntities.map { PostNotificationMapper.toDomain(it, userIdToUser[it.userId]!!) }
     }
 
+    override fun save(postNotification: PostNotification): PostNotification {
+        val postNotificationEntity = PostNotificationMapper.toEntity(postNotification)
+        val savedPostNotificationEntity = postNotificationJpaRepository.save(postNotificationEntity)
+
+        return PostNotificationMapper.toDomain(entity = savedPostNotificationEntity, user = postNotification.user)
+    }
+
+    override fun findByPostIdAndUserId(postId: Long, userId: Long): PostNotification? {
+        return postNotificationJpaRepository.findByPostIdAndUserId(postId = postId, userId = userId)
+            ?.let { PostNotificationMapper.toDomain(it, userPort.findById(userId)!!) }
+    }
+
+    override fun deleteById(id: Long) {
+        postNotificationJpaRepository.deleteById(id)
+    }
+
 }
