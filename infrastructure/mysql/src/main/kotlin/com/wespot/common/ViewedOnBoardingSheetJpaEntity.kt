@@ -22,9 +22,11 @@ data class ViewedOnBoardingSheetJpaEntity(
     @field: NotNull
     val isViewedAnswerMessageOnBoardingSheet: Boolean,
 
+    @field:NotNull
+    var isViewedPostOnBoardingSheet: Boolean,
+
     @Embedded
     val baseEntity: BaseEntity
-
 ) {
 
 }

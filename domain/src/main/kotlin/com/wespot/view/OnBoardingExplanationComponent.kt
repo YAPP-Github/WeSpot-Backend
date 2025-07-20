@@ -181,6 +181,61 @@ data class OnBoardingExplanationComponent(
             )
         }
 
+        fun createPostComponent(): OnBoardingExplanationComponent {
+            return OnBoardingExplanationComponent(
+                textComponent = TextComponent.of(
+                    RichText.of("답장하기에 대해 알려드릴게요", "#FFF7F7F8", 20, "Center", "Bold"),
+                    Paddings.of(bottom = 34)
+                ),
+                textListComponent = TextListComponent.from(
+                    textLines = listOf(
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/post_01.png",
+                            RichText.of(
+                                "욕설, 모욕, 저격 등 타인의 명예를 훼손하거나\n과도하게 비방하는 행위는 허용하지 않아요.",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/post_02.png",
+                            RichText.of(
+                                "개인의 이익, 수익을 목적으로 한 도배/광고성\n게시글은 허용하지 않아요.",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                        Pair(
+                            "https://dw2d2daekmyur.cloudfront.net/post_03.png",
+                            RichText.of(
+                                "신고, 차단 기능을 활용하여 건강하고 즐거운\n소통 문화 형성에 동참해주세요.",
+                                "#FFF7F7F8",
+                                14,
+                                "Start",
+                                null
+                            )
+                        ),
+                    )
+                ),
+                buttonsComponent = ButtonsComponent.of(
+                    listOf(
+                        ButtonComponent.ofWithClickActionType(
+                            RichText.of("이해했어요", "#FF1B1C1E", 16, "Center", "SemiBold"),
+                            "#FFF6FE8B",
+                            "#FFC0C66B",
+                            OnClickActionType.ACTION,
+                            Paddings.of(top = 8, bottom = 8)
+                        )
+                    ),
+                    Paddings.of(start = 20, end = 20, bottom = 12, top = 12)
+                )
+            )
+        }
+
     }
 
 }
