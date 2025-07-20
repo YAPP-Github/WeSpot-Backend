@@ -32,4 +32,8 @@ class PostScrapAdapter(
             ?.let { PostScrapMapper.toDomain(it) }
     }
 
+    override fun deleteByPostId(postId: Long) {
+        postScrapJpaRepository.deleteByPostId(postId)
+    }
+
 }

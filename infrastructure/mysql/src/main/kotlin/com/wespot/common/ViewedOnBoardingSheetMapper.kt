@@ -10,6 +10,7 @@ object ViewedOnBoardingSheetMapper {
             userId = viewedOnBoardingSheetEntity.userId,
             isViewedVoteOnBoardingSheet = viewedOnBoardingSheetEntity.isViewedVoteOnBoardingSheet,
             isViewedMessageOnBoardingSheet = viewedOnBoardingSheetEntity.isViewedMessageOnBoardingSheet,
+            isViewedPostOnBoardingSheet = viewedOnBoardingSheetEntity.isViewedPostOnBoardingSheet,
             isViewedAnswerMessageOnBoardingSheet = viewedOnBoardingSheetEntity.isViewedAnswerMessageOnBoardingSheet
         )
 
@@ -20,6 +21,7 @@ object ViewedOnBoardingSheetMapper {
             isViewedVoteOnBoardingSheet = viewedOnBoardingSheet.isViewedVoteOnBoardingSheet,
             isViewedMessageOnBoardingSheet = viewedOnBoardingSheet.isViewedMessageOnBoardingSheet,
             isViewedAnswerMessageOnBoardingSheet = viewedOnBoardingSheet.isViewedAnswerMessageOnBoardingSheet,
+            isViewedPostOnBoardingSheet = viewedOnBoardingSheet.isViewedPostOnBoardingSheet,
             baseEntity = BaseEntity(LocalDateTime.now(), LocalDateTime.now())
         )
 

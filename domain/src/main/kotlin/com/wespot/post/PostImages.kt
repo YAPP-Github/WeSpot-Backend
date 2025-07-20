@@ -12,10 +12,10 @@ data class PostImages(
 
         private const val IMAGE_MAX_COUNT_INCLUSIVE = 3
 
-        fun of(postId: Long, cloudFrontUrl: String, images: List<String>): PostImages {
-            val values = images.map { PostImage.of(postId = postId, cloudFrontUrl = cloudFrontUrl, imageUrl = it) }
-
-            return PostImages(values)
+        fun of(postId: Long, postImages: List<PostImage>): PostImages {
+            return PostImages(
+                postImages.map { it.addedPost(postId) }
+            )
         }
 
     }

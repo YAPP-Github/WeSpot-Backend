@@ -15,6 +15,7 @@ data class OnBoardingBottomSheetComponent(
                 OnBoardingCategory.MESSAGE -> createMessageType()
                 OnBoardingCategory.VOTE -> createVoteType()
                 OnBoardingCategory.ANSWER_MESSAGE -> createAnswerMessageType()
+                OnBoardingCategory.POST -> createPostType()
             }
         }
 
@@ -39,6 +40,14 @@ data class OnBoardingBottomSheetComponent(
                 name = TYPE,
                 onBoardingWelcomePageComponent = null,
                 onBoardingExplanationComponent = OnBoardingExplanationComponent.createAnswerMessageComponent()
+            )
+        }
+
+        private fun createPostType(): OnBoardingBottomSheetComponent {
+            return OnBoardingBottomSheetComponent(
+                name = TYPE,
+                onBoardingWelcomePageComponent = null,
+                onBoardingExplanationComponent = OnBoardingExplanationComponent.createPostComponent()
             )
         }
 

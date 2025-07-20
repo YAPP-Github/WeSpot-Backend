@@ -4,6 +4,7 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.post.Post
+import com.wespot.post.PostImage
 import com.wespot.post.dto.request.CreatedPostRequest
 import com.wespot.post.port.`in`.PostCreatedUseCase
 import com.wespot.post.port.out.PostCategoryPort
@@ -38,8 +39,15 @@ class PostCreatedService(
             user = loginUser,
             title = createdPostRequest.title,
             description = createdPostRequest.description,
-            images = createdPostRequest.urlOfImages,
-            cloudFrontUrl = cloudFrontUrl,
+            images = createdPostRequest.imagesRequest
+                ?.map {
+                    PostImage.of(
+                        cloudFrontUrl = cloudFrontUrl,
+                        imageUrl = it.url,
+                        width = it.width,
+                        height = it.height
+                    )
+                },
             toSavePost = { toSavedPost -> postPort.save(toSavedPost) }
         )
         return post.id

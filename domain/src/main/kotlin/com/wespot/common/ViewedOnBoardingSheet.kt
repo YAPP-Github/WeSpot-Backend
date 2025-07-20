@@ -5,15 +5,17 @@ import kotlin.reflect.KFunction1
 data class ViewedOnBoardingSheet(
     val id: Long,
     val userId: Long,
-    var isViewedMessageOnBoardingSheet: Boolean,
-    var isViewedVoteOnBoardingSheet: Boolean,
-    var isViewedAnswerMessageOnBoardingSheet: Boolean,
+    var isViewedMessageOnBoardingSheet: Boolean = false,
+    var isViewedVoteOnBoardingSheet: Boolean = false,
+    var isViewedAnswerMessageOnBoardingSheet: Boolean = false,
+    var isViewedPostOnBoardingSheet: Boolean = false,
 ) {
 
     companion object {
         private const val IS_MESSAGE_VIEW = "MESSAGE"
         private const val IS_VOTE_VIEW = "VOTE"
         private const val IS_ANSWER_MESSAGE_VIEW = "ANSWER_MESSAGE"
+        private const val IS_POST_VIEW = "POST"
 
         fun createInitialState(
             userId: Long,
@@ -22,9 +24,6 @@ data class ViewedOnBoardingSheet(
             return existsViewedOnBoardingSheet ?: ViewedOnBoardingSheet(
                 id = 0,
                 userId = userId,
-                isViewedMessageOnBoardingSheet = false,
-                isViewedVoteOnBoardingSheet = false,
-                isViewedAnswerMessageOnBoardingSheet = false
             )
         }
     }
@@ -42,6 +41,10 @@ data class ViewedOnBoardingSheet(
             isViewedAnswerMessageOnBoardingSheet = true
         }
 
+        if (name == IS_POST_VIEW) {
+            isViewedPostOnBoardingSheet = true
+        }
+
         commited.call(this)
     }
 
@@ -49,6 +52,8 @@ data class ViewedOnBoardingSheet(
         return when (name) {
             "MESSAGE" -> isViewedMessageOnBoardingSheet
             "VOTE" -> isViewedVoteOnBoardingSheet
+            "ANSWER_MESSAGE" -> isViewedAnswerMessageOnBoardingSheet
+            "POST" -> isViewedPostOnBoardingSheet
             else -> {
                 false
             }

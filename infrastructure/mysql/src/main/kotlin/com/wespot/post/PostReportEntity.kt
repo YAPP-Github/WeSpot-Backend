@@ -17,6 +17,9 @@ class PostReportEntity(
     @field: NotNull
     val userId: Long,
 
+    @field:NotNull
+    val reason: String,
+
     @Embedded
     val baseEntity: BaseEntity
 ) {

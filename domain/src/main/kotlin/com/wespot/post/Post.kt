@@ -15,8 +15,9 @@ class Post(
     val user: User,
     val title: PostTitle? = null,
     val description: PostDescription,
-    val likeCount: Int = 0,
-    val commentCount: Int = 0,
+    val likeCount: Long = 0,
+    val commentCount: Long = 0,
+    val bookmarkedCount: Long = 0,
     val images: PostImages? = null,
 
     val postStatusByViewer: PostStatusByViewer? = null,
@@ -31,8 +32,7 @@ class Post(
             user: User,
             title: String? = null,
             description: String,
-            images: List<String> = listOf(),
-            cloudFrontUrl: String,
+            images: List<PostImage>? = listOf(),
             toSavePost: (Post) -> Post
         ): Post {
             val post = Post(
@@ -42,7 +42,7 @@ class Post(
                 description = PostDescription(content = description),
             )
             val savedPost = toSavePost.invoke(post)
-            val postImages = PostImages.of(postId = savedPost.id, cloudFrontUrl = cloudFrontUrl, images = images)
+            val postImages = images?.let { PostImages.of(postId = savedPost.id, postImages = images) }
 
             val imagesAddedPost = savedPost.addImages(images = postImages)
             val completedPost = toSavePost.invoke(imagesAddedPost)
@@ -53,7 +53,7 @@ class Post(
 
     }
 
-    private fun addImages(images: PostImages): Post {
+    private fun addImages(images: PostImages?): Post {
         return copyAndUpdateField(images = images)
     }
 
@@ -63,8 +63,9 @@ class Post(
         user: User = this.user,
         title: PostTitle? = this.title,
         description: PostDescription = this.description,
-        likeCount: Int = this.likeCount,
-        commentCount: Int = this.commentCount,
+        likeCount: Long = this.likeCount,
+        commentCount: Long = this.commentCount,
+        bookmarkedCount: Long = this.bookmarkedCount,
         images: PostImages? = this.images,
         createdAt: LocalDateTime = this.createdAt
     ): Post {
@@ -76,6 +77,7 @@ class Post(
             description = description,
             likeCount = likeCount,
             commentCount = commentCount,
+            bookmarkedCount = bookmarkedCount,
             images = images,
             createdAt = createdAt
         )
@@ -90,8 +92,7 @@ class Post(
         user: User,
         title: String? = null,
         description: String,
-        images: List<String> = listOf(),
-        cloudFrontUrl: String,
+        images: List<PostImage>? = listOf(),
         toUpdatePost: (Post) -> Post
     ): Post {
         require(isAuthor(user.id)) {
@@ -104,7 +105,7 @@ class Post(
             category = category,
             title = title?.let { PostTitle(content = it) },
             description = PostDescription(content = description),
-            images = PostImages.of(postId = id, cloudFrontUrl = cloudFrontUrl, images = images),
+            images = images?.let { PostImages.of(postId = id, postImages = images) },
         )
 
         return toUpdatePost(updatedPost)
@@ -120,6 +121,18 @@ class Post(
 
     fun addComment(): Post {
         return copyAndUpdateField(commentCount = this.commentCount + 1)
+    }
+
+    fun scoreOfPost(): Long {
+        return likeCount * 3 + commentCount * 2 + bookmarkedCount
+    }
+
+    fun deleteBookmark(): Post {
+        return copyAndUpdateField(bookmarkedCount = this.bookmarkedCount - 1)
+    }
+
+    fun addBookmark(): Post {
+        return copyAndUpdateField(bookmarkedCount = this.bookmarkedCount + 1)
     }
 
 }

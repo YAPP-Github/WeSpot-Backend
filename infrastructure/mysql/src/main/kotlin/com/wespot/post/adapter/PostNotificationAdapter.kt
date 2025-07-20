@@ -44,4 +44,8 @@ class PostNotificationAdapter(
         postNotificationJpaRepository.deleteById(id)
     }
 
+    override fun deleteByPostId(postId: Long) {
+        postNotificationJpaRepository.deleteByPostId(postId)
+    }
+
 }

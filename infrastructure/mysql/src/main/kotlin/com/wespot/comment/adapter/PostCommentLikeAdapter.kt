@@ -46,4 +46,8 @@ class PostCommentLikeAdapter(
         postCommentLikeJpaRepository.deleteById(id)
     }
 
+    override fun deleteByPostCommentIdIn(postCommentIds: List<Long>) {
+        postCommentLikeJpaRepository.deleteByPostCommentIdIn(postCommentIds)
+    }
+
 }

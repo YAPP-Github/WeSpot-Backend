@@ -11,5 +11,7 @@ interface PostLikePort {
 
     fun findByPostIdAndUserId(postId: Long, userId: Long): PostLike?
 
+    fun deleteByPostId(postId: Long)
+
 }
 

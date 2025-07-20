@@ -23,10 +23,13 @@ class PostEntity(
     val description: String,
 
     @field: NotNull
-    val likeCount: Int,
+    val likeCount: Long,
 
     @field: NotNull
-    val commentCount: Int,
+    val commentCount: Long,
+
+    @field: NotNull
+    val bookmarkCount: Long,
 
     @Embedded
     val baseEntity: BaseEntity

@@ -5,6 +5,7 @@ import com.wespot.message.dto.response.MessageV2StatusResponse
 import com.wespot.message.port.`in`.MessageV2UsingStatusUseCase
 import com.wespot.message.port.out.MessageV2Port
 import com.wespot.message.v2.MessageV2
+import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +20,15 @@ class MessageV2UsingStatusService(
     @Transactional(readOnly = true)
     override fun getMessageStatus(): MessageV2StatusResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+
+        return getMessageV2Status(loginUser)
+    }
+
+    override fun getMessageStatus(loginUser: User): MessageV2StatusResponse {
+        return getMessageV2Status(loginUser)
+    }
+
+    private fun getMessageV2Status(loginUser: User): MessageV2StatusResponse {
         val today = LocalDate.now()
         val yesterday = today.minusDays(1)
         val messages =

@@ -14,6 +14,13 @@ class PostInquiryController(
     private val postInquiryByCategoryUseCase: PostInquiryByCategoryUseCase
 ) {
 
+    @GetMapping("/all")
+    fun findAllPosts(): ResponseEntity<List<PostResponse>> {
+        val responses = postInquiryByCategoryUseCase.findAllPosts()
+
+        return ResponseEntity.ok(responses)
+    }
+
     @GetMapping("/details")
     fun findPostsByCategoryId(categoryId: Long): ResponseEntity<List<PostResponse>> {
         val responses = postInquiryByCategoryUseCase.findPostsByCategoryId(categoryId)

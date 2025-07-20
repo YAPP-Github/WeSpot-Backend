@@ -26,4 +26,8 @@ class PostLikeAdapter(
         return postLikeJpaRepository.findByPostIdAndUserId(postId = postId, userId = userId)
             ?.let { PostLikeMapper.toDomain(it) }
     }
+
+    override fun deleteByPostId(postId: Long) {
+        postLikeJpaRepository.deleteByPostId(postId)
+    }
 }

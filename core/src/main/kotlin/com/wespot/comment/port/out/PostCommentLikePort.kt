@@ -14,4 +14,6 @@ interface PostCommentLikePort {
 
     fun deleteById(id: Long)
 
+    fun deleteByPostCommentIdIn(postCommentIds: List<Long>)
+
 }

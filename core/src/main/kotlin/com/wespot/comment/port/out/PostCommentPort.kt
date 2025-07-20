@@ -12,4 +12,6 @@ interface PostCommentPort {
 
     fun findById(id: Long, viewerId: Long? = null): PostComment?
 
+    fun deleteByPostId(postId: Long)
+
 }

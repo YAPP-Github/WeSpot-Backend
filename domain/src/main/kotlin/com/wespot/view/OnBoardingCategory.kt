@@ -10,6 +10,7 @@ enum class OnBoardingCategory {
     MESSAGE,
     VOTE,
     ANSWER_MESSAGE,
+    POST,
     ;
 
     companion object {

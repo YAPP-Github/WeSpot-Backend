@@ -1,6 +1,7 @@
 package com.wespot.post.repository
 
 import com.wespot.post.PostEntity
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface PostJpaRepository : JpaRepository<PostEntity, Long> {
@@ -16,5 +17,7 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
     fun findAllByUserId(authorId: Long): List<PostEntity>
 
     fun findAllByIdIn(postIds: List<Long>): List<PostEntity>
+
+    fun findAllByOrderByBaseEntityCreatedAtDesc(pageable: Pageable): List<PostEntity>
 
 }

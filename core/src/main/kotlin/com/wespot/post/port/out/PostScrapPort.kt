@@ -12,4 +12,6 @@ interface PostScrapPort {
 
     fun findByPostIdAndUserId(postId: Long, userId: Long): PostScrap?
 
+    fun deleteByPostId(postId: Long)
+
 }

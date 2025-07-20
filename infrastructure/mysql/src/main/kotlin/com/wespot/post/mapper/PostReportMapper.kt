@@ -12,6 +12,7 @@ object PostReportMapper {
             id = postReport.id,
             postId = postReport.postId,
             userId = postReport.userId,
+            reason = postReport.reason,
             baseEntity = BaseEntity(
                 createdAt = postReport.createdAt,
                 updatedAt = LocalDateTime.now()
@@ -24,6 +25,7 @@ object PostReportMapper {
             id = entity.id,
             postId = entity.postId,
             userId = entity.userId,
+            reason = entity.reason,
             createdAt = entity.baseEntity.createdAt
         )
     }

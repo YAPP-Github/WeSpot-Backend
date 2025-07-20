@@ -1,6 +1,7 @@
 package com.wespot.message.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.wespot.CommonDateTimeFormat
 import com.wespot.message.v2.UserProfile
 import java.time.LocalDateTime
 
@@ -9,7 +10,7 @@ data class AnonymousProfileResponse(
     val image: String,
     val name: String,
     val isAnonymous: Boolean,
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
+    @JsonFormat(pattern = CommonDateTimeFormat.DEFAULT_DATE_TIME)
     val recentlyTalk: LocalDateTime?,
     val myTurnToAnswer: Boolean,
     val messageRoomId: Long?,

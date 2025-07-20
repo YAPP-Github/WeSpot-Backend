@@ -76,4 +76,25 @@ data class VoteOptionsByVoteDate(
         }
     }
 
+    data class VoteOptionUsage(
+        val voteOption: VoteOption,
+        val usedCount: Int = 0
+    ) {
+
+        companion object {
+
+            fun of(voteOption: VoteOption, usedBallots: List<Ballot>): VoteOptionUsage {
+                val usedCount = usedBallots.filter { voteOption.id == it.voteOptionId }.size
+
+                return VoteOptionUsage(voteOption = voteOption, usedCount = usedCount)
+            }
+
+        }
+
+    }
+
+    fun voteOptionUsages(usedBallots: List<Ballot>): List<VoteOptionUsage> {
+        return voteOptionsByVoteDate.map { VoteOptionUsage.of(voteOption = it.voteOption, usedBallots = usedBallots) }
+    }
+
 }

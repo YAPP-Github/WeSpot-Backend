@@ -12,6 +12,7 @@ import com.wespot.post.port.out.PostPort
 import com.wespot.post.repository.*
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
@@ -136,10 +137,22 @@ class PostAdapter(
         return getCompletePost(posts, authorId)
     }
 
-    override fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long): List<Post> {
+    override fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long?): List<Post> {
         val posts = postJpaRepository.findAllByIdIn(postIds)
 
         return getCompletePost(posts, viewerId)
+    }
+
+    override fun findAllRecentPostByLimit(limit: Int, viewerId: Long?): List<Post> {
+        val pageable = PageRequest.of(0, limit)
+        val findAllByOrderByBaseEntityCreatedAtDesc =
+            postJpaRepository.findAllByOrderByBaseEntityCreatedAtDesc(pageable)
+
+        return getCompletePost(findAllByOrderByBaseEntityCreatedAtDesc, viewerId)
+    }
+
+    override fun deleteById(id: Long) {
+        postJpaRepository.deleteById(id)
     }
 
     override fun existsPostById(postId: Long): Boolean {

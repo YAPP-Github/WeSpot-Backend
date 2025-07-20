@@ -9,6 +9,7 @@ enum class OnBoardingComponentRequest(
 
     MESSAGE(OnBoardingCategory.MESSAGE, OnBoardingCategory.ANSWER_MESSAGE),
     VOTE(OnBoardingCategory.VOTE, OnBoardingCategory.VOTE),
+    POST(OnBoardingCategory.POST, OnBoardingCategory.POST)
     ;
 
 }

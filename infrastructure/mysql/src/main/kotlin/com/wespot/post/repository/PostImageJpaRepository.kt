@@ -7,4 +7,6 @@ interface PostImageJpaRepository : JpaRepository<PostImageEntity, Long> {
 
     fun findAllByPostIdIn(postIds: List<Long>): List<PostImageEntity>
 
+    fun deleteByPostId(postId: Long)
+
 }

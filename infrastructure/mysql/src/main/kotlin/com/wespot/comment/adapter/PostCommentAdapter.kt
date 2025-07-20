@@ -44,6 +44,10 @@ class PostCommentAdapter(
             ?.first()
     }
 
+    override fun deleteByPostId(postId: Long) {
+        postCommentJpaRepository.deleteByPostId(postId)
+    }
+
     private fun getCompletePostComments(
         postCommentEntities: List<PostCommentEntity>,
         viewerId: Long?
