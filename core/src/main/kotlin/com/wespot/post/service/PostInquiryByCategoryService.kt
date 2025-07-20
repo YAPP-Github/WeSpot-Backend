@@ -84,5 +84,10 @@ class PostInquiryByCategoryService(
         return postPort.findAllByUserId(authorId = loginUser.id).map { PostResponse.from(it) }
     }
 
+    @Transactional(readOnly = false)
+    override fun findAllPosts(): List<PostResponse> {
+        TODO("Not yet implemented")
+    }
+
 
 }

@@ -21,6 +21,11 @@ interface PostPort {
 
     fun findAllByUserId(authorId: Long): List<Post>
 
-    fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long): List<Post>
+    fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long? = null): List<Post>
+
+    fun findAllRecentPostByLimit(
+        limit: Int,
+        viewerId: Long? = null
+    ): List<Post>
 
 }

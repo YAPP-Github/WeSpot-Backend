@@ -216,4 +216,12 @@ data class Vote(
         return ballots.getNumberOfSender()
     }
 
+    fun leastFrequentlyUsedVoteOptionsAt(index: Int): VoteOption {
+        val leastFrequentlyUsedVoteOptions = voteOptionsByVoteDate.voteOptionUsages(ballots.getAllBallots())
+            .sortedBy { it.usedCount }
+
+        val findIndex = index - 1
+        return leastFrequentlyUsedVoteOptions[findIndex].voteOption
+    }
+
 }

@@ -12,27 +12,32 @@ enum class NudgeType(
     ;
 
     companion object {
-        private val SPECIAL_VOTE_SEQUENCE = 3
-        private val HOT_POST_SEQUENCE = 15
+        private const val SPECIAL_VOTE_SEQUENCE = 3
+        private const val HOT_POST_SEQUENCE = 15
 
+        private const val COUNT_UNIT_OF_REPEATED_NUDGES = 45
         private val REPEATED_NUDGE_TYPES: List<NudgeType> = listOf(MESSAGE, VOTE)
-        private val COUNT_UNIT_OF_REPEATED_NUDGES = 45
 
-        fun nudgeTypesByInquirySequences(startSequence: Int, endSequence: Int): List<NudgeType> {
-            val nudgeTypes = mutableListOf<NudgeType>()
+        fun nudgeTypesByInquirySequences(startSequence: Int, endSequence: Int): List<NudgeTypeWithSequence> {
+            val nudgeTypes = mutableListOf<NudgeTypeWithSequence>()
 
             if (SPECIAL_VOTE_SEQUENCE in startSequence..endSequence) {
-                nudgeTypes.add(VOTE)
+                nudgeTypes.add(NudgeTypeWithSequence(sequence = SPECIAL_VOTE_SEQUENCE, nudgeType = VOTE))
             }
             if (HOT_POST_SEQUENCE in startSequence..endSequence) {
-                nudgeTypes.add(HOT_POST)
+                nudgeTypes.add(NudgeTypeWithSequence(sequence = HOT_POST_SEQUENCE, nudgeType = HOT_POST))
             }
 
             var startRepeatedSequence =
                 ceil(startSequence.toDouble() / COUNT_UNIT_OF_REPEATED_NUDGES.toDouble()) * COUNT_UNIT_OF_REPEATED_NUDGES
             while (startRepeatedSequence <= endSequence) {
                 val index = (startRepeatedSequence / COUNT_UNIT_OF_REPEATED_NUDGES + 1) % REPEATED_NUDGE_TYPES.size
-                nudgeTypes.add(REPEATED_NUDGE_TYPES[index.toInt()])
+                nudgeTypes.add(
+                    NudgeTypeWithSequence(
+                        sequence = startRepeatedSequence.toInt(),
+                        nudgeType = REPEATED_NUDGE_TYPES[index.toInt()]
+                    )
+                )
                 startRepeatedSequence += COUNT_UNIT_OF_REPEATED_NUDGES
             }
 

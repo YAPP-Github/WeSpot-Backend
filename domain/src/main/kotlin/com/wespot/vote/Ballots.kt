@@ -83,4 +83,10 @@ data class Ballots(
         return ballots.size
     }
 
+    fun getAllBallots(): List<Ballot> {
+        return ballots.values
+            .flatMap { it.values }
+            .toList()
+    }
+
 }

@@ -18,6 +18,7 @@ object PostMapper {
             description = domain.description.content,
             likeCount = domain.likeCount,
             commentCount = domain.commentCount,
+            bookmarkCount = domain.bookmarkedCount,
             baseEntity = BaseEntity(domain.createdAt, LocalDateTime.now()),
         )
     }
@@ -37,6 +38,7 @@ object PostMapper {
             description = PostDescription(entity.description),
             likeCount = entity.likeCount,
             commentCount = entity.commentCount,
+            bookmarkedCount = entity.bookmarkCount,
             images = postImages,
             postStatusByViewer = postStatusByViewer,
             createdAt = entity.baseEntity.createdAt

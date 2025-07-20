@@ -2,6 +2,7 @@ package com.wespot.post.service
 
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
+import com.wespot.post.PostImage
 import com.wespot.post.dto.request.UpdatedPostRequest
 import com.wespot.post.port.`in`.PostEditUseCase
 import com.wespot.post.port.out.PostCategoryPort
@@ -32,8 +33,9 @@ class PostEditService(
             user = loginUser,
             title = request.title,
             description = request.description,
-            images = request.urlOfImages,
-            cloudFrontUrl = cloudFrontUrl,
+            images = request.imagesRequest?.map {
+                PostImage.of(cloudFrontUrl = cloudFrontUrl, imageUrl = it.url, width = it.width, height = it.height)
+            },
             toUpdatePost = { updatedPost -> postPort.save(updatedPost) }
         ).id
     }

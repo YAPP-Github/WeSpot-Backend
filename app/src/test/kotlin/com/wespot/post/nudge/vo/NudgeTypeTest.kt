@@ -17,8 +17,8 @@ class NudgeTypeTest {
         // then
         assertThat(actual).isEqualTo(
             listOf(
-                NudgeType.VOTE,
-                NudgeType.HOT_POST,
+                NudgeTypeWithSequence(sequence = 3, nudgeType = NudgeType.VOTE),
+                NudgeTypeWithSequence(sequence = 15, nudgeType = NudgeType.HOT_POST),
             )
         )
     }
@@ -35,10 +35,10 @@ class NudgeTypeTest {
         // then
         assertThat(actual).isEqualTo(
             listOf(
-                NudgeType.VOTE,
-                NudgeType.HOT_POST,
-                NudgeType.MESSAGE,
-                NudgeType.VOTE,
+                NudgeTypeWithSequence(sequence = 3, nudgeType = NudgeType.VOTE),
+                NudgeTypeWithSequence(sequence = 15, nudgeType = NudgeType.HOT_POST),
+                NudgeTypeWithSequence(sequence = 45, nudgeType = NudgeType.MESSAGE),
+                NudgeTypeWithSequence(sequence = 90, nudgeType = NudgeType.VOTE),
             )
         )
     }
@@ -55,7 +55,7 @@ class NudgeTypeTest {
         // then
         assertThat(actual).isEqualTo(
             listOf(
-                NudgeType.VOTE,
+                NudgeTypeWithSequence(sequence = 90, nudgeType = NudgeType.VOTE),
             )
         )
     }
@@ -72,8 +72,8 @@ class NudgeTypeTest {
         // then
         assertThat(actual).isEqualTo(
             listOf(
-                NudgeType.VOTE,
-                NudgeType.MESSAGE,
+                NudgeTypeWithSequence(sequence = 90, nudgeType = NudgeType.VOTE),
+                NudgeTypeWithSequence(sequence = 135, nudgeType = NudgeType.MESSAGE),
             )
         )
     }

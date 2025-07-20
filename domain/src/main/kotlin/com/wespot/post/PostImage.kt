@@ -9,6 +9,8 @@ class PostImage(
     val id: Long,
     val postId: Long,
     val url: String,
+    val width: Int = 0,
+    val height: Int = 0,
     val createdAt: LocalDateTime
 ) {
 
@@ -26,14 +28,41 @@ class PostImage(
 
     companion object {
 
-        fun of(postId: Long, cloudFrontUrl: String, imageUrl: String): PostImage {
+        fun of(postId: Long = 0L, cloudFrontUrl: String, imageUrl: String, width: Int, height: Int): PostImage {
             return PostImage(
                 id = 0L,
                 postId = postId,
                 url = "${cloudFrontUrl}/${imageUrl}",
+                width = width,
+                height = height,
                 createdAt = LocalDateTime.now()
             )
         }
+
+    }
+
+    fun addedPost(postId: Long): PostImage {
+        return update(
+            postId = postId
+        )
+    }
+
+    private fun update(
+        id: Long = this.id,
+        postId: Long = this.postId,
+        url: String = this.url,
+        width: Int = this.width,
+        height: Int = this.height,
+        createdAt: LocalDateTime = this.createdAt
+    ): PostImage {
+        return PostImage(
+            id = id,
+            postId = postId,
+            url = url,
+            width = width,
+            height = height,
+            createdAt = createdAt
+        )
     }
 
 }

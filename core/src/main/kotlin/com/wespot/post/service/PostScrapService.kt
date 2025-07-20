@@ -24,10 +24,14 @@ class PostScrapService(
         postScrapPort.findByPostIdAndUserId(postId = post.id, userId = loginUser.id)
             ?.let {
                 postScrapPort.deleteById(it.id)
+                val deleteBookmark = post.deleteBookmark()
+                postPort.save(deleteBookmark)
             }
             ?: {
-                val postLike = PostScrap(postId = post.id, userId = loginUser.id)
-                postScrapPort.save(postLike)
+                val postScrap = PostScrap(postId = post.id, userId = loginUser.id)
+                postScrapPort.save(postScrap)
+                val addBookmark = post.addBookmark()
+                postPort.save(addBookmark)
             }
     }
 
