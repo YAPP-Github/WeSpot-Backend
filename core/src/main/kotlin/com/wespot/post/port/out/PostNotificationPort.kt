@@ -12,4 +12,6 @@ interface PostNotificationPort {
 
     fun deleteById(id: Long)
 
+    fun deleteByPostId(postId: Long)
+
 }

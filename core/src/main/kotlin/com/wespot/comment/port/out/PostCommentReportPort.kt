@@ -10,4 +10,6 @@ interface PostCommentReportPort {
 
     fun save(postCommentReport: PostCommentReport): PostCommentReport
 
+    fun deleteByPostCommentIdIn(postCommentId: List<Long>)
+
 }

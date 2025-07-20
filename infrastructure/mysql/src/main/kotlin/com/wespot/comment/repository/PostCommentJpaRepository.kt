@@ -9,4 +9,6 @@ interface PostCommentJpaRepository : JpaRepository<PostCommentEntity, Long> {
 
     fun findAllByUserId(userId: Long): List<PostCommentEntity>
 
+    fun deleteByPostId(postId: Long)
+
 }

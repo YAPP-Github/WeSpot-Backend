@@ -151,6 +151,10 @@ class PostAdapter(
         return getCompletePost(findAllByOrderByBaseEntityCreatedAtDesc, viewerId)
     }
 
+    override fun deleteById(id: Long) {
+        postJpaRepository.deleteById(id)
+    }
+
     override fun existsPostById(postId: Long): Boolean {
         return postJpaRepository.existsById(postId)
     }

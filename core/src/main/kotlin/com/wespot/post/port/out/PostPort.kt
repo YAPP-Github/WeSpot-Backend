@@ -28,4 +28,6 @@ interface PostPort {
         viewerId: Long? = null
     ): List<Post>
 
+    fun deleteById(id: Long)
+
 }

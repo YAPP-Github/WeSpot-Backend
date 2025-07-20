@@ -27,4 +27,8 @@ class PostCommentReportAdapter(
         return PostCommentReportMapper.toDomain(savedPostCommentReportEntity)
     }
 
+    override fun deleteByPostCommentIdIn(postCommentId: List<Long>) {
+        postCommentReportJpaRepository.deleteByPostCommentIdIn(postCommentId)
+    }
+
 }
