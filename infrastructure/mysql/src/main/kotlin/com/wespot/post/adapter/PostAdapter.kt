@@ -45,7 +45,9 @@ class PostAdapter(
     }
 
     override fun searchByTitle(title: String, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByTitleContaining(title = title)
+        val posts = postJpaRepository.findByTitleContainingOrderByBaseEntityCreatedAtDesc(
+            title = title,
+        )
 
         return getCompletePost(posts, viewerId)
     }
@@ -104,8 +106,13 @@ class PostAdapter(
         }
     }
 
-    override fun searchByDescription(description: String, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByDescriptionContaining(description = description)
+    override fun searchByDescription(
+        description: String,
+        viewerId: Long?,
+    ): List<Post> {
+        val posts = postJpaRepository.findAllByDescriptionContainingOrderByBaseEntityCreatedAtDesc(
+            description = description,
+        )
 
         return getCompletePost(posts, viewerId)
     }
@@ -116,37 +123,69 @@ class PostAdapter(
             ?.first()
     }
 
-    override fun findAllByCategoryId(categoryId: Long, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findByCategoryId(categoryId)
+    override fun findAllByCategoryId(
+        categoryId: Long,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.findByCategoryIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            categoryId = categoryId,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
     override fun findAllByCategoryIdIn(
         categoryIds: List<Long>,
-        viewerId: Long?
+        viewerId: Long?, inquirySize: Long, cursorId: Long?
     ): List<Post> {
-        val posts = postJpaRepository.findByCategoryIdIn(categoryIds)
+        val posts = postJpaRepository.findByCategoryIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            categoryIds = categoryIds,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllByUserId(authorId: Long): List<Post> {
-        val posts = postJpaRepository.findAllByUserId(authorId)
+    override fun findAllByUserId(authorId: Long, inquirySize: Long, cursorId: Long?): List<Post> {
+        val posts = postJpaRepository.findAllByUserIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            userId = authorId,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, authorId)
     }
 
-    override fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByIdIn(postIds)
+    override fun findAllByPostIdIn(
+        postIds: List<Long>,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.findAllByIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            postIds = postIds,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllRecentPostByLimit(limit: Int, viewerId: Long?): List<Post> {
-        val pageable = PageRequest.of(0, limit)
+    override fun findAllRecentPostByLimit(
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?,
+    ): List<Post> {
         val findAllByOrderByBaseEntityCreatedAtDesc =
-            postJpaRepository.findAllByOrderByBaseEntityCreatedAtDesc(pageable)
+            postJpaRepository.findAllByIdLessThanOrderByBaseEntityCreatedAtDesc(
+                cursorId = cursorId ?: Long.MAX_VALUE,
+                pageable = PageRequest.of(0, inquirySize.toInt())
+            )
 
         return getCompletePost(findAllByOrderByBaseEntityCreatedAtDesc, viewerId)
     }

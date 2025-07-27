@@ -65,6 +65,7 @@ class OnBoardingService(
     ): OnBoardingCategory {
         val iosLatestVersion = latestVersionPort.get(LatestVersionType.IOS)
         val androidLatestVersion = latestVersionPort.get(LatestVersionType.ANDROID)
+        print(androidLatestVersion)
         val userVersion = userVersionPort.findByUserId(userId)
         if (userVersion?.hasLatestVersion(
                 iosLatestVersion = iosLatestVersion,

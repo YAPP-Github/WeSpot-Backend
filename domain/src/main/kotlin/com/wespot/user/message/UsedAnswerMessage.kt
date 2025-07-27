@@ -3,10 +3,10 @@ package com.wespot.user.message
 import java.time.LocalDateTime
 
 class UsedAnswerMessage(
-    val id: Long,
+    val id: Long = 0L,
     val userId: Long,
     val isUsedAnswerMessageFeature: Boolean = false,
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
     companion object {

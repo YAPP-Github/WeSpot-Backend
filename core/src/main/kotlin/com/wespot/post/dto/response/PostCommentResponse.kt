@@ -1,15 +1,18 @@
 package com.wespot.post.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.comment.PostComment
 import com.wespot.post.PostProfile
 import java.time.LocalDateTime
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostCommentResponse(
+    val isMe: Boolean,
     val authorImage: String,
     val authorName: String,
     val content: String,
     val likeCount: Long,
-    val didIPushLike: Boolean,
+    val hasPushedLike: Boolean,
     val isReported: Boolean,
     val createdAt: LocalDateTime,
 ) {
@@ -25,10 +28,11 @@ data class PostCommentResponse(
         ): PostCommentResponse {
             return PostCommentResponse(
                 authorImage = postProfile.url,
+                isMe = isPostOwner,
                 authorName = if (isPostOwner) OWNER_NAME else VIEWER_NAME,
                 content = postComment.content.content,
                 likeCount = postComment.likeCount,
-                didIPushLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,
+                hasPushedLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,
                 isReported = postComment.reportCount > 0,
                 createdAt = postComment.createdAt
             )

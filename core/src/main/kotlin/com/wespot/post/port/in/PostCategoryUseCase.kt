@@ -1,12 +1,12 @@
 package com.wespot.post.port.`in`
 
-import com.wespot.post.dto.response.PostCategoryDetailResponses
-import com.wespot.post.dto.response.PostCategoryResponse
+import com.wespot.post.dto.response.FilterChipResponse
+import com.wespot.post.dto.response.PostCategoryItemsResponse
 
 interface PostCategoryUseCase {
 
-    fun getCategoriesDetail(): List<PostCategoryDetailResponses>
+    fun getCategoriesDetail(): List<PostCategoryItemsResponse>
 
-    fun getCategories(): List<PostCategoryResponse>
+    fun getCategories(): List<FilterChipResponse>
 
 }

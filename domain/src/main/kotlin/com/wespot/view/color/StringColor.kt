@@ -5,7 +5,7 @@ import com.wespot.exception.ExceptionView
 import org.springframework.http.HttpStatus
 
 data class StringColor(
-    val value: String
+    val value: String,
 ) {
 
     companion object {

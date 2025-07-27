@@ -9,7 +9,7 @@ import com.wespot.user.User
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-class Post(
+class Post( // TODO : AnonymousProfile 포함
     val id: Long = 0L,
     val category: PostCategory,
     val user: User,

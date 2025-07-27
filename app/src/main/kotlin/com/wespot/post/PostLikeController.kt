@@ -4,6 +4,7 @@ import com.wespot.post.port.`in`.PostLikeUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -14,7 +15,7 @@ class PostLikeController(
     private val postLikeUseCase: PostLikeUseCase
 ) {
 
-    @PatchMapping("/{postId}/like")
+    @PostMapping("/{postId}/like")
     fun likePost(@PathVariable postId: Long): ResponseEntity<Unit> {
         postLikeUseCase.likePost(postId)
 
