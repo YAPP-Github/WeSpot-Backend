@@ -50,8 +50,8 @@ class PostInquiryController(
         @RequestParam(required = false) cursorId: Long? = null,
     ): ResponseEntity<PostPagingResponse> {
         val responses = postInquiryByCategoryUseCase.findPostsByMajorCategoryName(
-            majorCategoryName=majorCategoryName,
-            countOfPostsViewed=countOfPostsViewed,
+            majorCategoryName = majorCategoryName,
+            countOfPostsViewed = countOfPostsViewed,
             inquirySize = inquirySize,
             cursorId = cursorId
         )
