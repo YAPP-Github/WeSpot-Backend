@@ -12,20 +12,20 @@ class PostInquiryController(
     private val postInquiryByCategoryUseCase: PostInquiryUseCase
 ) {
 
-    @GetMapping("/all")
-    fun findAllPosts(
-        @RequestParam countOfPostsViewed: Long = 0L,
-        @RequestParam(required = false, defaultValue = "10") inquirySize: Long,
-        @RequestParam(required = false) cursorId: Long? = null,
-    ): ResponseEntity<PostPagingResponse> {
-        val responses = postInquiryByCategoryUseCase.findAllPosts(
-            countOfPostsViewed,
-            inquirySize,
-            cursorId
-        )
-
-        return ResponseEntity.ok(responses)
-    }
+//    @GetMapping("/all")
+//    fun findAllPosts(
+//        @RequestParam countOfPostsViewed: Long = 0L,
+//        @RequestParam(required = false, defaultValue = "10") inquirySize: Long,
+//        @RequestParam(required = false) cursorId: Long? = null,
+//    ): ResponseEntity<PostPagingResponse> {
+//        val responses = postInquiryByCategoryUseCase.findAllPosts(
+//            countOfPostsViewed,
+//            inquirySize,
+//            cursorId
+//        )
+//
+//        return ResponseEntity.ok(responses)
+//    }
 
     @GetMapping("/details")
     fun findPostsByCategoryId(
