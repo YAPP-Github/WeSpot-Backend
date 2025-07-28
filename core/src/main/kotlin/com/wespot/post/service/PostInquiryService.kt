@@ -107,6 +107,30 @@ class PostInquiryService(
         )
     }
 
+    private fun findPostsByCategoryName(
+        majorCategoryName: String,
+        loginUser: User,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        if (majorCategoryName == PostCategory.ALL_INCLUDE_CATEGORY_NAME || majorCategoryName == "") {
+            return postPort.findAllRecentPost(
+                viewerId = loginUser.id,
+                inquirySize = inquirySize + 1,
+                cursorId = cursorId
+            )
+        }
+
+        val categoryIds = postCategoryPort.findAllByMajorCategoryName(majorCategoryName)
+            .map { it.id }
+        return postPort.findAllByCategoryIdIn(
+            categoryIds = categoryIds,
+            viewerId = loginUser.id,
+            inquirySize = inquirySize + 1,
+            cursorId = cursorId
+        )
+    }
+
     private fun mixPostAndNudge(
         startSequence: Int,
         endSequence: Int,
@@ -163,59 +187,6 @@ class PostInquiryService(
                 null
             }
         }
-    }
-
-    //    @Transactional(readOnly = false)
-//    override fun findAllPosts(
-//        countOfPostsViewed: Long,
-//        inquirySize: Long,
-//        cursorId: Long?,
-//    ): PostPagingResponse {
-//        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-//        val posts = postPort.findAllRecentPost(
-//            viewerId = loginUser.id,
-//            inquirySize = inquirySize + 1,
-//            cursorId = cursorId
-//        )
-//
-//        val startSequence = countOfPostsViewed.toInt() + 1
-//        val endSequence = countOfPostsViewed.toInt() + inquirySize.toInt()
-//        val nudges = nudgeModalUseCase.findAllNudgeModalsBySequence(
-//            startSequence = startSequence,
-//            endSequence = endSequence,
-//        ).sortedBy { it.mustViewSequence() }
-//
-//        val data = mixPostAndNudge(startSequence, endSequence, posts.take(inquirySize.toInt()), nudges)
-//        val lastCursorId = posts.minOfOrNull { it.id }
-//        val hasNext = posts.size == (inquirySize.toInt() + 1)
-//
-//        return PostPagingResponse(
-//            data = data,
-//            lastCursorId = lastCursorId,
-//            hasNext = hasNext
-//        )
-
-    private fun findPostsByCategoryName(
-        majorCategoryName: String,
-        loginUser: User,
-        inquirySize: Long,
-        cursorId: Long?
-    ): List<Post> {
-        if (majorCategoryName == PostCategory.ALL_INCLUDE_CATEGORY_NAME || majorCategoryName == "") {
-            return postPort.findAllRecentPost(
-                viewerId = loginUser.id,
-                inquirySize = inquirySize + 1,
-                cursorId = cursorId
-            )
-        }
-        val categoryIds = postCategoryPort.findAllByMajorCategoryName(majorCategoryName)
-            .map { it.id }
-        return postPort.findAllByCategoryIdIn(
-            categoryIds = categoryIds,
-            viewerId = loginUser.id,
-            inquirySize = inquirySize + 1,
-            cursorId = cursorId
-        )
     }
 
     @Transactional(readOnly = false)

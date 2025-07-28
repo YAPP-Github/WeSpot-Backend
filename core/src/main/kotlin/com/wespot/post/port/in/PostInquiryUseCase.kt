@@ -35,10 +35,4 @@ interface PostInquiryUseCase {
         cursorId: Long?,
     ): PostPagingResponse
 
-//    fun findAllPosts(
-//        countOfPostsViewed: Long,
-//        inquirySize: Long,
-//        cursorId: Long?
-//    ): PostPagingResponse
-
 }
