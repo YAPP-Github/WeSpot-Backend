@@ -8,6 +8,7 @@ import com.wespot.common.dto.view.MessageComponentResponse
 import com.wespot.common.dto.view.VoteComponentResponse
 import com.wespot.exception.CustomException
 import com.wespot.post.Post
+import com.wespot.post.PostCategory
 import com.wespot.post.dto.response.PostComponentResponse
 import com.wespot.post.nudge.HotPostNudge
 import com.wespot.post.nudge.MessageNudge
@@ -22,6 +23,7 @@ import com.wespot.post.port.out.PostCategoryPort
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.port.out.PostScrapPort
 import com.wespot.post.server_driven.PostComponent
+import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -75,101 +77,15 @@ class PostInquiryService(
     @Transactional(readOnly = false)
     override fun findPostsByMajorCategoryName(
         majorCategoryName: String,
-        inquirySize: Long,
-        cursorId: Long?,
-    ): PostPagingResponse {
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val categoryIds = postCategoryPort.findAllByMajorCategoryName(majorCategoryName)
-            .map { it.id }
-
-        val posts = postPort.findAllByCategoryIdIn(
-            categoryIds = categoryIds,
-            viewerId = loginUser.id,
-            inquirySize = inquirySize + 1,
-            cursorId = cursorId
-        )
-
-        return postPagingResponse(posts, inquirySize)
-    }
-
-    @Transactional(readOnly = false)
-    override fun findPostById(
-        postId: Long,
-    ): PostComponentResponse {
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val post = postPort.findById(postId, viewerId = loginUser.id) ?: throw CustomException(
-            status = HttpStatus.BAD_REQUEST,
-            message = "존재하지 않는 게시글입니다."
-        )
-
-        val postComponent = PostComponent.fromDetail(post)
-        return PostComponentResponse.from(postComponent)
-    }
-
-    @Transactional(readOnly = false)
-    override fun findCommentedPosts(
-        inquirySize: Long,
-        cursorId: Long?,
-    ): PostPagingResponse {
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val postIds = postCommentPort.findAllByUserId(userId = loginUser.id)
-            .map { it.postId }
-            .distinct()
-
-        val posts = postPort.findAllByPostIdIn(
-            postIds = postIds,
-            viewerId = loginUser.id,
-            inquirySize = inquirySize + 1,
-            cursorId = cursorId
-        )
-
-        return postPagingResponse(posts, inquirySize)
-    }
-
-    @Transactional(readOnly = false)
-    override fun findScrappedPosts(
-        inquirySize: Long,
-        cursorId: Long?,
-    ): PostPagingResponse {
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val postIds = postScrapPort.findAllByUserId(userId = loginUser.id)
-            .map { it.postId }
-            .distinct()
-
-        postPort.findAllByPostIdIn(
-            postIds = postIds,
-            viewerId = loginUser.id,
-            inquirySize = inquirySize + 1,
-            cursorId = cursorId
-        ).let { posts ->
-            return postPagingResponse(posts, inquirySize)
-        }
-    }
-
-    @Transactional(readOnly = false)
-    override fun findWrittenPosts(
-        inquirySize: Long,
-        cursorId: Long?,
-    ): PostPagingResponse {
-        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-
-        postPort.findAllByUserId(
-            authorId = loginUser.id,
-            inquirySize = inquirySize + 1,
-            cursorId = cursorId
-        ).let { return postPagingResponse(it, inquirySize) }
-    }
-
-    @Transactional(readOnly = false)
-    override fun findAllPosts(
         countOfPostsViewed: Long,
         inquirySize: Long,
         cursorId: Long?,
     ): PostPagingResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val posts = postPort.findAllRecentPostByLimit(
-            viewerId = loginUser.id,
-            inquirySize = inquirySize + 1,
+        val posts = findPostsByCategoryName(
+            majorCategoryName = majorCategoryName,
+            loginUser = loginUser,
+            inquirySize = inquirySize,
             cursorId = cursorId
         )
 
@@ -248,6 +164,129 @@ class PostInquiryService(
             }
         }
     }
+
+    //    @Transactional(readOnly = false)
+//    override fun findAllPosts(
+//        countOfPostsViewed: Long,
+//        inquirySize: Long,
+//        cursorId: Long?,
+//    ): PostPagingResponse {
+//        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+//        val posts = postPort.findAllRecentPost(
+//            viewerId = loginUser.id,
+//            inquirySize = inquirySize + 1,
+//            cursorId = cursorId
+//        )
+//
+//        val startSequence = countOfPostsViewed.toInt() + 1
+//        val endSequence = countOfPostsViewed.toInt() + inquirySize.toInt()
+//        val nudges = nudgeModalUseCase.findAllNudgeModalsBySequence(
+//            startSequence = startSequence,
+//            endSequence = endSequence,
+//        ).sortedBy { it.mustViewSequence() }
+//
+//        val data = mixPostAndNudge(startSequence, endSequence, posts.take(inquirySize.toInt()), nudges)
+//        val lastCursorId = posts.minOfOrNull { it.id }
+//        val hasNext = posts.size == (inquirySize.toInt() + 1)
+//
+//        return PostPagingResponse(
+//            data = data,
+//            lastCursorId = lastCursorId,
+//            hasNext = hasNext
+//        )
+
+    private fun findPostsByCategoryName(
+        majorCategoryName: String,
+        loginUser: User,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        if (majorCategoryName == PostCategory.ALL_INCLUDE_CATEGORY_NAME || majorCategoryName == "") {
+            return postPort.findAllRecentPost(
+                viewerId = loginUser.id,
+                inquirySize = inquirySize + 1,
+                cursorId = cursorId
+            )
+        }
+        val categoryIds = postCategoryPort.findAllByMajorCategoryName(majorCategoryName)
+            .map { it.id }
+        return postPort.findAllByCategoryIdIn(
+            categoryIds = categoryIds,
+            viewerId = loginUser.id,
+            inquirySize = inquirySize + 1,
+            cursorId = cursorId
+        )
+    }
+
+    @Transactional(readOnly = false)
+    override fun findPostById(
+        postId: Long,
+    ): PostComponentResponse {
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+        val post = postPort.findById(postId, viewerId = loginUser.id) ?: throw CustomException(
+            status = HttpStatus.BAD_REQUEST,
+            message = "존재하지 않는 게시글입니다."
+        )
+
+        val postComponent = PostComponent.fromDetail(post)
+        return PostComponentResponse.from(postComponent)
+    }
+
+    @Transactional(readOnly = false)
+    override fun findCommentedPosts(
+        inquirySize: Long,
+        cursorId: Long?,
+    ): PostPagingResponse {
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+        val postIds = postCommentPort.findAllByUserId(userId = loginUser.id)
+            .map { it.postId }
+            .distinct()
+
+        val posts = postPort.findAllByPostIdIn(
+            postIds = postIds,
+            viewerId = loginUser.id,
+            inquirySize = inquirySize + 1,
+            cursorId = cursorId
+        )
+
+        return postPagingResponse(posts, inquirySize)
+    }
+
+    @Transactional(readOnly = false)
+    override fun findScrappedPosts(
+        inquirySize: Long,
+        cursorId: Long?,
+    ): PostPagingResponse {
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+        val postIds = postScrapPort.findAllByUserId(userId = loginUser.id)
+            .map { it.postId }
+            .distinct()
+
+        postPort.findAllByPostIdIn(
+            postIds = postIds,
+            viewerId = loginUser.id,
+            inquirySize = inquirySize + 1,
+            cursorId = cursorId
+        ).let { posts ->
+            return postPagingResponse(posts, inquirySize)
+        }
+    }
+
+    @Transactional(readOnly = false)
+    override fun findWrittenPosts(
+        inquirySize: Long,
+        cursorId: Long?,
+    ): PostPagingResponse {
+        val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+
+        postPort.findAllByUserId(
+            authorId = loginUser.id,
+            inquirySize = inquirySize + 1,
+            cursorId = cursorId
+        ).let { return postPagingResponse(it, inquirySize) }
+    }
+
+//    }
 
 
 }

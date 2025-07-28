@@ -45,11 +45,13 @@ class PostInquiryController(
     @GetMapping
     fun findPostsByMajorCategoryName(
         @RequestParam majorCategoryName: String,
+        @RequestParam(required = false, defaultValue = "0") countOfPostsViewed: Long,
         @RequestParam(required = false, defaultValue = "10") inquirySize: Long,
         @RequestParam(required = false) cursorId: Long? = null,
     ): ResponseEntity<PostPagingResponse> {
         val responses = postInquiryByCategoryUseCase.findPostsByMajorCategoryName(
-            majorCategoryName,
+            majorCategoryName=majorCategoryName,
+            countOfPostsViewed=countOfPostsViewed,
             inquirySize = inquirySize,
             cursorId = cursorId
         )

@@ -8,4 +8,9 @@ class PostCategory(
     val name: String,
     val createdAt: LocalDateTime
 ) {
+
+    companion object {
+        const val ALL_INCLUDE_CATEGORY_NAME = "전체"
+    }
+
 }

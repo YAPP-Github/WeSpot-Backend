@@ -1,5 +1,7 @@
 package com.wespot.view.text
 
+import com.wespot.common.view.ColorType
+import com.wespot.common.view.TypographType
 import com.wespot.view.color.Color
 
 data class RichTextV2(
@@ -11,7 +13,9 @@ data class RichTextV2(
 
     companion object {
         val HOT_POST_TEXT: RichTextV2 = RichTextV2(
-            text = "Hot Post",
+            text = "실시간 인기글",
+            color = Color(value = ColorType.WHITE.value),
+            typography = TypographType.BODY02.value,
             maxLine = 1
         )
     }

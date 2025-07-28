@@ -28,7 +28,8 @@ object PostMapper {
         postCategory: PostCategory,
         user: User,
         postImages: PostImages? = null,
-        postStatusByViewer: PostStatusByViewer? = null
+        postStatusByViewer: PostStatusByViewer? = null,
+        postProfile: PostProfile,
     ): Post {
         return Post(
             id = entity.id,
@@ -41,7 +42,8 @@ object PostMapper {
             bookmarkedCount = entity.bookmarkCount,
             images = postImages,
             postStatusByViewer = postStatusByViewer,
-            createdAt = entity.baseEntity.createdAt
+            createdAt = entity.baseEntity.createdAt,
+            profile = postProfile
         )
     }
 }

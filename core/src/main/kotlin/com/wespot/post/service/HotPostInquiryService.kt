@@ -16,7 +16,7 @@ class HotPostInquiryService(
     override fun topPost(user: User, countOfView: Int): List<Post> {
         val countOfPostToStatistic = 100L
         val posts =
-            postPort.findAllRecentPostByLimit(inquirySize = countOfPostToStatistic, viewerId = user.id, cursorId = null)
+            postPort.findAllRecentPost(inquirySize = countOfPostToStatistic, viewerId = user.id, cursorId = null)
         return posts
             .sortedByDescending { it.createdAt }
             .sortedByDescending { it.scoreOfPost() }

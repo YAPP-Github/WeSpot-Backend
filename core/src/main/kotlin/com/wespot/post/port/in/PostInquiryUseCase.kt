@@ -13,6 +13,7 @@ interface PostInquiryUseCase {
 
     fun findPostsByMajorCategoryName(
         majorCategoryName: String,
+        countOfPostsViewed: Long,
         inquirySize: Long,
         cursorId: Long?,
     ): PostPagingResponse
@@ -34,10 +35,10 @@ interface PostInquiryUseCase {
         cursorId: Long?,
     ): PostPagingResponse
 
-    fun findAllPosts(
-        countOfPostsViewed: Long,
-        inquirySize: Long,
-        cursorId: Long?
-    ): PostPagingResponse
+//    fun findAllPosts(
+//        countOfPostsViewed: Long,
+//        inquirySize: Long,
+//        cursorId: Long?
+//    ): PostPagingResponse
 
 }

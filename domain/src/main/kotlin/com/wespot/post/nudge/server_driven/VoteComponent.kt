@@ -1,5 +1,7 @@
 package com.wespot.post.nudge.server_driven
 
+import com.wespot.common.view.ColorType
+import com.wespot.common.view.TypographType
 import com.wespot.post.nudge.VoteNudge
 import com.wespot.view.color.Color
 import com.wespot.view.icon.IconV2
@@ -38,18 +40,28 @@ data class VoteComponent(
                 id = id,
                 content = VoteContent(
                     badge = VoteContent.VoteBadge(
-                        backgroundColor = Color("#FFFFFF"),
-                        text = RichTextV2(text = "비밀 투표")
+                        backgroundColor = Color("#FF8D65", type = "Hex"),
+                        text = RichTextV2(
+                            text = "비밀 투표",
+                            color = Color(value = ColorType.WHITE.value),
+                            typography = TypographType.BADGE.value,
+                            maxLine = 1
+                        )
                     ),
-                    text = RichTextV2(text = "지금 우리 반에서 가장\n${voteOption.content} 친구는?"),
+                    text = RichTextV2(
+                        text = "지금 우리 반에서 가장\n${voteOption.content.content} 친구는?",
+                        color = Color(value = ColorType.GRAY900.value),
+                        typography = TypographType.BODY04.value,
+                        maxLine = 2
+                    ),
                     actionIcon = VoteContent.VoteActionIcon(
-                        backgroundColor = Color("#FFFFFF"),
+                        backgroundColor = Color(value = ColorType.GRAY900.value),
                         icon = IconV2.MOVE_TO_VOTE_ICON
                     ),
                     gradation = Gradation(
-                        startColor = Color("#FFFFFF"),
-                        endColor = Color("#FFFFFF"),
-                        angle = 1
+                        startColor = Color(value = "#FEF0B5", type = Color.HEX),
+                        endColor = Color(value = "#FBAA8B", type = Color.HEX),
+                        angle = 90
                     )
                 )
             )

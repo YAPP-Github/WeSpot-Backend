@@ -9,7 +9,7 @@ import com.wespot.user.User
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-class Post( // TODO : AnonymousProfile 포함
+class Post(
     val id: Long = 0L,
     val category: PostCategory,
     val user: User,
@@ -19,6 +19,7 @@ class Post( // TODO : AnonymousProfile 포함
     val commentCount: Long = 0,
     val bookmarkedCount: Long = 0,
     val images: PostImages? = null,
+    val profile: PostProfile = PostProfile.DEFAULT_PROFILE,
 
     val postStatusByViewer: PostStatusByViewer? = null,
 
@@ -67,6 +68,7 @@ class Post( // TODO : AnonymousProfile 포함
         commentCount: Long = this.commentCount,
         bookmarkedCount: Long = this.bookmarkedCount,
         images: PostImages? = this.images,
+        profile: PostProfile = this.profile,
         createdAt: LocalDateTime = this.createdAt
     ): Post {
         return Post(
@@ -79,7 +81,8 @@ class Post( // TODO : AnonymousProfile 포함
             commentCount = commentCount,
             bookmarkedCount = bookmarkedCount,
             images = images,
-            createdAt = createdAt
+            createdAt = createdAt,
+            profile = profile,
         )
     }
 

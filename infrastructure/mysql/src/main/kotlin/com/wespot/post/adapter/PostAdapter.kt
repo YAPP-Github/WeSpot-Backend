@@ -1,6 +1,7 @@
 package com.wespot.post.adapter
 
 import com.wespot.comment.port.out.PostValidatePort
+import com.wespot.exception.CustomException
 import com.wespot.post.Post
 import com.wespot.post.PostEntity
 import com.wespot.post.PostImages
@@ -8,6 +9,7 @@ import com.wespot.post.PostStatusByViewer
 import com.wespot.post.mapper.PostCategoryMapper
 import com.wespot.post.mapper.PostImageMapper
 import com.wespot.post.mapper.PostMapper
+import com.wespot.post.mapper.PostProfileMapper
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.repository.*
 import com.wespot.user.User
@@ -25,6 +27,7 @@ class PostAdapter(
     private val postLikeJpaRepository: PostLikeJpaRepository,
     private val postNotificationJpaRepository: PostNotificationJpaRepository,
     private val postScrapJpaRepository: PostScrapJpaRepository,
+    private val postProfileJpaRepository: PostProfileJpaRepository,
 ) : PostPort, PostValidatePort {
 
     override fun save(post: Post): Post {
@@ -35,12 +38,16 @@ class PostAdapter(
             ?.let { postImageJpaRepository.saveAll(it) }
             ?.map { PostImageMapper.toDomain(it) }
             ?.let { PostImages(it) }
+        val postProfile = postProfileJpaRepository.findByIdOrNull(post.user.id) ?: throw CustomException(
+            message = "Post profile not found for user id: ${post.user.id}",
+        )
 
         return PostMapper.toDomain(
             entity = savedPostEntity,
             postCategory = post.category,
             user = post.user,
-            postImages = savedPostImages
+            postImages = savedPostImages,
+            postProfile = PostProfileMapper.toDomain(postProfile),
         )
     }
 
@@ -69,6 +76,9 @@ class PostAdapter(
         val postIdToPostImages = postImageJpaRepository.findAllByPostIdIn(postIds)
             .map { PostImageMapper.toDomain(it) }
             .groupBy { it.postId }
+        val userIdToPostProfile = postProfileJpaRepository.findAllByUserIdIn(userIds)
+            .map { PostProfileMapper.toDomain(it) }
+            .associateBy { it.userId }
 
         val postIdToPostStatusByViewer = getPostIdToPostStatusByViewer(postIds, viewer = viewer)
 
@@ -78,7 +88,8 @@ class PostAdapter(
                 postCategory = categoryIdToCategory[postEntity.categoryId]!!,
                 user = userIdToUser[postEntity.userId]!!,
                 postImages = postIdToPostImages[postEntity.id]?.let { postImages -> PostImages(postImages) },
-                postStatusByViewer = postIdToPostStatusByViewer?.let { postIdToPostStatusByViewer[postEntity.id] }
+                postStatusByViewer = postIdToPostStatusByViewer?.let { postIdToPostStatusByViewer[postEntity.id] },
+                postProfile = userIdToPostProfile[postEntity.userId]!!
             )
         }
     }
@@ -176,7 +187,7 @@ class PostAdapter(
         return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllRecentPostByLimit(
+    override fun findAllRecentPost(
         viewerId: Long?,
         inquirySize: Long,
         cursorId: Long?,

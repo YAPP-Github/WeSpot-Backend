@@ -30,7 +30,7 @@ interface PostPort {
         cursorId: Long?
     ): List<Post>
 
-    fun findAllRecentPostByLimit(
+    fun findAllRecentPost(
         viewerId: Long? = null,
         inquirySize: Long,
         cursorId: Long?
