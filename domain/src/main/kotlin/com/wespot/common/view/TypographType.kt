@@ -4,6 +4,7 @@ enum class TypographType(
     val value: String
 ) {
 
+    BODY00("Body00"),
     BODY01("Body01"),
     BODY02("Body02"),
     BODY03("Body03"),
