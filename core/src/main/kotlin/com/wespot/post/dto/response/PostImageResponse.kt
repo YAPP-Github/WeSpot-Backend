@@ -9,8 +9,6 @@ data class PostImageResponse(
     val id: Long,
     val postId: Long,
     val url: String,
-    val width: Int,
-    val height: Int,
     val createdAt: LocalDateTime
 ) {
 
@@ -21,8 +19,6 @@ data class PostImageResponse(
                 id = postImage.id,
                 postId = postImage.postId,
                 url = postImage.url,
-                width = postImage.width,
-                height = postImage.height,
                 createdAt = postImage.createdAt
             )
         }

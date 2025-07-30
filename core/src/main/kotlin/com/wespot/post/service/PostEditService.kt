@@ -34,7 +34,7 @@ class PostEditService(
             title = request.title,
             description = request.description,
             images = request.imagesRequest?.map {
-                PostImage.of(cloudFrontUrl = cloudFrontUrl, imageUrl = it.url, width = it.width, height = it.height)
+                PostImage.of(cloudFrontUrl = cloudFrontUrl, imageUrl = it.url)
             },
             toUpdatePost = { updatedPost -> postPort.save(updatedPost) }
         ).id
