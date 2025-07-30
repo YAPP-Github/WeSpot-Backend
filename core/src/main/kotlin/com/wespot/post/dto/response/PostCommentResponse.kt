@@ -2,8 +2,8 @@ package com.wespot.post.dto.response
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.comment.PostComment
+import com.wespot.common.TimeExpressionUtil
 import com.wespot.post.PostProfile
-import java.time.LocalDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostCommentResponse(
@@ -14,7 +14,7 @@ data class PostCommentResponse(
     val likeCount: Long,
     val hasPushedLike: Boolean,
     val isReported: Boolean,
-    val createdAt: LocalDateTime,
+    val createdAt: String,
 ) {
 
     companion object {
@@ -34,7 +34,7 @@ data class PostCommentResponse(
                 likeCount = postComment.likeCount,
                 hasPushedLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,
                 isReported = postComment.reportCount > 0,
-                createdAt = postComment.createdAt
+                createdAt = TimeExpressionUtil.commentTime(createdAt = postComment.createdAt)
             )
         }
 

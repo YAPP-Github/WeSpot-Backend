@@ -1,5 +1,6 @@
 package com.wespot.post.nudge.server_driven
 
+import com.wespot.common.TimeExpressionUtil
 import com.wespot.common.view.ColorType
 import com.wespot.common.view.TypographType
 import com.wespot.post.Post
@@ -69,7 +70,7 @@ class HotPostComponent(
                             ),
                         ),
                         createdAt = RichTextV2(
-                            text = post.createdAt.toString(),
+                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY500.value),
                             typography = TypographType.BODY12.value,
                             maxLine = 1

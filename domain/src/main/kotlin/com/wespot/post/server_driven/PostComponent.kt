@@ -1,5 +1,6 @@
 package com.wespot.post.server_driven
 
+import com.wespot.common.TimeExpressionUtil
 import com.wespot.common.view.ColorType
 import com.wespot.common.view.TypographType
 import com.wespot.post.Post
@@ -7,8 +8,6 @@ import com.wespot.view.color.Color
 import com.wespot.view.icon.IconV2
 import com.wespot.view.image.ImageContentV2
 import com.wespot.view.text.RichTextV2
-import kotlin.math.max
-import kotlin.reflect.typeOf
 
 data class PostComponent(
     val id: Long,
@@ -108,7 +107,7 @@ data class PostComponent(
                             maxLine = 1,
                         ),
                         createdAt = RichTextV2(
-                            text = post.createdAt.toString(),
+                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY400.value),
                             typography = TypographType.BADGE.value,
                             maxLine = 1,
@@ -218,7 +217,7 @@ data class PostComponent(
                             maxLine = 1
                         ),
                         createdAt = RichTextV2(
-                            text = post.createdAt.toString(),
+                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY400.value),
                             typography = TypographType.BODY09.value,
                             maxLine = 1

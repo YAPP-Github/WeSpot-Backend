@@ -38,16 +38,13 @@ class PostAdapter(
             ?.let { postImageJpaRepository.saveAll(it) }
             ?.map { PostImageMapper.toDomain(it) }
             ?.let { PostImages(it) }
-        val postProfile = postProfileJpaRepository.findByIdOrNull(post.user.id) ?: throw CustomException(
-            message = "Post profile not found for user id: ${post.user.id}",
-        )
 
         return PostMapper.toDomain(
             entity = savedPostEntity,
             postCategory = post.category,
             user = post.user,
             postImages = savedPostImages,
-            postProfile = PostProfileMapper.toDomain(postProfile),
+            postProfile = post.profile,
         )
     }
 
