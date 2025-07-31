@@ -1,6 +1,6 @@
 package com.wespot.post
 
-import com.wespot.post.dto.response.PostComponentResponse
+import com.wespot.common.dto.PostPagingResponse
 import com.wespot.post.port.`in`.PostSearchedUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,8 +17,14 @@ class PostSearchedController(
     @GetMapping("/search")
     fun searchPost(
         @RequestParam keyword: String,
-    ): ResponseEntity<List<PostComponentResponse>> {
-        val response = postSearchedUseCase.search(keyword = keyword)
+        @RequestParam(required = false, defaultValue = "10") inquirySize: Long,
+        @RequestParam(required = false) cursorId: Long? = null,
+    ): ResponseEntity<PostPagingResponse> {
+        val response = postSearchedUseCase.search(
+            keyword = keyword,
+            inquirySize = inquirySize,
+            cursorId = cursorId
+        )
 
         return ResponseEntity.ok(response)
     }

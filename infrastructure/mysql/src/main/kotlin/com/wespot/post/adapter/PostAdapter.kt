@@ -48,6 +48,21 @@ class PostAdapter(
         )
     }
 
+    override fun searchByTitleAndDescription(
+        keyword: String,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.searchByTitleAndDescription(
+            pattern = keyword,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            limit = inquirySize.toInt()
+        )
+
+        return getCompletePost(posts, viewerId)
+    }
+
     override fun searchByTitle(title: String, viewerId: Long?): List<Post> {
         val posts = postJpaRepository.findByTitleContainingOrderByBaseEntityCreatedAtDesc(
             title = title,

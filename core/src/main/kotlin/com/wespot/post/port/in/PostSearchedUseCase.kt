@@ -1,11 +1,13 @@
 package com.wespot.post.port.`in`
 
-import com.wespot.post.dto.response.PostComponentResponse
+import com.wespot.common.dto.PostPagingResponse
 
 interface PostSearchedUseCase {
 
     fun search(
         keyword: String,
-    ): List<PostComponentResponse>
+        inquirySize: Long,
+        cursorId: Long?
+    ): PostPagingResponse
 
 }

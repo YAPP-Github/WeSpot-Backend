@@ -6,6 +6,13 @@ interface PostPort {
 
     fun save(post: Post): Post
 
+    fun searchByTitleAndDescription(
+        keyword: String,
+        viewerId: Long? = null,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post>
+
     fun searchByTitle(title: String, viewerId: Long? = null): List<Post>
 
     fun searchByDescription(description: String, viewerId: Long? = null): List<Post>
