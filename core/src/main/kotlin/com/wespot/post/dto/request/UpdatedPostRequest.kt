@@ -8,9 +8,7 @@ class UpdatedPostRequest(
 ) {
 
     data class UpdatedPostImageRequest(
-        val url: String,
-        val width: Int,
-        val height: Int
+        val url: String
     ) {
     }
 

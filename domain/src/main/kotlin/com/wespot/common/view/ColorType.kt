@@ -25,7 +25,7 @@ enum class ColorType(
     PRIMARY900("Primary900"),
 
     WHITE("White"),
+    BLACK("Black"),
     ;
-
 
 }

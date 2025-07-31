@@ -50,7 +50,7 @@ data class PostComponent(
 
         data class PostContentSection(
             val type: String = "Images",
-            val images: List<ImageContentV2>,
+            val images: List<String>,
         ) {
 
         }
@@ -143,9 +143,7 @@ data class PostComponent(
                     ),
                     contentSection = post.images?.let {
                         PostContent.PostContentSection(
-                            images = it.postImages.map { image ->
-                                ImageContentV2(url = image.url)
-                            }
+                            images = it.postImages.map { image -> image.url }
                         )
                     },
                     footerSection = PostContent.PostFooterSection(
@@ -253,11 +251,7 @@ data class PostComponent(
                     ),
                     contentSection = post.images?.let {
                         PostContent.PostContentSection(
-                            images = it.postImages.map { image ->
-                                ImageContentV2(
-                                    url = image.url,
-                                )
-                            }
+                            images = it.postImages.map { image -> image.url }
                         )
                     },
                     footerSection = PostContent.PostFooterSection(

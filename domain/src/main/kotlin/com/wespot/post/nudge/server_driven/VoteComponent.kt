@@ -9,7 +9,7 @@ import com.wespot.view.text.RichTextV2
 
 data class VoteComponent(
     val id: Long,
-    val type: String = "VoteComponent",
+    val type: String = "VoteItem",
     val content: VoteContent,
 ) {
 

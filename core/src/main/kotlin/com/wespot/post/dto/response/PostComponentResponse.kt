@@ -70,7 +70,7 @@ data class PostComponentResponse(
 
         data class PostContentSectionResponse(
             val type: String,
-            val images: List<ImageContentV2Response>,
+            val images: List<String>,
         ) {
             companion object {
 
@@ -78,7 +78,7 @@ data class PostComponentResponse(
                     return postContentSection?.let {
                         PostContentSectionResponse(
                             type = it.type,
-                            images = it.images.map { image -> ImageContentV2Response.from(image) }
+                            images = it.images
                         )
                     }
                 }
