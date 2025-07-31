@@ -49,7 +49,7 @@ data class VoteComponent(
                         )
                     ),
                     text = RichTextV2(
-                        text = "지금 우리 반에서 가장\n${voteOption.content.content} 친구는?",
+                        text = "지금 우리 반에서 가장\n${voteOption.content.content}는?",
                         color = Color(value = ColorType.GRAY900.value),
                         typography = TypographType.BODY04.value,
                         maxLine = 2
