@@ -1,6 +1,7 @@
 package com.wespot.post
 
 import com.wespot.post.port.`in`.PostScrapUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +18,7 @@ class PostScrapController(
     fun scrapPost(@PathVariable postId: Long): ResponseEntity<Unit> {
         postScrapUseCase.scrapPost(postId)
 
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.CREATED)
             .build()
     }
 

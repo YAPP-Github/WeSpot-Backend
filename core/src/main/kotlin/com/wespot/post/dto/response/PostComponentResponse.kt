@@ -10,6 +10,7 @@ import com.wespot.post.server_driven.PostComponent
 data class PostComponentResponse(
     val id: Long,
     val type: String,
+    val isMyPost: Boolean,
     val content: PostContentResponse,
 ) {
 
@@ -152,6 +153,7 @@ data class PostComponentResponse(
             return PostComponentResponse(
                 id = postComponent.id,
                 type = postComponent.type,
+                isMyPost = postComponent.isMyPost,
                 content = PostContentResponse(
                     category = PostCategoryComponentResponse.from(content.category),
                     headerSection = PostContentResponse.PostHeaderSectionResponse.from(content.headerSection),

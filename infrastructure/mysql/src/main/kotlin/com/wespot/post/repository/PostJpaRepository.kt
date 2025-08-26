@@ -47,13 +47,13 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
 
     @Query(
         value = """
-        SELECT *
-        FROM post
-        WHERE (title REGEXP :pattern
-               OR description REGEXP :pattern)
-          AND id < :cursorId
-        ORDER BY created_at DESC
-        LIMIT :limit
+            SELECT *
+            FROM post
+            WHERE (title REGEXP :pattern
+                   OR description REGEXP :pattern)
+              AND id < :cursorId
+            ORDER BY created_at DESC
+            LIMIT :limit
         """,
         nativeQuery = true
     )

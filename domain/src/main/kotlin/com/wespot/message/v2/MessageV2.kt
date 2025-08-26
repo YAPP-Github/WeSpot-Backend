@@ -341,6 +341,7 @@ data class MessageV2(
                 view = ExceptionView.TOAST,
             )
         }
+
         if (viewer.isMeSender(senderId = sender.id)) {
             throw CustomException(
                 message = "받은 쪽지에 대해서만 답장할 수 있습니다.",
@@ -356,6 +357,8 @@ data class MessageV2(
                 view = ExceptionView.TOAST,
             )
         }
+
+        // TODO : 상대방에게 답장할 수 있는지 확인 (차단 여부)
 
         val newMessage = MessageV2(
             id = 0L,

@@ -1,6 +1,7 @@
 package com.wespot.comment
 
 import com.wespot.comment.port.`in`.PostCommentLikeUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,7 +19,7 @@ class PostCommentLikeController(
     fun likePostComment(@PathVariable commentId: Long): ResponseEntity<Unit> {
         postCommentLikeUseCase.likeComment(commentId)
 
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.CREATED)
             .build()
     }
 

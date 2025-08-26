@@ -25,7 +25,7 @@ class PostBlockService(
             ?.let {
                 postBlockPort.deleteById(it.id)
             }
-            ?: {
+            ?: run {
                 postBlockPort.save(PostBlock(postId = post.id, userId = loginUser.id))
             }
     }

@@ -20,4 +20,7 @@ class SettingJpaEntity(
     @Column(name = "is_enable_message_v2")
     val isEnableMessageV2: Boolean,
 
-    )
+    @field: NotNull
+    val isEnablePostNotification: Boolean
+
+)

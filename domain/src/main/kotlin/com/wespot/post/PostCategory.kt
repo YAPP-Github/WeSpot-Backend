@@ -6,6 +6,8 @@ class PostCategory(
     val id: Long,
     val majorCategoryName: String,
     val name: String,
+    val thumbnail: String,
+    val backgroundImage: String,
     val createdAt: LocalDateTime
 ) {
 

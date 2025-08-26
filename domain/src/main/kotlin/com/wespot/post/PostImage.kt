@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class PostImage(
-    val id: Long,
+    val id: Long = 0L,
     val postId: Long,
     val url: String,
     val createdAt: LocalDateTime
@@ -35,6 +35,10 @@ class PostImage(
             )
         }
 
+    }
+
+    fun isNew(): Boolean {
+        return id == 0L
     }
 
     fun addedPost(postId: Long): PostImage {

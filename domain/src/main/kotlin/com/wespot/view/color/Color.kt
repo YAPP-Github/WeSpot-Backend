@@ -12,7 +12,7 @@ data class Color(
         const val TOKEN = "Token"
         const val HEX = "Hex"
 
-        val DEFAULT_COLOR = Color(value = ColorType.BLACK.value)
+        val DEFAULT_COLOR = Color(value = ColorType.GRAY300.value)
     }
 
 }

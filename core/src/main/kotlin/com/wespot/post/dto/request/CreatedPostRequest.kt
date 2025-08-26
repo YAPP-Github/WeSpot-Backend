@@ -4,12 +4,7 @@ data class CreatedPostRequest(
     val categoryId: Long,
     val title: String?,
     val description: String,
-    val imagesRequest: List<CreatedPostImageRequest>?,
+    val imagesRequest: List<String>?,
 ) {
-
-    data class CreatedPostImageRequest(
-        val url: String
-    ) {
-    }
 
 }

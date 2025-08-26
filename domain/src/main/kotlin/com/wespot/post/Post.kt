@@ -126,6 +126,10 @@ class Post(
         return copyAndUpdateField(commentCount = this.commentCount + 1)
     }
 
+    fun removeComment(): Post {
+        return copyAndUpdateField(commentCount = this.commentCount - 1)
+    }
+
     fun scoreOfPost(): Long {
         return likeCount * 3 + commentCount * 2 + bookmarkedCount
     }

@@ -8,6 +8,10 @@ data class PostImages(
     val postImages: List<PostImage>
 ) {
 
+    fun isThereOnlyNewImages(): Boolean {
+        return postImages.all { it.isNew() }
+    }
+
     companion object {
 
         private const val IMAGE_MAX_COUNT_INCLUSIVE = 3

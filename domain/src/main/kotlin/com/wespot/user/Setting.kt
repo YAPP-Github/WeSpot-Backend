@@ -6,4 +6,5 @@ data class Setting(
     val isEnableMarketingNotification: Boolean = false,
 
     val isEnableMessage: Boolean = true,
+    val isEnablePostNotification: Boolean = false,
 )

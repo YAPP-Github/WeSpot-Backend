@@ -27,7 +27,7 @@ class PostScrapService(
                 val deleteBookmark = post.deleteBookmark()
                 postPort.save(deleteBookmark)
             }
-            ?: {
+            ?: run {
                 val postScrap = PostScrap(postId = post.id, userId = loginUser.id)
                 postScrapPort.save(postScrap)
                 val addBookmark = post.addBookmark()

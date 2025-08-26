@@ -20,7 +20,7 @@ enum class NotificationType(
     PROFILE_UPDATE({ it.isEnableMarketingNotification() }, SpecificNotificationType.UPDATE), // 프로필 업데이트 이벤트
     UPDATE_REQUIRED({ it.isEnableMarketingNotification() }, SpecificNotificationType.UPDATE), // 업데이트를 아직 안한 유저
 
-    COMMENT({it.isEnableMarketingNotification()},SpecificNotificationType.POST)
+    COMMENT({ it.isEnableMarketingNotification() }, SpecificNotificationType.POST)
     ;
 
     fun isVote(): Boolean {

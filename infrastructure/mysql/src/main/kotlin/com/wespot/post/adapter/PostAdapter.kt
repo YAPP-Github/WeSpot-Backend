@@ -1,7 +1,6 @@
 package com.wespot.post.adapter
 
 import com.wespot.comment.port.out.PostValidatePort
-import com.wespot.exception.CustomException
 import com.wespot.post.Post
 import com.wespot.post.PostEntity
 import com.wespot.post.PostImages
@@ -33,6 +32,12 @@ class PostAdapter(
     override fun save(post: Post): Post {
         val postEntity = PostMapper.toEntity(post)
         val savedPostEntity = postJpaRepository.save(postEntity)
+
+        post.images?.let {
+            if (it.isThereOnlyNewImages()) {
+                postImageJpaRepository.deleteByPostId(savedPostEntity.id)
+            }
+        }
         val savedPostImages: PostImages? = post.images?.postImages
             ?.map { PostImageMapper.toEntity(it) }
             ?.let { postImageJpaRepository.saveAll(it) }

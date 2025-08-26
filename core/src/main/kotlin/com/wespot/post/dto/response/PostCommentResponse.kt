@@ -7,6 +7,7 @@ import com.wespot.post.PostProfile
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostCommentResponse(
+    val id: Long,
     val isMe: Boolean,
     val authorImage: String,
     val authorName: String,
@@ -23,12 +24,14 @@ data class PostCommentResponse(
 
         fun of(
             isPostOwner: Boolean = false,
+            isCommentOwner: Boolean = false,
             postComment: PostComment,
             postProfile: PostProfile
         ): PostCommentResponse {
             return PostCommentResponse(
+                id = postComment.id,
                 authorImage = postProfile.url,
-                isMe = isPostOwner,
+                isMe = isCommentOwner,
                 authorName = if (isPostOwner) OWNER_NAME else VIEWER_NAME,
                 content = postComment.content.content,
                 likeCount = postComment.likeCount,

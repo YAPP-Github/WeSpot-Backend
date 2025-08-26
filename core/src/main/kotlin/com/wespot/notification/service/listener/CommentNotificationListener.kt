@@ -26,7 +26,7 @@ class CommentNotificationListener(
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun listenCreatedPostCommentEvent(postCommentCreatedEvent: PostCommentCreatedEvent) {
+    fun listenCreatedPostCommentEvent(postCommentCreatedEvent: PostCommentCreatedEvent) { // TODO : 일단, 본인은 알림 못받게 해야하고, 익명 프로필로
         val postComment = postCommentCreatedEvent.postComment
         val post = postPort.findById(postComment.postId) ?: throw CustomException(
             status = HttpStatus.BAD_REQUEST,

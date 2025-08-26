@@ -12,6 +12,7 @@ import com.wespot.view.text.RichTextV2
 data class PostComponent(
     val id: Long,
     val type: String = "PostItem",
+    val isMyPost: Boolean,
     val content: PostContent,
 ) {
 
@@ -90,9 +91,14 @@ data class PostComponent(
 
     companion object {
 
-        fun from(post: Post): PostComponent {
+        fun of(
+            post: Post,
+            viewerId: Long,
+            isCategoryScreen: Boolean = false,
+        ): PostComponent {
             return PostComponent(
                 id = post.id,
+                isMyPost = post.isAuthor(viewerId),
                 content = PostContent(
                     headerSection = PostContent.PostHeaderSection(
                         profileImage = ImageContentV2(
@@ -112,18 +118,16 @@ data class PostComponent(
                             typography = TypographType.BADGE.value,
                             maxLine = 1,
                         ),
-                        category = PostCategoryComponent(
+                        category = if (!isCategoryScreen) PostCategoryComponent(
                             text = RichTextV2(
                                 text = post.category.name,
                                 color = Color(value = ColorType.GRAY300.value),
                                 typography = TypographType.BADGE.value,
                                 maxLine = 1,
                             ),
-                            target = post.category.majorCategoryName,
-                            icon = IconV2(
-                                url = "https://dw2d2daekmyur.cloudfront.net/right_arrow.png",
-                            )
-                        )
+                            target = post.category.id.toString(),
+                            icon = IconV2.RIGHT_ARROW
+                        ) else null
                     ),
                     infoSection = PostContent.PostInfoSection(
                         title = post.title?.let {
@@ -150,9 +154,7 @@ data class PostComponent(
                         reactions = listOf(
                             PostContent.PostFooterSection.PostReactionItem(
                                 type = "Chat",
-                                icon = IconV2(
-                                    url = "https://dw2d2daekmyur.cloudfront.net/TALK_BALLON.png"
-                                ),
+                                icon = IconV2.COMMENT_BALLON,
                                 count = RichTextV2(
                                     text = post.commentCount.toString(),
                                     color = Color(value = ColorType.GRAY300.value),
@@ -163,9 +165,7 @@ data class PostComponent(
                             ),
                             PostContent.PostFooterSection.PostReactionItem(
                                 type = "Like",
-                                icon = IconV2(
-                                    url = "https://dw2d2daekmyur.cloudfront.net/THUMBS_UP.png",
-                                ),
+                                icon = IconV2.THUMBS_UP,
                                 count = RichTextV2(
                                     text = post.likeCount.toString(),
                                     color = Color(value = ColorType.GRAY300.value),
@@ -176,9 +176,7 @@ data class PostComponent(
                             ),
                         ),
                         scrap = PostContent.PostFooterSection.PostScrapComponent(
-                            icon = IconV2(
-                                url = "https://dw2d2daekmyur.cloudfront.net/BOOKMARK.png",
-                            ),
+                            icon = IconV2.BOOKMARK,
                             selected = post.postStatusByViewer?.isViewerPushedScrap ?: false,
                         ),
                     )
@@ -186,9 +184,10 @@ data class PostComponent(
             )
         }
 
-        fun fromDetail(post: Post): PostComponent {
+        fun fromDetail(post: Post, viewerId: Long): PostComponent {
             return PostComponent(
                 id = post.id,
+                isMyPost = post.isAuthor(viewerId),
                 content = PostContent(
                     category = PostCategoryComponent(
                         text = RichTextV2(
@@ -198,9 +197,7 @@ data class PostComponent(
                             maxLine = 1,
                         ),
                         target = post.category.id.toString(),
-                        icon = IconV2(
-                            url = "https://dw2d2daekmyur.cloudfront.net/right_arrow_in_black.png",
-                        )
+                        icon = IconV2.RIGHT_ARROW_IN_BLACK
                     ),
                     headerSection = PostContent.PostHeaderSection(
                         profileImage = ImageContentV2(
@@ -221,9 +218,7 @@ data class PostComponent(
                             maxLine = 1
                         ),
                         button = PostContent.PostButtonComponent(
-                            icon = IconV2(
-                                url = "https://dw2d2daekmyur.cloudfront.net/comment_notification_check.png",
-                            ),
+                            icon = IconV2.COMMENT_NOTIFICATION_CHECK,
                             text = RichTextV2(
                                 text = "댓글 알림",
                                 color = Color(value = ColorType.GRAY100.value),
@@ -258,9 +253,7 @@ data class PostComponent(
                         reactions = listOf(
                             PostContent.PostFooterSection.PostReactionItem(
                                 type = "Chat",
-                                icon = IconV2(
-                                    url = "https://dw2d2daekmyur.cloudfront.net/TALK_BALLON.png"
-                                ),
+                                icon = IconV2.COMMENT_BALLON,
                                 count = RichTextV2(
                                     text = post.commentCount.toString(),
                                     color = Color(value = ColorType.GRAY300.value),
@@ -271,9 +264,7 @@ data class PostComponent(
                             ),
                             PostContent.PostFooterSection.PostReactionItem(
                                 type = "Like",
-                                icon = IconV2(
-                                    url = "https://dw2d2daekmyur.cloudfront.net/THUMBS_UP.png",
-                                ),
+                                icon = IconV2.THUMBS_UP,
                                 count = RichTextV2(
                                     text = post.likeCount.toString(),
                                     color = Color(value = ColorType.GRAY300.value),
@@ -284,9 +275,7 @@ data class PostComponent(
                             ),
                         ),
                         scrap = PostContent.PostFooterSection.PostScrapComponent(
-                            icon = IconV2(
-                                url = "https://dw2d2daekmyur.cloudfront.net/BOOKMARK.png",
-                            ),
+                            icon = IconV2.BOOKMARK,
                             selected = post.postStatusByViewer?.isViewerPushedScrap ?: false,
                         ),
                     )

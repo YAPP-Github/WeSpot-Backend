@@ -27,7 +27,7 @@ class PostCommentReportService(
                 val removedReportPostComment = postComment.removeReport()
                 postCommentPort.save(removedReportPostComment)
             }
-            ?: {
+            ?: run {
                 val postCommentReport = PostCommentReport(postCommentId = commentId, userId = loginUser.id)
                 postCommentReportPort.save(postCommentReport)
                 val addedReportPostComment = postComment.addReport()

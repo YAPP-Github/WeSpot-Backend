@@ -70,11 +70,19 @@ class PostComment(
     }
 
     fun removeReport(): PostComment {
-        TODO("Not yet implemented")
+        return update(
+            reportCount = this.reportCount - 1
+        )
     }
 
     fun addReport(): PostComment {
-        TODO("Not yet implemented")
+        return update(
+            reportCount = this.reportCount + 1
+        )
+    }
+
+    fun isAuthor(id: Long): Boolean {
+        return user.id == id
     }
 
 }

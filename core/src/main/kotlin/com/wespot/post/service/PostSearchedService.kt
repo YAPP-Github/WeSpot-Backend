@@ -33,7 +33,7 @@ class PostSearchedService(
             cursorId = cursorId
         )
 
-        val data = posts.map { PostComponent.from(it) }.map { PostComponentResponse.from(it) }
+        val data = posts.map { PostComponent.of(it, loginUser.id) }.map { PostComponentResponse.from(it) }
         val hasNext = posts.size == (inquirySize + 1).toInt()
         val lastCursorId = posts.minOfOrNull { it.id }
 

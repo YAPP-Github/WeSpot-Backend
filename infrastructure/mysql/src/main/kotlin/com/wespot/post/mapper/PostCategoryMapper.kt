@@ -12,6 +12,8 @@ object PostCategoryMapper {
             id = postCategory.id,
             majorCategoryName = postCategory.majorCategoryName,
             name = postCategory.name,
+            thumbnail = postCategory.thumbnail,
+            backgroundImage = postCategory.backgroundImage,
             baseEntity = BaseEntity(createdAt = postCategory.createdAt, updatedAt = LocalDateTime.now())
         )
     }
@@ -21,6 +23,8 @@ object PostCategoryMapper {
             id = entity.id,
             majorCategoryName = entity.majorCategoryName,
             name = entity.name,
+            thumbnail = entity.thumbnail,
+            backgroundImage = entity.backgroundImage,
             createdAt = entity.baseEntity.createdAt
         )
     }

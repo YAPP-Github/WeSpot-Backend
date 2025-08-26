@@ -4,8 +4,8 @@ import com.wespot.view.image.ImageContentV2
 
 data class ImageContentV2Response(
     val url: String,
-    val width: Int?,
-    val height: Int?,
+    val width: Int? = null,
+    val height: Int? = null,
 ) {
 
     companion object {

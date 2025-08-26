@@ -4,6 +4,7 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.comment.port.out.PostCommentPort
 import com.wespot.common.dto.PostPagingResponse
 import com.wespot.common.dto.view.HotPostComponentResponse
+import com.wespot.common.dto.view.ImageContentV2Response
 import com.wespot.common.dto.view.MessageComponentResponse
 import com.wespot.common.dto.view.VoteComponentResponse
 import com.wespot.exception.CustomException
@@ -59,14 +60,26 @@ class PostInquiryService(
             inquirySize = inquirySize + 1
         )
 
-        return postPagingResponse(posts, inquirySize)
+        val data = posts.map { PostComponent.of(it, viewerId = loginUser.id, isCategoryScreen = true) }
+            .map { PostComponentResponse.from(it) }
+        val lastCursorId = data.minOfOrNull { it.id }
+        val hasNext = posts.size == (inquirySize.toInt() + 1)
+
+        return PostPagingResponse(
+            data = data.take(inquirySize.toInt()),
+            background = ImageContentV2Response(url = postCategory.backgroundImage),
+            thumbnail = ImageContentV2Response(url = postCategory.thumbnail),
+            lastCursorId = lastCursorId,
+            hasNext = hasNext
+        )
     }
 
     private fun postPagingResponse(
         posts: List<Post>,
-        inquirySize: Long
+        inquirySize: Long,
+        viewerId: Long,
     ): PostPagingResponse {
-        val data = posts.map { PostComponent.from(it) }
+        val data = posts.map { PostComponent.of(it, viewerId = viewerId) }
             .map { PostComponentResponse.from(it) }
         val lastCursorId = data.minOfOrNull { it.id }
         val hasNext = posts.size == (inquirySize.toInt() + 1)
@@ -96,7 +109,7 @@ class PostInquiryService(
             endSequence = endSequence,
         ).sortedBy { it.mustViewSequence() }
 
-        val data = mixPostAndNudge(startSequence, endSequence, posts.take(inquirySize.toInt()), nudges)
+        val data = mixPostAndNudge(startSequence, endSequence, posts.take(inquirySize.toInt()), nudges, loginUser.id)
         val lastCursorId = posts.minOfOrNull { it.id }
         val hasNext = posts.size == (inquirySize.toInt() + 1)
 
@@ -104,6 +117,7 @@ class PostInquiryService(
             data = data,
             lastCursorId = lastCursorId,
             hasNext = hasNext
+
         )
     }
 
@@ -136,13 +150,14 @@ class PostInquiryService(
         endSequence: Int,
         posts: List<Post>,
         nudges: List<NudgeItem>,
+        viewerId: Long,
     ): MutableList<Any> {
         val data = mutableListOf<Any>()
         var nudgesIndex = 0
 
         (startSequence..endSequence).asSequence().forEach { i ->
             val post = posts[i - startSequence]
-            val component = PostComponent.from(post)
+            val component = PostComponent.of(post, viewerId)
             data.add(PostComponentResponse.from(component))
 
             if (nudges.size > nudgesIndex && nudges[nudgesIndex].mustViewSequence() == i) {
@@ -199,7 +214,7 @@ class PostInquiryService(
             message = "존재하지 않는 게시글입니다."
         )
 
-        val postComponent = PostComponent.fromDetail(post)
+        val postComponent = PostComponent.fromDetail(post, loginUser.id)
         return PostComponentResponse.from(postComponent)
     }
 
@@ -220,7 +235,7 @@ class PostInquiryService(
             cursorId = cursorId
         )
 
-        return postPagingResponse(posts, inquirySize)
+        return postPagingResponse(posts, inquirySize, loginUser.id)
     }
 
     @Transactional(readOnly = false)
@@ -239,7 +254,7 @@ class PostInquiryService(
             inquirySize = inquirySize + 1,
             cursorId = cursorId
         ).let { posts ->
-            return postPagingResponse(posts, inquirySize)
+            return postPagingResponse(posts, inquirySize, loginUser.id)
         }
     }
 
@@ -254,10 +269,8 @@ class PostInquiryService(
             authorId = loginUser.id,
             inquirySize = inquirySize + 1,
             cursorId = cursorId
-        ).let { return postPagingResponse(it, inquirySize) }
+        ).let { return postPagingResponse(it, inquirySize, loginUser.id) }
     }
-
-//    }
 
 
 }
