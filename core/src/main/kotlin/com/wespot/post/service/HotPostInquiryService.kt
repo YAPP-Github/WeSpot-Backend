@@ -14,11 +14,12 @@ class HotPostInquiryService(
 
     @Transactional(readOnly = true)
     override fun topPost(user: User, countOfView: Int): List<Post> {
-        val countOfPostToStatistic = 100
+        val countOfPostToStatistic = 100L
         val posts =
-            postPort.findAllRecentPostByLimit(limit = countOfPostToStatistic, viewerId = user.id)
-        return posts.sortedByDescending { it.scoreOfPost() }
+            postPort.findAllRecentPost(inquirySize = countOfPostToStatistic, viewerId = user.id, cursorId = null)
+        return posts
+            .sortedByDescending { it.createdAt }
+            .sortedByDescending { it.scoreOfPost() }
             .take(countOfView)
     }
-
 }

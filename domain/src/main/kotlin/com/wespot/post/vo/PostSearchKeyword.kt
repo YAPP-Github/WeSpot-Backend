@@ -34,4 +34,14 @@ data class PostSearchKeyword(
         return listOf(keyword)
     }
 
+    fun keywordsToSearchInRegex(): String {
+        val keywordsToSearch = keywordsToSearch()
+
+        if (keywordsToSearch.size == 1) {
+            return keywordsToSearch[0]
+        }
+
+        return keywordsToSearch.joinToString(separator = "|") { it.replace(" ", "") }
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.wespot.post
 
-import com.wespot.post.dto.response.PostCategoryDetailResponses
-import com.wespot.post.dto.response.PostCategoryResponse
+import com.wespot.post.dto.response.FilterChipResponse
+import com.wespot.post.dto.response.PostCategoryItemsResponse
 import com.wespot.post.port.`in`.PostCategoryUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,14 +15,14 @@ class PostCategoryController(
 ) {
 
     @GetMapping("/details")
-    fun getPostCategoryDetailResponse(): ResponseEntity<List<PostCategoryDetailResponses>> {
+    fun getPostCategoryDetailResponse(): ResponseEntity<List<PostCategoryItemsResponse>> {
         val response = postCategoryUseCase.getCategoriesDetail()
 
         return ResponseEntity.ok(response)
     }
 
     @GetMapping
-    fun getPostCategoryResponse(): ResponseEntity<List<PostCategoryResponse>> {
+    fun getPostCategoryResponse(): ResponseEntity<List<FilterChipResponse>> {
         val response = postCategoryUseCase.getCategories()
 
         return ResponseEntity.ok(response)

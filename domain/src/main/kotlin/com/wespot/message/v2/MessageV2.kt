@@ -48,7 +48,7 @@ data class MessageV2(
 
     companion object {
 
-        //        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY=3
+//        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
         const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 100 // 개발하는 동안 100개로 유지
 
         fun createInitial(
@@ -341,6 +341,7 @@ data class MessageV2(
                 view = ExceptionView.TOAST,
             )
         }
+
         if (viewer.isMeSender(senderId = sender.id)) {
             throw CustomException(
                 message = "받은 쪽지에 대해서만 답장할 수 있습니다.",
@@ -356,6 +357,8 @@ data class MessageV2(
                 view = ExceptionView.TOAST,
             )
         }
+
+        // TODO : 상대방에게 답장할 수 있는지 확인 (차단 여부)
 
         val newMessage = MessageV2(
             id = 0L,

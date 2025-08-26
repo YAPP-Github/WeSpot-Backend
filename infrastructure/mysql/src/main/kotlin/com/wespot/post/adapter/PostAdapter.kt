@@ -8,6 +8,7 @@ import com.wespot.post.PostStatusByViewer
 import com.wespot.post.mapper.PostCategoryMapper
 import com.wespot.post.mapper.PostImageMapper
 import com.wespot.post.mapper.PostMapper
+import com.wespot.post.mapper.PostProfileMapper
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.repository.*
 import com.wespot.user.User
@@ -25,11 +26,18 @@ class PostAdapter(
     private val postLikeJpaRepository: PostLikeJpaRepository,
     private val postNotificationJpaRepository: PostNotificationJpaRepository,
     private val postScrapJpaRepository: PostScrapJpaRepository,
+    private val postProfileJpaRepository: PostProfileJpaRepository,
 ) : PostPort, PostValidatePort {
 
     override fun save(post: Post): Post {
         val postEntity = PostMapper.toEntity(post)
         val savedPostEntity = postJpaRepository.save(postEntity)
+
+        post.images?.let {
+            if (it.isThereOnlyNewImages()) {
+                postImageJpaRepository.deleteByPostId(savedPostEntity.id)
+            }
+        }
         val savedPostImages: PostImages? = post.images?.postImages
             ?.map { PostImageMapper.toEntity(it) }
             ?.let { postImageJpaRepository.saveAll(it) }
@@ -40,12 +48,30 @@ class PostAdapter(
             entity = savedPostEntity,
             postCategory = post.category,
             user = post.user,
-            postImages = savedPostImages
+            postImages = savedPostImages,
+            postProfile = post.profile,
         )
     }
 
+    override fun searchByTitleAndDescription(
+        keyword: String,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.searchByTitleAndDescription(
+            pattern = keyword,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            limit = inquirySize.toInt()
+        )
+
+        return getCompletePost(posts, viewerId)
+    }
+
     override fun searchByTitle(title: String, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByTitleContaining(title = title)
+        val posts = postJpaRepository.findByTitleContainingOrderByBaseEntityCreatedAtDesc(
+            title = title,
+        )
 
         return getCompletePost(posts, viewerId)
     }
@@ -67,6 +93,9 @@ class PostAdapter(
         val postIdToPostImages = postImageJpaRepository.findAllByPostIdIn(postIds)
             .map { PostImageMapper.toDomain(it) }
             .groupBy { it.postId }
+        val userIdToPostProfile = postProfileJpaRepository.findAllByUserIdIn(userIds)
+            .map { PostProfileMapper.toDomain(it) }
+            .associateBy { it.userId }
 
         val postIdToPostStatusByViewer = getPostIdToPostStatusByViewer(postIds, viewer = viewer)
 
@@ -76,7 +105,8 @@ class PostAdapter(
                 postCategory = categoryIdToCategory[postEntity.categoryId]!!,
                 user = userIdToUser[postEntity.userId]!!,
                 postImages = postIdToPostImages[postEntity.id]?.let { postImages -> PostImages(postImages) },
-                postStatusByViewer = postIdToPostStatusByViewer?.let { postIdToPostStatusByViewer[postEntity.id] }
+                postStatusByViewer = postIdToPostStatusByViewer?.let { postIdToPostStatusByViewer[postEntity.id] },
+                postProfile = userIdToPostProfile[postEntity.userId]!!
             )
         }
     }
@@ -104,8 +134,13 @@ class PostAdapter(
         }
     }
 
-    override fun searchByDescription(description: String, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByDescriptionContaining(description = description)
+    override fun searchByDescription(
+        description: String,
+        viewerId: Long?,
+    ): List<Post> {
+        val posts = postJpaRepository.findAllByDescriptionContainingOrderByBaseEntityCreatedAtDesc(
+            description = description,
+        )
 
         return getCompletePost(posts, viewerId)
     }
@@ -116,37 +151,69 @@ class PostAdapter(
             ?.first()
     }
 
-    override fun findAllByCategoryId(categoryId: Long, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findByCategoryId(categoryId)
+    override fun findAllByCategoryId(
+        categoryId: Long,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.findByCategoryIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            categoryId = categoryId,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
     override fun findAllByCategoryIdIn(
         categoryIds: List<Long>,
-        viewerId: Long?
+        viewerId: Long?, inquirySize: Long, cursorId: Long?
     ): List<Post> {
-        val posts = postJpaRepository.findByCategoryIdIn(categoryIds)
+        val posts = postJpaRepository.findByCategoryIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            categoryIds = categoryIds,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllByUserId(authorId: Long): List<Post> {
-        val posts = postJpaRepository.findAllByUserId(authorId)
+    override fun findAllByUserId(authorId: Long, inquirySize: Long, cursorId: Long?): List<Post> {
+        val posts = postJpaRepository.findAllByUserIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            userId = authorId,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, authorId)
     }
 
-    override fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long?): List<Post> {
-        val posts = postJpaRepository.findAllByIdIn(postIds)
+    override fun findAllByPostIdIn(
+        postIds: List<Long>,
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post> {
+        val posts = postJpaRepository.findAllByIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+            postIds = postIds,
+            cursorId = cursorId ?: Long.MAX_VALUE,
+            pageable = PageRequest.of(0, inquirySize.toInt())
+        )
 
         return getCompletePost(posts, viewerId)
     }
 
-    override fun findAllRecentPostByLimit(limit: Int, viewerId: Long?): List<Post> {
-        val pageable = PageRequest.of(0, limit)
+    override fun findAllRecentPost(
+        viewerId: Long?,
+        inquirySize: Long,
+        cursorId: Long?,
+    ): List<Post> {
         val findAllByOrderByBaseEntityCreatedAtDesc =
-            postJpaRepository.findAllByOrderByBaseEntityCreatedAtDesc(pageable)
+            postJpaRepository.findAllByIdLessThanOrderByBaseEntityCreatedAtDesc(
+                cursorId = cursorId ?: Long.MAX_VALUE,
+                pageable = PageRequest.of(0, inquirySize.toInt())
+            )
 
         return getCompletePost(findAllByOrderByBaseEntityCreatedAtDesc, viewerId)
     }

@@ -4,14 +4,7 @@ class UpdatedPostRequest(
     val categoryId: Long,
     val title: String?,
     val description: String,
-    val imagesRequest: List<UpdatedPostImageRequest>?,
+    val imagesRequest: List<String>?,
 ) {
-
-    data class UpdatedPostImageRequest(
-        val url: String,
-        val width: Int,
-        val height: Int
-    ) {
-    }
 
 }

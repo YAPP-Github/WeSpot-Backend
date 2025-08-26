@@ -1,8 +1,10 @@
 package com.wespot.post.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.post.PostImage
 import java.time.LocalDateTime
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostImageResponse(
     val id: Long,
     val postId: Long,

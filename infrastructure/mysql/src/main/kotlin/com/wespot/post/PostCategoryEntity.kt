@@ -17,6 +17,12 @@ class PostCategoryEntity(
     @field:NotNull
     val name: String,
 
+    @field:NotNull
+    val thumbnail: String,
+
+    @field:NotNull
+    val backgroundImage: String,
+
     @Embedded
     val baseEntity: BaseEntity
 ) {

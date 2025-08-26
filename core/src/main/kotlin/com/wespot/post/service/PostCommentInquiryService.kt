@@ -1,11 +1,10 @@
 package com.wespot.post.service
 
 import com.wespot.auth.service.SecurityUtils
-import com.wespot.post.dto.response.PostCommentResponse
-import com.wespot.post.port.`in`.PostCommentInquiryUseCase
-import com.wespot.comment.port.out.PostCommentLikePort
 import com.wespot.comment.port.out.PostCommentPort
 import com.wespot.exception.CustomException
+import com.wespot.post.dto.response.PostCommentResponse
+import com.wespot.post.port.`in`.PostCommentInquiryUseCase
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.port.out.PostProfilePort
 import com.wespot.user.port.out.UserPort
@@ -36,6 +35,7 @@ class PostCommentInquiryService(
         return postComments.map {
             PostCommentResponse.of(
                 isPostOwner = post.isAuthor(loginUser.id),
+                isCommentOwner = it.isAuthor(loginUser.id),
                 postComment = it,
                 postProfile = userIdToProfile[it.user.id]!!
             )

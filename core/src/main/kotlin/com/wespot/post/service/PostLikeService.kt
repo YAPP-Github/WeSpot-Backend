@@ -27,7 +27,7 @@ class PostLikeService(
                 val removedLikePost = post.removeLike()
                 postPort.save(removedLikePost)
             }
-            ?: {
+            ?: run {
                 val postLike = PostLike(postId = postId, userId = loginUser.id)
                 postLikePort.save(postLike)
                 val addedLikePost = post.addLike()

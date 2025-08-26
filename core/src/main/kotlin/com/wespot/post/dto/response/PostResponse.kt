@@ -1,9 +1,11 @@
 package com.wespot.post.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.post.Post
 import com.wespot.user.dto.response.UserResponse
 import java.time.LocalDateTime
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostResponse(
     val id: Long = 0L,
     val category: PostCategoryDetailResponses.PostCategoryDetailResponse,

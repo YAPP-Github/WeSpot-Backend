@@ -42,7 +42,7 @@ class MessageV2PersistenceAdapter(
     }
 
     override fun findAllMessageRoomBySenderId(senderId: Long): List<MessageV2> {
-        val messageRooms = messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderId(senderId = senderId)
+        val messageRooms = messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBlockedFalse(senderId = senderId)
 
         return getCompleteMessageV2(messageRooms)
     }
@@ -87,19 +87,19 @@ class MessageV2PersistenceAdapter(
     }
 
     override fun findAllMessageRoomByReceiverId(receiverId: Long): List<MessageV2> {
-        val messageRooms = messageV2JpaRepository.findAllByMessageRoomIdIsNullAndReceiverId(receiverId = receiverId)
+        val messageRooms = messageV2JpaRepository.findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBlockedFalse(receiverId = receiverId)
         return getCompleteMessageV2(messageRooms)
     }
 
     override fun findAllMessageRoomBySenderIdAndIsSenderBookmarkedTrue(senderId: Long): List<MessageV2> {
         val messageRooms =
-            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBookmarkedTrue(senderId = senderId)
+            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBookmarkedTrueAndIsSenderBlockedFalse(senderId = senderId)
         return getCompleteMessageV2(messageRooms)
     }
 
     override fun findAllMessageRoomByReceiverIdAndIsReceiverBookmarkedTrue(receiverId: Long): List<MessageV2> {
         val messageRooms =
-            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBookmarkedTrue(receiverId = receiverId)
+            messageV2JpaRepository.findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBookmarkedTrueAndIsReceiverBlockedFalse(receiverId = receiverId)
         return getCompleteMessageV2(messageRooms)
     }
 

@@ -6,26 +6,41 @@ interface PostPort {
 
     fun save(post: Post): Post
 
+    fun searchByTitleAndDescription(
+        keyword: String,
+        viewerId: Long? = null,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post>
+
     fun searchByTitle(title: String, viewerId: Long? = null): List<Post>
 
     fun searchByDescription(description: String, viewerId: Long? = null): List<Post>
 
     fun findById(postId: Long, viewerId: Long? = null): Post?
 
-    fun findAllByCategoryId(categoryId: Long, viewerId: Long? = null): List<Post>
+    fun findAllByCategoryId(categoryId: Long, viewerId: Long? = null, inquirySize: Long, cursorId: Long?): List<Post>
 
     fun findAllByCategoryIdIn(
         categoryIds: List<Long>,
-        viewerId: Long? = null
+        viewerId: Long? = null,
+        inquirySize: Long,
+        cursorId: Long?
     ): List<Post>
 
-    fun findAllByUserId(authorId: Long): List<Post>
+    fun findAllByUserId(authorId: Long, inquirySize: Long, cursorId: Long?): List<Post>
 
-    fun findAllByPostIdIn(postIds: List<Long>, viewerId: Long? = null): List<Post>
+    fun findAllByPostIdIn(
+        postIds: List<Long>,
+        viewerId: Long? = null,
+        inquirySize: Long,
+        cursorId: Long?
+    ): List<Post>
 
-    fun findAllRecentPostByLimit(
-        limit: Int,
-        viewerId: Long? = null
+    fun findAllRecentPost(
+        viewerId: Long? = null,
+        inquirySize: Long,
+        cursorId: Long?
     ): List<Post>
 
     fun deleteById(id: Long)

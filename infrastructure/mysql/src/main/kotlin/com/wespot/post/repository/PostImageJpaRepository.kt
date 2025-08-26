@@ -9,4 +9,6 @@ interface PostImageJpaRepository : JpaRepository<PostImageEntity, Long> {
 
     fun deleteByPostId(postId: Long)
 
+    fun postId(postId: Long): MutableList<PostImageEntity>
+
 }

@@ -9,7 +9,7 @@ import com.wespot.post.nudge.VoteNudge
 import com.wespot.post.nudge.vo.NudgeType
 import com.wespot.post.nudge.vo.NudgeTypeWithSequence
 import com.wespot.post.port.`in`.HotPostInquiryUseCase
-import com.wespot.post.port.`in`.PostNudgeModalUseCase
+import com.wespot.post.port.`in`.PostNudgeUseCase
 import com.wespot.user.User
 import com.wespot.user.port.out.UserPort
 import com.wespot.vote.port.`in`.VoteOptionUsageUseCase
@@ -22,7 +22,7 @@ class PostNudgeModalService(
     private val messageV2UsingStatusUseCase: MessageV2UsingStatusUseCase,
     private val voteOptionUsageUseCase: VoteOptionUsageUseCase,
     private val hotPostInquiryUseCase: HotPostInquiryUseCase
-) : PostNudgeModalUseCase {
+) : PostNudgeUseCase {
 
     @Transactional(readOnly = true)
     override fun findAllNudgeModalsBySequence(startSequence: Int, endSequence: Int): List<NudgeItem> {

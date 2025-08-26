@@ -3,6 +3,7 @@ package com.wespot.post.mapper
 import com.wespot.common.BaseEntity
 import com.wespot.post.PostReport
 import com.wespot.post.PostReportEntity
+import com.wespot.report.ReportReason
 import java.time.LocalDateTime
 
 object PostReportMapper {
@@ -12,7 +13,7 @@ object PostReportMapper {
             id = postReport.id,
             postId = postReport.postId,
             userId = postReport.userId,
-            reason = postReport.reason,
+            reportReasonId = postReport.reportReason.id,
             baseEntity = BaseEntity(
                 createdAt = postReport.createdAt,
                 updatedAt = LocalDateTime.now()
@@ -20,12 +21,12 @@ object PostReportMapper {
         )
     }
 
-    fun toDomain(entity: PostReportEntity): PostReport {
+    fun toDomain(entity: PostReportEntity, reportReason: ReportReason): PostReport {
         return PostReport(
             id = entity.id,
             postId = entity.postId,
             userId = entity.userId,
-            reason = entity.reason,
+            reportReason = reportReason,
             createdAt = entity.baseEntity.createdAt
         )
     }

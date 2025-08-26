@@ -2,20 +2,19 @@ package com.wespot.message.v2
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
 
     fun countBySenderIdAndBaseEntityCreatedAtBetween(senderId: Long, from: LocalDateTime, to: LocalDateTime): Int
 
-    fun findAllByMessageRoomIdIsNullAndSenderId(senderId: Long): List<MessageJpaEntityV2>
+    fun findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBlockedFalse(senderId: Long): List<MessageJpaEntityV2>
 
-    fun findAllByMessageRoomIdIsNullAndReceiverId(receiverId: Long): List<MessageJpaEntityV2>
+    fun findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBlockedFalse(receiverId: Long): List<MessageJpaEntityV2>
 
-    fun findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBookmarkedTrue(senderId: Long): List<MessageJpaEntityV2>
+    fun findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBookmarkedTrueAndIsSenderBlockedFalse(senderId: Long): List<MessageJpaEntityV2>
 
-    fun findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBookmarkedTrue(receiverId: Long): List<MessageJpaEntityV2>
+    fun findAllByMessageRoomIdIsNullAndReceiverIdAndIsReceiverBookmarkedTrueAndIsReceiverBlockedFalse(receiverId: Long): List<MessageJpaEntityV2>
 
     fun findAllByMessageRoomIdIsNullAndSenderIdAndIsSenderBlockedTrue(senderId: Long): List<MessageJpaEntityV2>
 

@@ -13,13 +13,13 @@ class PostCommentCreatedEventListener(
 ) {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    private fun listenPostCreatedEvent(postCommentCreatedEvent: PostCommentCreatedEvent) {
+    fun listenPostCreatedEvent(postCommentCreatedEvent: PostCommentCreatedEvent) {
         val postComment = postCommentCreatedEvent.postComment
         val post = postPort.findById(postId = postComment.postId)
             ?: throw CustomException(message = "존재하지 않는 게시글입니다.")
 
-        post.addComment()
-        postPort.save(post)
+        val addedCommentPost = post.addComment()
+        postPort.save(addedCommentPost)
     }
 
 }

@@ -1,8 +1,10 @@
 package com.wespot.post.dto.response
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.wespot.post.PostCategories
 import com.wespot.post.PostCategory
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class PostCategoryDetailResponses(
     val majorCategoriesName: String,
     val categories: List<PostCategoryDetailResponse>

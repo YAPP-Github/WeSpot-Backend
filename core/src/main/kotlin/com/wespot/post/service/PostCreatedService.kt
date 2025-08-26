@@ -43,9 +43,7 @@ class PostCreatedService(
                 ?.map {
                     PostImage.of(
                         cloudFrontUrl = cloudFrontUrl,
-                        imageUrl = it.url,
-                        width = it.width,
-                        height = it.height
+                        imageUrl = it,
                     )
                 },
             toSavePost = { toSavedPost -> postPort.save(toSavedPost) }

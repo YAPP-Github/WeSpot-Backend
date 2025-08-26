@@ -19,6 +19,7 @@ class Post(
     val commentCount: Long = 0,
     val bookmarkedCount: Long = 0,
     val images: PostImages? = null,
+    val profile: PostProfile = PostProfile.DEFAULT_PROFILE,
 
     val postStatusByViewer: PostStatusByViewer? = null,
 
@@ -67,6 +68,7 @@ class Post(
         commentCount: Long = this.commentCount,
         bookmarkedCount: Long = this.bookmarkedCount,
         images: PostImages? = this.images,
+        profile: PostProfile = this.profile,
         createdAt: LocalDateTime = this.createdAt
     ): Post {
         return Post(
@@ -79,7 +81,8 @@ class Post(
             commentCount = commentCount,
             bookmarkedCount = bookmarkedCount,
             images = images,
-            createdAt = createdAt
+            createdAt = createdAt,
+            profile = profile,
         )
     }
 
@@ -121,6 +124,10 @@ class Post(
 
     fun addComment(): Post {
         return copyAndUpdateField(commentCount = this.commentCount + 1)
+    }
+
+    fun removeComment(): Post {
+        return copyAndUpdateField(commentCount = this.commentCount - 1)
     }
 
     fun scoreOfPost(): Long {
