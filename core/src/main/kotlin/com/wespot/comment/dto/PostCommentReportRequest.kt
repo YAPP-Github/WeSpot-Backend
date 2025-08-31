@@ -1,8 +1,8 @@
-package com.wespot.post.dto.request
+package com.wespot.comment.dto
 
 import com.wespot.report.dto.ReportReasonRequest
 
-data class PostReportRequest(
+data class PostCommentReportRequest(
     val reportReasonRequests: List<ReportReasonRequest>,
 ) {
 }

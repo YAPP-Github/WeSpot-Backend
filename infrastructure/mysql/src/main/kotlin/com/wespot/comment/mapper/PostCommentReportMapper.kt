@@ -2,6 +2,7 @@ package com.wespot.comment.mapper
 
 import com.wespot.comment.PostCommentReport
 import com.wespot.comment.PostCommentReportEntity
+import com.wespot.comment.PostCommentReportReason
 import com.wespot.common.BaseEntity
 import java.time.LocalDateTime
 
@@ -16,11 +17,15 @@ object PostCommentReportMapper {
         )
     }
 
-    fun toDomain(entity: PostCommentReportEntity): PostCommentReport {
+    fun toDomain(
+        entity: PostCommentReportEntity,
+        postCommentReportReasons: List<PostCommentReportReason>
+    ): PostCommentReport {
         return PostCommentReport(
             id = entity.id,
             postCommentId = entity.postCommentId,
             userId = entity.userId,
+            postCommentReportReasons = postCommentReportReasons,
             createdAt = entity.baseEntity.createdAt
         )
     }
