@@ -326,4 +326,11 @@ data class User(
         return setting.isEnableMessage
     }
 
+    fun isEnablePostNotification(): Boolean {
+        if (isWithDraw() || isKeepRestrict()) {
+            return false
+        }
+        return setting.isEnablePostNotification
+    }
+
 }

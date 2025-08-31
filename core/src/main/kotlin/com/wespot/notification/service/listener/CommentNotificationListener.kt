@@ -8,6 +8,7 @@ import com.wespot.notification.NotificationType
 import com.wespot.notification.service.NotificationHelper
 import com.wespot.post.port.out.PostNotificationPort
 import com.wespot.post.port.out.PostPort
+import com.wespot.post.port.out.PostProfilePort
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -19,6 +20,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class CommentNotificationListener(
     private val postPort: PostPort,
+    private val postProfilePort: PostProfilePort,
     private val postNotificationPort: PostNotificationPort,
     private val notificationHelper: NotificationHelper,
 ) {
@@ -26,7 +28,7 @@ class CommentNotificationListener(
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun listenCreatedPostCommentEvent(postCommentCreatedEvent: PostCommentCreatedEvent) { // TODO : 일단, 본인은 알림 못받게 해야하고, 익명 프로필로
+    fun listenCreatedPostCommentEvent(postCommentCreatedEvent: PostCommentCreatedEvent) {
         val postComment = postCommentCreatedEvent.postComment
         val post = postPort.findById(postComment.postId) ?: throw CustomException(
             status = HttpStatus.BAD_REQUEST,
@@ -35,14 +37,15 @@ class CommentNotificationListener(
         val commentRegister = postComment.user
         val postNotifications = postNotificationPort.findAllByPostId(post.id)
 
-        val users = listOf(post.user) + postNotifications.map { it.user }.distinct()
+        val users = postNotifications.map { it.user }.distinct()
         val notifications = users.stream()
+            .filter { postComment.isNotAuthor(it.id) }
             .map {
                 Notification.create(
                     userId = it.id,
-                    type = NotificationType.COMMENT,
+                    type = NotificationType.POST_COMMENT,
                     targetId = post.id,
-                    title = "${commentRegister.name} 님이 댓글을 남겼습니다.",
+                    title = "${post.commentProfileName(commentRegister)} 님이 댓글을 남겼습니다.",
                     body = NotificationUtil.summaryContent(
                         content = postComment.content.content
                     ),

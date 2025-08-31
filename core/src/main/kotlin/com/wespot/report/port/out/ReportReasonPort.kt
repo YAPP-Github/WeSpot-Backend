@@ -8,4 +8,6 @@ interface ReportReasonPort {
 
     fun findById(reportReasonId: Long): ReportReason?
 
+    fun findAllByIdIn(ids: List<Long>): List<ReportReason>
+
 }

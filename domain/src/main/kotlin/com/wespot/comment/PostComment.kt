@@ -85,4 +85,8 @@ class PostComment(
         return user.id == id
     }
 
+    fun isNotAuthor(id: Long): Boolean {
+        return !isAuthor(id)
+    }
+
 }

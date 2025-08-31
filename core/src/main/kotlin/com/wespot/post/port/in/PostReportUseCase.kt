@@ -4,6 +4,6 @@ import com.wespot.post.dto.request.PostReportRequest
 
 interface PostReportUseCase {
 
-    fun reportPost(postId: Long, postReportRequest: PostReportRequest)
+    fun reportPost(postId: Long, postReportRequest: PostReportRequest?)
 
 }

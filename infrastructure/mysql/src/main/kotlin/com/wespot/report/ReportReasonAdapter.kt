@@ -19,4 +19,9 @@ class ReportReasonAdapter(
             ?.let { ReportReasonMapper.toDomain(it) }
     }
 
+    override fun findAllByIdIn(ids: List<Long>): List<ReportReason> {
+        return reportReasonJpaRepository.findAllById(ids)
+            .map { ReportReasonMapper.toDomain(it) }
+    }
+
 }

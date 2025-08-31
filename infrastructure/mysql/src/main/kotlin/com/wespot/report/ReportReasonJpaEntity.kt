@@ -13,7 +13,9 @@ data class ReportReasonJpaEntity(
     val id: Long = 0L,
 
     @field:NotNull
-    val content: String
+    val content: String,
+
+    val canReceiveReason: Boolean
 
 ) {
 }

@@ -28,6 +28,9 @@ class Post(
 
     companion object {
 
+        const val VIEWER_COMMENT_PROFILE_NAME = "익명의 댓쓴이"
+        const val AUTHOR_COMMENT_PROFILE_NAME = "익명의 글쓴이"
+
         fun of(
             category: PostCategory,
             user: User,
@@ -140,6 +143,14 @@ class Post(
 
     fun addBookmark(): Post {
         return copyAndUpdateField(bookmarkedCount = this.bookmarkedCount + 1)
+    }
+
+    fun commentProfileName(user: User): String {
+        if (isAuthor(user.id)) {
+            return AUTHOR_COMMENT_PROFILE_NAME
+        }
+
+        return VIEWER_COMMENT_PROFILE_NAME
     }
 
 }
