@@ -20,6 +20,10 @@ class UpdatedMessageV2Service(
     override fun bookmarkMessage(messageId: Long) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
+        if (loginUser.canNotUseMessage()) {
+            throw CustomException(message = "메시지 기능을 사용할 수 없는 사용자입니다.", status = HttpStatus.FORBIDDEN)
+        }
+
         val message = messageV2Port.findById(messageId)
 
         if (!message.isRoom()) {

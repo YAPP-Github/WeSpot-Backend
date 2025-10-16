@@ -48,7 +48,7 @@ data class MessageV2(
 
     companion object {
 
-//        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
+        //        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
         const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 100 // 개발하는 동안 100개로 유지
 
         fun createInitial(
@@ -272,7 +272,7 @@ data class MessageV2(
         return isReceiverBookmarked
     }
 
-    fun isBlockedByMe(viewer: User): Boolean {
+    fun isBlockedBy(viewer: User): Boolean {
         if (viewer.isMeSender(senderId = sender.id)) {
             return isSenderBlocked
         }
@@ -302,10 +302,11 @@ data class MessageV2(
         return sender.profile.iconUrl
     }
 
-    fun isAbleToAnswer(viewer: User, alreadyUsedMessageOnToday: Int): Boolean {
+    fun isAbleToAnswer(viewer: User, alreadyUsedMessageOnToday: Int, roomMessage: MessageV2): Boolean {
         return alreadyUsedMessageOnToday < COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY
             && viewer.isMeReceiver(receiverId = receiver.id)
             && isAbleToUseMessage(sender, receiver)
+            && roomMessage.isNotBlockedByAnybody()
     }
 
     fun isSameUserProfileAndNotAnonymous(viewer: User): Boolean {
@@ -333,7 +334,20 @@ data class MessageV2(
         return viewer.isMeSender(senderId = sender.id) || viewer.isMeReceiver(receiverId = receiver.id)
     }
 
-    fun answerMessage(viewer: User, alreadyUsedMessageOnToday: Int, content: MessageContent): MessageV2 {
+    fun answerMessage(
+        viewer: User,
+        alreadyUsedMessageOnToday: Int,
+        content: MessageContent,
+        roomMessage: MessageV2
+    ): MessageV2 {
+        if (!roomMessage.isRoom()) {
+            throw CustomException(
+                message = "room message가 쪽지방이 아닙니다.",
+                status = HttpStatus.INTERNAL_SERVER_ERROR,
+                view = ExceptionView.TOAST,
+            )
+        }
+
         if (!isAbleToUseMessage(sender, receiver)) {
             throw CustomException(
                 message = "쪽지 기능이 비활성화 되어 있는 유저가 존재합니다.",
@@ -358,7 +372,13 @@ data class MessageV2(
             )
         }
 
-        // TODO : 상대방에게 답장할 수 있는지 확인 (차단 여부)
+        if (roomMessage.isBlockedByAnybody()) {
+            throw CustomException(
+                message = "쪽지방에서 차단된 상태에서는 답장할 수 없습니다.",
+                status = HttpStatus.BAD_REQUEST,
+                view = ExceptionView.TOAST,
+            )
+        }
 
         val newMessage = MessageV2(
             id = 0L,
@@ -404,6 +424,14 @@ data class MessageV2(
         )
 
         return newMessage
+    }
+
+    private fun isBlockedByAnybody(): Boolean {
+        return isSenderBlocked || isReceiverBlocked
+    }
+
+    private fun isNotBlockedByAnybody(): Boolean {
+        return !isBlockedByAnybody()
     }
 
     private fun isUserOwner(user: User): Boolean {
@@ -585,6 +613,18 @@ data class MessageV2(
         }
 
         return 31 * createdAt.hashCode() + content.hashCode()
+    }
+
+    fun receiverByViewer(viewer: User): User {
+        if (viewer.isMeSender(senderId = sender.id)) {
+            return receiver
+        }
+
+        return sender
+    }
+
+    fun isAnonymousRoom(): Boolean {
+        return isRoom() && anonymousProfile != null
     }
 
 }

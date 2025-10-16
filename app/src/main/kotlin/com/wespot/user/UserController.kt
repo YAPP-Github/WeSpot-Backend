@@ -10,8 +10,10 @@ import com.wespot.user.dto.response.UserSettingResponse
 import com.wespot.user.port.`in`.CheckedUserRestrictionUseCase
 import com.wespot.user.port.`in`.UserSettingUseCase
 import com.wespot.user.port.`in`.UserUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,6 +33,14 @@ class UserController(
 
         return ResponseEntity.ok()
             .body(response)
+    }
+
+    @PostMapping("/allow/policy")
+    fun allowNewPolicy(policyType: PolicyType): ResponseEntity<Unit> {
+        userUseCase.allowNewPolicy(policyType)
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .build()
     }
 
     @PutMapping("/me")

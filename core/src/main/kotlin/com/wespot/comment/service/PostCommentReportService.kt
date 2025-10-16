@@ -4,6 +4,7 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.comment.PostCommentReport
 import com.wespot.comment.PostCommentReportReason
 import com.wespot.comment.dto.PostCommentReportRequest
+import com.wespot.comment.event.PostCommentReportEvent
 import com.wespot.comment.port.`in`.PostCommentReportUseCase
 import com.wespot.comment.port.out.PostCommentPort
 import com.wespot.comment.port.out.PostCommentReportPort
@@ -11,6 +12,8 @@ import com.wespot.exception.CustomException
 import com.wespot.report.ReportReasonWithCustomReason
 import com.wespot.report.port.out.ReportReasonPort
 import com.wespot.user.port.out.UserPort
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,13 +22,23 @@ class PostCommentReportService(
     private val userPort: UserPort,
     private val postCommentReportPort: PostCommentReportPort,
     private val postCommentPort: PostCommentPort,
-    private val reportReasonPort: ReportReasonPort
+    private val reportReasonPort: ReportReasonPort,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : PostCommentReportUseCase {
 
     @Transactional
     override fun reportComment(commentId: Long, request: PostCommentReportRequest?) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+
+        if (loginUser.canNotUseCommunity()) {
+            throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
+        }
+
         val postComment = postCommentPort.findById(commentId) ?: throw CustomException(message = "존재하지 않는 댓글입니다.")
+
+        if (postComment.isAuthor(id = loginUser.id)) {
+            throw CustomException(message = "자신의 댓글은 신고할 수 없습니다.")
+        }
 
         postCommentReportPort.findByPostCommentIdAndUserId(postCommentId = commentId, userId = loginUser.id)
             ?.let {
@@ -56,6 +69,17 @@ class PostCommentReportService(
 
                 val addedReportPostComment = postComment.addReport()
                 postCommentPort.save(addedReportPostComment)
+
+                val reportReason = postCommentReportReasons.map { it.reportReasonWithCustomReason.reason() }
+                    .joinToString(separator = ", ") { it }
+                applicationEventPublisher.publishEvent(
+                    PostCommentReportEvent(
+                        postComment = postComment,
+                        sender = loginUser,
+                        receiver = postComment.user,
+                        reason = reportReason,
+                    )
+                )
             }
     }
 

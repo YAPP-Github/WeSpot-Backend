@@ -21,14 +21,16 @@ data class MessageDetail(
             viewer: User,
             message: MessageV2,
             alreadyUsedMessageOnToday: Int,
-            isLatestMessage: Boolean
+            isLatestMessage: Boolean,
+            roomMessage: MessageV2,
         ): MessageDetail {
             return MessageDetail(
                 isReceived = message.isReceived(viewer = viewer),
                 isSend = message.isSent(viewer = viewer),
                 isAbleToAnswer = if (isLatestMessage) message.isAbleToAnswer(
                     viewer = viewer,
-                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday
+                    alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
+                    roomMessage = roomMessage
                 ) else false,
                 isRead = message.isRead(viewer = viewer),
                 message = message
@@ -45,7 +47,7 @@ data class MessageDetail(
         return message.createdAt
     }
 
-    fun createAnswerMessage(sender: User, alreadyUsedMessageOnToday: Int, content: MessageContent): MessageV2 {
+    fun createAnswerMessage(sender: User, alreadyUsedMessageOnToday: Int, content: MessageContent, roomMessage: MessageV2): MessageV2 {
         if (!isAbleToAnswer) {
             throw CustomException(
                 message = "답장할 수 있는 쪽지가 아닙니다.",
@@ -65,7 +67,8 @@ data class MessageDetail(
         return message.answerMessage(
             viewer = sender,
             alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
-            content = content
+            content = content,
+            roomMessage = roomMessage
         )
     }
 

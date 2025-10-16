@@ -27,6 +27,11 @@ class CreatedMessageV2Service(
     @Transactional
     override fun createMessage(createdMessageV2Request: CreatedMessageV2Request): MessageV2 {
         val sender = SecurityUtils.getLoginUser(userPort)
+
+        if (sender.canNotUseMessage()) {
+            throw CustomException(message = "메시지 기능을 사용할 수 없는 사용자입니다.", status = HttpStatus.FORBIDDEN)
+        }
+
         val receiver =
             userPort.findById(userId = createdMessageV2Request.receiverId) ?: throw CustomException(
                 HttpStatus.NOT_FOUND,

@@ -9,4 +9,6 @@ interface PostBlockJpaRepository : JpaRepository<PostBlockEntity, Long> {
 
     fun deleteByPostId(postId: Long)
 
+    fun findAllByUserId(userId: Long): List<PostBlockEntity>
+
 }

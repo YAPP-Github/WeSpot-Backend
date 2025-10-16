@@ -21,4 +21,8 @@ class ReportPersistenceAdapter(
         return ReportMapper.toDomainEntity(reportJpaRepository.save(reportJpaEntity))
     }
 
+    override fun deleteByReportTypeAndTargetIdAndReceiverId(reportType: ReportType, targetId: Long, receiverId: Long) {
+        reportJpaRepository.deleteByReportTypeAndTargetIdAndReceiverId(reportType, targetId, receiverId)
+    }
+
 }

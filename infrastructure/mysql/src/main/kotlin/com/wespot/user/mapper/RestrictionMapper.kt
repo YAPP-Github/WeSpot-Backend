@@ -1,6 +1,7 @@
 package com.wespot.user.mapper
 
 import com.wespot.user.entity.RestrictionJpaEntity
+import com.wespot.user.restriction.CommunityRestriction
 import com.wespot.user.restriction.MessageRestriction
 import com.wespot.user.restriction.Restriction
 import com.wespot.user.restriction.VoteRestriction
@@ -17,6 +18,10 @@ object RestrictionMapper {
             messageRestriction = MessageRestriction(
                 restrictionType = restrictionJpaEntity.messageRestrictionType,
                 releaseDate = restrictionJpaEntity.messageReleaseDate
+            ),
+            communityRestriction = CommunityRestriction(
+                restrictionType = restrictionJpaEntity.communityRestrictionType,
+                releaseDate = restrictionJpaEntity.communityReleaseDate
             )
         )
 
@@ -26,7 +31,9 @@ object RestrictionMapper {
             voteRestrictionType = restriction.voteRestriction.restrictionType,
             voteReleaseDate = restriction.voteRestriction.releaseDate,
             messageRestrictionType = restriction.messageRestriction.restrictionType,
-            messageReleaseDate = restriction.messageRestriction.releaseDate
+            messageReleaseDate = restriction.messageRestriction.releaseDate,
+            communityRestrictionType = restriction.communityRestriction.restrictionType,
+            communityReleaseDate = restriction.communityRestriction.releaseDate
         )
 
 }

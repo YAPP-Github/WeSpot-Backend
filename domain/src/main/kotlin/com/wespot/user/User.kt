@@ -25,6 +25,7 @@ data class User(
     val social: Social,
     val userConsent: UserConsent,
     var restriction: Restriction,
+    val userPolicyAgreements: List<UserPolicyAgreement>,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val withdrawalStatus: WithdrawalStatus,
@@ -32,7 +33,6 @@ data class User(
     val withdrawalCancelAt: LocalDateTime?,
     val withdrawalCompleteAt: LocalDateTime?,
 ) {
-
 
     fun updateProfile(
         introduction: String,
@@ -54,6 +54,8 @@ data class User(
             social = social,
             userConsent = userConsent,
             restriction = restriction,
+            userPolicyAgreements = userPolicyAgreements,
+
             createdAt = createdAt,
             updatedAt = LocalDateTime.now(),
             withdrawalStatus = withdrawalStatus,
@@ -79,6 +81,8 @@ data class User(
             setting = setting,
             social = social,
             userConsent = userConsent,
+            userPolicyAgreements = userPolicyAgreements,
+
             createdAt = createdAt,
             restriction = restriction,
             updatedAt = LocalDateTime.now(),
@@ -106,6 +110,8 @@ data class User(
             setting = setting,
             social = social,
             userConsent = userConsent,
+            userPolicyAgreements = userPolicyAgreements,
+
             createdAt = createdAt,
             restriction = restriction,
             updatedAt = LocalDateTime.now(),
@@ -147,6 +153,7 @@ data class User(
         withdrawalRequestAt = withdrawalRequestAt,
         withdrawalCancelAt = withdrawalCancelAt,
         withdrawalCompleteAt = LocalDateTime.now(),
+        userPolicyAgreements = userPolicyAgreements,
     )
 
     companion object {
@@ -191,6 +198,7 @@ data class User(
             withdrawalRequestAt = null,
             withdrawalCancelAt = null,
             withdrawalCompleteAt = null,
+            userPolicyAgreements = mutableListOf(),
         )
 
         fun update(
@@ -222,7 +230,8 @@ data class User(
                 withdrawalStatus = user.withdrawalStatus,
                 withdrawalRequestAt = user.withdrawalRequestAt,
                 withdrawalCancelAt = user.withdrawalCancelAt,
-                withdrawalCompleteAt = user.withdrawalCompleteAt
+                withdrawalCompleteAt = user.withdrawalCompleteAt,
+                userPolicyAgreements = user.userPolicyAgreements,
             )
 
     }
@@ -237,6 +246,30 @@ data class User(
         restriction: Restriction
     ) {
         this.restriction = restriction
+    }
+
+    fun canNotUseVote(): Boolean {
+        if (isWithDraw()) {
+            return true
+        }
+
+        return restriction.canNotUseVoteFeature()
+    }
+
+    fun canNotUseMessage(): Boolean {
+        if (isWithDraw()) {
+            return true
+        }
+
+        return restriction.canNotUseMessageFeature()
+    }
+
+    fun canNotUseCommunity(): Boolean {
+        if (isWithDraw()) {
+            return true
+        }
+
+        return restriction.canNotUseCommunityFeature()
     }
 
     fun changeSettings(
@@ -331,6 +364,12 @@ data class User(
             return false
         }
         return setting.isEnablePostNotification
+    }
+
+    fun needToAnnounceAboutPolicy(): Boolean {
+        val standardDate = LocalDate.of(2025, 10, 15)
+
+        return createdAt.isBefore(standardDate.atStartOfDay()) && userPolicyAgreements.none { it.policyType == PolicyType.NEW_POLICY_ABOUT_ACCOUNT }
     }
 
 }

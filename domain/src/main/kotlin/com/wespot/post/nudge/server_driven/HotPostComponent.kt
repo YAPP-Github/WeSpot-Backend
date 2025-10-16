@@ -29,6 +29,7 @@ class HotPostComponent(
         }
 
         data class HotPost(
+            val targetId: Long = 0L,
             val headerSection: HotPostHeaderSection,
             val infoSection: HotPostInfoSection,
             val createdAt: RichTextV2,
@@ -39,6 +40,7 @@ class HotPostComponent(
 
                 fun from(post: Post): HotPost {
                     return HotPost(
+                        targetId = post.id,
                         headerSection = HotPostHeaderSection(
                             profileImage = ImageContentV2(
                                 url = post.profile.url,

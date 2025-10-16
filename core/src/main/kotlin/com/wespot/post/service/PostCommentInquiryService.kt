@@ -32,12 +32,14 @@ class PostCommentInquiryService(
         val userIdToProfile = postProfilePort.findByUserIdIn(userIds)
             .associateBy { it.userId }
 
+
+
         return postComments.map {
             PostCommentResponse.of(
-                isPostOwner = post.isAuthor(loginUser.id),
                 isCommentOwner = it.isAuthor(loginUser.id),
+                isPostCommentOwnerPostAuthor = post.isAuthor(it.user.id),
                 postComment = it,
-                postProfile = userIdToProfile[it.user.id]!!
+                postProfile = userIdToProfile[it.user.id]!!,
             )
         }
     }

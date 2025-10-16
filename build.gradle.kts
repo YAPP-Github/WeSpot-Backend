@@ -49,6 +49,10 @@ subprojects {
 
     dependencies {
 
+        // retry
+        implementation("org.springframework.retry:spring-retry")
+        implementation("org.springframework.boot:spring-boot-starter-aop")
+
         implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
         implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.3.0")
         implementation("io.swagger.core.v3:swagger-core:2.2.19")

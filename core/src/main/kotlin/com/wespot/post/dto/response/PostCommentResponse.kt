@@ -23,16 +23,16 @@ data class PostCommentResponse(
         private const val VIEWER_NAME = "익명의 댓쓴이"
 
         fun of(
-            isPostOwner: Boolean = false,
             isCommentOwner: Boolean = false,
+            isPostCommentOwnerPostAuthor: Boolean = false,
             postComment: PostComment,
-            postProfile: PostProfile
+            postProfile: PostProfile,
         ): PostCommentResponse {
             return PostCommentResponse(
                 id = postComment.id,
                 authorImage = postProfile.url,
                 isMe = isCommentOwner,
-                authorName = if (isPostOwner) OWNER_NAME else VIEWER_NAME,
+                authorName = if (isPostCommentOwnerPostAuthor) OWNER_NAME else VIEWER_NAME,
                 content = postComment.content.content,
                 likeCount = postComment.likeCount,
                 hasPushedLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,

@@ -5,6 +5,7 @@ import com.wespot.message.MessageContent
 import com.wespot.school.SchoolJpaEntity
 import com.wespot.user.User
 import com.wespot.user.entity.UserJpaEntity
+import com.wespot.user.entity.UserPolicyAgreementJpaEntity
 import com.wespot.user.entity.message.AnonymousProfileJpaEntity
 import com.wespot.user.mapper.AnonymousProfileMapper
 import com.wespot.user.mapper.UserMapper
@@ -56,7 +57,10 @@ object MessageV2Mapper {
         anonymousProfileJpaEntity: AnonymousProfileJpaEntity?,
     ): MessageV2 {
         val sender =
-            UserMapper.mapToDomainEntity(userJpaEntity = senderJpaEntity, schoolJpaEntity = senderSchoolJpaEntity)
+            UserMapper.mapToDomainEntity(
+                userJpaEntity = senderJpaEntity,
+                schoolJpaEntity = senderSchoolJpaEntity,
+        )
         val receiver =
             UserMapper.mapToDomainEntity(userJpaEntity = receiverJpaEntity, schoolJpaEntity = receiverSchoolJpaEntity)
         val anonymousProfile =

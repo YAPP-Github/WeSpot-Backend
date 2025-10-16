@@ -7,6 +7,7 @@ import com.wespot.post.port.`in`.PostLikeUseCase
 import com.wespot.post.port.out.PostLikePort
 import com.wespot.post.port.out.PostPort
 import com.wespot.user.port.out.UserPort
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,6 +21,11 @@ class PostLikeService(
     @Transactional
     override fun likePost(postId: Long) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+
+        if (loginUser.canNotUseCommunity()) {
+            throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
+        }
+
         val post = postPort.findById(postId) ?: throw CustomException(message = "존재하지 않는 게시글입니다.")
         postLikePort.findByPostIdAndUserId(postId = postId, userId = loginUser.id)
             ?.let {

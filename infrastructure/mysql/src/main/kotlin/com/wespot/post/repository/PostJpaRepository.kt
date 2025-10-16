@@ -4,43 +4,50 @@ import com.wespot.post.PostEntity
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface PostJpaRepository : JpaRepository<PostEntity, Long> {
 
-    fun findByTitleContainingOrderByBaseEntityCreatedAtDesc(
+    fun findByTitleContainingAndIdNotInOrderByBaseEntityCreatedAtDesc(
         title: String,
+        blockPostIds: List<Long>,
     ): List<PostEntity>
 
-    fun findAllByDescriptionContainingOrderByBaseEntityCreatedAtDesc(
+    fun findAllByDescriptionContainingAndIdNotInOrderByBaseEntityCreatedAtDesc(
         description: String,
+        @Param("ids") blockPostIds: List<Long>,
     ): List<PostEntity>
 
-    fun findByCategoryIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+    fun findByCategoryIdAndIdNotInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
         categoryId: Long,
+        @Param("ids") blockPostIds: List<Long>,
         cursorId: Long,
         pageable: Pageable
-
     ): List<PostEntity>
 
-    fun findByCategoryIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+    fun findByCategoryIdInAndIdNotInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
         categoryIds: List<Long>,
+        @Param("ids") blockPostIds: List<Long>,
         cursorId: Long,
         pageable: Pageable
     ): List<PostEntity>
 
-    fun findAllByUserIdAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+    fun findAllByUserIdAndIdNotInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
         userId: Long,
+        @Param("ids") blockPostIds: List<Long>,
         cursorId: Long,
         pageable: Pageable
     ): List<PostEntity>
 
-    fun findAllByIdInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+    fun findAllByIdInAndIdNotInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
         postIds: List<Long>,
+        @Param("ids") blockPostIds: List<Long>,
         cursorId: Long,
         pageable: Pageable
     ): List<PostEntity>
 
-    fun findAllByIdLessThanOrderByBaseEntityCreatedAtDesc(
+    fun findAllByIdNotInAndIdLessThanOrderByBaseEntityCreatedAtDesc(
+        @Param("ids") blockPostIds: List<Long>,
         cursorId: Long,
         pageable: Pageable
     ): List<PostEntity>
@@ -52,6 +59,7 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
             WHERE (title REGEXP :pattern
                    OR description REGEXP :pattern)
               AND id < :cursorId
+              AND id NOT IN :blockPostIds
             ORDER BY created_at DESC
             LIMIT :limit
         """,
@@ -59,6 +67,7 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
     )
     fun searchByTitleAndDescription(
         pattern: String,
+        blockPostIds: List<Long>,
         cursorId: Long,
         limit: Int,
     ): List<PostEntity>

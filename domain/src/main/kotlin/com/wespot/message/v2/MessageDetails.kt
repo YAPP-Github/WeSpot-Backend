@@ -20,7 +20,8 @@ data class MessageDetails(
                         viewer = viewer,
                         message = message,
                         alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
-                        isLatestMessage = index == messages.lastIndex
+                        isLatestMessage = index == messages.lastIndex,
+                        roomMessage = messages.first { it.isRoom() }
                     )
                 }
                 .distinct()
@@ -52,7 +53,8 @@ data class MessageDetails(
         return toAnswerMessage.createAnswerMessage(
             sender = sender,
             alreadyUsedMessageOnToday = alreadyUsedMessageOnToday,
-            content = content
+            content = content,
+            roomMessage = messages.first().message
         )
     }
 

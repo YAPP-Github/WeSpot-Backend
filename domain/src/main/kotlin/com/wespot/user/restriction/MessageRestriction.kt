@@ -3,12 +3,13 @@ package com.wespot.user.restriction
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import com.wespot.user.RestrictionType
+import com.wespot.user.restriction.CommunityRestriction.Companion
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class MessageRestriction(
-    val restrictionType: RestrictionType,
-    val releaseDate: LocalDate
+    val restrictionType: RestrictionType = RestrictionType.NONE,
+    val releaseDate: LocalDate = PERMANENT_BAN_DATE
 ) {
 
     companion object {
@@ -18,11 +19,16 @@ data class MessageRestriction(
         private const val FIRST_MESSAGE_USAGE_RESTRICTION_DAY = 30L
         private const val SECOND_MESSAGE_USAGE_RESTRICTION_DAY = 90L
 
+        private val RESTRICTION_RULE: List<RestrictionRule> = listOf(
+            RestrictionRule(20, PERMANENT_BAN_DAY),
+            RestrictionRule(15, 15),
+            RestrictionRule(10, 7),
+            RestrictionRule(5, 3),
+            RestrictionRule(0, 0),
+        )
+
         fun createInitialState() =
-            MessageRestriction(
-                restrictionType = RestrictionType.NONE,
-                releaseDate = PERMANENT_BAN_DATE
-            )
+            MessageRestriction()
 
         fun of(restrictionType: RestrictionType, restrictionDay: Long): MessageRestriction {
             validate(restrictionType, restrictionDay)
@@ -66,5 +72,27 @@ data class MessageRestriction(
     }
 
     fun isKeepRestriction() = restrictionType != RestrictionType.NONE
+
+    fun receivedNewReport(reportCount: Long): MessageRestriction {
+        val restrictionDay = RESTRICTION_RULE
+            .firstOrNull { reportCount >= it.standard }
+            ?.restrictionDay ?: 0L
+
+        if (restrictionDay == 0L) {
+            return this
+        }
+
+        if (restrictionDay == PERMANENT_BAN_DAY) {
+            return MessageRestriction(
+                RestrictionType.PERMANENT_BAN_MESSAGE_REPORT,
+                PERMANENT_BAN_DATE
+            )
+        }
+
+        return MessageRestriction(
+            RestrictionType.TEMPORARY_BAN_MESSAGE_REPORT,
+            LocalDate.now().plusDays(restrictionDay)
+        )
+    }
 
 }

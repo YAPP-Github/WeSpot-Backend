@@ -11,4 +11,12 @@ data class ReportReasonWithCustomReason(
         }
     }
 
+    fun reason(): String {
+        if (reportReason.canReceiveReason) {
+            return customReason ?: ""
+        }
+
+        return reportReason.content
+    }
+
 }

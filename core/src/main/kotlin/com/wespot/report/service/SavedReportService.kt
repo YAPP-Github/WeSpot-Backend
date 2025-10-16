@@ -1,6 +1,5 @@
 package com.wespot.report.service
 
-import com.google.common.io.ByteArrayDataInput
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
@@ -42,7 +41,7 @@ class SavedReportService(
         val reports = findAllUserReportByReportType(targetUser, reportRequest.reportType)
         val savedReport = executeReport(report = report, receiver = targetUser, reports = reports)
 
-        return ReportResponse(savedReport.id)
+        return ReportResponse(id = savedReport.id)
     }
 
     private fun findLoginUser(): User {

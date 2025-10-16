@@ -46,7 +46,7 @@ data class IconV2(
         )
 
         val RIGHT_ARROW = IconV2(
-            url = "https://dw2d2daekmyur.cloudfront.net/right_arrow.png",
+            url = "https://dw2d2daekmyur.cloudfront.net/right_arrow.jpg",
             color = Color(value = ColorType.GRAY600.value)
         )
 

@@ -139,6 +139,7 @@ data class PostComponentResponse(
                             icon = IconV2Response.from(it.icon),
                             text = RichTextV2Response.from(it.text),
                             type = it.type,
+                            isSelected = it.isSelected
                         )
                     }
                 }

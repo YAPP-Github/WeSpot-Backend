@@ -7,61 +7,82 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
 data class Restriction(
-    val id: Long,
-    val voteRestriction: VoteRestriction,
-    val messageRestriction: MessageRestriction
+    val id: Long = 0L,
+    val voteRestriction: VoteRestriction = VoteRestriction.createInitialState(),
+    val messageRestriction: MessageRestriction = MessageRestriction.createInitialState(),
+    val communityRestriction: CommunityRestriction = CommunityRestriction(),
 ) {
 
     companion object {
 
-        fun createInitialState() =
-            Restriction(
-                id = 0,
-                voteRestriction = VoteRestriction.createInitialState(),
-                messageRestriction = MessageRestriction.createInitialState()
-            )
+        fun createInitialState() = Restriction()
 
     }
 
-    fun addRestrict(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
-        validate(restrictionType)
-
-        if (restrictionType.isVoteRestriction()) {
-            return Restriction(
-                id = id,
-                voteRestriction = VoteRestriction.of(restrictionType, restrictionDay),
-                messageRestriction = messageRestriction
+    fun receivedNewReport(
+        restrictionCategory: RestrictionCategory,
+        reportCount: Long,
+    ): Restriction {
+        if (restrictionCategory == RestrictionCategory.VOTE) {
+            return copy(
+                voteRestriction = voteRestriction.receivedNewReport(reportCount)
             )
         }
 
-        return Restriction(
-            id = id,
-            voteRestriction = voteRestriction,
-            messageRestriction = MessageRestriction.of(restrictionType, restrictionDay)
+        if (restrictionCategory == RestrictionCategory.MESSAGE) {
+            return copy(
+                messageRestriction = messageRestriction.receivedNewReport(reportCount)
+            )
+        }
+
+        return copy(
+            communityRestriction = communityRestriction.receivedNewReport(reportCount)
         )
     }
 
-    private fun validate(restrictionType: RestrictionType) {
-        require(restrictionType.isVoteRestriction() || restrictionType.isMessageRestriction()) {
+    fun addRestrict(restrictionType: RestrictionType, restrictionDay: Long): Restriction {
+        if (restrictionType == RestrictionType.NONE) {
             throw CustomException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 ExceptionView.TOAST,
                 "RestrictionType.NONE을 추가할 수 없습니다."
             )
         }
-    }
 
+        if (restrictionType.isVoteRestriction()) {
+            return copy(
+                voteRestriction = VoteRestriction.of(restrictionType, restrictionDay),
+            )
+        }
+
+        return copy(
+            messageRestriction = MessageRestriction.of(restrictionType, restrictionDay)
+        )
+    }
 
     fun getCurrentRestrictionBasedOnTime(date: LocalDate): Restriction {
         return Restriction(
             id = id,
             voteRestriction = voteRestriction.getCurrentRestrictionBasedOnTime(date),
-            messageRestriction = messageRestriction.getCurrentRestrictionBasedOnTime(date)
+            messageRestriction = messageRestriction.getCurrentRestrictionBasedOnTime(date),
+            communityRestriction = communityRestriction.getCurrentRestrictionBasedOnTime(date)
         )
     }
 
     fun isKeepRestriction(): Boolean {
-        return voteRestriction.isKeepRestriction() || messageRestriction.isKeepRestriction()
+        return voteRestriction.isKeepRestriction() || messageRestriction.isKeepRestriction() || communityRestriction.isKeepRestriction()
+    }
+
+    fun canNotUseVoteFeature(): Boolean {
+        return voteRestriction.isKeepRestriction()
+    }
+
+    fun canNotUseMessageFeature(): Boolean {
+        return messageRestriction.isKeepRestriction()
+    }
+
+    fun canNotUseCommunityFeature(): Boolean {
+        return communityRestriction.isKeepRestriction()
     }
 
 }

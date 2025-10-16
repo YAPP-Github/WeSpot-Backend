@@ -1,5 +1,6 @@
 package com.wespot.user.port.`in`
 
+import com.wespot.user.PolicyType
 import com.wespot.user.dto.request.SearchUserRequest
 import com.wespot.user.dto.request.UpdateProfileRequest
 import com.wespot.user.dto.response.BackgroundListResponse
@@ -17,5 +18,7 @@ interface UserUseCase {
     fun backgrounds(): BackgroundListResponse
 
     fun characters(): CharacterListResponse
+
+    fun allowNewPolicy(policyType: PolicyType): Long
 
 }

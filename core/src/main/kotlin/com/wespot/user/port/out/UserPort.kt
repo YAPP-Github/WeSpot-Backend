@@ -35,6 +35,7 @@ interface UserPort {
         cursorId: Long?,
         pageable: Pageable,
         loginUserId: Long,
+        blockedUserIds: List<Long>,
     ): List<User>
 
     fun findAll(): List<User>
@@ -46,6 +47,7 @@ interface UserPort {
         cursorSchoolTypeOrder: Int?,
         cursorId: Long?,
         loginUserId: Long,
+        blockedUserIds: List<Long>,
     ): Long
 
     fun countBySchoolIdAndGradeAndClassNumber(

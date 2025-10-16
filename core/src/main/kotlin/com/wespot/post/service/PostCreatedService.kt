@@ -28,6 +28,11 @@ class PostCreatedService(
     @Transactional
     override fun createPost(createdPostRequest: CreatedPostRequest): Long {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
+
+        if (loginUser.canNotUseCommunity()) {
+            throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
+        }
+
         val category =
             postCategoryPort.findById(createdPostRequest.categoryId) ?: throw CustomException(
                 status = HttpStatus.BAD_REQUEST,

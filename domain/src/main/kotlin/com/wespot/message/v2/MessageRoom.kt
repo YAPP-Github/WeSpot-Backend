@@ -120,7 +120,7 @@ data class MessageRoom(
     }
 
     fun isBlockedByMe(): Boolean {
-        return roomMessage.isBlockedByMe(viewer = viewer)
+        return roomMessage.isBlockedBy(viewer = viewer)
     }
 
     fun isReceiverEver(): Boolean {

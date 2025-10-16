@@ -29,4 +29,9 @@ class PostCategoryAdapter(
             .map { PostCategoryMapper.toDomain(it) }
     }
 
+    override fun findAllByName(name: String): List<PostCategory> {
+        return postCategoryJpaRepository.findAllByName(name)
+            .map { PostCategoryMapper.toDomain(it) }
+    }
+
 }
