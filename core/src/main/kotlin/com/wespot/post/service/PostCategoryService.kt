@@ -28,16 +28,19 @@ class PostCategoryService(
     override fun getCategories(): List<FilterChipResponse> {
         val ALL_INCLUDE_CATEGORY_NAME = "전체"
         val postCategories = PostCategories.from(postCategories = postCategoryPort.findAll())
-        val eachMajorCategories = postCategories.eachMajorCategories
         var id = 1L
 
         val firstElement = FilterChip.of(id = id++, text = ALL_INCLUDE_CATEGORY_NAME)
-        val otherElements = eachMajorCategories.map {
-            FilterChip.of(
-                id = id++,
-                eachMajorCategory = it
-            )
-        }
+        val otherElements = postCategories.eachMajorCategories
+            .map { it.postCategories }
+            .flatten()
+            .map {
+                FilterChip.of(
+                    id = id++,
+                    postCategory = it
+                )
+            }
+            .toList()
 
         return (listOf(firstElement) + otherElements)
             .map { FilterChipResponse.from(it) }

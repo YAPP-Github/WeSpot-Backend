@@ -6,11 +6,17 @@ import com.wespot.school.SchoolJpaEntity
 import com.wespot.school.SchoolMapper
 import com.wespot.user.User
 import com.wespot.user.UserIntroduction
+import com.wespot.user.UserPolicyAgreement
 import com.wespot.user.entity.UserJpaEntity
+import com.wespot.user.entity.UserPolicyAgreementJpaEntity
 
 object UserMapper {
 
-    fun mapToDomainEntity(userJpaEntity: UserJpaEntity, schoolJpaEntity: SchoolJpaEntity): User =
+    fun mapToDomainEntity(
+        userJpaEntity: UserJpaEntity,
+        schoolJpaEntity: SchoolJpaEntity,
+        userPolicyAgreementJpaEntities: List<UserPolicyAgreementJpaEntity> = mutableListOf(),
+    ): User =
         User(
             id = userJpaEntity.id,
             email = userJpaEntity.email,
@@ -30,13 +36,19 @@ object UserMapper {
             restriction = RestrictionMapper.mapToDomainEntity(userJpaEntity.restriction),
             createdAt = userJpaEntity.baseEntity.createdAt,
             updatedAt = userJpaEntity.baseEntity.updatedAt,
+            userPolicyAgreements = userPolicyAgreementJpaEntities.map { UserPolicyAgreementMapper.toDomain(it) },
+
             withdrawalStatus = userJpaEntity.withdrawalStatus,
             withdrawalRequestAt = userJpaEntity.withdrawalRequestAt,
             withdrawalCancelAt = userJpaEntity.withdrawalCancelAt,
             withdrawalCompleteAt = userJpaEntity.withdrawalCompleteAt,
         )
 
-    fun mapToDomainEntity(userJpaEntity: UserJpaEntity, school: School): User =
+    fun mapToDomainEntity(
+        userJpaEntity: UserJpaEntity,
+        school: School,
+        userPolicyAgreements: List<UserPolicyAgreement> = mutableListOf(),
+    ): User =
         User(
             id = userJpaEntity.id,
             email = userJpaEntity.email,
@@ -56,6 +68,7 @@ object UserMapper {
             restriction = RestrictionMapper.mapToDomainEntity(userJpaEntity.restriction),
             createdAt = userJpaEntity.baseEntity.createdAt,
             updatedAt = userJpaEntity.baseEntity.updatedAt,
+            userPolicyAgreements = userPolicyAgreements,
             withdrawalStatus = userJpaEntity.withdrawalStatus,
             withdrawalRequestAt = userJpaEntity.withdrawalRequestAt,
             withdrawalCancelAt = userJpaEntity.withdrawalCancelAt,

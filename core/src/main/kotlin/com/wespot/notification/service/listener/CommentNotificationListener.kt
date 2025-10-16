@@ -5,6 +5,7 @@ import com.wespot.common.NotificationUtil
 import com.wespot.exception.CustomException
 import com.wespot.notification.Notification
 import com.wespot.notification.NotificationType
+import com.wespot.notification.port.out.NotificationPort
 import com.wespot.notification.service.NotificationHelper
 import com.wespot.post.port.out.PostNotificationPort
 import com.wespot.post.port.out.PostPort
@@ -23,10 +24,11 @@ class CommentNotificationListener(
     private val postProfilePort: PostProfilePort,
     private val postNotificationPort: PostNotificationPort,
     private val notificationHelper: NotificationHelper,
+    private val notificationPort: NotificationPort,
 ) {
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun listenCreatedPostCommentEvent(postCommentCreatedEvent: PostCommentCreatedEvent) {
         val postComment = postCommentCreatedEvent.postComment
@@ -51,6 +53,8 @@ class CommentNotificationListener(
                     ),
                 )
             }
+            .toList()
+        notificationPort.saveAll(notifications)
         val usersGroup = users.associateBy { it.id }
         notifications.forEach { notificationHelper.sendNotification(usersGroup[it.userId], it) }
     }

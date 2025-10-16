@@ -18,6 +18,7 @@ object SecurityUtils {
 
     fun getLoginUser(userPort: UserPort): User {
         val principal = SecurityContextHolder.getContext().authentication.principal as PrincipalDetails
+
         return userPort.findByEmail(principal.username)
             ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 계정이 존재하지 않습니다.")
     }

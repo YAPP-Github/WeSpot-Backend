@@ -16,7 +16,7 @@ class PostBlockAdapter(
     }
 
     override fun deleteById(id: Long) {
-         postBlockJpaRepository.deleteById(id)
+        postBlockJpaRepository.deleteById(id)
     }
 
     override fun save(postBlock: PostBlock): PostBlock {
@@ -27,6 +27,11 @@ class PostBlockAdapter(
 
     override fun deleteByPostId(postId: Long) {
         postBlockJpaRepository.deleteByPostId(postId)
+    }
+
+    override fun findAllByUserId(userId: Long): List<PostBlock> {
+        return postBlockJpaRepository.findAllByUserId(userId)
+            .map { PostBlockMapper.toDomain(it) }
     }
 
 }

@@ -10,4 +10,6 @@ interface PostCategoryJpaRepository : JpaRepository<PostCategoryEntity, Long> {
 
     fun findAlLByMajorCategoryName(majorCategoryName: String): List<PostCategoryEntity>
 
+    fun findAllByName(name: String): List<PostCategoryEntity>
+
 }

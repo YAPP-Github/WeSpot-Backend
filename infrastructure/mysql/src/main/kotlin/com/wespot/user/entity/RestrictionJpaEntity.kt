@@ -31,6 +31,13 @@ data class RestrictionJpaEntity(
     val messageRestrictionType: RestrictionType,
 
     @field: NotNull
-    val messageReleaseDate: LocalDate
+    val messageReleaseDate: LocalDate,
 
-)
+    @Enumerated(EnumType.STRING)
+    @field: NotNull
+    val communityRestrictionType: RestrictionType,
+
+    @field: NotNull
+    val communityReleaseDate: LocalDate,
+
+    )

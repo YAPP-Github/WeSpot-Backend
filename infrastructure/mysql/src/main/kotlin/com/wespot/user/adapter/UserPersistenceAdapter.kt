@@ -10,6 +10,7 @@ import com.wespot.user.entity.UserJpaEntity
 import com.wespot.user.mapper.UserMapper
 import com.wespot.user.port.out.UserPort
 import com.wespot.user.repository.UserJpaRepository
+import com.wespot.user.repository.UserPolicyAgreementJpaRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -22,6 +23,7 @@ import java.time.LocalDateTime
 class UserPersistenceAdapter(
     private val userJpaRepository: UserJpaRepository,
     private val schoolJpaRepository: SchoolJpaRepository,
+    private val userPolicyAgreementJpaRepository: UserPolicyAgreementJpaRepository,
 ) : UserPort {
 
     override fun existsBySchoolIdAndGradeAndClassNumber(schoolId: Long, grade: Int, classNumber: Int): Boolean {
@@ -30,7 +32,13 @@ class UserPersistenceAdapter(
 
     override fun findByEmail(userEmail: String): User? {
         return userJpaRepository.findByEmail(userEmail)
-            ?.let { UserMapper.mapToDomainEntity(userJpaEntity = it, schoolJpaEntity = getBySchool(it)) }
+            ?.let {
+                UserMapper.mapToDomainEntity(
+                    userJpaEntity = it,
+                    schoolJpaEntity = getBySchool(it),
+                    userPolicyAgreementJpaEntities = userPolicyAgreementJpaRepository.findAllByUserId(userId = it.id)
+                )
+            }
     }
 
     private fun getBySchool(it: UserJpaEntity): SchoolJpaEntity {
@@ -54,6 +62,7 @@ class UserPersistenceAdapter(
         cursorId: Long?,
         pageable: Pageable,
         loginUserId: Long,
+        blockedUserIds: List<Long>,
     ): List<User> {
         val searchUsers = userJpaRepository.searchUsers(
             name = name,
@@ -62,7 +71,8 @@ class UserPersistenceAdapter(
             cursorSchoolTypeOrder = cursorSchoolTypeOrder,
             cursorId = cursorId,
             pageable = pageable,
-            loginUserId = loginUserId
+            loginUserId = loginUserId,
+            blockedUserIds = blockedUserIds,
         )
         val schoolMap = getSchoolMapsByUsers(searchUsers)
         return searchUsers
@@ -88,6 +98,7 @@ class UserPersistenceAdapter(
         cursorSchoolTypeOrder: Int?,
         cursorId: Long?,
         loginUserId: Long,
+        blockedUserIds: List<Long>,
     ): Long {
         return userJpaRepository.countUsersAfterCursor(
             name = name,
@@ -95,7 +106,8 @@ class UserPersistenceAdapter(
             cursorSchoolName = cursorSchoolName,
             cursorSchoolTypeOrder = cursorSchoolTypeOrder,
             cursorId = cursorId,
-            loginUserId = loginUserId
+            loginUserId = loginUserId,
+            blockedUserIds = blockedUserIds,
         )
     }
 

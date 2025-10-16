@@ -44,6 +44,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         LEFT JOIN SchoolJpaEntity s ON u.schoolId = s.id
         WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
         AND u.id <> :loginUserId
+        AND u.id NOT IN :blockedUserIds
         AND (
             :cursorId IS NULL OR (
                 (:cursorName IS NULL OR u.name > :cursorName) OR
@@ -77,6 +78,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("cursorSchoolTypeOrder") cursorSchoolTypeOrder: Int?,
         @Param("cursorId") cursorId: Long?,
         @Param("loginUserId") loginUserId: Long,
+        @Param("blockedUserIds") blockedUserIds: List<Long>,
         pageable: Pageable
     ): List<UserJpaEntity>
 
@@ -86,6 +88,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         FROM UserJpaEntity u
         LEFT JOIN SchoolJpaEntity s ON u.schoolId = s.id
         AND u.id <> :loginUserId
+        AND u.id NOT IN :blockedUserIds
         WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
           AND (
             :cursorId IS NULL OR (
@@ -115,6 +118,7 @@ interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
         @Param("cursorSchoolTypeOrder") cursorSchoolTypeOrder: Int?,
         @Param("cursorId") cursorId: Long?,
         @Param("loginUserId") loginUserId: Long,
+        @Param("blockedUserIds") blockedUserIds: List<Long>,
     ): Long
 
     fun countBySchoolIdAndGradeAndClassNumber(

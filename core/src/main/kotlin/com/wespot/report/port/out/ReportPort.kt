@@ -9,4 +9,6 @@ interface ReportPort {
 
     fun save(report: Report): Report
 
+    fun deleteByReportTypeAndTargetIdAndReceiverId(reportType: ReportType, targetId: Long, receiverId: Long)
+
 }

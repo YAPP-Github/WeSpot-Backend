@@ -21,6 +21,7 @@ class HotPostComponentResponse(
         }
 
         data class HotPostResponse(
+            val targetId: Long = 0L,
             val headerSection: HotPostHeaderSectionResponse,
             val infoSection: HotPostInfoSectionResponse,
             val createdAt: RichTextV2Response,
@@ -63,6 +64,7 @@ class HotPostComponentResponse(
                     ),
                     posts = posts.map { post ->
                         HotPostContentResponse.HotPostResponse(
+                            targetId = post.targetId,
                             headerSection = HotPostContentResponse.HotPostHeaderSectionResponse(
                                 profileImage = ImageContentV2Response.from(post.headerSection.profileImage),
                                 nickname = RichTextV2Response.from(post.headerSection.nickname)

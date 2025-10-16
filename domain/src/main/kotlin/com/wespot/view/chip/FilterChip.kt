@@ -2,7 +2,7 @@ package com.wespot.view.chip
 
 import com.wespot.common.view.ColorType
 import com.wespot.common.view.TypographType
-import com.wespot.post.PostCategories
+import com.wespot.post.PostCategory
 import com.wespot.view.color.Color
 import com.wespot.view.icon.IconV2
 import com.wespot.view.text.RichTextV2
@@ -43,19 +43,19 @@ data class FilterChip(
 
         fun of(
             id: Long,
-            eachMajorCategory: PostCategories.EachMajorCategory
+            postCategory: PostCategory,
         ): FilterChip {
             return FilterChip(
                 content = FilterChipContent(
                     id = id,
                     icon = IconV2(url = "", color = Color()),
                     text = RichTextV2(
-                        text = eachMajorCategory.majorCategoryName(),
+                        text = postCategory.name,
                         color = Color(value = ColorType.GRAY600.value),
                         typography = TypographType.BODY06.value,
                         maxLine = 1,
                     ),
-                    target = eachMajorCategory.majorCategoryName()
+                    target = postCategory.name
                 )
             )
         }

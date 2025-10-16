@@ -12,4 +12,6 @@ interface PostBlockPort {
 
     fun deleteByPostId(postId: Long)
 
+    fun findAllByUserId(userId: Long): List<PostBlock>
+
 }

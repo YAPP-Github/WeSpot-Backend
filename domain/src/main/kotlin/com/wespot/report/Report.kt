@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 data class Report(
-    val id: Long,
+    val id: Long = 0L,
     val reportType: ReportType,
-    val targetId: Long,
+    val targetId: Long = 0L,
     val senderId: Long,
     val receiverId: Long,
-    val content: String,
-    val createdAt: LocalDateTime
+    val content: String = "",
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
 
     companion object {

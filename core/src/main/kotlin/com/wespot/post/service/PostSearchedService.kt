@@ -4,6 +4,7 @@ import com.wespot.auth.service.SecurityUtils
 import com.wespot.common.dto.PostPagingResponse
 import com.wespot.post.dto.response.PostComponentResponse
 import com.wespot.post.port.`in`.PostSearchedUseCase
+import com.wespot.post.port.out.PostBlockPort
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.server_driven.PostComponent
 import com.wespot.post.vo.PostSearchKeyword
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class PostSearchedService(
     private val postPort: PostPort,
     private val userPort: UserPort,
+    private val postBlockPort: PostBlockPort,
 ) : PostSearchedUseCase {
 
     @Transactional(readOnly = true)
@@ -30,7 +32,8 @@ class PostSearchedService(
             keyword = keywordsToSearch,
             viewerId = loginUser.id,
             inquirySize = inquirySize + 1,
-            cursorId = cursorId
+            cursorId = cursorId,
+            blockPostIds = postBlockPort.findAllByUserId(loginUser.id).map { it.postId }
         )
 
         val data = posts.map { PostComponent.of(it, loginUser.id) }.map { PostComponentResponse.from(it) }

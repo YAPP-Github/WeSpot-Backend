@@ -11,6 +11,7 @@ import com.wespot.user.dto.CursorSearchData
 import com.wespot.user.dto.response.UserListResponse
 import com.wespot.user.dto.response.UserResponse
 import com.wespot.user.port.`in`.SearchUserUseCase
+import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Service
 @Service
 class SearchUserService(
     private val userPort: UserPort,
-    private val schoolPort: SchoolPort
+    private val schoolPort: SchoolPort,
+    private val blockedUserPort: BlockedUserPort
 ) : SearchUserUseCase {
 
     override fun searchUsers(
@@ -31,9 +33,16 @@ class SearchUserService(
         val loginUser = SecurityUtils.getLoginUser(userPort)
         validateLoginUserRegulation(loginUser)
         val pageable = PageRequest.of(0, 10, Sort.by("id"))
+        val blockedUserIds = blockedUserPort.findAllByBlockerId(blockerId = loginUser.id)
+            .map { it.blockedId }
 
         if (cursorId == 0L) {
-            return fetchFirstPage(keyword = keyword, pageable = pageable, loginUserId = loginUser.id)
+            return fetchFirstPage(
+                keyword = keyword,
+                pageable = pageable,
+                loginUserId = loginUser.id,
+                blockedUserIds = blockedUserIds
+            )
         }
 
         val cursorData = fetchCursorData(cursorId)
@@ -44,7 +53,8 @@ class SearchUserService(
             cursorSchoolTypeOrder = cursorData.cursorSchoolTypeOrder,
             cursorId = cursorId,
             pageable = pageable,
-            loginUserId = loginUser.id
+            loginUserId = loginUser.id,
+            blockedUserIds = blockedUserIds
         )
 
         val totalCount = userPort.countUsersAfterCursor(
@@ -53,7 +63,8 @@ class SearchUserService(
             cursorSchoolName = cursorData.cursorSchoolName,
             cursorSchoolTypeOrder = cursorData.cursorSchoolTypeOrder,
             cursorId = cursorId,
-            loginUserId = loginUser.id
+            loginUserId = loginUser.id,
+            blockedUserIds = blockedUserIds
         )
 
         return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)
@@ -69,6 +80,7 @@ class SearchUserService(
         keyword: String,
         pageable: Pageable,
         loginUserId: Long,
+        blockedUserIds: List<Long>,
     ): UserListResponse {
         val users = userPort.searchUsers(
             name = keyword,
@@ -77,7 +89,8 @@ class SearchUserService(
             cursorSchoolTypeOrder = null,
             cursorId = null,
             pageable = pageable,
-            loginUserId = loginUserId
+            loginUserId = loginUserId,
+            blockedUserIds = blockedUserIds,
         )
 
         val totalCount = userPort.countUsersAfterCursor(
@@ -86,7 +99,8 @@ class SearchUserService(
             cursorSchoolName = null,
             cursorSchoolTypeOrder = null,
             cursorId = null,
-            loginUserId = loginUserId
+            loginUserId = loginUserId,
+            blockedUserIds = blockedUserIds,
         )
 
         return buildUserListResponse(users = users, pageable = pageable, totalCount = totalCount)

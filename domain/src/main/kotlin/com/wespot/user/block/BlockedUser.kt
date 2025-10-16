@@ -3,14 +3,15 @@ package com.wespot.user.block
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
 import org.springframework.http.HttpStatus
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class BlockedUser(
-    val id: Long,
+    val id: Long = 0L,
     val blockerId: Long,
     val blockedId: Long,
     val messageId: Long,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
 
     companion object {

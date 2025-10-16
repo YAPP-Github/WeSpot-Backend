@@ -20,6 +20,7 @@ import com.wespot.post.nudge.server_driven.MessageComponent
 import com.wespot.post.nudge.server_driven.VoteComponent
 import com.wespot.post.port.`in`.PostInquiryUseCase
 import com.wespot.post.port.`in`.PostNudgeUseCase
+import com.wespot.post.port.out.PostBlockPort
 import com.wespot.post.port.out.PostCategoryPort
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.port.out.PostScrapPort
@@ -29,6 +30,7 @@ import com.wespot.user.port.out.UserPort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.math.min
 
 @Service
 class PostInquiryService(
@@ -37,6 +39,7 @@ class PostInquiryService(
     private val postPort: PostPort,
     private val postCommentPort: PostCommentPort,
     private val postScrapPort: PostScrapPort,
+    private val postBlockPort: PostBlockPort,
 
     private val nudgeModalUseCase: PostNudgeUseCase,
 ) : PostInquiryUseCase {
@@ -57,7 +60,8 @@ class PostInquiryService(
             categoryId = postCategory.id,
             viewerId = loginUser.id,
             cursorId = cursorId,
-            inquirySize = inquirySize + 1
+            inquirySize = inquirySize + 1,
+            blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId }
         )
 
         val data = posts.map { PostComponent.of(it, viewerId = loginUser.id, isCategoryScreen = true) }
@@ -103,7 +107,7 @@ class PostInquiryService(
         )
 
         val startSequence = countOfPostsViewed.toInt() + 1
-        val endSequence = countOfPostsViewed.toInt() + inquirySize.toInt()
+        val endSequence = countOfPostsViewed.toInt() + min(inquirySize, posts.size.toLong()).toInt()
         val nudges = nudgeModalUseCase.findAllNudgeModalsBySequence(
             startSequence = startSequence,
             endSequence = endSequence,
@@ -117,7 +121,6 @@ class PostInquiryService(
             data = data,
             lastCursorId = lastCursorId,
             hasNext = hasNext
-
         )
     }
 
@@ -131,17 +134,19 @@ class PostInquiryService(
             return postPort.findAllRecentPost(
                 viewerId = loginUser.id,
                 inquirySize = inquirySize + 1,
-                cursorId = cursorId
+                cursorId = cursorId,
+                blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId },
             )
         }
 
-        val categoryIds = postCategoryPort.findAllByMajorCategoryName(majorCategoryName)
+        val categoryIds = postCategoryPort.findAllByName(majorCategoryName)
             .map { it.id }
         return postPort.findAllByCategoryIdIn(
             categoryIds = categoryIds,
             viewerId = loginUser.id,
             inquirySize = inquirySize + 1,
-            cursorId = cursorId
+            cursorId = cursorId,
+            blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId },
         )
     }
 
@@ -209,12 +214,12 @@ class PostInquiryService(
         postId: Long,
     ): PostComponentResponse {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
-        val post = postPort.findById(postId, viewerId = loginUser.id) ?: throw CustomException(
+        val post = postPort.findById(postId = postId, viewerId = loginUser.id) ?: throw CustomException(
             status = HttpStatus.BAD_REQUEST,
             message = "존재하지 않는 게시글입니다."
         )
 
-        val postComponent = PostComponent.fromDetail(post, loginUser.id)
+        val postComponent = PostComponent.fromDetail(post = post, viewerId = loginUser.id)
         return PostComponentResponse.from(postComponent)
     }
 
@@ -232,7 +237,8 @@ class PostInquiryService(
             postIds = postIds,
             viewerId = loginUser.id,
             inquirySize = inquirySize + 1,
-            cursorId = cursorId
+            cursorId = cursorId,
+            blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId },
         )
 
         return postPagingResponse(posts, inquirySize, loginUser.id)
@@ -252,7 +258,8 @@ class PostInquiryService(
             postIds = postIds,
             viewerId = loginUser.id,
             inquirySize = inquirySize + 1,
-            cursorId = cursorId
+            cursorId = cursorId,
+            blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId },
         ).let { posts ->
             return postPagingResponse(posts, inquirySize, loginUser.id)
         }
@@ -268,7 +275,8 @@ class PostInquiryService(
         postPort.findAllByUserId(
             authorId = loginUser.id,
             inquirySize = inquirySize + 1,
-            cursorId = cursorId
+            cursorId = cursorId,
+            blockPostIds = postBlockPort.findAllByUserId(userId = loginUser.id).map { it.postId },
         ).let { return postPagingResponse(it, inquirySize, loginUser.id) }
     }
 

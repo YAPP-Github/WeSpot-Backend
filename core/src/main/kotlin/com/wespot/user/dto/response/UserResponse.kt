@@ -10,7 +10,8 @@ data class UserResponse(
     val schoolName : String,
     val grade : Int,
     val classNumber : Int,
-    val profile: ProfileResponse?
+    val profile: ProfileResponse?,
+    val needToAnnounceAboutPolicy: Boolean = false,
 ) {
 
     companion object {
@@ -24,7 +25,8 @@ data class UserResponse(
                 schoolName = school,
                 grade = user.grade,
                 classNumber = user.classNumber,
-                profile = user.profile.let { ProfileResponse.from(it) }
+                profile = user.profile.let { ProfileResponse.from(it) },
+                needToAnnounceAboutPolicy = user.needToAnnounceAboutPolicy(),
             )
         }
 

@@ -5,14 +5,18 @@ import com.wespot.exception.CustomException
 import com.wespot.post.PostReport
 import com.wespot.post.PostReportReason
 import com.wespot.post.dto.request.PostReportRequest
+import com.wespot.post.event.PostReportEvent
 import com.wespot.post.port.`in`.PostReportUseCase
 import com.wespot.post.port.out.PostPort
 import com.wespot.post.port.out.PostReportPort
 import com.wespot.report.ReportReasonWithCustomReason
 import com.wespot.report.port.out.ReportReasonPort
 import com.wespot.user.port.out.UserPort
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.math.log
 
 @Service
 class PostReportService(
@@ -20,17 +24,29 @@ class PostReportService(
     private val postPort: PostPort,
     private val postReportPort: PostReportPort,
     private val reportReasonPort: ReportReasonPort,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) : PostReportUseCase {
 
     @Transactional
     override fun reportPost(postId: Long, postReportRequest: PostReportRequest?) {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
+        if (loginUser.canNotUseCommunity()) {
+            throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
+        }
+
         val post = postPort.findById(postId)
             ?: throw CustomException(message = "존재하지 않는 게시글입니다.")
 
+        if (post.isAuthor(loginUser.id)) {
+            throw CustomException(message = "자신의 게시글은 신고할 수 없습니다.")
+        }
+
         postReportPort.findByPostIdAndUserId(postId, loginUser.id)
             ?.let {
+                if (postReportRequest != null) {
+                    throw CustomException(message = "이미 신고한 게시글입니다.")
+                }
                 postReportPort.deleteById(id = it.id)
             }
             ?: run {
@@ -56,6 +72,17 @@ class PostReportService(
 
                 postReport.addReportReasons(postReportReasons)
                 postReportPort.save(postReport)
+
+                val reportReason = postReportReasons.map { it.reportReasonWithCustomReason.reason() }
+                    .joinToString(separator = ", ") { it }
+                applicationEventPublisher.publishEvent(
+                    PostReportEvent(
+                        post = post,
+                        sender = loginUser,
+                        receiver = post.user,
+                        reason = reportReason,
+                    )
+                )
             }
     }
 
