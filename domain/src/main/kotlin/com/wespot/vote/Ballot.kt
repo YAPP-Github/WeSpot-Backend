@@ -77,4 +77,8 @@ data class Ballot(
         isReceiverRead = true
     }
 
+    override fun toString(): String {
+        return "Ballot(id=$id, voteId=$voteId, voteOptionId=$voteOptionId, senderId=$senderId, receiverId=$receiverId, createdAt=$createdAt, updatedAt=$updatedAt, isReceiverRead=$isReceiverRead)"
+    }
+
 }

@@ -113,7 +113,7 @@ data class PostComponent(
                             maxLine = 1,
                         ),
                         createdAt = RichTextV2(
-                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
+                            text = TimeExpressionUtil.detailTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY400.value),
                             typography = TypographType.BADGE.value,
                             maxLine = 1,
@@ -212,7 +212,7 @@ data class PostComponent(
                             maxLine = 1
                         ),
                         createdAt = RichTextV2(
-                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
+                            text = TimeExpressionUtil.isNotDetailTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY400.value),
                             typography = TypographType.BODY09.value,
                             maxLine = 1
@@ -234,14 +234,14 @@ data class PostComponent(
                                 text = post.title.content,
                                 color = Color(value = ColorType.WHITE.value),
                                 typography = TypographType.BODY04.value,
-                                maxLine = 1,
+                                maxLine = Int.MAX_VALUE, // 기존 : 1
                             )
                         },
                         description = RichTextV2(
                             text = post.description.content,
                             color = Color(value = ColorType.WHITE.value),
                             typography = TypographType.BODY00.value,
-                            maxLine = post.title?.let { 3 } ?: 5,
+                            maxLine = Int.MAX_VALUE // 기존 title 있으면 3 없으면 5
                         ),
                     ),
                     contentSection = post.images?.let {

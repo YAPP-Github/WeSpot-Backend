@@ -75,7 +75,7 @@ data class MessageRestriction(
 
     fun receivedNewReport(reportCount: Long): MessageRestriction {
         val restrictionDay = RESTRICTION_RULE
-            .firstOrNull { reportCount >= it.standard }
+            .firstOrNull { reportCount == it.standard }
             ?.restrictionDay ?: 0L
 
         if (restrictionDay == 0L) {

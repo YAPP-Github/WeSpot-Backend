@@ -16,7 +16,8 @@ class VoteOptionUsageService(
 
     @Transactional(readOnly = true)
     override fun findLeastFrequentlyUsedVoteOptionsAt(user: User, index: Int): VoteOption {
-        val today = LocalDate.now()
+        val today = LocalDate.now(java.time.ZoneId.of("Asia/Seoul"))
+//        val today = LocalDate.now()
         val vote = votePort.findBySchoolIdAndGradeAndClassNumberAndDate(
             schoolId = user.school.id,
             grade = user.grade,

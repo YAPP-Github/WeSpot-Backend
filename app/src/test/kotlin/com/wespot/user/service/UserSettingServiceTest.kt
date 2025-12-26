@@ -27,7 +27,8 @@ class UserSettingServiceTest @Autowired constructor(
         val modifiedSettingRequest = ModifiedSettingRequest(
             isEnableVoteNotification = true,
             isEnableMessageNotification = false,
-            isEnableMarketingNotification = true
+            isEnableMarketingNotification = true,
+            isEnablePostNotification =  null
         )
 
         // when

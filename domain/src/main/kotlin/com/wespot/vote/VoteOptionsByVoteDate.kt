@@ -97,4 +97,8 @@ data class VoteOptionsByVoteDate(
         return voteOptionsByVoteDate.map { VoteOptionUsage.of(voteOption = it.voteOption, usedBallots = usedBallots) }
     }
 
+    override fun toString(): String {
+        return "VoteOptionsByVoteDate(voteDate=$voteDate, voteOptionsByVoteDate=$voteOptionsByVoteDate)"
+    }
+
 }

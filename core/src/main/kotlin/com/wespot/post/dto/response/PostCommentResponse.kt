@@ -37,7 +37,7 @@ data class PostCommentResponse(
                 likeCount = postComment.likeCount,
                 hasPushedLike = postComment.postCommentStatusByViewer?.isViewerPushedLike ?: false,
                 isReported = postComment.reportCount > 0,
-                createdAt = TimeExpressionUtil.commentTime(createdAt = postComment.createdAt)
+                createdAt = TimeExpressionUtil.isNotDetailTime(createdAt = postComment.createdAt)
             )
         }
 

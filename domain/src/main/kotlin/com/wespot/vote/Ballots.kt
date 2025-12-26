@@ -89,4 +89,8 @@ data class Ballots(
             .toList()
     }
 
+    override fun toString(): String {
+        return "Ballots(ballots=$ballots)"
+    }
+
 }

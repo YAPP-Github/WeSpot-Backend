@@ -64,7 +64,7 @@ data class VoteRestriction(
 
     fun receivedNewReport(reportCount: Long): VoteRestriction {
         val restrictionDay = RESTRICTION_RULE
-            .firstOrNull { reportCount >= it.standard }
+            .firstOrNull { reportCount == it.standard }
             ?.restrictionDay ?: 0L
 
         if (restrictionDay == 0L) {

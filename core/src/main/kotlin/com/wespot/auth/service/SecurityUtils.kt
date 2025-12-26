@@ -21,5 +21,7 @@ object SecurityUtils {
 
         return userPort.findByEmail(principal.username)
             ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 계정이 존재하지 않습니다.")
+//        return userPort.findByName("김재연")
+//            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당 계정이 존재하지 않습니다.")
     }
 }

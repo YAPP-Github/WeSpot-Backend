@@ -7,10 +7,7 @@ import com.wespot.user.UserIntroduction
 import com.wespot.user.dto.response.UserResponse
 import com.wespot.user.fixture.ProfileFixture
 import com.wespot.user.fixture.UserFixture
-import com.wespot.user.port.out.ProfileBackgroundPort
-import com.wespot.user.port.out.ProfileIconPort
-import com.wespot.user.port.out.ProfilePort
-import com.wespot.user.port.out.UserPort
+import com.wespot.user.port.out.*
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -22,12 +19,14 @@ class UserServiceTest : BehaviorSpec({
     val profilePort = mockk<ProfilePort>()
     val profileBackgroundPort = mockk<ProfileBackgroundPort>()
     val profileIconPort = mockk<ProfileIconPort>()
+    val userPolicyAgreementPort = mockk<UserPolicyAgreementPort>()
     val userService = UserService(
         userPort = userPort,
         schoolPort = schoolPort,
         profilePort = profilePort,
         profileBackgroundPort = profileBackgroundPort,
-        profileIconPort = profileIconPort
+        profileIconPort = profileIconPort,
+        userPolicyAgreementPort = userPolicyAgreementPort
     )
 
     given("UserService 테스트") {

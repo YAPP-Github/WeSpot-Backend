@@ -49,7 +49,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createWithIdSchool(
@@ -87,7 +88,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createWithIdAndEmail(
@@ -126,7 +128,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createSender(
@@ -164,7 +167,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createReceiver(
@@ -202,7 +206,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     // SecurityContextHolder를 사용하여 테스트를 위한 User를 설정
@@ -261,7 +266,8 @@ object UserFixture {
             withdrawalCancelAt = null,
             withdrawalCompleteAt = null,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            userPolicyAgreements =  emptyList()
         )
     }
 
@@ -301,7 +307,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createWithIdAndSchoolIdAndGradeAndClassNumber(
@@ -341,7 +348,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createWithEmailAndSchoolIdAndGradeAndClassNumber(
@@ -381,7 +389,8 @@ object UserFixture {
         withdrawalStatus = WithdrawalStatus.NONE,
         withdrawalRequestAt = null,
         withdrawalCancelAt = null,
-        withdrawalCompleteAt = null
+        withdrawalCompleteAt = null,
+        userPolicyAgreements =  emptyList()
     )
 
     fun createUserWithRestrictionTypeAndRestrictDay(
@@ -424,7 +433,8 @@ object UserFixture {
             withdrawalStatus = WithdrawalStatus.NONE,
             withdrawalRequestAt = null,
             withdrawalCancelAt = null,
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
+            userPolicyAgreements =  emptyList()
         )
     }
 
@@ -470,7 +480,8 @@ object UserFixture {
             withdrawalStatus = WithdrawalStatus.NONE,
             withdrawalRequestAt = null,
             withdrawalCancelAt = null,
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
+            userPolicyAgreements =  emptyList()
         )
     }
 
@@ -515,7 +526,8 @@ object UserFixture {
             withdrawalStatus = WithdrawalStatus.NONE,
             withdrawalRequestAt = null,
             withdrawalCancelAt = null,
-            withdrawalCompleteAt = null
+            withdrawalCompleteAt = null,
+            userPolicyAgreements =  emptyList()
         )
     }
 

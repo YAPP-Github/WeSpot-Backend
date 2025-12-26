@@ -18,7 +18,6 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class CreatedReportEventListener(
     val createdReportService: CreatedReportService,
-    val reportPort: ReportPort,
 ) {
 
     @Async
@@ -35,15 +34,7 @@ class CreatedReportEventListener(
                 receiverId = event.receiver.id,
                 content = "메시지 차단"
             )
-            return
         }
-
-        reportPort.deleteByReportTypeAndTargetIdAndReceiverId(
-            reportType = ReportType.MESSAGE,
-            targetId = event.message.id,
-            receiverId = event.receiver.id
-        )
-        createdReportService.changeRestriction(receiverId = event.receiver.id, reportType = ReportType.MESSAGE)
     }
 
     @Async

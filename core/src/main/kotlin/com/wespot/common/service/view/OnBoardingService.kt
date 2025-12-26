@@ -79,14 +79,14 @@ class OnBoardingService(
     }
 
     @Transactional
-    override fun viewOnBoardingSheetBy(category: OnBoardingComponentRequest) { // TODO : 일단 이 처리 없애놓으
-//        val userId = SecurityUtils.getLoginUser(userPort).id
-//        val isViewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId) ?: return
+    override fun viewOnBoardingSheetBy(category: OnBoardingComponentRequest) {
+        val userId = SecurityUtils.getLoginUser(userPort).id
+        val isViewedOnBoardingSheet = viewedOnBoardingSheetPort.findByUserId(userId) ?: return
 
-//        isViewedOnBoardingSheet.view(
-//            category.name,
-//            viewedOnBoardingSheetPort::save
-//        )
+        isViewedOnBoardingSheet.view(
+            category.name,
+            viewedOnBoardingSheetPort::save
+        )
     }
 
 }

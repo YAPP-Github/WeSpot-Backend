@@ -5,26 +5,39 @@ import java.time.LocalDateTime
 
 object TimeExpressionUtil {
 
-    fun postTime(now: LocalDateTime = LocalDateTime.now(), createdAt: LocalDateTime): String {
-        return timeToString(createdAt, now)
+    fun detailTime(now: LocalDateTime = LocalDateTime.now(), createdAt: LocalDateTime): String {
+        return timeToString(createdAt = createdAt, now = now, isDetail = true)
     }
 
-    private fun timeToString(createdAt: LocalDateTime, now: LocalDateTime): String {
-        if (createdAt.year != now.year) {
-            return "${createdAt.year % 100}.${createdAt.monthValue}.${createdAt.dayOfMonth} ${createdAt.hour}:${createdAt.minute}"
-        }
-
+    private fun timeToString(createdAt: LocalDateTime, now: LocalDateTime, isDetail: Boolean = false): String {
         val duration = Duration.between(createdAt, now)
+        val yearString = fillWithZero(createdAt.year % 100)
+        val monthString = fillWithZero(createdAt.monthValue)
+        val dayString = fillWithZero(createdAt.dayOfMonth)
+        val hourString = fillWithZero(createdAt.hour)
+        val minuteString = fillWithZero(createdAt.minute)
+
         return when {
-            duration.toMinutes() <= 10 -> "방금"
-            duration.toDays() < 1 -> "${duration.toHours()}시간 전"
-            duration.toDays() < 30 -> "${duration.toDays()}일 전"
-            else -> "${createdAt.monthValue}.${createdAt.dayOfMonth} ${createdAt.hour}:${createdAt.minute}"
+            duration.toMinutes() < 1 -> "방금"
+            isDetail && duration.toMinutes() < 60 -> "${duration.toMinutes()}분 전"
+            isDetail && now.dayOfMonth == createdAt.dayOfMonth && duration.toHours() < 24 -> "${hourString}:${minuteString}"
+            isDetail && now.year == createdAt.year && duration.toDays() < 365 -> "${monthString}/${dayString}"
+            isDetail && 365 <= duration.toDays() -> "${if ((duration.toDays() / 365).toInt() == 0) 1 else duration.toDays() / 365}년 전"
+            now.year == createdAt.year && duration.toDays() < 365 -> "${monthString}/${dayString} ${hourString}:${minuteString}"
+            else -> "${yearString}/${monthString}/${dayString} ${hourString}:${minuteString}"
         }
     }
 
-    fun commentTime(now: LocalDateTime = LocalDateTime.now(), createdAt: LocalDateTime): String {
-        return timeToString(createdAt, now)
+    private fun fillWithZero(value: Int): String {
+        if (value < 10) {
+            return "0$value"
+        }
+
+        return value.toString()
+    }
+
+    fun isNotDetailTime(now: LocalDateTime = LocalDateTime.now(), createdAt: LocalDateTime): String {
+        return timeToString(createdAt = createdAt, now = now)
     }
 
 }

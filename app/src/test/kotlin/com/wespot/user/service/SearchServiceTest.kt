@@ -6,6 +6,7 @@ import com.wespot.school.SchoolType
 import com.wespot.school.fixture.SchoolFixture
 import com.wespot.school.port.out.SchoolPort
 import com.wespot.user.fixture.UserFixture
+import com.wespot.user.port.out.BlockedUserPort
 import com.wespot.user.port.out.UserPort
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -16,9 +17,11 @@ import org.springframework.data.domain.Sort
 class SearchServiceTest : BehaviorSpec({
     val userPort = mockk<UserPort>()
     val schoolPort = mockk<SchoolPort>()
+    val blockUserPort = mockk<BlockedUserPort>()
     val searchUserService = SearchUserService(
         userPort = userPort,
-        schoolPort = schoolPort
+        schoolPort = schoolPort,
+        blockedUserPort = blockUserPort
     )
 
     given("cursorId가 0일 때") {
@@ -39,8 +42,29 @@ class SearchServiceTest : BehaviorSpec({
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
-            every { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id) } returns users
-            every { userPort.countUsersAfterCursor(keyword, null, null, null, null, loginUser.id) } returns 0L
+            every {
+                userPort.searchUsers(
+                    keyword,
+                    null,
+                    null,
+                    null,
+                    null,
+                    pageable,
+                    loginUser.id,
+                    emptyList()
+                )
+            } returns users
+            every {
+                userPort.countUsersAfterCursor(
+                    keyword,
+                    null,
+                    null,
+                    null,
+                    null,
+                    loginUser.id,
+                    emptyList()
+                )
+            } returns 0L
             every { schoolPort.findById(1L) } returns school1
             every { schoolPort.findById(2L) } returns school2
             every { schoolPort.findById(3L) } returns school3
@@ -48,7 +72,7 @@ class SearchServiceTest : BehaviorSpec({
             val result = searchUserService.searchUsers(keyword, cursorId)
 
             then("첫 페이지의 사용자들을 반환한다") {
-                verify { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id) }
+                verify { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id, emptyList()) }
                 result.users.size shouldBe 3
                 result.hasNext shouldBe false
             }
@@ -74,15 +98,37 @@ class SearchServiceTest : BehaviorSpec({
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
             every { userPort.findById(cursorId) } returns cursorUser
-            every { userPort.countUsersAfterCursor("경", "김갑수", "서울고등학교", 2, 1, loginUser.id) } returns 0L
+            every { userPort.countUsersAfterCursor("경", "김갑수", "서울고등학교", 2, 1, loginUser.id, emptyList()) } returns 0L
             every { schoolPort.findById(1L) } returns school
-            every { userPort.searchUsers(keyword, "김갑수", "서울고등학교", 2, cursorId, pageable, loginUser.id) } returns users
+            every {
+                userPort.searchUsers(
+                    keyword,
+                    "김갑수",
+                    "서울고등학교",
+                    2,
+                    cursorId,
+                    pageable,
+                    loginUser.id,
+                    emptyList()
+                )
+            } returns users
 
             val result = searchUserService.searchUsers(keyword, cursorId)
 
             then("커서 기반의 사용자들을 반환한다") {
                 verify { userPort.findById(cursorId) }
-                verify { userPort.searchUsers(keyword, "김갑수", "서울고등학교", 2, cursorId, pageable, loginUser.id) }
+                verify {
+                    userPort.searchUsers(
+                        keyword,
+                        "김갑수",
+                        "서울고등학교",
+                        2,
+                        cursorId,
+                        pageable,
+                        loginUser.id,
+                        emptyList()
+                    )
+                }
                 result.users.size shouldBe 2
                 result.hasNext shouldBe false
             }
@@ -106,16 +152,38 @@ class SearchServiceTest : BehaviorSpec({
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
-            every { userPort.countUsersAfterCursor("경", "김경식", "부산고등학교", 2, 2, loginUser.id) } returns 0L
+            every { userPort.countUsersAfterCursor("경", "김경식", "부산고등학교", 2, 2, loginUser.id, emptyList()) } returns 0L
             every { userPort.findById(cursorId) } returns cursorUser
             every { schoolPort.findById(2L) } returns school
-            every { userPort.searchUsers(keyword, "김경식", "부산고등학교", 2, cursorId, pageable, loginUser.id) } returns users
+            every {
+                userPort.searchUsers(
+                    keyword,
+                    "김경식",
+                    "부산고등학교",
+                    2,
+                    cursorId,
+                    pageable,
+                    loginUser.id,
+                    emptyList()
+                )
+            } returns users
 
             val result = searchUserService.searchUsers(keyword, cursorId)
 
             then("다음 페이지의 사용자들을 반환한다") {
                 verify { userPort.findById(cursorId) }
-                verify { userPort.searchUsers(keyword, "김경식", "부산고등학교", 2, cursorId, pageable, loginUser.id) }
+                verify {
+                    userPort.searchUsers(
+                        keyword,
+                        "김경식",
+                        "부산고등학교",
+                        2,
+                        cursorId,
+                        pageable,
+                        loginUser.id,
+                        emptyList()
+                    )
+                }
                 result.users.size shouldBe 1
                 result.hasNext shouldBe false
             }
@@ -141,7 +209,18 @@ class SearchServiceTest : BehaviorSpec({
 
             mockkStatic(SecurityUtils::class)
             every { SecurityUtils.getLoginUser(userPort) } returns loginUser
-            every { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id) } returns users
+            every {
+                userPort.searchUsers(
+                    keyword,
+                    null,
+                    null,
+                    null,
+                    null,
+                    pageable,
+                    loginUser.id,
+                    emptyList()
+                )
+            } returns users
             every { schoolPort.findById(1L) } returns school1
             every { schoolPort.findById(2L) } returns school2
             every { schoolPort.findById(3L) } returns school3
@@ -149,7 +228,7 @@ class SearchServiceTest : BehaviorSpec({
             val result = searchUserService.searchUsers(keyword, cursorId)
 
             then("정렬된 사용자들을 반환한다") {
-                verify { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id) }
+                verify { userPort.searchUsers(keyword, null, null, null, null, pageable, loginUser.id, emptyList()) }
                 result.users.size shouldBe 3
                 result.hasNext shouldBe false
 

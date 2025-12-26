@@ -14,4 +14,8 @@ data class VoteOptionByVoteDate(
         return voteOptionId == voteOption.id
     }
 
+    override fun toString(): String {
+        return "VoteOptionByVoteDate(id=$id, voteId=$voteId, voteOption=$voteOption)"
+    }
+
 }

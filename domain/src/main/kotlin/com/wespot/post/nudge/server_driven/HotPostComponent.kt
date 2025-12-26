@@ -72,7 +72,7 @@ class HotPostComponent(
                             ),
                         ),
                         createdAt = RichTextV2(
-                            text = TimeExpressionUtil.postTime(createdAt = post.createdAt),
+                            text = TimeExpressionUtil.detailTime(createdAt = post.createdAt),
                             color = Color(value = ColorType.GRAY500.value),
                             typography = TypographType.BODY12.value,
                             maxLine = 1

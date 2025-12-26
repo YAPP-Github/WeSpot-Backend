@@ -10,7 +10,7 @@ data class IconV2(
     companion object {
 
         val RIGHT_ARROW_IN_BLACK = IconV2(
-            url = "https://dw2d2daekmyur.cloudfront.net/right_arrow_in_black.png",
+            url = "https://dw2d2daekmyur.cloudfront.net/icon-arrow-back-fill.png",
             color = Color(value = ColorType.GRAY300.value)
         )
 
@@ -46,7 +46,7 @@ data class IconV2(
         )
 
         val RIGHT_ARROW = IconV2(
-            url = "https://dw2d2daekmyur.cloudfront.net/right_arrow.jpg",
+            url = "https://dw2d2daekmyur.cloudfront.net/icon-arrow-back.jpg",
             color = Color(value = ColorType.GRAY600.value)
         )
 

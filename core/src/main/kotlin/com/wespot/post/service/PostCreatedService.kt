@@ -3,6 +3,8 @@ package com.wespot.post.service
 import com.wespot.auth.service.SecurityUtils
 import com.wespot.exception.CustomException
 import com.wespot.exception.ExceptionView
+import com.wespot.lock.ExecutorWithLock
+import com.wespot.lock.LockKey
 import com.wespot.post.Post
 import com.wespot.post.PostImage
 import com.wespot.post.dto.request.CreatedPostRequest
@@ -22,38 +24,52 @@ class PostCreatedService(
 
     private val postPort: PostPort,
     private val postCategoryPort: PostCategoryPort,
-    private val userPort: UserPort
+    private val userPort: UserPort,
+    private val executorWithLock: ExecutorWithLock,
 ) : PostCreatedUseCase {
 
     @Transactional
     override fun createPost(createdPostRequest: CreatedPostRequest): Long {
         val loginUser = SecurityUtils.getLoginUser(userPort = userPort)
 
-        if (loginUser.canNotUseCommunity()) {
-            throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
-        }
+        return executorWithLock.execute(
+            task = {
+                if (loginUser.canNotUseCommunity()) {
+                    throw CustomException(status = HttpStatus.FORBIDDEN, message = "커뮤니티 이용이 제한된 사용자입니다.")
+                }
 
-        val category =
-            postCategoryPort.findById(createdPostRequest.categoryId) ?: throw CustomException(
-                status = HttpStatus.BAD_REQUEST,
-                view = ExceptionView.TOAST,
-                message = "존재하지 않는 카테고리입니다."
-            )
-        val post = Post.of(
-            category = category,
-            user = loginUser,
-            title = createdPostRequest.title,
-            description = createdPostRequest.description,
-            images = createdPostRequest.imagesRequest
-                ?.map {
-                    PostImage.of(
-                        cloudFrontUrl = cloudFrontUrl,
-                        imageUrl = it,
+                val category =
+                    postCategoryPort.findById(createdPostRequest.categoryId) ?: throw CustomException(
+                        status = HttpStatus.BAD_REQUEST,
+                        view = ExceptionView.TOAST,
+                        message = "존재하지 않는 카테고리입니다."
                     )
-                },
-            toSavePost = { toSavedPost -> postPort.save(toSavedPost) }
+                val post = Post.of(
+                    category = category,
+                    user = loginUser,
+                    title = createdPostRequest.title,
+                    description = createdPostRequest.description,
+                    images = createdPostRequest.imagesRequest
+                        ?.map {
+                            PostImage.of(
+                                cloudFrontUrl = cloudFrontUrl,
+                                imageUrl = it,
+                            )
+                        },
+                    toSavePost = { toSavedPost -> postPort.save(toSavedPost) }
+                )
+
+                post.id
+            },
+            lockKey = LockKey(
+                "post",
+                "created",
+                loginUser.id,
+                createdPostRequest.title,
+                createdPostRequest.categoryId,
+                createdPostRequest.description,
+            ),
         )
-        return post.id
     }
 
 }

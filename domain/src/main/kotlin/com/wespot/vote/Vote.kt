@@ -224,4 +224,9 @@ data class Vote(
         return leastFrequentlyUsedVoteOptions[findIndex].voteOption
     }
 
+    override fun toString(): String {
+        return "Vote(id=$id, voteIdentifier=$voteIdentifier, voteNumber=$voteNumber, " +
+            "voteOptionsByVoteDate=$voteOptionsByVoteDate, ballots=$ballots)"
+    }
+
 }

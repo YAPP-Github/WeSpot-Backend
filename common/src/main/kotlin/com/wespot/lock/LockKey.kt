@@ -16,10 +16,17 @@ data class LockKey(val keywords: List<String>) {
         }
     }
 
-    constructor(vararg keywords: Any) : this(keywords.map { it.toString() }.toList())
+    constructor(vararg keywords: Any?) : this(
+        keywords
+            .filterNotNull()
+            .map { it.toString() }
+            .toList()
+    )
 
     val key: String
         get() {
             return keywords.joinToString(":") { it }
+                .hashCode()
+                .toString()
         }
 }

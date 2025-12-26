@@ -69,6 +69,7 @@ class UserJpaRepositoryTest @Autowired constructor(
             2,
             0,
             user1.id,
+            emptyList(),
             PageRequest.of(0, 10),
         )
 

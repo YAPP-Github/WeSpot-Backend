@@ -53,7 +53,9 @@ data class Report(
         return reportType == ReportType.VOTE
     }
 
-    fun isSameReport(otherReport: Report): Boolean {
+    fun isSameReport(otherReport: Report?): Boolean {
+        if (otherReport == null) return false
+
         return reportType == otherReport.reportType
             && targetId == otherReport.targetId
             && senderId == otherReport.senderId

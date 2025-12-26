@@ -31,4 +31,10 @@ class VoteJpaEntity(
     @field: NotNull
     val date: LocalDate,
 
-    )
+    ) {
+
+    override fun toString(): String {
+        return "VoteJpaEntity(id=$id, schoolId=$schoolId, grade=$grade, classNumber=$classNumber, voteNumber=$voteNumber, date=$date)"
+    }
+
+}

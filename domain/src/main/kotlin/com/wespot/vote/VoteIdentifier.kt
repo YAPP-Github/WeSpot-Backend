@@ -28,4 +28,8 @@ data class VoteIdentifier(
             grade == otherVoteIdentifier.grade &&
             classNumber == otherVoteIdentifier.classNumber
 
+    override fun toString(): String {
+        return "VoteIdentifier(schoolId=$schoolId, grade=$grade, classNumber=$classNumber, date=$date)"
+    }
+
 }

@@ -49,7 +49,7 @@ data class MessageV2(
     companion object {
 
         //        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 3
-        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 100 // 개발하는 동안 100개로 유지
+        const val COUNT_OF_MAX_ABLE_TO_SEND_MESSAGE_PER_DAY = 5 // 개발하는 동안 100개로 유지
 
         fun createInitial(
             content: String,

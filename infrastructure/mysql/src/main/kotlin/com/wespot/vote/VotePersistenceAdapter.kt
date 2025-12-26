@@ -68,7 +68,7 @@ class VotePersistenceAdapter(
     private fun getVoteOption(voteOptionId: Long): VoteOption {
         return voteOptionJpaRepository.findByIdOrNull(voteOptionId)
             ?.let { VoteOptionMapper.mapToDomainEntity(it) }
-            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST,"해당하는 ID의 질문지가 존재하지 않습니다.")
+            ?: throw CustomException(HttpStatus.NOT_FOUND, ExceptionView.TOAST, "해당하는 ID의 질문지가 존재하지 않습니다.")
     }
 
     private fun findBallotsByVote(voteId: Long): List<Ballot> =

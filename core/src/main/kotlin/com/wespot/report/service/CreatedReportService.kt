@@ -36,6 +36,11 @@ class CreatedReportService(
 
     fun changeRestriction(newReport: Report? = null, receiverId: Long, reportType: ReportType) {
         val reports = reportPort.findAllByReceiverIdAndReportType(receiverId, reportType)
+        val isExistsSameReport = reports.any { it.isSameReport(newReport) }
+
+        if (isExistsSameReport) {
+            return
+        }
 
         val targetUser = userPort.findById(receiverId) ?: throw CustomException(message = "존재하지 않는 유저입니다.")
         val restriction = targetUser.restriction

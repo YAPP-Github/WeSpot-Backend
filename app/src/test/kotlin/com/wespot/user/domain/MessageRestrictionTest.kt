@@ -2,11 +2,13 @@ package com.wespot.user.domain
 
 import com.wespot.exception.CustomException
 import com.wespot.user.RestrictionType
+import com.wespot.user.fixture.CommunityRestrictionFixture
 import com.wespot.user.restriction.MessageRestriction
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import org.junit.Test
 import java.time.LocalDate
 
 class MessageRestrictionTest : BehaviorSpec({
