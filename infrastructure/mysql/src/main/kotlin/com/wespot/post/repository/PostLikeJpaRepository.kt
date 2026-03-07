@@ -11,4 +11,6 @@ interface PostLikeJpaRepository : JpaRepository<PostLikeEntity, Long> {
 
     fun deleteByPostId(postId: Long)
 
+    fun deleteByUserId(userId: Long)
+
 }

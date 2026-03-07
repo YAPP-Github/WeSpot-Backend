@@ -9,4 +9,8 @@ interface PostReportJpaRepository : JpaRepository<PostReportEntity, Long> {
 
     fun deleteByPostId(postId: Long)
 
+    fun findAllByUserId(userId: Long): List<PostReportEntity>
+
+    fun deleteByUserId(userId: Long)
+
 }

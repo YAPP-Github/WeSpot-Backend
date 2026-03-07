@@ -9,4 +9,6 @@ interface UsedAnswerMessageJpaRepository : JpaRepository<UsedAnswerMessageJpaEnt
 
     fun findByUserId(userId: Long): UsedAnswerMessageJpaEntity?
 
+    fun deleteByUserId(userId: Long)
+
 }

@@ -7,4 +7,6 @@ interface UserVersionJpaRepository : JpaRepository<UserVersionJpaEntity, Long> {
 
     fun findByUserId(id: Long): UserVersionJpaEntity?
 
+    fun deleteByUserId(userId: Long)
+
 }

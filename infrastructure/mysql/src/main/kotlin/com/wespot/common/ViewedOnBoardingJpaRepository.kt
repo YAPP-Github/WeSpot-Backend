@@ -6,4 +6,6 @@ interface ViewedOnBoardingJpaRepository : JpaRepository<ViewedOnBoardingSheetJpa
 
     fun findByUserId(userId: Long): ViewedOnBoardingSheetJpaEntity?
 
+    fun deleteByUserId(userId: Long)
+
 }

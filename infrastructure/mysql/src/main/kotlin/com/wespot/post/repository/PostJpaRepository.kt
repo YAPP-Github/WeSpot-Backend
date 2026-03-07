@@ -3,6 +3,7 @@ package com.wespot.post.repository
 import com.wespot.post.PostEntity
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
@@ -71,5 +72,9 @@ interface PostJpaRepository : JpaRepository<PostEntity, Long> {
         cursorId: Long,
         limit: Int,
     ): List<PostEntity>
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE PostEntity p SET p.userId = :toUserId WHERE p.userId = :fromUserId")
+    fun reassignUserId(@Param("fromUserId") fromUserId: Long, @Param("toUserId") toUserId: Long)
 
 }

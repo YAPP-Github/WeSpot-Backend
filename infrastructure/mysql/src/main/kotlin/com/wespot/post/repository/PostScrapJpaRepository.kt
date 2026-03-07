@@ -13,4 +13,6 @@ interface PostScrapJpaRepository : JpaRepository<PostScrapEntity, Long> {
 
     fun deleteByPostId(postId: Long)
 
+    fun deleteByUserId(userId: Long)
+
 }

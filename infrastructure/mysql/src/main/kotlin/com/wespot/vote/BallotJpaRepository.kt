@@ -6,4 +6,6 @@ interface BallotJpaRepository : JpaRepository<BallotJpaEntity, Long> {
 
     fun findAllByVoteId(voteId: Long): List<BallotJpaEntity>
 
+    fun deleteByReceiverIdOrSenderId(receiverId: Long, senderId: Long)
+
 }

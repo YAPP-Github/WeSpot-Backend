@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "Admin API", description = "혜연짱을 위한 API 입니다.")
+@Tag(name = "Admin API", description = "관리자용 API입니다.")
 interface AdminSwagger {
 
     @Operation(summary = "선택지 조회 API")
@@ -51,5 +51,16 @@ interface AdminSwagger {
 
     @Operation(summary = "Remote Config 변수 삭제 API")
     fun deleteRemoteConfigVariables(key: String): ResponseEntity<Unit>
+
+    @Operation(summary = "전체 유저 목록 조회 API (어드민 전용)")
+    fun getAllUsers(): ResponseEntity<List<AdminUserResponse>>
+
+    @Operation(
+        summary = "유저 삭제 API (어드민 전용)",
+        description = "대상 유저를 삭제하고, post/post_comment는 대체 유저(replacementUserId)에게 이전합니다."
+    )
+    fun deleteUser(
+        @Parameter(description = "삭제할 유저 ID", required = true) userId: Long,
+    ): ResponseEntity<Unit>
 
 }

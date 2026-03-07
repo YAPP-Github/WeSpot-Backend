@@ -69,4 +69,6 @@ interface MessageV2JpaRepository : JpaRepository<MessageJpaEntityV2, Long> {
         receiverId: Long
     ) :Boolean
 
+    fun deleteBySenderIdOrReceiverId(senderId: Long, receiverId: Long)
+
 }

@@ -55,4 +55,6 @@ interface BlockedUserJpaRepository: JpaRepository<BlockedUserJpaEntity, Long> {
     fun findAllByBlockerId(
         @Param("blockerId") blockerId: Long
     ): List<BlockedUserJpaEntity>
+
+    fun deleteByBlockerIdOrBlockedId(blockerId: Long, blockedId: Long)
 }

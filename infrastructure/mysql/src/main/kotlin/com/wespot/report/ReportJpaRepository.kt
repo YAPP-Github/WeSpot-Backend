@@ -8,4 +8,6 @@ interface ReportJpaRepository : JpaRepository<ReportJpaEntity, Long> {
 
     fun deleteByReportTypeAndTargetIdAndReceiverId(reportType: ReportType, targetId: Long, receiverId: Long)
 
+    fun deleteBySenderIdOrReceiverId(senderId: Long, receiverId: Long)
+
 }

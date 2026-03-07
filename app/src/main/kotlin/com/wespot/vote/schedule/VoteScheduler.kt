@@ -10,6 +10,7 @@ class VoteScheduler(
 ) {
 
     @Scheduled(cron = "50 0 0 * * *") // 매일 00시 00분에 50초에 실행
+//    @Scheduled(fixedDelay = 10000)
     fun createNewVote() {
         createdVoteUseCase.createVotes()
     }

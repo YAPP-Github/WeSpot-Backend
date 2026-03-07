@@ -9,4 +9,8 @@ interface PostCommentReportJpaRepository : JpaRepository<PostCommentReportEntity
 
     fun deleteByPostCommentIdIn(postCommentId: List<Long>)
 
+    fun findAllByUserId(userId: Long): List<PostCommentReportEntity>
+
+    fun deleteByUserId(userId: Long)
+
 }

@@ -4,7 +4,6 @@ import com.wespot.common.util.RandomGenerator
 import com.wespot.school.School
 import com.wespot.school.SchoolJpaEntity
 import com.wespot.school.SchoolType
-import kotlinx.coroutines.flow.SharingCommand
 
 object SchoolFixture {
 

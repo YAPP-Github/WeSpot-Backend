@@ -1,6 +1,8 @@
 package com.wespot.admin
 
 import com.wespot.admin.dto.*
+import com.wespot.admin.port.`in`.AdminUserDeletionUseCase
+import com.wespot.admin.port.`in`.AdminUserUseCase
 import com.wespot.admin.port.`in`.AdminVoteOptionUseCase
 import com.wespot.admin.port.`in`.FirebaseUseCase
 import com.wespot.admin.swagger.AdminSwagger
@@ -24,6 +26,8 @@ class AdminController(
     private val adminVoteOptionUseCase: AdminVoteOptionUseCase,
     private val publishNotificationUseCase: PublishNotificationUseCase,
     private val firebaseUseCase: FirebaseUseCase,
+    private val adminUserUseCase: AdminUserUseCase,
+    private val adminUserDeletionUseCase: AdminUserDeletionUseCase,
 ) : AdminSwagger {
 
     @GetMapping("/vote-options")
@@ -109,6 +113,22 @@ class AdminController(
 
         return ResponseEntity.noContent()
             .build()
+    }
+
+    @GetMapping("/users")
+    override fun getAllUsers(): ResponseEntity<List<AdminUserResponse>> {
+        val response = adminUserUseCase.getAllUsers()
+
+        return ResponseEntity.ok(response)
+    }
+
+    @DeleteMapping("/users/{userId}")
+    override fun deleteUser(
+        @PathVariable userId: Long,
+    ): ResponseEntity<Unit> {
+        adminUserDeletionUseCase.deleteUser(userId)
+
+        return ResponseEntity.noContent().build()
     }
 
 }

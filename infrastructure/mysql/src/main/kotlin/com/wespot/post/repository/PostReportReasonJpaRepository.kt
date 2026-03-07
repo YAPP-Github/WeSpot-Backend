@@ -7,4 +7,6 @@ interface PostReportReasonJpaRepository : JpaRepository<PostReportReasonEntity, 
 
     fun findByPostReportId(postReportId: Long): List<PostReportReasonEntity>
 
+    fun deleteByPostReportIdIn(postReportIds: List<Long>)
+
 }

@@ -153,4 +153,6 @@ interface MessageJpaRepository : JpaRepository<MessageJpaEntity, Long> {
         @Param("messageOpenTime") messageOpenTime: LocalDateTime
     ): Long
 
+    fun deleteBySenderIdOrReceiverId(senderId: Long, receiverId: Long)
+
 }

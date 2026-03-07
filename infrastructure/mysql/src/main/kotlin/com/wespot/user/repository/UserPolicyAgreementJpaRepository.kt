@@ -7,4 +7,6 @@ interface UserPolicyAgreementJpaRepository : JpaRepository<UserPolicyAgreementJp
 
     fun findAllByUserId(userId: Long): List<UserPolicyAgreementJpaEntity>
 
+    fun deleteByUserId(userId: Long)
+
 }

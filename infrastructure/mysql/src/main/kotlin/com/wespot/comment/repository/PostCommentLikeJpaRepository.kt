@@ -13,4 +13,6 @@ interface PostCommentLikeJpaRepository : JpaRepository<PostCommentLikeEntity, Lo
 
     fun deleteByPostCommentIdIn(postCommentIds: List<Long>)
 
+    fun deleteByUserId(userId: Long)
+
 }

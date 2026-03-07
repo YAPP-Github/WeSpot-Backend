@@ -33,4 +33,6 @@ interface NotificationJpaRepository : JpaRepository<NotificationJpaEntity, Long>
         createdAtEnd: LocalDateTime
     ): List<NotificationJpaEntity>
 
+    fun deleteByUserId(userId: Long)
+
 }

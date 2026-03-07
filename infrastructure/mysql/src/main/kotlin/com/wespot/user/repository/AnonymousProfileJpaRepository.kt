@@ -9,4 +9,6 @@ interface AnonymousProfileJpaRepository : JpaRepository<AnonymousProfileJpaEntit
 
     fun findByIdIn(ids: List<Long>): List<AnonymousProfileJpaEntity>
 
+    fun deleteByOwnerIdOrReceiverId(ownerId: Long, receiverId: Long)
+
 }
