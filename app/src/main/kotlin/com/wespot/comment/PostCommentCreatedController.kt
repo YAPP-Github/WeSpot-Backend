@@ -2,6 +2,7 @@ package com.wespot.comment
 
 import com.wespot.comment.dto.PostCommentCreatedRequest
 import com.wespot.comment.port.`in`.PostCommentCreatedUseCase
+import com.wespot.config.ratelimit.UserRateLimit
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,6 +17,7 @@ class PostCommentCreatedController(
 ) {
 
     @PostMapping
+    @UserRateLimit
     fun createPostComment(
         @RequestBody postCommentCreatedRequest: PostCommentCreatedRequest
     ): ResponseEntity<Long> {

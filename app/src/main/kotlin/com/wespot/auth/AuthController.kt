@@ -10,6 +10,7 @@ import com.wespot.auth.dto.response.TokenResponse
 import com.wespot.auth.port.`in`.AuthUseCase
 import com.wespot.auth.port.`in`.LogoutUsecase
 import com.wespot.auth.swagger.AuthSwagger
+import com.wespot.config.ratelimit.UserRateLimit
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -37,6 +38,7 @@ class AuthController(
     }
 
     @PostMapping("/signup")
+    @UserRateLimit
     fun signUp(
         @RequestBody request: SignUpRequest
     ): ResponseEntity<TokenAndUserDetailResponse> {

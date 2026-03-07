@@ -1,5 +1,6 @@
 package com.wespot.post
 
+import com.wespot.config.ratelimit.UserRateLimit
 import com.wespot.post.dto.request.CreatedPostRequest
 import com.wespot.post.port.`in`.PostCreatedUseCase
 import org.springframework.http.HttpStatus
@@ -16,6 +17,7 @@ class PostCreatedController(
 ) {
 
     @PostMapping
+    @UserRateLimit
     fun createPost(
         @RequestBody createdPostRequest: CreatedPostRequest
     ): ResponseEntity<Unit> {
